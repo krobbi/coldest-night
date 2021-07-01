@@ -1,0 +1,118 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Object",
+"class": "DisplayService",
+"language": "GDScript",
+"path": "res://utils/services/display_service.gd"
+}, {
+"base": "Object",
+"class": "PrefsService",
+"language": "GDScript",
+"path": "res://utils/services/prefs_service.gd"
+} ]
+_global_script_class_icons={
+"DisplayService": "",
+"PrefsService": ""
+}
+
+[application]
+
+config/name="Coldest Night"
+config/description="Space is lonely."
+run/main_scene="res://scenes/boot/boot.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="krobbizoid/coldest_night"
+boot_splash/image="res://assets/images/project/boot_splash.png"
+boot_splash/use_filter=false
+boot_splash/bg_color=Color( 0.0509804, 0.027451, 0.0352941, 1 )
+config/icon="res://assets/images/project/icon.png"
+config/macos_native_icon="res://assets/images/project/icon_macos.icns"
+config/windows_native_icon="res://assets/images/project/icon_windows.ico"
+config/auto_accept_quit=false
+config/quit_on_go_back=false
+
+[audio]
+
+default_bus_layout="res://assets/audio_bus_layouts/default_bus_layout.tres"
+
+[autoload]
+
+Global="*res://scenes/global/global.tscn"
+
+[display]
+
+window/size/width=640
+window/size/height=360
+window/stretch/mode="viewport"
+
+[editor]
+
+convert_text_resources_to_binary_on_export=true
+
+[gui]
+
+theme/custom="res://assets/themes/default_theme.tres"
+
+[importer_defaults]
+
+texture={
+"compress/bptc_ldr": 0,
+"compress/hdr_mode": 0,
+"compress/lossy_quality": 0.7,
+"compress/mode": 0,
+"compress/normal_map": 0,
+"detect_3d": false,
+"flags/anisotropic": false,
+"flags/filter": false,
+"flags/mipmaps": false,
+"flags/repeat": 0,
+"flags/srgb": 2,
+"process/HDR_as_SRGB": false,
+"process/fix_alpha_border": true,
+"process/invert_color": false,
+"process/premult_alpha": false,
+"size_limit": 0,
+"stream": false,
+"svg/scale": 1.0
+}
+
+[logging]
+
+file_logging/enable_file_logging.pc=false
+
+[physics]
+
+3d/active_soft_world=false
+2d/default_gravity=0
+2d/default_gravity_vector=Vector2( 0, 0 )
+3d/default_gravity=0.0
+3d/default_gravity_vector=Vector3( 0, 0, 0 )
+common/enable_object_picking=false
+
+[rendering]
+
+2d/options/use_nvidia_rect_flicker_workaround=true
+quality/intended_usage/framebuffer_allocation=1
+quality/intended_usage/framebuffer_allocation.mobile=1
+2d/snapping/use_gpu_pixel_snap=true
+quality/shadows/filter_mode=0
+quality/reflections/texture_array_reflections=false
+quality/reflections/high_quality_ggx=false
+quality/filters/anisotropic_filter_level=2
+quality/filters/use_nearest_mipmap_filter=true
+batching/precision/uv_contract=true
+quality/lightmapping/use_bicubic_sampling=false
+quality/subsurface_scattering/quality=0
+environment/default_clear_color=Color( 0.0509804, 0.027451, 0.0352941, 1 )
+quality/depth/hdr=false
+environment/default_environment="res://assets/environments/default_env.tres"
+quality/dynamic_fonts/use_oversampling=false
