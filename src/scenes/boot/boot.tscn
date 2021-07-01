@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/boot/boot.gd" type="Script" id=1]
+[ext_resource path="res://assets/animations/scenes/boot/boot_splash.tres" type="Animation" id=2]
+[ext_resource path="res://assets/images/project/boot_splash.png" type="Texture" id=3]
+
+[node name="Boot" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+main_scene = "res://scenes/dev_version/dev_version.tscn"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/boot_splash = ExtResource( 2 )
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 3 )
+expand = true
+stretch_mode = 6
