@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://entities/actors/actor.tscn" type="PackedScene" id=1]
+[ext_resource path="res://entities/actors/player/player.gd" type="Script" id=2]
+[ext_resource path="res://assets/images/entities/actors/player/player.png" type="Texture" id=3]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 8.0
+height = 4.0
+
+[node name="Player" instance=ExtResource( 1 )]
+collision_mask = 1
+script = ExtResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="." index="0"]
+texture = ExtResource( 3 )
+offset = Vector2( 0, -32 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
+rotation = 1.5708
+shape = SubResource( 1 )
+
+[node name="CameraAnchor" type="RemoteTransform2D" parent="." index="2"]

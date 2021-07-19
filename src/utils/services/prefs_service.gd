@@ -2,20 +2,18 @@ class_name PrefsService
 extends Object
 
 # Preferences Service
-# The preferences service is a service object that manages loading, storing and
-# saving the user's settings. It behaves only as a data store and does not apply
-# the preferences to the game. Ideally, the preferences service should be
-# accessed by proxy through other functions to ensure that the stored
-# preferences accurately reflect the user's settings. A global instance of the
-# preferences service can be accessed from any script by using the identifier
-# 'Global.prefs'.
-
-signal pref_changed(section, key, value);
+# The preferences service is a service object that manages loading, storing, and
+# saving the user's preferences. The preferences service behaves only as a data
+# store, and does not apply the user's preferences to the game's settings.
+# Ideally, the preferences service should be accessed by proxy through other
+# services to ensure that the user's stored preferences are synchronized with
+# the game's applied settings. A global instance of the preferences service can
+# be accessed from any script by using the identifier 'Global.prefs'.
 
 const FILE_PATH: String = "user://settings.cfg";
 const DEFAULT_PREFS: Dictionary = {
 	"display": {
-		"window_mode": "windowed",
+		"display_mode": "windowed",
 		"scale_mode": "aspect",
 		"window_scale": 0
 	}
@@ -24,14 +22,12 @@ const DEFAULT_PREFS: Dictionary = {
 var _data: Dictionary = DEFAULT_PREFS;
 var _should_save_data: bool = false;
 
-
 # Sets a preference from its section and key if it exists. Marks the preferences
-# to be saved and emits a signal if the preference was changed:
+# to be saved if the preference was changed:
 func set_pref(section: String, key: String, value) -> void:
 	if has_pref(section, key) and _data[section][key] != value:
 		_data[section][key] = value;
 		_should_save_data = true;
-		emit_signal("pref_changed", section, key, value);
 
 
 # Gets a preference from its section and key. Returns a default value if the
@@ -45,7 +41,7 @@ func has_pref(section: String, key: String) -> bool:
 	return DEFAULT_PREFS.has(section) and DEFAULT_PREFS[section].has(key);
 
 
-# Saves the preferences to their file if they are marked to be saved:
+# Saves the preferences to their file if they are marked to be saved;
 func save_file() -> void:
 	if not _should_save_data:
 		return;
@@ -69,7 +65,6 @@ func load_file() -> void:
 	var dir: Directory = Directory.new();
 	
 	if not dir.file_exists(FILE_PATH):
-		_should_save_data = true; # Provide user with a preferences file.
 		return;
 	
 	var file: ConfigFile = ConfigFile.new();
@@ -85,4 +80,4 @@ func load_file() -> void:
 				else:
 					_should_save_data = true; # File has missing preferences.
 	else:
-		_should_save_data = false; # Avoid overwriting the preferences file.
+		print("Failed to load settings from %s! Error: %d" % [FILE_PATH, error]);
