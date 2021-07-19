@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://entities/overworld_camera/overworld_camera.gd" type="Script" id=1]
+
+[node name="OverworldCamera" type="Camera2D"]
+position = Vector2( 320, 180 )
+current = true
+process_mode = 0
+limit_smoothed = true
+smoothing_enabled = true
+smoothing_speed = 8.0
+editor_draw_screen = false
+script = ExtResource( 1 )

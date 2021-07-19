@@ -9,19 +9,73 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "KinematicBody2D",
+"class": "Actor",
+"language": "GDScript",
+"path": "res://entities/actors/actor.gd"
+}, {
 "base": "Object",
 "class": "DisplayService",
 "language": "GDScript",
 "path": "res://utils/services/display_service.gd"
 }, {
+"base": "Node2D",
+"class": "Level",
+"language": "GDScript",
+"path": "res://levels/level.gd"
+}, {
+"base": "Object",
+"class": "LevelCache",
+"language": "GDScript",
+"path": "res://utils/overworld/level_cache.gd"
+}, {
+"base": "Object",
+"class": "MusicService",
+"language": "GDScript",
+"path": "res://utils/services/music_service.gd"
+}, {
+"base": "Camera2D",
+"class": "OverworldCamera",
+"language": "GDScript",
+"path": "res://entities/overworld_camera/overworld_camera.gd"
+}, {
+"base": "Actor",
+"class": "Player",
+"language": "GDScript",
+"path": "res://entities/actors/player/player.gd"
+}, {
 "base": "Object",
 "class": "PrefsService",
 "language": "GDScript",
 "path": "res://utils/services/prefs_service.gd"
+}, {
+"base": "Control",
+"class": "Radar",
+"language": "GDScript",
+"path": "res://gui/radar/radar.gd"
+}, {
+"base": "Node2D",
+"class": "RadarWallRenderer",
+"language": "GDScript",
+"path": "res://gui/radar/radar_wall_renderer.gd"
+}, {
+"base": "Object",
+"class": "ShapeSegmenter",
+"language": "GDScript",
+"path": "res://utils/radar/shape_segmenter.gd"
 } ]
 _global_script_class_icons={
+"Actor": "",
 "DisplayService": "",
-"PrefsService": ""
+"Level": "",
+"LevelCache": "",
+"MusicService": "",
+"OverworldCamera": "",
+"Player": "",
+"PrefsService": "",
+"Radar": "",
+"RadarWallRenderer": "",
+"ShapeSegmenter": ""
 }
 
 [application]
@@ -61,6 +115,7 @@ convert_text_resources_to_binary_on_export=true
 [gui]
 
 theme/custom="res://assets/themes/default_theme.tres"
+theme/custom_font="res://assets/fonts/coldnight.tres"
 
 [importer_defaults]
 
@@ -84,6 +139,14 @@ texture={
 "stream": false,
 "svg/scale": 1.0
 }
+ogg_vorbis={
+"loop": true,
+"loop_offset": 0
+}
+
+[layer_names]
+
+2d_physics/layer_1="World"
 
 [logging]
 

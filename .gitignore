@@ -18,6 +18,7 @@ export.cfg
 export_presets.cfg
 
 # Defaulted Imports
+*.ogg.import
 *.png.import
 
 # Ignore

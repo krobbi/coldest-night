@@ -1,7 +1,7 @@
 # ![Coldest Night](header.png)
 _Space is lonely_  
 __A stealth-focused RPG in Godot__  
-__Version 0.0.0__  
+__Version 0.1.0__  
 __Krobbizoid Proprietary-Open Game Development License__ -
 https://krobbi.github.io/license/2021/kpogdl.txt  
 __Copyright &copy; 2021 Chris Roberts__ (Krobbizoid)  
@@ -21,8 +21,8 @@ _All rights reserved._
 
 # About
 Coldest Night is a stealth-focused RPG made in [Godot](https://godotengine.org).
-This is the initial release of the game, and it is not yet in a
-playable state.
+The game is in very early development and currently only contains basic
+movement, background music, and a radar display.
 
 Running the game creates the directories `krobbizoid/coldest_night` alongside
 the Godot editor data/settings folder (in `%AppData%` on Windows). This
@@ -52,18 +52,32 @@ Documentation for Coldest Night is not yet available.
 # Credits
 
 ## Development Team
-Lead Developer - [Chris Roberts (Krobbizoid)](https://twitter.com/krobbizoid)
+__Lead Developer__ -
+* [Krobbizoid (Chris Roberts)](https://twitter.com/krobbizoid)
 
 ## Tools and Resources
 _The following credits list publicly-available tools and resources used in the
 production of Coldest Night. These credits are not affiliated with Coldest Night
 or its copyright holders._
 
-Game Engine - [Godot](https://godotengine.org) by
-[its authors](https://github.com/godotengine/godot/blob/master/AUTHORS.md)  
-Image Editor - [Krita](https://krita.org) by [KDE](https://kde.org)  
-Color Palette - [Faraway48](https://lospec.com/palette-list/faraway48) by
-[Igor Ferreira](https://twitter.com/diemorth)
+__Game Engine__ -
+* [Godot](https://godotengine.org) by
+[its authors](https://github.com/godotengine/godot/blob/master/AUTHORS.md)
+
+__Image Editor__ -
+* [Krita](https://krita.org) by [KDE](https://kde.org)
+
+__Color Palette__ -
+* [Faraway48](https://lospec.com/palette-list/faraway48) by
+[Igor Ferreira (Diemorth)](https://twitter.com/diemorth)
+
+__Bitmap Font to TTF Converter__ -
+* [Pixel Font Converter](https://yal.cc/r/20/pixelfont) by
+[Vadim (YellowAfterlife)](https://twitter.com/yellowafterlife)
+
+__Digital Audio Workstation__ -
+* [LMMS](https://lmms.io) by
+[its contributors](https://github.com/LMMS/lmms/graphs/contributors)
 
 # License
 Krobbizoid Proprietary-Open Game Development License -

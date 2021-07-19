@@ -1,0 +1,53 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://gui/radar/radar.gd" type="Script" id=1]
+[ext_resource path="res://gui/radar/radar_wall_renderer.gd" type="Script" id=2]
+
+[node name="Radar" type="Control"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -144.0
+margin_top = 16.0
+margin_right = -16.0
+margin_bottom = 112.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewportContainer" type="ViewportContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="ViewportContainer"]
+size = Vector2( 128, 96 )
+transparent_bg = true
+handle_input_locally = false
+hdr = false
+usage = 1
+render_target_update_mode = 3
+
+[node name="Background" type="CanvasLayer" parent="ViewportContainer/Viewport"]
+
+[node name="Polygon2D" type="Polygon2D" parent="ViewportContainer/Viewport/Background"]
+color = Color( 0.239216, 0.0196078, 0.0941176, 0.501961 )
+polygon = PoolVector2Array( 0, 0, 128, 0, 128, 0, 128, 96, 0, 96, 0, 96 )
+
+[node name="Foreground" type="CanvasLayer" parent="ViewportContainer/Viewport"]
+follow_viewport_enable = true
+
+[node name="Walls" type="Node2D" parent="ViewportContainer/Viewport/Foreground"]
+script = ExtResource( 2 )
+color = Color( 1, 0.596078, 0.054902, 1 )
+
+[node name="Player" type="Polygon2D" parent="ViewportContainer/Viewport/Foreground"]
+color = Color( 0.945098, 0.94902, 0.945098, 1 )
+polygon = PoolVector2Array( -1, -1, 1, -1, 1, 1, -1, 1 )
+
+[node name="Camera2D" type="Camera2D" parent="ViewportContainer/Viewport/Foreground/Player"]
+current = true
+process_mode = 0
+editor_draw_screen = false

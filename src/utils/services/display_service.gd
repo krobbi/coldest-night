@@ -2,33 +2,35 @@ class_name DisplayService
 extends Object
 
 # Display Service
-# The display service is a service object that manages the user's display
-# settings, and controls the behavior of the display. A global instance of the
-# display service can be accessed from any script by using the identifier
-# 'Global.display'.
+# The display service is a service object that manages applying and storing the
+# game's display settings, and controlling the behavior of the display. The
+# display service behaves as a proxy to the global preferences service, ensuring
+# that the game's applied display settings are synchronized with the user's
+# stored display preferences. A global instance of the display service can be
+# accessed from any script by using the identifier 'Global.display'.
 
 enum ScaleMode {
-	STRETCH, # Viewport fills entire display.
-	ASPECT, # Viewport maintains its aspect ratio.
-	PIXEL, # Viewport pixels maintain an integral scale.
+	STRETCH, # The viewport fills the entire display.
+	ASPECT, # The viewport maintains its aspect ratio.
+	PIXEL, # The viewport's pixels maintain an integral scale.
 };
 
 var scale_mode: int = ScaleMode.STRETCH setget set_scale_mode;
 var window_scale: int = 1 setget set_window_scale;
 var fullscreen: bool = ProjectSettings.get_setting(
 		"display/window/size/fullscreen"
-);
+) setget set_fullscreen;
 var resolution: Vector2 = Vector2(
 		max(1.0, float(ProjectSettings.get_setting("display/window/size/width"))),
 		max(1.0, float(ProjectSettings.get_setting("display/window/size/height")))
 );
 
-var _max_window_scale: int = _get_max_window_scale(0.0);
-var _default_window_scale: int = _get_max_window_scale(40.0);
-var _handling_resize: bool = false setget _set_handling_resize;
-var _should_resize_display: bool = false;
 var _scene_tree: SceneTree;
 var _viewport: Viewport;
+var _handling_resize: bool = false setget _set_handling_resize;
+var _max_window_scale: int = _get_max_window_scale(0.0);
+var _default_window_scale: int = _get_max_window_scale(64.0);
+var _should_rescale_window: bool = false;
 
 # Constructor. Passes the scene tree to the display service:
 func _init(scene_tree_ref: SceneTree) -> void:
@@ -55,12 +57,9 @@ func set_scale_mode(value: int) -> void:
 	_update_handling_resize();
 
 
-# Sets the scale of the window:
+# Sets the window scale of the display:
 func set_window_scale(value: int) -> void:
-	if window_scale == value:
-		return;
-	
-	if value <= 0:
+	if value < 1:
 		value = _default_window_scale;
 	elif value > _max_window_scale:
 		value = _max_window_scale;
@@ -69,8 +68,9 @@ func set_window_scale(value: int) -> void:
 	Global.prefs.set_pref("display", "window_scale", window_scale);
 	
 	if fullscreen:
-		_should_resize_display = true;
+		_should_rescale_window = true;
 	else:
+		_should_rescale_window = false;
 		OS.set_window_size(resolution * float(window_scale));
 		OS.center_window();
 
@@ -80,9 +80,6 @@ func set_fullscreen(value: bool) -> void:
 	if fullscreen == value:
 		return;
 	
-	# Workaround to fix an unstable fullscreen function (changing to fullscreen
-	# mode sometimes causes a black screen). This may just be an issue on my
-	# end:
 	if value:
 		OS.set_borderless_window(true);
 		yield(_scene_tree, "idle_frame");
@@ -91,7 +88,7 @@ func set_fullscreen(value: bool) -> void:
 		OS.set_window_fullscreen(true);
 		yield(_scene_tree, "idle_frame");
 		fullscreen = true;
-		Global.prefs.set_pref("display", "window_mode", "fullscreen");
+		Global.prefs.set_pref("display", "display_mode", "fullscreen");
 	else:
 		yield(_scene_tree, "idle_frame");
 		OS.set_window_fullscreen(true);
@@ -99,10 +96,10 @@ func set_fullscreen(value: bool) -> void:
 		OS.set_window_fullscreen(false);
 		OS.set_borderless_window(false);
 		fullscreen = false;
-		Global.prefs.set_pref("display", "window_mode", "windowed");
+		Global.prefs.set_pref("display", "display_mode", "windowed");
 		
-		if _should_resize_display:
-			_should_resize_display = false;
+		if _should_rescale_window:
+			_should_rescale_window = false;
 			OS.set_window_size(resolution * float(window_scale));
 			OS.center_window();
 	
@@ -120,13 +117,13 @@ func cycle_scale_mode() -> void:
 			set_scale_mode(ScaleMode.PIXEL);
 
 
-# Decreases the scale of the window:
+# Decreases the window scale of the display:
 func decrease_window_scale() -> void:
 	if window_scale > 1:
 		set_window_scale(window_scale - 1);
 
 
-# Increases the scale of the window:
+# Increases the window scale of the display:
 func increase_window_scale() -> void:
 	if window_scale < _max_window_scale:
 		set_window_scale(window_scale + 1);
@@ -149,7 +146,7 @@ func apply_prefs() -> void:
 	
 	set_window_scale(Global.prefs.get_pref("display", "window_scale", 0));
 	
-	match Global.prefs.get_pref("display", "window_mode", "windowed"):
+	match Global.prefs.get_pref("display", "display_mode", "windowed"):
 		"fullscreen":
 			set_fullscreen(true);
 		"windowed", _:
@@ -180,19 +177,15 @@ func _set_handling_resize(value: bool) -> void:
 		_handling_resize = false;
 
 
-# Gets the largest integral window scale that can fit on the screen with a given
-# margin in pixels:
+# Gets the maximum integral window scale of the display that can fit on the
+# screen, with a given margin on each axis in pixels:
 func _get_max_window_scale(margin: float) -> int:
-	var screen_size: Vector2 = OS.get_screen_size();
-	var margin_size: Vector2 = Vector2(margin, margin);
-	var decoration_size: Vector2 = OS.get_real_window_size() - OS.get_window_size();
-	var usable_area: Vector2 = screen_size - margin_size - decoration_size;
-	var max_scale: Vector2 = usable_area / resolution;
+	var max_scale: Vector2 = (OS.get_screen_size() - Vector2(margin, margin)) / resolution;
 	return int(max(1.0, floor(min(max_scale.x, max_scale.y))));
 
 
 # Updates whether resizing the display is being handled based on whether the
-# display is fullscreen and the scale mode of the display:
+# display is fullscreen, and the scale mode of the display:
 func _update_handling_resize() -> void:
 	_set_handling_resize(not fullscreen and scale_mode != ScaleMode.STRETCH);
 	_apply_scale_mode();
@@ -216,6 +209,8 @@ func _apply_scale_mode() -> void:
 	var offset: Vector2 = ((window_size - size) * 0.5).floor();
 	_viewport.set_attach_to_screen_rect(Rect2(offset, size));
 	
-	var margin_l: int = int(offset.x);
-	var margin_t: int = int(offset.y);
-	VisualServer.black_bars_set_margins(margin_l, margin_t, margin_l, margin_t);
+	var margin_l: int = int(max(0.0, offset.x));
+	var margin_t: int = int(max(0.0, offset.y));
+	var margin_r: int = int(round(window_size.x - size.x - offset.x));
+	var margin_b: int = int(round(window_size.y - size.y - offset.y));
+	VisualServer.black_bars_set_margins(margin_l, margin_t, margin_r, margin_b);
