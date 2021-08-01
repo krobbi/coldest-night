@@ -11,6 +11,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+show_splash_in_debug = false
 main_scene = "res://scenes/version_display/version_display.tscn"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

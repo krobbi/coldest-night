@@ -14,12 +14,14 @@ Thumbs.db
 .import/
 .mono/
 data_*/
+*.TMP
 export.cfg
 export_presets.cfg
 
 # Defaulted Imports
 *.ogg.import
 *.png.import
+*.wav.import
 
 # Ignore
 notes/

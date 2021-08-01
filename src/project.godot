@@ -14,10 +14,50 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://entities/actors/actor.gd"
 }, {
-"base": "Object",
-"class": "DisplayService",
+"base": "Trigger",
+"class": "CameraFocusTrigger",
 "language": "GDScript",
-"path": "res://utils/services/display_service.gd"
+"path": "res://entities/triggers/camera_focus_trigger/camera_focus_trigger.gd"
+}, {
+"base": "Trigger",
+"class": "ChangeLevelTrigger",
+"language": "GDScript",
+"path": "res://entities/triggers/change_level_trigger/change_level_trigger.gd"
+}, {
+"base": "ColorRect",
+"class": "FadeTransition",
+"language": "GDScript",
+"path": "res://gui/hud/fade_transition/fade_transition.gd"
+}, {
+"base": "Node2D",
+"class": "FloatingText",
+"language": "GDScript",
+"path": "res://gui/hud/floating_text/floating_text.gd"
+}, {
+"base": "Node",
+"class": "FloatingTextSpawner",
+"language": "GDScript",
+"path": "res://gui/hud/floating_text/floating_text_spawner.gd"
+}, {
+"base": "Object",
+"class": "GlobalDisplayManager",
+"language": "GDScript",
+"path": "res://global/managers/global_display_manager.gd"
+}, {
+"base": "Object",
+"class": "GlobalPrefsManager",
+"language": "GDScript",
+"path": "res://global/managers/global_prefs_manager.gd"
+}, {
+"base": "Object",
+"class": "GlobalProviderManager",
+"language": "GDScript",
+"path": "res://global/managers/global_provider_manager.gd"
+}, {
+"base": "Object",
+"class": "GlobalSaveManager",
+"language": "GDScript",
+"path": "res://global/managers/global_save_manager.gd"
 }, {
 "base": "Node2D",
 "class": "Level",
@@ -29,10 +69,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://utils/overworld/level_cache.gd"
 }, {
-"base": "Object",
-"class": "MusicService",
+"base": "Node",
+"class": "Overworld",
 "language": "GDScript",
-"path": "res://utils/services/music_service.gd"
+"path": "res://scenes/overworld/overworld.gd"
 }, {
 "base": "Camera2D",
 "class": "OverworldCamera",
@@ -44,38 +84,58 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://entities/actors/player/player.gd"
 }, {
-"base": "Object",
-"class": "PrefsService",
-"language": "GDScript",
-"path": "res://utils/services/prefs_service.gd"
-}, {
 "base": "Control",
 "class": "Radar",
 "language": "GDScript",
-"path": "res://gui/radar/radar.gd"
+"path": "res://gui/hud/radar/radar.gd"
 }, {
 "base": "Node2D",
 "class": "RadarWallRenderer",
 "language": "GDScript",
-"path": "res://gui/radar/radar_wall_renderer.gd"
+"path": "res://gui/hud/radar/radar_wall_renderer.gd"
+}, {
+"base": "Reference",
+"class": "SaveData",
+"language": "GDScript",
+"path": "res://utils/save/save_data.gd"
+}, {
+"base": "Reference",
+"class": "SaveSlot",
+"language": "GDScript",
+"path": "res://utils/save/save_slot.gd"
 }, {
 "base": "Object",
-"class": "ShapeSegmenter",
+"class": "ShapeSegmentor",
 "language": "GDScript",
-"path": "res://utils/radar/shape_segmenter.gd"
+"path": "res://utils/radar/shape_segmentor.gd"
+}, {
+"base": "Area2D",
+"class": "Trigger",
+"language": "GDScript",
+"path": "res://entities/triggers/trigger.gd"
 } ]
 _global_script_class_icons={
 "Actor": "",
-"DisplayService": "",
+"CameraFocusTrigger": "",
+"ChangeLevelTrigger": "",
+"FadeTransition": "",
+"FloatingText": "",
+"FloatingTextSpawner": "",
+"GlobalDisplayManager": "",
+"GlobalPrefsManager": "",
+"GlobalProviderManager": "",
+"GlobalSaveManager": "",
 "Level": "",
 "LevelCache": "",
-"MusicService": "",
+"Overworld": "",
 "OverworldCamera": "",
 "Player": "",
-"PrefsService": "",
 "Radar": "",
 "RadarWallRenderer": "",
-"ShapeSegmenter": ""
+"SaveData": "",
+"SaveSlot": "",
+"ShapeSegmentor": "",
+"Trigger": ""
 }
 
 [application]
@@ -100,17 +160,13 @@ default_bus_layout="res://assets/audio_bus_layouts/default_bus_layout.tres"
 
 [autoload]
 
-Global="*res://scenes/global/global.tscn"
+Global="*res://global/global.tscn"
 
 [display]
 
 window/size/width=640
 window/size/height=360
 window/stretch/mode="viewport"
-
-[editor]
-
-convert_text_resources_to_binary_on_export=true
 
 [gui]
 
@@ -143,10 +199,56 @@ ogg_vorbis={
 "loop": true,
 "loop_offset": 0
 }
+wav={
+"compress/mode": 0,
+"edit/loop": false,
+"edit/normalize": false,
+"edit/trim": false,
+"force/8_bit": false,
+"force/max_rate": false,
+"force/max_rate_hz": 44100,
+"force/mono": false
+}
+
+[input]
+
+display_toggle_fullscreen={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777254,"unicode":0,"echo":false,"script":null)
+ ]
+}
+display_toggle_scale_mode={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777255,"unicode":0,"echo":false,"script":null)
+ ]
+}
+display_decrease_window_scale={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777252,"unicode":0,"echo":false,"script":null)
+ ]
+}
+display_increase_window_scale={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777253,"unicode":0,"echo":false,"script":null)
+ ]
+}
+debug_quicksave={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777249,"unicode":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":81,"unicode":0,"echo":false,"script":null)
+ ]
+}
+debug_quickload={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777248,"unicode":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":87,"unicode":0,"echo":false,"script":null)
+ ]
+}
 
 [layer_names]
 
 2d_physics/layer_1="World"
+2d_physics/layer_2="Triggers"
 
 [logging]
 

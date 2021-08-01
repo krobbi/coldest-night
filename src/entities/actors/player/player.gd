@@ -11,10 +11,10 @@ const FRICTION: float = 1200.0;
 var input_vector: Vector2 = Vector2.ZERO;
 var velocity: Vector2 = Vector2.ZERO;
 
-onready var camera_anchor: RemoteTransform2D = $CameraAnchor;
+onready var radar: Radar = Global.provider.get_radar();
 
-# Virtual _physics_process method. Runs on every frame while the player is in
-# the scene. Provides a temporary player controller:
+# Virtual _physics_process method. Runs on every physics frame while the player
+# is in the scene tree. Handles a temporary player controller:
 func _physics_process(delta: float) -> void:
 	input_vector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left");
 	input_vector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up");
@@ -26,3 +26,16 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta);
 	
 	velocity = move_and_slide(velocity);
+	
+	if radar:
+		radar.set_player_pos(get_position());
+
+
+# Disable's the player's ablity to interact with triggers:
+func disable_triggers() -> void:
+	$TriggeringArea/CollisionShape2D.disabled = true;
+
+
+# Enable's the player's ability to interact with triggers:
+func enable_triggers() -> void:
+	$TriggeringArea/CollisionShape2D.disabled = false;
