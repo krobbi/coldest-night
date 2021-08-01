@@ -19,69 +19,71 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
-margin_top = 38.0
+[node name="LogoRect" type="TextureRect" parent="VBoxContainer"]
+margin_top = 17.0
 margin_right = 640.0
-margin_bottom = 102.0
+margin_bottom = 81.0
 texture = ExtResource( 2 )
 stretch_mode = 4
 
 [node name="LogoSeparator" type="HSeparator" parent="VBoxContainer"]
-margin_top = 106.0
+margin_top = 85.0
 margin_right = 640.0
-margin_bottom = 110.0
+margin_bottom = 89.0
 
 [node name="VersionLabel" type="Label" parent="VBoxContainer"]
-margin_top = 114.0
+margin_top = 93.0
 margin_right = 640.0
-margin_bottom = 132.0
-text = "Coldest Night v0.1.0"
+margin_bottom = 111.0
+text = "Coldest Night v0.2.0"
 align = 1
 
 [node name="LicenseLabel" type="Label" parent="VBoxContainer"]
-margin_top = 136.0
+margin_top = 115.0
 margin_right = 640.0
-margin_bottom = 175.0
+margin_bottom = 154.0
 text = "Krobbizoid Proprietary-Open Game Development License
 https://krobbi.github.io/license/2021/kpogdl.txt"
 align = 1
 
 [node name="CopyrightLabel" type="Label" parent="VBoxContainer"]
-margin_top = 179.0
+margin_top = 158.0
 margin_right = 640.0
-margin_bottom = 218.0
+margin_bottom = 197.0
 text = "Copyright (c) 2021 Chris Roberts (Krobbizoid)
 All rights reserved."
 align = 1
 
 [node name="InfoSeparator" type="HSeparator" parent="VBoxContainer"]
-margin_top = 222.0
+margin_top = 201.0
 margin_right = 640.0
-margin_bottom = 226.0
+margin_bottom = 205.0
 
 [node name="InfoLabel" type="Label" parent="VBoxContainer"]
-margin_top = 230.0
+margin_top = 209.0
 margin_right = 640.0
-margin_bottom = 269.0
-text = "This is an unfinished development version of Coldest Night,
-and will not represent the quality of the final game."
+margin_bottom = 248.0
+text = "This is an unfinished development version of Coldest Night
+and will not represent the quality of the final product."
 align = 1
 
 [node name="ControlLabel" type="Label" parent="VBoxContainer"]
-margin_top = 273.0
+margin_top = 252.0
 margin_right = 640.0
-margin_bottom = 291.0
-text = "Use [PgUp/PgDown/Home/End] to adjust display settings."
+margin_bottom = 312.0
+text = "Use [Arrow Keys] to move.
+Use [F5/F6] in-game to quick-load and quick-save.
+Use [F9/F10/F11/F12] to adjust display settings at any time."
 align = 1
 
 [node name="ContinueSeparator" type="HSeparator" parent="VBoxContainer"]
-margin_top = 295.0
+margin_top = 316.0
 margin_right = 640.0
-margin_bottom = 299.0
+margin_bottom = 320.0
 
 [node name="ContinueLabel" type="Label" parent="VBoxContainer"]
-margin_top = 303.0
+margin_top = 324.0
 margin_right = 640.0
-margin_bottom = 321.0
-text = "Press Any Other Key to Continue"
+margin_bottom = 342.0
+text = "Press Any Key to Continue."
 align = 1

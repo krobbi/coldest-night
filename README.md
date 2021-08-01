@@ -1,7 +1,7 @@
 # ![Coldest Night](header.png)
 _Space is lonely_  
 __A stealth-focused RPG in Godot__  
-__Version 0.1.0__  
+__Version 0.2.0__  
 __Krobbizoid Proprietary-Open Game Development License__ -
 https://krobbi.github.io/license/2021/kpogdl.txt  
 __Copyright &copy; 2021 Chris Roberts__ (Krobbizoid)  
@@ -11,6 +11,7 @@ _All rights reserved._
 1. [About](#about)
 2. [Demo](#demo)
 3. [Known Issues](#known-issues)
+   * [Issues Affecting All Platforms](#issues-affecting-all-platforms)
    * [Issues Affecting MacOS](#issues-affecting-macos)
    * [Issues Affecting Windows](#issues-affecting-windows)
 4. [Documentation](#documentation)
@@ -22,7 +23,7 @@ _All rights reserved._
 # About
 Coldest Night is a stealth-focused RPG made in [Godot](https://godotengine.org).
 The game is in very early development and currently only contains basic
-movement, background music, and a radar display.
+movement, background music, a radar display, and level transitions.
 
 Running the game creates the directories `krobbizoid/coldest_night` alongside
 the Godot editor data/settings folder (in `%AppData%` on Windows). This
@@ -37,7 +38,13 @@ project source for the game can be found in the `src/` directory of this
 repository.
 
 # Known Issues
-You may encounter the following issues when running Coldest Night:
+You may encounter the following issues when running Coldest Night or using the
+Godot editor:
+
+## Issues Affecting Source Code
+* Exporting the game with `Project Settings > Editor > Convert Text Resources To
+Binary On Export` enabled causes some resources to not be loaded correctly.
+* The level transition code is very ugly.
 
 ## Issues Affecting MacOS
 * The MacOS native icons do not contain a 48x48 pixel icon image.

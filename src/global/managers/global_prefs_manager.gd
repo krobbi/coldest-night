@@ -1,21 +1,21 @@
-class_name PrefsService
+class_name GlobalPrefsManager
 extends Object
 
-# Preferences Service
-# The preferences service is a service object that manages loading, storing, and
-# saving the user's preferences. The preferences service behaves only as a data
-# store, and does not apply the user's preferences to the game's settings.
-# Ideally, the preferences service should be accessed by proxy through other
-# services to ensure that the user's stored preferences are synchronized with
-# the game's applied settings. A global instance of the preferences service can
-# be accessed from any script by using the identifier 'Global.prefs'.
+# Global Preferences Manager
+# The global preferences manager is a manager that handles loading, storing, and
+# saving the user's preferences. It behaves only as a data store, and does not
+# apply the user's preferences to the game's settings. Ideally, the global
+# preferences manager should be accessed by proxy through other managers to
+# ensure that the user's stored preferences are synchronized with the game's
+# applied settings. The global preferences manager can be accessed from any
+# script by using the identifier 'Global.prefs'.
 
 const FILE_PATH: String = "user://settings.cfg";
 const DEFAULT_PREFS: Dictionary = {
 	"display": {
 		"display_mode": "windowed",
 		"scale_mode": "aspect",
-		"window_scale": 0
+		"window_scale": "auto"
 	}
 };
 
@@ -41,7 +41,7 @@ func has_pref(section: String, key: String) -> bool:
 	return DEFAULT_PREFS.has(section) and DEFAULT_PREFS[section].has(key);
 
 
-# Saves the preferences to their file if they are marked to be saved;
+# Saves the preferences to their file if they are marked to be saved:
 func save_file() -> void:
 	if not _should_save_data:
 		return;
@@ -60,7 +60,7 @@ func save_file() -> void:
 		print("Failed to save settings to %s! Error: %d" % [FILE_PATH, error]);
 
 
-# Loads the preferences from their file:
+# Loads the preferences from their file if it exists:
 func load_file() -> void:
 	var dir: Directory = Directory.new();
 	
