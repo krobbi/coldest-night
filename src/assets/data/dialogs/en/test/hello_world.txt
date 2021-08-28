@@ -1,0 +1,9 @@
+:main
+	say Hello, world!
+	end
+
+:repeat
+	say Oh, you opened the dialog again!
+	say I suppose I have to say "Hello, world!" now.
+	say Here it goes...
+	goto main

@@ -15,14 +15,14 @@ _global_script_classes=[ {
 "path": "res://entities/actors/actor.gd"
 }, {
 "base": "Trigger",
-"class": "CameraFocusTrigger",
-"language": "GDScript",
-"path": "res://entities/triggers/camera_focus_trigger/camera_focus_trigger.gd"
-}, {
-"base": "Trigger",
 "class": "ChangeLevelTrigger",
 "language": "GDScript",
 "path": "res://entities/triggers/change_level_trigger/change_level_trigger.gd"
+}, {
+"base": "Object",
+"class": "DialogParser",
+"language": "GDScript",
+"path": "res://utils/dialog/dialog_parser.gd"
 }, {
 "base": "ColorRect",
 "class": "FadeTransition",
@@ -38,6 +38,16 @@ _global_script_classes=[ {
 "class": "FloatingTextSpawner",
 "language": "GDScript",
 "path": "res://gui/hud/floating_text/floating_text_spawner.gd"
+}, {
+"base": "Trigger",
+"class": "FocusCameraTrigger",
+"language": "GDScript",
+"path": "res://entities/triggers/focus_camera_trigger/focus_camera_trigger.gd"
+}, {
+"base": "Object",
+"class": "GlobalAudioManager",
+"language": "GDScript",
+"path": "res://global/managers/global_audio_manager.gd"
 }, {
 "base": "Object",
 "class": "GlobalDisplayManager",
@@ -64,11 +74,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://levels/level.gd"
 }, {
-"base": "Object",
-"class": "LevelCache",
-"language": "GDScript",
-"path": "res://utils/overworld/level_cache.gd"
-}, {
 "base": "Node",
 "class": "Overworld",
 "language": "GDScript",
@@ -77,37 +82,47 @@ _global_script_classes=[ {
 "base": "Camera2D",
 "class": "OverworldCamera",
 "language": "GDScript",
-"path": "res://entities/overworld_camera/overworld_camera.gd"
+"path": "res://scenes/overworld/overworld_camera.gd"
+}, {
+"base": "Object",
+"class": "OverworldLevelCache",
+"language": "GDScript",
+"path": "res://scenes/overworld/overworld_level_cache.gd"
 }, {
 "base": "Actor",
 "class": "Player",
 "language": "GDScript",
 "path": "res://entities/actors/player/player.gd"
 }, {
-"base": "Control",
+"base": "ViewportContainer",
 "class": "Radar",
 "language": "GDScript",
 "path": "res://gui/hud/radar/radar.gd"
 }, {
 "base": "Node2D",
-"class": "RadarWallRenderer",
+"class": "RadarPolygonRenderer",
 "language": "GDScript",
-"path": "res://gui/hud/radar/radar_wall_renderer.gd"
+"path": "res://gui/hud/radar/radar_polygon_renderer.gd"
 }, {
-"base": "Reference",
+"base": "Node2D",
+"class": "RadarSegmentRenderer",
+"language": "GDScript",
+"path": "res://gui/hud/radar/radar_segment_renderer.gd"
+}, {
+"base": "Object",
 "class": "SaveData",
 "language": "GDScript",
 "path": "res://utils/save/save_data.gd"
 }, {
-"base": "Reference",
+"base": "Object",
 "class": "SaveSlot",
 "language": "GDScript",
 "path": "res://utils/save/save_slot.gd"
 }, {
-"base": "Object",
-"class": "ShapeSegmentor",
+"base": "Reference",
+"class": "SerialBuffer",
 "language": "GDScript",
-"path": "res://utils/radar/shape_segmentor.gd"
+"path": "res://utils/io/serial_buffer.gd"
 }, {
 "base": "Area2D",
 "class": "Trigger",
@@ -116,25 +131,28 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Actor": "",
-"CameraFocusTrigger": "",
 "ChangeLevelTrigger": "",
+"DialogParser": "",
 "FadeTransition": "",
 "FloatingText": "",
 "FloatingTextSpawner": "",
+"FocusCameraTrigger": "",
+"GlobalAudioManager": "",
 "GlobalDisplayManager": "",
 "GlobalPrefsManager": "",
 "GlobalProviderManager": "",
 "GlobalSaveManager": "",
 "Level": "",
-"LevelCache": "",
 "Overworld": "",
 "OverworldCamera": "",
+"OverworldLevelCache": "",
 "Player": "",
 "Radar": "",
-"RadarWallRenderer": "",
+"RadarPolygonRenderer": "",
+"RadarSegmentRenderer": "",
 "SaveData": "",
 "SaveSlot": "",
-"ShapeSegmentor": "",
+"SerialBuffer": "",
 "Trigger": ""
 }
 
@@ -149,8 +167,8 @@ boot_splash/image="res://assets/images/project/boot_splash.png"
 boot_splash/use_filter=false
 boot_splash/bg_color=Color( 0.0509804, 0.027451, 0.0352941, 1 )
 config/icon="res://assets/images/project/icon.png"
-config/macos_native_icon="res://assets/images/project/icon_macos.icns"
-config/windows_native_icon="res://assets/images/project/icon_windows.ico"
+config/macos_native_icon="res://natives/macos/icon_macos.icns"
+config/windows_native_icon="res://natives/windows/icon_windows.ico"
 config/auto_accept_quit=false
 config/quit_on_go_back=false
 
@@ -167,6 +185,10 @@ Global="*res://global/global.tscn"
 window/size/width=640
 window/size/height=360
 window/stretch/mode="viewport"
+
+[editor]
+
+convert_text_resources_to_binary_on_export=true
 
 [gui]
 
@@ -195,10 +217,6 @@ texture={
 "stream": false,
 "svg/scale": 1.0
 }
-ogg_vorbis={
-"loop": true,
-"loop_offset": 0
-}
 wav={
 "compress/mode": 0,
 "edit/loop": false,
@@ -208,6 +226,10 @@ wav={
 "force/max_rate": false,
 "force/max_rate_hz": 44100,
 "force/mono": false
+}
+ogg_vorbis={
+"loop": true,
+"loop_offset": 0
 }
 
 [input]
@@ -232,23 +254,21 @@ display_increase_window_scale={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777253,"unicode":0,"echo":false,"script":null)
  ]
 }
-debug_quicksave={
+debug_save={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777249,"unicode":0,"echo":false,"script":null)
-, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":81,"unicode":0,"echo":false,"script":null)
  ]
 }
-debug_quickload={
+debug_load={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777248,"unicode":0,"echo":false,"script":null)
-, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":87,"unicode":0,"echo":false,"script":null)
  ]
 }
 
 [layer_names]
 
 2d_physics/layer_1="World"
-2d_physics/layer_2="Triggers"
+2d_physics/layer_2="Triggering Areas"
 
 [logging]
 

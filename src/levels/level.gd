@@ -3,21 +3,21 @@ extends Node2D
 
 # Level Base
 # Levels are sub-scenes of the overworld scene that represent an area in the
-# game world. They have an area name, level name, background music, boundaries,
-# fixed points, a navigation map storing collision information, and a Y sort
-# node for storing entities. The player and camera do not need to be instanced
-# within levels as this is handled by the overworld scene. Each level can be
-# referenced by a string key based on its path:
+# game world. They have an area and level name, background music, boundaries,
+# radar display data, a set of fixed point positions, a navigation map storing
+# collision information, a node for containing triggers, and a Y sort node for
+# containing entities. Each level can be referenced by a string key based on its
+# path.
 
 enum RadarSource {
-	NONE, # Level has no radar.
-	INTERPRET, # Level's radar is created just-in-time.
+	NONE, # The level has no radar.
+	INTERPRET, # The level's radar is rendered just in time from the radar nodes.
 };
 
 export(String) var area_name: String = "???";
 export(String) var level_name: String = "???";
-export(AudioStream) var music: AudioStream = null;
-export(RadarSource) var radar_source: int = RadarSource.INTERPRET;
+export(RadarSource) var _radar_source: int = RadarSource.INTERPRET;
+export(AudioStream) var _music: AudioStream = null;
 
 var _points: Dictionary = {};
 
@@ -25,46 +25,65 @@ onready var y_sort: YSort = $YSort;
 onready var top_left: Vector2 = $TopLeft.get_position();
 onready var bottom_right: Vector2 = $BottomRight.get_position();
 
-# Virtual _ready method. Runs when the level finishes entering the scene tree.
-# Frees the used boundary position nodes, registers the level's points, renders
-# the level's radar, and plays the level's music.
+# Virtual _ready method. Runs when the level is entered. Frees the used boundary
+# position nodes, registers the level's points, renders the level's radar,
+# unpacks the level's triggers, plays the level's background music, and
+# registers the level to the global provider manager:
 func _ready() -> void:
-	$TopLeft.queue_free();
 	$BottomRight.queue_free();
-	
-	for node in $Points.get_children():
-		if node is Node2D:
-			_points[node.get_name()] = node.get_position();
-	
-	$Points.queue_free();
+	$TopLeft.queue_free();
 	
 	var radar: Radar = Global.provider.get_radar();
 	
-	if radar:
-		match radar_source:
-			RadarSource.INTERPRET:
-				var segmentor: ShapeSegmentor = ShapeSegmentor.new();
-				var segments: PoolVector2Array = segmentor.segment_node($RadarShapes);
-				segmentor.free();
-				radar.render_walls(segments);
-			RadarSource.NONE, _:
-				radar.render_walls(PoolVector2Array());
+	if radar == null:
+		print("Failed to render the level's radar as the radar display could not be provided!");
 	else:
-		print("Failed to render radar as the radar display could not be provided!");
+		match RadarSource:
+			RadarSource.NONE:
+				radar.clear_walls();
+				radar.clear_floors();
+				radar.clear_pits();
+			RadarSource.INTERPRET, _:
+				radar.render_pits_node($Radar/Pits);
+				radar.render_floors_node($Radar/Floors);
+				radar.render_walls_node($Radar/Walls);
 	
-	$RadarShapes.queue_free();
+	$Radar.queue_free();
 	
-	Global.play_music(music);
+	for point in $Points.get_children():
+		if point is Node2D:
+			_points[point.get_name()] = point.get_position();
+	
+	$Points.queue_free();
+	
+	var trigger_container: Node2D = $Triggers;
+	
+	for trigger in trigger_container.get_children():
+		if trigger is Trigger:
+			trigger_container.remove_child(trigger);
+			add_child(trigger);
+	
+	trigger_container.free();
+	
+	Global.audio.play_music(_music);
+	
+	Global.provider.set_level(self);
 
 
-# Gets the world position of a point. Returns a zero vector if the point does
-# not exist:
+# Virtual _exit_tree method. Runs when the level is exited. Unregisters the
+# level from the global provider manager:
+func _exit_tree() -> void:
+	Global.provider.set_level(null);
+
+
+# Gets the world position of a point. Returns the origin position of the level
+# if the point does not exist:
 func get_point_pos(point: String) -> Vector2:
 	return _points[point] if _points.has(point) else Vector2.ZERO;
 
 
-# Gets the nearest point to a world position. Returns a default point if the
-# level has no points:
+# Gets the nearest point to world_position. Returns a default origin point if
+# the level has no points:
 func get_nearest_point(world_pos: Vector2) -> String:
 	var nearest_point: String = "O";
 	var nearest_distance: float = INF;

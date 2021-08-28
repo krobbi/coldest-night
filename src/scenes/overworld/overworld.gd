@@ -2,139 +2,153 @@ class_name Overworld
 extends Node
 
 # Overworld Scene
-# The overworld scene is the primary scene of the game, and is where most of the
-# game takes place. It handles storing and initializing the game state to and
-# from save data, loading and changing levels, configuring the player and camera
-# between levels, and controlling the HUD.
+# The overworld scene is the primary scene of the game. It handles composing,
+# applying, and initializing the game state from save data, loading and changing
+# levels, configuring the player and overworld camera between levels, and
+# controlling the HUD.
 
+signal _player_emplaced;
 signal _level_changed;
 
-var save_slot: SaveSlot = Global.save.get_active_slot();
-var save_data: SaveData = save_slot.clone_data();
-var level_cache: LevelCache = LevelCache.new();
+var save_data: SaveData = Global.save.get_working_data();
+var level_cache: OverworldLevelCache = OverworldLevelCache.new();
 var level: Level = null;
-var player: Player = load("res://entities/actors/player/player.tscn").instance();
+var player: Player = preload("res://entities/actors/player/player.tscn").instance();
 
 var _changing_level: bool = false;
 
 onready var camera: OverworldCamera = $OverworldCamera;
 onready var radar: Radar = $HUD/Radar;
-onready var floating_text_spawner: FloatingTextSpawner = $HUD/FloatingTextSpawner;
 onready var transition: FadeTransition = $HUD/FadeTransition;
+onready var floating_text: FloatingTextSpawner = $HUD/FloatingText;
 
-# Virtual _ready method. Initializes the game state from save data and registers
-# the overworld scene to the global provider manager:
+# Virtual _ready method. Runs when the overworld scene is entered. Registers the
+# overworld scene to the global provider manager and initializes the game state
+# from save data:
 func _ready() -> void:
-	Global.provider.set_radar(radar);
-	
-	_apply_save_data();
-	
-	Global.provider.set_player(player);
-	Global.provider.set_camera(camera);
 	Global.provider.set_overworld(self);
+	_apply_save_data();
 
 
 # Virtual _input method. Runs when the overworld scene receives an input event.
-# Handles debug controls for quick saving and quick loading:
+# Handles debug controls for saving and loading:
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("debug_quicksave"):
-		quick_save_game();
-	elif event.is_action_pressed("debug_quickload"):
-		quick_load_game();
+	if event.is_action_pressed("debug_save"):
+		save_game();
+	elif event.is_action_pressed("debug_load"):
+		load_game();
 
 
-# Virtual exit_tree method. Unregisters the overworld scene from the global
-# provider manager and frees the level cache and player:
+# Virtual _exit_tree method. Runs when the overworld scene is exited.
+# Unregisters the overworld scene from the global provider manager, frees the
+# level cache, and frees the player if it is not in the scene tree:
 func _exit_tree() -> void:
-	Global.provider.set_level(null);
-	Global.provider.set_player(null);
-	Global.provider.set_radar(null);
-	Global.provider.set_camera(null);
 	Global.provider.set_overworld(null);
 	
-	camera.unfollow_anchor();
 	level_cache.free();
 	
-	if not level:
+	if not player.is_inside_tree():
 		player.free();
 
 
-# Displays floating text at a world position source:
-func display_floating_text(message: String, world_pos: Vector2) -> void:
-	floating_text_spawner.display(message, camera.get_screen_pos(world_pos));
+# Displays a new floating text instance sourced at a world position:
+func display_floating_text(text: String, world_pos: Vector2) -> void:
+	floating_text.display(text, camera.get_screen_pos(world_pos));
 
 
-# Saves the game to its save slot without saving to its file:
-func quick_save_game() -> void:
+# Saves the game state to the active save slot's file:
+func save_game() -> void:
 	if _changing_level:
-		print("Failed to quick save the game as the level is changing!");
+		print("Failed to save the game as the level is changing!");
 		return;
 	
 	_compose_save_data();
-	save_slot.put_data(save_data);
-	
-	display_floating_text("Saved Game", player.get_position());
+	Global.save.save_file();
+	display_floating_text("Saved game", player.get_position());
 
 
-# Loads the game from its save slot without reading from its file:
-func quick_load_game() -> void:
+# Loads the game state from the active save slot's file:
+func load_game() -> void:
 	if _changing_level:
-		print("Failed to quick load the game as the level is changing!");
+		print("Failed to load the game as the level is changing!");
 		return;
 	
-	save_data = save_slot.clone_data();
+	Global.save.load_file();
 	_apply_save_data();
 	
 	if _changing_level:
 		yield(self, "_level_changed");
 	
-	display_floating_text("Loaded Game", player.get_position());
+	display_floating_text("Loaded game", player.get_position());
 
 
-# Changes the current level in the overworld scene:
-func change_level(key: String, point: String, offset: Vector2 = Vector2.ZERO) -> void:
+# Changes the current level and positions the player at a point and offset
+# position:
+func change_level(key: String, point: String, offset: Vector2) -> void:
 	if _changing_level:
-		print("Failed to change the level as the level is already changing!");
+		print("Failed to change to level %s as the level is already changing!" % key);
 		return;
 	
 	_changing_level = true;
 	
-	yield(get_tree(), "idle_frame");
+	if level != null:
+		yield(get_tree(), "idle_frame");
+		_change_level_pre();
+		
+		transition.fade_out();
+		yield(transition, "faded_out");
+		
+		_remove_player();
+		_remove_level();
+	
+	_add_level(key);
+	_add_player(point, offset);
+	
+	save_data.pos_level = key;
+	save_data.pos_point = point;
+	save_data.pos_offset = offset;
+	
+	transition.fade_in();
+	
+	_changing_level = false;
+	emit_signal("_level_changed");
+	_change_level_post();
+
+
+# Initializes the state for changing the current level:
+func _change_level_pre() -> void:
 	player.disable_triggers();
-	
-	# Fade out:
-	transition.fade_out();
-	yield(transition, "faded_out");
-	
-	if level:
-		Global.provider.set_level(null);
-	
-		# Remove player:
-		camera.unfollow_anchor();
-		camera.unfocus();
-		level.y_sort.remove_child(player);
-	
-		# Remove level:
-		remove_child(level);
-		level.free();
-	
-	# Add level:
+	player.set_state(player.State.TRANSITIONING);
+
+
+# Removes the player from the current level:
+func _remove_player() -> void:
+	level.y_sort.remove_child(player);
+
+
+# Removes the current level from the overworld scene:
+func _remove_level() -> void:
+	remove_child(level);
+	level.free();
+
+
+# Adds a new level to the overworld scene from its key:
+func _add_level(key: String) -> void:
 	level = level_cache.get_level(key);
-	
-	transition.show_message("%s\n>> %s" % [level.area_name, level.level_name]);
-	yield(transition, "message_shown");
-	
 	add_child(level);
-	Global.provider.set_level(level);
-	
-	# Add player:
+
+
+# Adds the player to the current level positioned at a point and offset
+# position:
+func _add_player(point: String, offset: Vector2) -> void:
 	player.set_position(level.get_point_pos(point) + offset);
 	level.y_sort.add_child(player);
+	Global.provider.set_player(player);
 	
-	# Configure radar:
+	emit_signal("_player_emplaced");
+	
 	radar.set_player_pos(player.get_position());
 	
-	# Configure camera:
 	camera.set_limit(MARGIN_LEFT, int(level.top_left.x));
 	camera.set_limit(MARGIN_TOP, int(level.top_left.y));
 	camera.set_limit(MARGIN_RIGHT, int(level.bottom_right.x));
@@ -142,28 +156,25 @@ func change_level(key: String, point: String, offset: Vector2 = Vector2.ZERO) ->
 	camera.follow_anchor(player);
 	camera.force_update_scroll();
 	camera.reset_smoothing();
-	
-	# Update save data:
-	save_data.pos_level = key;
-	save_data.pos_point = point;
-	save_data.pos_offset = offset;
-	
-	transition.fade_in();
-	yield(transition, "faded_in");
-	
-	_changing_level = false;
-	emit_signal("_level_changed");
-	
+
+
+# Finalizes the state after the current level has finished changing:
+func _change_level_post() -> void:
+	player.set_state(player.State.MOVING);
 	player.enable_triggers();
 
 
-# Composes the game state to the current save data:
+# Composes the current working save data from the game state:
 func _compose_save_data() -> void:
 	var world_pos: Vector2 = player.get_position();
 	save_data.pos_point = level.get_nearest_point(world_pos);
 	save_data.pos_offset = world_pos - level.get_point_pos(save_data.pos_point);
 
 
-# Applies the current save data to the game state:
+# Applies the current working save data to the game state:
 func _apply_save_data() -> void:
 	change_level(save_data.pos_level, save_data.pos_point, save_data.pos_offset);
+	
+	if _changing_level:
+		yield(self, "_player_emplaced");
+		player.clear_velocity();

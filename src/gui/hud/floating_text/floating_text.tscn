@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://gui/hud/floating_text/floating_text.gd" type="Script" id=1]
 [ext_resource path="res://assets/animations/gui/hud/floating_text/display.tres" type="Animation" id=2]
-[ext_resource path="res://assets/audio/interface/test/pickup_temp.wav" type="AudioStream" id=3]
 
 [node name="FloatingText" type="Node2D"]
 script = ExtResource( 1 )
@@ -11,19 +10,25 @@ script = ExtResource( 1 )
 anims/display = ExtResource( 2 )
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 3 )
-mix_target = 2
 bus = "Interface"
 
 [node name="Label" type="Label" parent="."]
 modulate = Color( 0.678431, 0.0941176, 0.0941176, 0 )
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
 margin_left = -96.0
 margin_top = -72.0
 margin_right = 96.0
 margin_bottom = -40.0
+custom_colors/font_color_shadow = Color( 0.239216, 0.0196078, 0.0941176, 1 )
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 2
 align = 1
 valign = 1
 uppercase = true
+percent_visible = 0.0
 __meta__ = {
 "_edit_use_anchors_": false
 }

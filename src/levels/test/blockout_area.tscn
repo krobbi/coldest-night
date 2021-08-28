@@ -6,7 +6,7 @@
 
 [node name="BlockoutArea" instance=ExtResource( 1 )]
 area_name = "Test Area"
-music = ExtResource( 2 )
+_music = ExtResource( 2 )
 
 [node name="TileMap" type="TileMap" parent="." index="0"]
 tile_set = ExtResource( 3 )

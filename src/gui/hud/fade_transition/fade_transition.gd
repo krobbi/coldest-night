@@ -2,46 +2,49 @@ class_name FadeTransition
 extends ColorRect
 
 # Fade Transition
-# The fade transition is a HUD element that masks a transition between two
-# visual states by fading out and in:
+# A fade transition is a HUD element that handles transitions between scenes by
+# 
 
 signal faded_in;
 signal faded_out;
-signal message_shown;
 
-onready var tween: Tween = $Tween;
-onready var label: Label = $Label;
+enum State {FADED_OUT, FADED_IN, FADING_OUT, FADING_IN};
 
-# Tweens the modulation of the fade transition to a target color:
-func _do_tween(to: Color) -> void:
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	tween.interpolate_property(self, "modulate", get_modulate(), to, 0.3);
-	tween.start(); # warning-ignore: RETURN_VALUE_DISCARDED
+var _state: int = State.FADED_OUT;
 
+onready var _animation_player: AnimationPlayer = $AnimationPlayer;
 
-# Shows a message on top of the fade transition:
-func show_message(message: String) -> void:
-	label.text = message;
-	label.set_modulate(Color(1.0, 1.0, 1.0, 0.0));
-	label.set_visible(true);
-	
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	tween.interpolate_property(label, "modulate", label.get_modulate(), Color.white, 0.6);
-	tween.start(); # warning-ignore: RETURN_VALUE_DISCARDED
-	yield(tween, "tween_all_completed");
-	emit_signal("message_shown");
-
-
-# Fades in to the scene by making the fade transition transparent:
+# Fades in to the current scene by fading out the fade transition:
 func fade_in() -> void:
-	_do_tween(Color(1.0, 1.0, 1.0, 0.0));
-	yield(tween, "tween_all_completed");
-	label.set_visible(false);
+	match _state:
+		State.FADED_IN:
+			call_deferred("emit_signal", "faded_in");
+			return;
+		State.FADING_OUT:
+			yield(self, "faded_out");
+		State.FADING_IN:
+			return;
+	
+	_state = State.FADING_IN;
+	_animation_player.call_deferred("play", "fade_in");
+	yield(_animation_player, "animation_finished");
+	_state = State.FADED_IN;
 	emit_signal("faded_in");
 
 
-# Fades out of the scene by making the fade transition opaque:
+# Fades out of the current scene by fading in the fade transition:
 func fade_out() -> void:
-	_do_tween(Color.white);
-	yield(tween, "tween_all_completed");
+	match _state:
+		State.FADED_OUT:
+			call_deferred("emit_signal", "faded_out");
+			return;
+		State.FADING_OUT:
+			return;
+		State.FADING_IN:
+			yield(self, "faded_in");
+	
+	_state = State.FADING_OUT;
+	_animation_player.call_deferred("play", "fade_out");
+	yield(_animation_player, "animation_finished");
+	_state = State.FADED_OUT;
 	emit_signal("faded_out");

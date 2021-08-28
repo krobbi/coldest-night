@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://gui/hud/radar/radar.gd" type="Script" id=1]
-[ext_resource path="res://gui/hud/radar/radar_wall_renderer.gd" type="Script" id=2]
+[ext_resource path="res://gui/hud/radar/radar_polygon_renderer.gd" type="Script" id=2]
+[ext_resource path="res://gui/hud/radar/radar_segment_renderer.gd" type="Script" id=3]
 
-[node name="Radar" type="Control"]
+[node name="Radar" type="ViewportContainer"]
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -144.0
@@ -15,14 +16,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ViewportContainer" type="ViewportContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Viewport" type="Viewport" parent="ViewportContainer"]
+[node name="Viewport" type="Viewport" parent="."]
 size = Vector2( 128, 96 )
 transparent_bg = true
 handle_input_locally = false
@@ -31,24 +25,32 @@ disable_3d = true
 usage = 1
 render_target_update_mode = 3
 
-[node name="Background" type="CanvasLayer" parent="ViewportContainer/Viewport"]
+[node name="Background" type="CanvasLayer" parent="Viewport"]
 
-[node name="Polygon2D" type="Polygon2D" parent="ViewportContainer/Viewport/Background"]
+[node name="Polygon2D" type="Polygon2D" parent="Viewport/Background"]
 color = Color( 0.239216, 0.0196078, 0.0941176, 0.501961 )
 polygon = PoolVector2Array( 0, 0, 128, 0, 128, 96, 0, 96 )
 
-[node name="Foreground" type="CanvasLayer" parent="ViewportContainer/Viewport"]
+[node name="Foreground" type="CanvasLayer" parent="Viewport"]
 follow_viewport_enable = true
 
-[node name="RadarWallRenderer" type="Node2D" parent="ViewportContainer/Viewport/Foreground"]
+[node name="Pits" type="Node2D" parent="Viewport/Foreground"]
 script = ExtResource( 2 )
+color = Color( 0.239216, 0.0196078, 0.0941176, 0.501961 )
+
+[node name="Floors" type="Node2D" parent="Viewport/Foreground"]
+script = ExtResource( 3 )
+color = Color( 0.85098, 0.309804, 0.0470588, 1 )
+
+[node name="Walls" type="Node2D" parent="Viewport/Foreground"]
+script = ExtResource( 3 )
 color = Color( 1, 0.596078, 0.054902, 1 )
 
-[node name="Player" type="Polygon2D" parent="ViewportContainer/Viewport/Foreground"]
+[node name="Player" type="Polygon2D" parent="Viewport/Foreground"]
 color = Color( 0.945098, 0.94902, 0.945098, 1 )
 polygon = PoolVector2Array( -1, -1, 1, -1, 1, 1, -1, 1 )
 
-[node name="Camera2D" type="Camera2D" parent="ViewportContainer/Viewport/Foreground/Player"]
+[node name="Camera2D" type="Camera2D" parent="Viewport/Foreground/Player"]
 current = true
 process_mode = 0
 editor_draw_screen = false

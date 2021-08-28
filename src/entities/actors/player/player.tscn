@@ -24,8 +24,9 @@ monitoring = false
 collision_layer = 2
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggeringArea" index="0"]
+[node name="TriggeringShape" type="CollisionShape2D" parent="TriggeringArea" index="0"]
 shape = SubResource( 2 )
+disabled = true
 
 [node name="Sprite" type="Sprite" parent="." index="2"]
 texture = ExtResource( 3 )
