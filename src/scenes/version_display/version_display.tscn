@@ -3,7 +3,8 @@
 [ext_resource path="res://scenes/version_display/version_display.gd" type="Script" id=1]
 [ext_resource path="res://assets/images/project/logo.png" type="Texture" id=2]
 
-[node name="VersionDisplay" type="Control"]
+[node name="VersionDisplay" type="CenterContainer"]
+pause_mode = 2
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
@@ -12,78 +13,74 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-alignment = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_left = 14.0
+margin_top = 13.0
+margin_right = 626.0
+margin_bottom = 346.0
 
 [node name="LogoRect" type="TextureRect" parent="VBoxContainer"]
-margin_top = 17.0
-margin_right = 640.0
-margin_bottom = 81.0
+margin_right = 612.0
+margin_bottom = 64.0
 texture = ExtResource( 2 )
 stretch_mode = 4
 
 [node name="LogoSeparator" type="HSeparator" parent="VBoxContainer"]
-margin_top = 85.0
-margin_right = 640.0
-margin_bottom = 89.0
+margin_top = 68.0
+margin_right = 612.0
+margin_bottom = 72.0
 
 [node name="VersionLabel" type="Label" parent="VBoxContainer"]
-margin_top = 93.0
-margin_right = 640.0
-margin_bottom = 111.0
-text = "Coldest Night v0.2.0"
-align = 1
+margin_top = 76.0
+margin_right = 612.0
+margin_bottom = 94.0
+text = "Coldest Night v0.3.0"
 
 [node name="LicenseLabel" type="Label" parent="VBoxContainer"]
-margin_top = 115.0
-margin_right = 640.0
-margin_bottom = 154.0
+margin_top = 98.0
+margin_right = 612.0
+margin_bottom = 137.0
 text = "Krobbizoid Proprietary-Open Game Development License
 https://krobbi.github.io/license/2021/kpogdl.txt"
-align = 1
 
 [node name="CopyrightLabel" type="Label" parent="VBoxContainer"]
-margin_top = 158.0
-margin_right = 640.0
-margin_bottom = 197.0
+margin_top = 141.0
+margin_right = 612.0
+margin_bottom = 180.0
 text = "Copyright (c) 2021 Chris Roberts (Krobbizoid)
 All rights reserved."
-align = 1
 
-[node name="InfoSeparator" type="HSeparator" parent="VBoxContainer"]
-margin_top = 201.0
-margin_right = 640.0
-margin_bottom = 205.0
+[node name="CopyrightSeparator" type="HSeparator" parent="VBoxContainer"]
+margin_top = 184.0
+margin_right = 612.0
+margin_bottom = 188.0
 
 [node name="InfoLabel" type="Label" parent="VBoxContainer"]
-margin_top = 209.0
-margin_right = 640.0
-margin_bottom = 248.0
+margin_top = 192.0
+margin_right = 612.0
+margin_bottom = 231.0
 text = "This is an unfinished development version of Coldest Night
 and will not represent the quality of the final product."
-align = 1
+
+[node name="InfoSeparator" type="HSeparator" parent="VBoxContainer"]
+margin_top = 235.0
+margin_right = 612.0
+margin_bottom = 239.0
 
 [node name="ControlLabel" type="Label" parent="VBoxContainer"]
-margin_top = 252.0
-margin_right = 640.0
-margin_bottom = 312.0
+margin_top = 243.0
+margin_right = 612.0
+margin_bottom = 303.0
 text = "Use [Arrow Keys] to move.
-Use [F5/F6] in-game to quick-load and quick-save.
-Use [F9/F10/F11/F12] to adjust display settings at any time."
-align = 1
+Use [F5/F6] to load from disk and save to disk.
+Use [F9/F10/F11/F12] to adjust display settings."
 
-[node name="ContinueSeparator" type="HSeparator" parent="VBoxContainer"]
-margin_top = 316.0
-margin_right = 640.0
-margin_bottom = 320.0
+[node name="ControlSeparator" type="HSeparator" parent="VBoxContainer"]
+margin_top = 307.0
+margin_right = 612.0
+margin_bottom = 311.0
 
 [node name="ContinueLabel" type="Label" parent="VBoxContainer"]
-margin_top = 324.0
-margin_right = 640.0
-margin_bottom = 342.0
-text = "Press Any Key to Continue."
-align = 1
+margin_top = 315.0
+margin_right = 612.0
+margin_bottom = 333.0
+text = "Press [Any Key] to continue."

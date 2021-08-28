@@ -1,21 +1,30 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scenes/overworld/overworld.gd" type="Script" id=1]
-[ext_resource path="res://entities/overworld_camera/overworld_camera.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/overworld/overworld_camera.gd" type="Script" id=2]
 [ext_resource path="res://gui/hud/radar/radar.tscn" type="PackedScene" id=3]
-[ext_resource path="res://gui/hud/floating_text/floating_text_spawner.gd" type="Script" id=4]
-[ext_resource path="res://gui/hud/fade_transition/fade_transition.tscn" type="PackedScene" id=5]
+[ext_resource path="res://gui/hud/fade_transition/fade_transition.tscn" type="PackedScene" id=4]
+[ext_resource path="res://gui/hud/floating_text/floating_text_spawner.gd" type="Script" id=5]
 
 [node name="Overworld" type="Node"]
+pause_mode = 2
 script = ExtResource( 1 )
 
-[node name="OverworldCamera" parent="." instance=ExtResource( 2 )]
+[node name="OverworldCamera" type="Camera2D" parent="."]
+position = Vector2( 320, 180 )
+current = true
+process_mode = 0
+limit_smoothed = true
+smoothing_enabled = true
+smoothing_speed = 8.0
+editor_draw_screen = false
+script = ExtResource( 2 )
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
 [node name="Radar" parent="HUD" instance=ExtResource( 3 )]
 
-[node name="FadeTransition" parent="HUD" instance=ExtResource( 5 )]
+[node name="FadeTransition" parent="HUD" instance=ExtResource( 4 )]
 
-[node name="FloatingTextSpawner" type="Node" parent="HUD"]
-script = ExtResource( 4 )
+[node name="FloatingText" type="Node" parent="HUD"]
+script = ExtResource( 5 )

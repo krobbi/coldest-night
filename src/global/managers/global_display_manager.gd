@@ -2,17 +2,17 @@ class_name GlobalDisplayManager
 extends Object
 
 # Global Display Manager
-# The global display manager is a manager that handles applying and storing the
-# game's display settings, and controlling the behavior of the display. It
-# behaves as a proxy to the global preferences manager to ensure that the game's
-# applied display settings are synchronized with the user's stored display
-# preferences. The global display manager can be accessed from any script by
-# using the identifier 'Global.display'.
+# The global display manager is a global manager that handles applying and
+# storing the game's display settings and controlling the behavior of the
+# display. It behaves as a proxy to the global preferences manager to ensure
+# that the game's applied display settings are synchronized with the user's
+# stored display preferences. The global display manager can be accessed from
+# any script by using the identifier 'Global.display'.
 
 enum ScaleMode {
 	STRETCH, # The viewport fills the entire display.
 	ASPECT, # The viewport maintains its aspect ratio.
-	PIXEL, # 'Pixel-perfect' - The viewport's pixels maintain an integral scale.
+	PIXEL, # 'Pixel-perfect' - the viewport's pixels maintain an integral scale.
 };
 
 var window_scale: int = 1 setget set_window_scale;
@@ -108,9 +108,6 @@ func set_fullscreen(value: bool) -> void:
 		fullscreen = false;
 		Global.prefs.set_pref("display", "display_mode", "windowed");
 		
-		yield(_scene_tree, "idle_frame");
-		OS.set_window_fullscreen(true);
-		yield(_scene_tree, "idle_frame");
 		OS.set_window_fullscreen(false);
 		OS.set_borderless_window(false);
 		
@@ -165,11 +162,6 @@ func apply_prefs() -> void:
 	match typeof(window_scale_pref):
 		TYPE_INT:
 			set_window_scale(window_scale_pref);
-		TYPE_REAL:
-			if window_scale_pref == INF or window_scale_pref <= 0.0 or is_nan(window_scale_pref):
-				set_window_scale(_default_window_scale);
-			else:
-				set_window_scale(int(max(1.0, round(window_scale_pref))));
 		TYPE_STRING:
 			match window_scale_pref:
 				"auto":
@@ -178,8 +170,11 @@ func apply_prefs() -> void:
 					set_window_scale(_max_window_scale);
 				_:
 					set_window_scale(int(window_scale_pref));
-		_:
-			set_window_scale(_default_window_scale);
+		TYPE_REAL:
+			if window_scale_pref <= 0.0 or is_inf(window_scale_pref) or is_nan(window_scale_pref):
+				set_window_scale(_default_window_scale);
+			else:
+				set_window_scale(int(max(1.0, round(window_scale_pref))));
 	
 	match Global.prefs.get_pref("display", "display_mode", "windowed"):
 		"fullscreen":
@@ -206,27 +201,25 @@ func _set_handling_resize(value: bool) -> void:
 		else:
 			print("Failed to handle resizing the display! Error: %d" % error);
 	else:
-		if _scene_tree.is_connected("screen_resized", self, "_apply_scale_mode"):
-			_scene_tree.disconnect("screen_resized", self, "_apply_scale_mode");
-		
+		_scene_tree.disconnect("screen_resized", self, "_apply_scale_mode");
 		_handling_resize = false;
 
 
 # Gets the maximum integral window scale of the display that can fit on the
-# screen with a given margin on each axis in pixels:
+# screen with a margin on each axis in pixels:
 func _get_max_window_scale(margin: float) -> int:
 	var max_scale: Vector2 = (OS.get_screen_size() - Vector2(margin, margin)) / _resolution;
 	return int(max(1.0, floor(min(max_scale.x, max_scale.y))));
 
 
-# Applies the current window scale to the display:
+# Applies the display's current window scale to the display:
 func _apply_window_scale() -> void:
 	_should_apply_window_scale = false;
 	OS.set_window_size(_resolution * float(window_scale));
 	OS.center_window();
 
 
-# Applies the current scale mode to the display:
+# Applies the display's current scale mode to the display:
 func _apply_scale_mode() -> void:
 	var window_size: Vector2 = OS.get_window_size();
 	
