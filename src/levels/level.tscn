@@ -15,7 +15,12 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="NavigationMap" type="TileMap" parent="."]
+[node name="Navigation" type="Navigation2D" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="NavigationMap" type="TileMap" parent="Navigation"]
 visible = false
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 32, 32 )
@@ -26,6 +31,11 @@ __meta__ = {
 }
 
 [node name="Triggers" type="Node2D" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Interactables" type="Node2D" parent="."]
 __meta__ = {
 "_edit_lock_": true
 }

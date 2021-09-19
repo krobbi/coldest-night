@@ -16,10 +16,15 @@ export(String) var main_scene: String;
 func _ready() -> void:
 	_boot();
 	
-	if show_splash_in_debug or not OS.is_debug_build():
-		var animation_player: AnimationPlayer = $AnimationPlayer;
-		animation_player.call_deferred("play", "boot_splash");
-		yield(animation_player, "animation_finished");
+	# CNEP:DEBUG
+	if not show_splash_in_debug and OS.is_debug_build():
+		_start_game();
+		return;
+	# CNEP:END_DEBUG
+	
+	var animation_player: AnimationPlayer = $AnimationPlayer;
+	animation_player.call_deferred("play", "boot_splash");
+	yield(animation_player, "animation_finished");
 	
 	_start_game();
 

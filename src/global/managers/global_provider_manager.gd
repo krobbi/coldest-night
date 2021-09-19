@@ -9,6 +9,7 @@ extends Object
 var _overworld: Overworld = null;
 var _camera: OverworldCamera = null;
 var _radar: Radar = null;
+var _radio: RadioDialog = null;
 var _player: Player = null;
 var _level: Level = null;
 
@@ -25,6 +26,11 @@ func set_camera(camera_ref: OverworldCamera) -> void:
 # Sets the provided radar display:
 func set_radar(radar_ref: Radar) -> void:
 	_radar = radar_ref;
+
+
+# Sets the provided radio dialog:
+func set_radio(radio_ref: RadioDialog) -> void:
+	_radio = radio_ref;
 
 
 # Sets the provided player:
@@ -52,6 +58,11 @@ func get_camera() -> OverworldCamera:
 # Gets the provided radar display. Returns null if no radar display is present:
 func get_radar() -> Radar:
 	return _radar;
+
+
+# Gets the provided radio dialog. Returns null if no radio dialog is present:
+func get_radio() -> RadioDialog:
+	return _radio;
 
 
 # Gets the provided player. Returns null if no player is present:

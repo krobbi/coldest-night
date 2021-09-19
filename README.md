@@ -1,7 +1,7 @@
 # ![Coldest Night](header.png)
 _Space is lonely_  
 __A stealth-focused RPG in Godot__  
-__Version 0.3.0__  
+__Version 0.4.0__  
 __Krobbizoid Proprietary-Open Game Development License__ -
 https://krobbi.github.io/license/2021/kpogdl.txt  
 __Copyright &copy; 2021 Chris Roberts__ (Krobbizoid)  
@@ -9,46 +9,49 @@ _All rights reserved._
 
 # Contents
 1. [About](#about)
-2. [Demo](#demo)
-3. [Settings](#settings)
+2. [Running](#running)
+3. [Directories and Files](#directories-and-files)
+   * [Settings File](#settings-file)
+   * [Save Files](#save-files)
 4. [Known Issues](#known-issues)
    * [Issues Affecting All Platforms](#issues-affecting-all-platforms)
    * [Issues Affecting MacOS](#issues-affecting-macos)
-   * [Issues Affecting Windows](#issues-affecting-windows)
-5. [Documentation](#documentation)
+5. [Exporting](#exporting)
+   * [Export Pipeline Features](#export-pipeline-features)
 6. [Credits](#credits)
    * [Development Team](#development-team)
    * [Tools and Resources](#tools-and-resources)
 7. [License](#license)
 
 # About
-Coldest Night is a stealth-focused RPG made in [Godot](https://godotengine.org).
-The game is in very early development and currently only contains basic
-movement, background music, a radar display, and level transitions.
+Coldest Night is a stealth-focused RPG being developed in
+[Godot](https://godotengine.org). The game is in early development.
 
-Running the game creates the directories `krobbizoid/coldest_night` alongside
+Coldest Night 0.4.0 primarily targets Windows Desktop releases in Godot 3.3.3.
+
+_Coldest Night is not affiliated with Godot or its contributors._
+
+# Running
+Pre-built demo versions of the game are not yet available. The Godot project
+source for the game can be found in the `src/` directory of this repository.
+
+# Directories and Files
+Running the game creates the directories `krobbizoid/coldest_night/` alongside
 the Godot editor data/settings folder (in `%AppData%` on Windows). This
 directory is known as `user://`.
 
-Quitting the game creates a `settings.cfg` file in the `user://` directory. This
-is an INI-style file containing audio and display settings for the game.
+Opening the game in the Godot editor creates a `user://logs/` directory and a
+`user://tmp/` directory.
 
-Saving the game creates a `user://saves/` directory containing a `cn_save_1.dat`
-file. This file has a custom binary format, and is typically less than 100 bytes
-in the current version.
-
-# Demo
-Pre-built demo versions of Coldest Night are not yet available. The Godot
-project source for the game can be found in the `src/` directory of this
-repository.
-
-# Settings
-The settings file created by the game contains the following settings:
+## Settings File
+Quitting the game after adjusting the display settings creates a `settings.cfg`
+file in the `user://` directory. This is known as the settings file, and is an
+INI-style file containing the following settings for the game:
 
 * `audio/main_volume` - The final output volume as a percentage.
 * `audio/music_volume` - The volume of background music as a percentage.
 * `audio/interface_volume` - The volume of user interface sound effects as a
-percentage
+percentage.
 * `display/display_mode` - The window mode of the game. This setting can be
 toggled at any time by pressing `F11`.
    * `"windowed"` uses windowed mode.
@@ -72,9 +75,15 @@ and `F10`.
    between `1` and `"max"`. Invalid values, and values of `0` or below will
    default to `"auto"`.
 
+## Save Files
+Saving the game creates a `user://saves/` directory containing a `cn_save_1.dat`
+file. This is known as the save file, and has a custom binary format.
+
+The format of the save file will be documented after the first public build of
+the game, when the first internal payload format of save files is finalized.
+
 # Known Issues
-You may encounter the following issues when running Coldest Night or using the
-Godot editor:
+You may encounter the following issues with the game:
 
 ## Issues Affecting All Platforms
 * The internal payload format version of save files will only change between
@@ -84,44 +93,82 @@ versions.
 displays has not been tested.
 
 ## Issues Affecting MacOS
-* The MacOS native icons do not contain a 48x48 pixel icon image.
+* There is no native icon for MacOS. The native icon from versions 0.3.0 and
+below has been removed due to being poorly formatted and potentially causing a
+crash when running the game.
 
-# Documentation
-Documentation for Coldest Night is not yet available.
+# Exporting
+The following requirements should be fulfilled to export the game successfully:
+
+* The game should be exported from the Godot editor in the appropriate version.
+* The `Coldest Night Development Toolkit` plugin must be enabled.
+* The `editor/convert_text_resources_to_binary_on_export` project setting must
+be disabled.
+* The export mode must be `Export all resources in the project`.
+* The include filter must include `*.txt`.
+* The script export mode must be `Text`.
+
+## Export Pipeline Features
+The `Coldest Night Development Toolkit` plugin includes an 'export pipeline'
+which performs the following actions on release exports of the game:
+
+* Excludes unnecessary files from the exported game.
+* Compiles dialog source files to compiled binary dialog trees.
+* Repacks level's scenes to remove nodes that are included to make them more
+editor-friendly.
+* Excludes source code between `# CNEP:DEBUG` and `# CNEP:END_DEBUG` comment
+lines.
+* Minifies source code and parses it to bytecode.
+* Converts text resources to binary.
+* Bypasses the default file remapping to reduce the size of remap files and
+store remapped files at short, obfuscated paths.
+
+Exporting the game with the `export_log` feature generates an `export.log` file
+in the `user://logs/` directory. This file is typically 13kB large and documents
+the export settings, actions taken for each exported file, and any errors that
+occurred.
+
+Exporting the game will write to the `tmp.res` and `tmp.scn` files many times in
+the `user://tmp/` directory. There does not appear to be a documented method of
+converting text resources to binary without disk usage using GDScript.
 
 # Credits
 
 ## Development Team
-__Lead Developer__ -
+__Lead Developer__:
 * [Chris Roberts (Krobbizoid)](https://twitter.com/krobbizoid)
 
 ## Tools and Resources
-_The following credits list publicly-available tools and resources used in the
-production of Coldest Night. These credits are not affiliated with Coldest Night
-or its copyright holders._
+_The following credits list tools and resources that are used in the production
+of Coldest Night, but are not affiliated with Coldest Night or its copyright
+holders._
 
-__Game Engine__ -
+__Game Engine__:
 * [Godot](https://godotengine.org) by
 [its authors](https://github.com/godotengine/godot/blob/master/AUTHORS.md)
 
-__Image Editor__ -
+__Image Editor__:
 * [Krita](https://krita.org) by [KDE](https://kde.org)
 
-__Color Palette__ -
+__Color Palette__:
 * [Faraway48](https://lospec.com/palette-list/faraway48) by
 [Igor Ferreira (Diemorth)](https://twitter.com/diemorth)
 
-__Bitmap Font to TTF Converter__ -
+__Bitmap Font to TTF Converter__:
 * [Pixel Font Converter](https://yal.cc/r/20/pixelfont) by
 [Vadim (YellowAfterlife)](https://twitter.com/yellowafterlife)
 
-__Digital Audio Workstation__ -
+__Digital Audio Workstations__:
+* [Audacity](https://www.audacityteam.org)* by
+[its contributors](https://www.audacityteam.org/about/credits/)
 * [LMMS](https://lmms.io) by
 [its contributors](https://github.com/LMMS/lmms/graphs/contributors)
 
+\* Compile from source to remove the controversial networking features.
+
 # License
-Krobbizoid Proprietary-Open Game Development License -
-https://krobbi.github.io/license/2021/kpogdl.txt
+Coldest Night is released under the Krobbizoid Proprietary-Open Game Development
+License - https://krobbi.github.io/license/2021/kpogdl.txt
 
 ---
 

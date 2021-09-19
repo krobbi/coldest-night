@@ -1,0 +1,49 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://gui/dialogs/radio_dialog/radio_dialog_option/radio_dialog_option.gd" type="Script" id=1]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 6.0
+content_margin_right = 6.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color( 0.0509804, 0.219608, 0.133333, 0.501961 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.560784, 0.980392, 0.215686, 1 )
+anti_aliasing = false
+
+[node name="RadioDialogOption" type="Label"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -272.0
+margin_top = -158.0
+margin_right = -16.0
+margin_bottom = -126.0
+mouse_filter = 1
+custom_styles/normal = SubResource( 1 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+color_normal = Color( 0.945098, 0.94902, 0.945098, 1 )
+color_hover = Color( 0.560784, 0.980392, 0.215686, 1 )
+
+[node name="SelectionRect" type="ColorRect" parent="."]
+visible = false
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -22.0
+margin_top = -10.0
+margin_right = -6.0
+margin_bottom = 10.0
+color = Color( 0.560784, 0.980392, 0.215686, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

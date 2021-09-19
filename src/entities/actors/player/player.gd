@@ -17,6 +17,8 @@ var _input_vector: Vector2 = Vector2.ZERO;
 var _velocity: Vector2 = Vector2.ZERO;
 
 onready var _triggering_shape: CollisionShape2D = $TriggeringArea/TriggeringShape;
+onready var _interacting_area: InteractingArea = $SmoothPivot/InteractingArea;
+onready var _interacting_shape: CollisionShape2D = $SmoothPivot/InteractingArea/CollisionShape2D;
 onready var _radar: Radar = Global.provider.get_radar();
 
 # Virtual _ready method. Runs when the player finishes entering the scene tree
@@ -51,13 +53,16 @@ func set_state(value: int) -> void:
 			state = State.MOVING;
 
 
-# Enables the player's ability to interact with triggers:
+# Enables the player's ability to interact with triggers and interactables:
 func enable_triggers() -> void:
 	_triggering_shape.set_disabled(false);
+	_interacting_shape.set_disabled(false);
 
 
-# Disables the player's ability to interact with triggers:
+# Disables the player's ability to interact with triggers and interactables:
 func disable_triggers() -> void:
+	_interacting_shape.set_disabled(true);
+	_interacting_area.flush();
 	_triggering_shape.set_disabled(true);
 
 
@@ -81,14 +86,19 @@ func _state_moving(delta: float) -> void:
 	if _input_vector == Vector2.ZERO:
 		_velocity = _velocity.move_toward(Vector2.ZERO, FRICTION * delta);
 	else:
+		smooth_pivot.pivot_to(_input_vector.angle());
 		_velocity = _velocity.move_toward(_input_vector * SPEED, ACCELERATION * delta);
 	
 	_apply_velocity();
+	
+	if Input.is_action_just_pressed("ui_accept"):
+		_interacting_area.interact();
 
 
 # Applies the player's current velocity to its movement:
 func _apply_velocity() -> void:
 	_velocity = move_and_slide(_velocity);
+	_interacting_area.sort();
 	
 	if _radar != null:
 		_radar.set_player_pos(get_position());

@@ -14,15 +14,45 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://entities/actors/actor.gd"
 }, {
+"base": "Interactable",
+"class": "CallRadioInteractable",
+"language": "GDScript",
+"path": "res://entities/interactables/call_radio_interactable/call_radio_interactable.gd"
+}, {
 "base": "Trigger",
 "class": "ChangeLevelTrigger",
 "language": "GDScript",
 "path": "res://entities/triggers/change_level_trigger/change_level_trigger.gd"
 }, {
-"base": "Object",
-"class": "DialogParser",
+"base": "Node",
+"class": "Dialog",
 "language": "GDScript",
-"path": "res://utils/dialog/dialog_parser.gd"
+"path": "res://gui/dialogs/dialog.gd"
+}, {
+"base": "Node",
+"class": "DialogInterpreter",
+"language": "GDScript",
+"path": "res://gui/dialogs/dialog_interpreter.gd"
+}, {
+"base": "Object",
+"class": "DialogLeaf",
+"language": "GDScript",
+"path": "res://utils/dialog/dialog_leaf.gd"
+}, {
+"base": "Object",
+"class": "DialogOpcode",
+"language": "GDScript",
+"path": "res://utils/dialog/dialog_opcode.gd"
+}, {
+"base": "Object",
+"class": "DialogTree",
+"language": "GDScript",
+"path": "res://utils/dialog/dialog_tree.gd"
+}, {
+"base": "Object",
+"class": "DialogTreeBuilder",
+"language": "GDScript",
+"path": "res://utils/dialog/dialog_tree_builder.gd"
 }, {
 "base": "ColorRect",
 "class": "FadeTransition",
@@ -69,10 +99,25 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://global/managers/global_save_manager.gd"
 }, {
+"base": "Area2D",
+"class": "Interactable",
+"language": "GDScript",
+"path": "res://entities/interactables/interactable.gd"
+}, {
+"base": "Area2D",
+"class": "InteractingArea",
+"language": "GDScript",
+"path": "res://components/interacting_area/interacting_area.gd"
+}, {
 "base": "Node2D",
 "class": "Level",
 "language": "GDScript",
 "path": "res://levels/level.gd"
+}, {
+"base": "Object",
+"class": "LevelCache",
+"language": "GDScript",
+"path": "res://utils/overworld/level_cache.gd"
 }, {
 "base": "Node",
 "class": "Overworld",
@@ -83,11 +128,6 @@ _global_script_classes=[ {
 "class": "OverworldCamera",
 "language": "GDScript",
 "path": "res://scenes/overworld/overworld_camera.gd"
-}, {
-"base": "Object",
-"class": "OverworldLevelCache",
-"language": "GDScript",
-"path": "res://scenes/overworld/overworld_level_cache.gd"
 }, {
 "base": "Actor",
 "class": "Player",
@@ -109,6 +149,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/hud/radar/radar_segment_renderer.gd"
 }, {
+"base": "Dialog",
+"class": "RadioDialog",
+"language": "GDScript",
+"path": "res://gui/dialogs/radio_dialog/radio_dialog.gd"
+}, {
+"base": "Label",
+"class": "RadioDialogOption",
+"language": "GDScript",
+"path": "res://gui/dialogs/radio_dialog/radio_dialog_option/radio_dialog_option.gd"
+}, {
 "base": "Object",
 "class": "SaveData",
 "language": "GDScript",
@@ -124,6 +174,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://utils/io/serial_buffer.gd"
 }, {
+"base": "Position2D",
+"class": "SmoothPivot",
+"language": "GDScript",
+"path": "res://components/smooth_pivot/smooth_pivot.gd"
+}, {
 "base": "Area2D",
 "class": "Trigger",
 "language": "GDScript",
@@ -131,8 +186,14 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Actor": "",
+"CallRadioInteractable": "",
 "ChangeLevelTrigger": "",
-"DialogParser": "",
+"Dialog": "",
+"DialogInterpreter": "",
+"DialogLeaf": "",
+"DialogOpcode": "",
+"DialogTree": "",
+"DialogTreeBuilder": "",
 "FadeTransition": "",
 "FloatingText": "",
 "FloatingTextSpawner": "",
@@ -142,17 +203,22 @@ _global_script_class_icons={
 "GlobalPrefsManager": "",
 "GlobalProviderManager": "",
 "GlobalSaveManager": "",
+"Interactable": "",
+"InteractingArea": "",
 "Level": "",
+"LevelCache": "",
 "Overworld": "",
 "OverworldCamera": "",
-"OverworldLevelCache": "",
 "Player": "",
 "Radar": "",
 "RadarPolygonRenderer": "",
 "RadarSegmentRenderer": "",
+"RadioDialog": "",
+"RadioDialogOption": "",
 "SaveData": "",
 "SaveSlot": "",
 "SerialBuffer": "",
+"SmoothPivot": "",
 "Trigger": ""
 }
 
@@ -167,7 +233,6 @@ boot_splash/image="res://assets/images/project/boot_splash.png"
 boot_splash/use_filter=false
 boot_splash/bg_color=Color( 0.0509804, 0.027451, 0.0352941, 1 )
 config/icon="res://assets/images/project/icon.png"
-config/macos_native_icon="res://natives/macos/icon_macos.icns"
 config/windows_native_icon="res://natives/windows/icon_windows.ico"
 config/auto_accept_quit=false
 config/quit_on_go_back=false
@@ -186,9 +251,9 @@ window/size/width=640
 window/size/height=360
 window/stretch/mode="viewport"
 
-[editor]
+[editor_plugins]
 
-convert_text_resources_to_binary_on_export=true
+enabled=PoolStringArray( "res://addons/cn_dev/plugin.cfg" )
 
 [gui]
 
@@ -234,6 +299,15 @@ ogg_vorbis={
 
 [input]
 
+ui_accept={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777221,"unicode":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777222,"unicode":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":32,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":0,"pressure":0.0,"pressed":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":90,"unicode":0,"echo":false,"script":null)
+ ]
+}
 display_toggle_fullscreen={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777254,"unicode":0,"echo":false,"script":null)
@@ -254,21 +328,20 @@ display_increase_window_scale={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777253,"unicode":0,"echo":false,"script":null)
  ]
 }
-debug_save={
+click={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777249,"unicode":0,"echo":false,"script":null)
- ]
-}
-debug_load={
-"deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777248,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"pressed":false,"doubleclick":false,"script":null)
  ]
 }
 
 [layer_names]
 
-2d_physics/layer_1="World"
-2d_physics/layer_2="Triggering Areas"
+2d_physics/layer_1="Obstructive"
+2d_physics/layer_2="Occlusive"
+2d_physics/layer_3="Visible"
+2d_physics/layer_4="Audible"
+2d_physics/layer_5="Triggering"
+2d_physics/layer_6="Interactable"
 
 [logging]
 

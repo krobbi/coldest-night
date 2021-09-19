@@ -47,6 +47,11 @@ func get_u16() -> int:
 	return _buffer.get_u16();
 
 
+# Gets a 16-bit signed integer from the serial buffer:
+func get_s16() -> int:
+	return _buffer.get_16();
+
+
 # Gets a 32-bit unsigned integer from the serial buffer:
 func get_u32() -> int:
 	return _buffer.get_u32();
@@ -55,6 +60,14 @@ func get_u32() -> int:
 # Gets a 32-bit floating point number from the serial buffer:
 func get_f32() -> float:
 	return _buffer.get_float();
+
+
+# Gets a 2D vector with 16-bit signed integer number components from the serial
+# buffer:
+func get_vec2s16() -> Vector2:
+	var x: float = float(get_s16());
+	var y: float = float(get_s16());
+	return Vector2(x, y);
 
 
 # Gets a 2D vector with 32-bit floating point number components from the serial
@@ -69,6 +82,12 @@ func get_vec2f32() -> Vector2:
 # integer byte length value:
 func get_utf8_u8() -> String:
 	return get_data_u8().get_string_from_utf8();
+
+
+# Gets a UTF-8 string from the serial buffer preceeded by a 16-bit unsigned
+# integer byte length value:
+func get_utf8_u16() -> String:
+	return get_data_u16().get_string_from_utf8();
 
 
 # Gets some data with a known length from the serial buffer:
@@ -111,6 +130,12 @@ func put_u16(value: int) -> void:
 	_size += 2;
 
 
+# Puts a 16-bit signed integer to the serial buffer:
+func put_s16(value: int) -> void:
+	_buffer.put_16(value);
+	_size += 2;
+
+
 # Puts a 32-bit unsigned integer to the serial buffer:
 func put_u32(value: int) -> void:
 	_buffer.put_u32(value);
@@ -121,6 +146,12 @@ func put_u32(value: int) -> void:
 func put_f32(value: float) -> void:
 	_buffer.put_float(value);
 	_size += 4;
+
+
+# Puts a 2D vector with 16-bit signed integer components to the serial buffer:
+func put_vec2s16(value: Vector2) -> void:
+	put_s16(int(round(value.x)));
+	put_s16(int(round(value.y)));
 
 
 # Puts a 2D vector with 32-bit floating point number components to the serial
@@ -134,6 +165,12 @@ func put_vec2f32(value: Vector2) -> void:
 # byte length value:
 func put_utf8_u8(value: String) -> void:
 	put_data_u8(value.to_utf8());
+
+
+# Puts a UTF-8 string to the serial buffer preceded by a 16-bit unsigned integer
+# byte length value:
+func put_utf8_u16(value: String) -> void:
+	put_data_u16(value.to_utf8());
 
 
 # Puts some data to the serial buffer:
@@ -217,6 +254,14 @@ func can_read_u32(footer: int = 0) -> bool:
 	_buffer.seek(return_pos);
 	
 	return return_pos + 4 + length + footer <= _size;
+
+
+# Reloads the serial buffer with new data to read:
+func reload(data: PoolByteArray) -> void:
+	_buffer.seek(0);
+	_size = 0;
+	put_data(data);
+	_buffer.seek(0);
 
 
 # Seeks towards the back of the serial buffer by an amount:
