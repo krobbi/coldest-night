@@ -1,0 +1,43 @@
+:main
+	^ It's a save terminal. Save your progress?
+	menu
+	goto save_menu
+
+
+:repeat
+	^ Save your progress?
+	menu
+	goto save_menu
+
+
+:save_menu
+	option save Save Progress
+	option no_save Do Not Save
+	end menu
+
+
+:save
+	save
+	^ Quit Coldest Night?
+	menu
+	goto quit_menu
+
+
+:no_save
+	^ Quit Coldest Night? (Any unsaved progress will be lost!)
+	menu
+	goto quit_menu
+
+
+:quit_menu
+	option quit Quit Game
+	option no_quit Do Not Quit
+	end menu
+
+
+:quit
+	quit
+
+
+:no_quit
+	exit

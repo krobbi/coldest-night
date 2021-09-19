@@ -11,7 +11,7 @@ signal _player_emplaced;
 signal _level_changed;
 
 var save_data: SaveData = Global.save.get_working_data();
-var level_cache: OverworldLevelCache = OverworldLevelCache.new();
+var level_cache: LevelCache = LevelCache.new(2);
 var level: Level = null;
 var player: Player = preload("res://entities/actors/player/player.tscn").instance();
 
@@ -21,6 +21,7 @@ onready var camera: OverworldCamera = $OverworldCamera;
 onready var radar: Radar = $HUD/Radar;
 onready var transition: FadeTransition = $HUD/FadeTransition;
 onready var floating_text: FloatingTextSpawner = $HUD/FloatingText;
+onready var radio: RadioDialog = $HUD/RadioDialog;
 
 # Virtual _ready method. Runs when the overworld scene is entered. Registers the
 # overworld scene to the global provider manager and initializes the game state
@@ -28,15 +29,6 @@ onready var floating_text: FloatingTextSpawner = $HUD/FloatingText;
 func _ready() -> void:
 	Global.provider.set_overworld(self);
 	_apply_save_data();
-
-
-# Virtual _input method. Runs when the overworld scene receives an input event.
-# Handles debug controls for saving and loading:
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("debug_save"):
-		save_game();
-	elif event.is_action_pressed("debug_load"):
-		load_game();
 
 
 # Virtual _exit_tree method. Runs when the overworld scene is exited.
@@ -65,21 +57,6 @@ func save_game() -> void:
 	_compose_save_data();
 	Global.save.save_file();
 	display_floating_text("Saved game", player.get_position());
-
-
-# Loads the game state from the active save slot's file:
-func load_game() -> void:
-	if _changing_level:
-		print("Failed to load the game as the level is changing!");
-		return;
-	
-	Global.save.load_file();
-	_apply_save_data();
-	
-	if _changing_level:
-		yield(self, "_level_changed");
-	
-	display_floating_text("Loaded game", player.get_position());
 
 
 # Changes the current level and positions the player at a point and offset
@@ -153,7 +130,7 @@ func _add_player(point: String, offset: Vector2) -> void:
 	camera.set_limit(MARGIN_TOP, int(level.top_left.y));
 	camera.set_limit(MARGIN_RIGHT, int(level.bottom_right.x));
 	camera.set_limit(MARGIN_BOTTOM, int(level.bottom_right.y));
-	camera.follow_anchor(player);
+	camera.follow_anchor(player.camera_anchor);
 	camera.force_update_scroll();
 	camera.reset_smoothing();
 
@@ -169,11 +146,13 @@ func _compose_save_data() -> void:
 	var world_pos: Vector2 = player.get_position();
 	save_data.pos_point = level.get_nearest_point(world_pos);
 	save_data.pos_offset = world_pos - level.get_point_pos(save_data.pos_point);
+	save_data.pos_angle = wrapf(player.smooth_pivot.get_rotation(), -PI, PI);
 
 
 # Applies the current working save data to the game state:
 func _apply_save_data() -> void:
 	change_level(save_data.pos_level, save_data.pos_point, save_data.pos_offset);
+	player.smooth_pivot.set_rotation(wrapf(save_data.pos_angle, -PI, PI));
 	
 	if _changing_level:
 		yield(self, "_player_emplaced");

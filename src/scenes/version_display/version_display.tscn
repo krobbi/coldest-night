@@ -33,7 +33,7 @@ margin_bottom = 72.0
 margin_top = 76.0
 margin_right = 612.0
 margin_bottom = 94.0
-text = "Coldest Night v0.3.0"
+text = "Coldest Night v0.4.0"
 
 [node name="LicenseLabel" type="Label" parent="VBoxContainer"]
 margin_top = 98.0
@@ -70,8 +70,8 @@ margin_bottom = 239.0
 margin_top = 243.0
 margin_right = 612.0
 margin_bottom = 303.0
-text = "Use [Arrow Keys] to move.
-Use [F5/F6] to load from disk and save to disk.
+text = "Use [Arrow Keys] to move and navigate menus.
+Use [Z/Enter/Space] to interact.
 Use [F9/F10/F11/F12] to adjust display settings."
 
 [node name="ControlSeparator" type="HSeparator" parent="VBoxContainer"]

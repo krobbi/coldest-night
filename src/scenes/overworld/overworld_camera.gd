@@ -24,7 +24,7 @@ func _ready() -> void:
 # Virtual _physics_process method. Runs on every physics frame while the
 # overworld camera is in the scene tree and has its physics process enabled:
 func _physics_process(_delta: float) -> void:
-	set_position(_anchor.get_position());
+	set_position(_anchor.get_global_position());
 
 
 # Virtual _exit_tree method. Runs when the overworld camera exits the scene
@@ -51,7 +51,7 @@ func unfocus() -> void:
 	_focusing = false;
 	
 	if _anchor != null:
-		set_position(_anchor.get_position());
+		set_position(_anchor.get_global_position());
 		set_physics_process(true);
 
 
@@ -60,7 +60,7 @@ func follow_anchor(anchor_ref: Node2D) -> void:
 	_anchor = anchor_ref;
 	
 	if not _focusing:
-		set_position(_anchor.get_position());
+		set_position(_anchor.get_global_position());
 		set_physics_process(true);
 
 

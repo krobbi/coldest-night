@@ -35,119 +35,109 @@ func set_player_pos(world_pos: Vector2) -> void:
 	_player.set_position(get_radar_pos(world_pos) + PLAYER_OFFSET);
 
 
-# Clears the displayed pits:
-func clear_pits() -> void:
-	_pits.clear();
-
-
-# Clears the displayed floors:
-func clear_floors() -> void:
-	_floors.clear();
-
-
-# Clears the displayed walls:
-func clear_walls() -> void:
-	_walls.clear();
-
-
-# Renders the displayed pits from a node:
-func render_pits_node(node: Node) -> void:
-	_pits.render(_polygonize_node(node));
-
-
-# Renders the displayed floors from a node:
-func render_floors_node(node: Node) -> void:
-	_floors.render(_segment_node(node));
-
-
-# Renders the displayed walls from a node:
-func render_walls_node(node: Node) -> void:
-	_walls.render(_segment_node(node));
-
-
-# Segments a multi-segment line in world positions to an array of line segments
-# in radar positions:
-func _segment_line(points: PoolVector2Array) -> PoolVector2Array:
-	var segment_count: int = points.size() - 1;
+# Renders the radar from radar data:
+func render_data(data: PoolByteArray) -> void:
+	var buffer: SerialBuffer = SerialBuffer.new(data);
+	var payload_size: int = buffer.get_u32();
+	var payload: PoolByteArray = buffer.get_data_u32();
+	payload = payload.decompress(payload_size, File.COMPRESSION_ZSTD);
+	buffer.reload(payload);
 	
-	if segment_count < 0:
-		return PoolVector2Array();
-	elif segment_count == 0:
-		points.push_back(points[0]);
-		segment_count = 1;
+	_render_polygon_buffer(buffer, _pits);
+	_render_segment_buffer(buffer, _floors);
+	_render_segment_buffer(buffer, _walls);
+
+
+# Renders a radar polygon renderer from buffered radar data:
+func _render_polygon_buffer(buffer: SerialBuffer, renderer: RadarPolygonRenderer) -> void:
+	var polygons: Array = [];
+	var polygon_count: int = buffer.get_u16();
+	polygons.resize(polygon_count);
 	
+	for i in range(polygon_count):
+		var polygon: PoolVector2Array = PoolVector2Array();
+		var point_count: int = buffer.get_u16();
+		polygon.resize(point_count);
+		
+		for j in range(point_count):
+			polygon[j] = get_radar_pos(buffer.get_vec2s16());
+		
+		polygons[i] = polygon;
+	
+	renderer.render(polygons);
+
+
+# Renders a radar segment renderer from buffered radar data:
+func _render_segment_buffer(buffer: SerialBuffer, renderer: RadarSegmentRenderer) -> void:
 	var segments: PoolVector2Array = PoolVector2Array();
-	segments.resize(segment_count * 2);
 	
-	for i in range(segment_count):
-		var point_a: Vector2 = get_radar_pos(points[i]);
-		var point_b: Vector2 = get_radar_pos(points[i + 1]);
+	# Points:
+	for _i in range(buffer.get_u16()):
+		var point: Vector2 = get_radar_pos(buffer.get_vec2s16());
+		segments.push_back(point);
+		segments.push_back(point);
+	
+	# Segments:
+	for _i in range(buffer.get_u16()):
+		var point_a: Vector2 = get_radar_pos(buffer.get_vec2s16());
+		var point_b: Vector2 = get_radar_pos(buffer.get_vec2s16());
 		
 		# Workaround to fix missing bottom-left corners:
 		if point_a.y == point_b.y:
-			if point_a.x > point_b.x:
-				point_b.x -= 1.0;
-			elif point_a.x < point_b.x:
-				point_a.x -= 1.0;
+				if point_a.x > point_b.x:
+					point_b.x -= 1.0;
+				elif point_a.x < point_b.x:
+					point_a.x -= 1.0;
 		
-		segments[i * 2] = point_a;
-		segments[i * 2 + 1] = point_b;
+		segments.push_back(point_a);
+		segments.push_back(point_b);
 	
-	return segments;
-
-
-# Segments a polygon in world positions to an array of line segments in radar
-# positions:
-func _segment_polygon(polygon: PoolVector2Array) -> PoolVector2Array:
-	if polygon.size() >= 3:
-		polygon.push_back(polygon[0]);
-	
-	return _segment_line(polygon);
-
-
-# Recursively segments a node to an array of line segments in radar positions:
-func _segment_node(node: Node, depth: int = 8) -> PoolVector2Array:
-	var segments: PoolVector2Array = PoolVector2Array();
-	
-	if node is Line2D:
-		segments.append_array(_segment_line(node.get_points()));
-	elif node is Polygon2D:
-		segments.append_array(_segment_polygon(node.get_polygon()));
-	
-	if depth > 0:
-		depth -= 1;
+	# Lines:
+	for _i in range(buffer.get_u16()):
+		var line: PoolVector2Array = PoolVector2Array();
+		var size: int = buffer.get_u16();
+		line.resize(size);
 		
-		for child in node.get_children():
-			segments.append_array(_segment_node(child, depth));
-	
-	return segments;
-
-
-# Polygonizes a polygon in world positions to an array of polygons in radar
-# positions:
-func _polygonize_polygon(polygon: PoolVector2Array) -> Array:
-	var size: int = polygon.size();
-	
-	if size < 3:
-		return [];
-	
-	for i in range(size):
-		polygon[i] = get_radar_pos(polygon[i]);
-	
-	return [polygon];
-
-
-# Recursively polygonizes a node to an array of polygons in radar positions:
-func _polygonize_node(node: Node, depth: int = 8) -> Array:
-	var polygons: Array = [];
-	
-	if node is Polygon2D:
-		polygons.append_array(_polygonize_polygon(node.get_polygon()));
-	
-	if depth > 0:
-		depth -= 1;
+		for j in range(size):
+			line[j] = get_radar_pos(buffer.get_vec2s16());
 		
-		for child in node.get_children():
-			polygons.append_array(_polygonize_node(child, depth));
+		for j in range(size - 1):
+			var point_a: Vector2 = line[j];
+			var point_b: Vector2 = line[j + 1];
+			
+			# Workaround to fix missing bottom-left corners:
+			if point_a.y == point_b.y:
+				if point_a.x > point_b.x:
+					point_b.x -= 1.0;
+				elif point_a.x < point_b.x:
+					point_a.x -= 1.0;
+			
+			segments.push_back(point_a);
+			segments.push_back(point_b);
 	
-	return polygons;
+	# Polygons:
+	for _i in range(buffer.get_u16()):
+		var polygon: PoolVector2Array = PoolVector2Array();
+		var size: int = buffer.get_u16();
+		polygon.resize(size + 1);
+		
+		for j in range(size):
+			polygon[j] = get_radar_pos(buffer.get_vec2s16());
+		
+		polygon[size] = polygon[0];
+		
+		for j in range(size):
+			var point_a: Vector2 = polygon[j];
+			var point_b: Vector2 = polygon[j + 1];
+			
+			# Workaround to fix missing bottom-left corners:
+			if point_a.y == point_b.y:
+				if point_a.x > point_b.x:
+					point_b.x -= 1.0;
+				elif point_a.x < point_b.x:
+					point_a.x -= 1.0;
+			
+			segments.push_back(point_a);
+			segments.push_back(point_b);
+	
+	renderer.render(segments);

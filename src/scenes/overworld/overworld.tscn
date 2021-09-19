@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scenes/overworld/overworld.gd" type="Script" id=1]
 [ext_resource path="res://scenes/overworld/overworld_camera.gd" type="Script" id=2]
 [ext_resource path="res://gui/hud/radar/radar.tscn" type="PackedScene" id=3]
 [ext_resource path="res://gui/hud/fade_transition/fade_transition.tscn" type="PackedScene" id=4]
 [ext_resource path="res://gui/hud/floating_text/floating_text_spawner.gd" type="Script" id=5]
+[ext_resource path="res://gui/dialogs/radio_dialog/radio_dialog.tscn" type="PackedScene" id=6]
 
 [node name="Overworld" type="Node"]
 pause_mode = 2
@@ -25,6 +26,8 @@ script = ExtResource( 2 )
 [node name="Radar" parent="HUD" instance=ExtResource( 3 )]
 
 [node name="FadeTransition" parent="HUD" instance=ExtResource( 4 )]
+
+[node name="RadioDialog" parent="HUD" instance=ExtResource( 6 )]
 
 [node name="FloatingText" type="Node" parent="HUD"]
 script = ExtResource( 5 )

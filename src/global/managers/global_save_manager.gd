@@ -37,7 +37,7 @@ var _active_slot_index: int = 0;
 var _working_data: SaveData = SaveData.new();
 
 # Constructor. Populates the available save slots and clears the current working
-# data:
+# save data:
 func _init() -> void:
 	_slots.resize(SLOT_COUNT);
 	
@@ -64,6 +64,16 @@ func select_slot(index: int) -> void:
 		_active_slot_index = index;
 
 
+# Saves the game contextually depending on the objects that can be provided:
+func save_game() -> void:
+	var overworld: Overworld = Global.provider.get_overworld();
+	
+	if overworld == null:
+		save_file();
+	else:
+		overworld.save_game();
+
+
 # Saves the current working save data to the active save slot's file:
 func save_file() -> void:
 	_push_data();
@@ -76,8 +86,8 @@ func load_file() -> void:
 	_pull_data();
 
 
-# Destructor. destructs and frees the available save slots and frees the current
-# working data:
+# Destructor. Destructs and frees the available save slots, and frees the
+# current working save data:
 func destruct() -> void:
 	for slot in _slots:
 		slot.destruct();
@@ -96,7 +106,8 @@ func _copy_data(source: SaveData, target: SaveData) -> void:
 	target.pos_level = source.pos_level;
 	target.pos_point = source.pos_point;
 	target.pos_offset = source.pos_offset;
-	target.dialog_flags = source.dialog_flags.duplicate(true);
+	target.pos_angle = source.pos_angle;
+	target.flags = source.flags.duplicate(true);
 
 
 # Pushes the current working save data to the active save slot's save data:
@@ -221,6 +232,18 @@ func _serialize_slot_payload_mercury(slot: SaveSlot) -> PoolByteArray:
 	buffer.put_utf8_u8(slot.data.pos_level);
 	buffer.put_utf8_u8(slot.data.pos_point);
 	buffer.put_vec2f32(slot.data.pos_offset);
+	buffer.put_f32(slot.data.pos_angle);
+	
+	buffer.put_u16(slot.data.flags.size());
+	
+	for flag_namespace in slot.data.flags.keys():
+		buffer.put_utf8_u8(flag_namespace);
+		buffer.put_u16(slot.data.flags[flag_namespace].size());
+		
+		for flag_key in slot.data.flags[flag_namespace].keys():
+			buffer.put_utf8_u8(flag_key);
+			buffer.put_s16(slot.data.flags[flag_namespace][flag_key]);
+	
 	return buffer.get_stream();
 
 
@@ -286,8 +309,8 @@ func _deserialize_slot_mercury(slot: SaveSlot, stream: PoolByteArray) -> bool:
 	
 	slot.data.pos_level = buffer.get_utf8_u8();
 	
-	if not buffer.can_read_u8(8):
-		print("Mercury payload is too short to contain its point and offset positions!");
+	if not buffer.can_read_u8(12):
+		print("Mercury payload is too short to contain its point, offset and angle positions!");
 		return false;
 	
 	slot.data.pos_point = buffer.get_utf8_u8();
@@ -299,5 +322,37 @@ func _deserialize_slot_mercury(slot: SaveSlot, stream: PoolByteArray) -> bool:
 	elif is_inf(slot.data.pos_offset.y) or is_nan(slot.data.pos_offset.y):
 		print("Mercury payload has an invalid Y offset position!");
 		return false;
+	
+	slot.data.pos_angle = buffer.get_f32();
+	
+	if is_inf(slot.data.pos_angle) or is_nan(slot.data.pos_angle):
+		print("Mercury payload has an invalid angle position!");
+		return false;
+	
+	slot.data.flags = {};
+	
+	if not buffer.can_read(2):
+		print("Mercury payload is too short to contain its flag namespace count!");
+		return false;
+	
+	var flag_namespace_count: int = buffer.get_u16();
+	
+	for _i in range(flag_namespace_count):
+		if not buffer.can_read_u8(2):
+			print("Mercury payload is too short to contain a flag namespace name and key count!");
+			return false;
+		
+		var flag_namespace: String = buffer.get_utf8_u8();
+		var flag_key_count: int = buffer.get_u16();
+		slot.data.flags[flag_namespace] = {};
+		
+		for _j in range(flag_key_count):
+			if not buffer.can_read_u8(2):
+				print("Mercury payload is too short to contain a flag key and value!");
+				return false;
+			
+			var flag_key: String = buffer.get_utf8_u8();
+			var flag_value: int = buffer.get_s16();
+			slot.data.flags[flag_namespace][flag_key] = flag_value;
 	
 	return true;

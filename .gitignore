@@ -1,27 +1,37 @@
-# System
+# System:
 .DS_Store
 desktop.ini
 Thumbs.db
 
-# IDE
+# IDE:
 .idea
 .vscode
 *.sublime-project
 *.sublime-workspace
 *.suo
 
-# Godot
+# Godot:
 .import/
 .mono/
 data_*/
-*.TMP
 export.cfg
 export_presets.cfg
+*.TMP
+*.translation
 
-# Defaulted Imports
+# Defaulted Imports:
 *.ogg.import
 *.png.import
 *.wav.import
 
-# Ignore
-notes/
+# Export Output:
+project.binary
+*.dtc
+*.gdc
+*.gde
+*.remap
+*.res
+*.scn
+
+# Ignore:
+ignore/
