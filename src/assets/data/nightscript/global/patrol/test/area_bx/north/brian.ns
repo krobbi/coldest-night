@@ -1,0 +1,33 @@
+# Patrol Route
+# Patrol route for 'brian' in test.area_bx.north
+
+label main
+	sleep 8
+	path do brian PBrB
+	look brian left
+	sleep 2
+	look brian right
+	sleep 1
+	path do brian PBrC
+	look brian right
+	sleep 2
+	look brian down
+	sleep 2
+	look brian right
+	sleep 3
+	path do brian PBrD
+	look brian up
+	sleep 2
+	look brian down
+	sleep 1
+	path do brian PBrE
+	look brian down
+	sleep 5
+	path do brian PBrC
+	look brian left
+	sleep 2
+	look brian right
+	sleep 2
+	path do brian PBrA
+	look brian up
+	goto main

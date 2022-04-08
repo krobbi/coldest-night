@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://gui/menu/menu_card.tscn" type="PackedScene" id=1]
+[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=2]
+
+[node name="GameOverMenuCard" instance=ExtResource( 1 )]
+_heading_key = "game_over"
+
+[node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
+margin_bottom = 68.0
+
+[node name="GameOverContinueButtonMenuRow" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
+anchor_right = 0.0
+margin_right = 512.0
+_button_key = "game_over_continue"
+_text = "BUTTON.GAME_OVER_CONTINUE"
+
+[node name="GameOverQuitButtonMenuRow2" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
+anchor_right = 0.0
+margin_top = 36.0
+margin_right = 512.0
+margin_bottom = 68.0
+_button_key = "game_over_quit"
+_text = "BUTTON.GAME_OVER_QUIT"
+_sound_type = 2

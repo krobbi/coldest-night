@@ -1,8 +1,0 @@
-:main
-	^ It's an elevator terminal. It's displaying an error message.
-	exit
-
-
-:repeat
-	^ Looks like the elevator is jammed somewhere.
-	exit

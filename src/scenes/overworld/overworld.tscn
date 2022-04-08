@@ -1,33 +1,60 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scenes/overworld/overworld.gd" type="Script" id=1]
-[ext_resource path="res://scenes/overworld/overworld_camera.gd" type="Script" id=2]
-[ext_resource path="res://gui/hud/radar/radar.tscn" type="PackedScene" id=3]
-[ext_resource path="res://gui/hud/fade_transition/fade_transition.tscn" type="PackedScene" id=4]
-[ext_resource path="res://gui/hud/floating_text/floating_text_spawner.gd" type="Script" id=5]
-[ext_resource path="res://gui/dialogs/radio_dialog/radio_dialog.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/overworld/level_host.gd" type="Script" id=2]
+[ext_resource path="res://scenes/overworld/level_camera.gd" type="Script" id=3]
+[ext_resource path="res://gui/radar/radar.tscn" type="PackedScene" id=4]
+[ext_resource path="res://utils/nightscript/ns_interpreter.tscn" type="PackedScene" id=5]
+[ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=6]
+[ext_resource path="res://gui/menu/menus/pause_menu.tscn" type="PackedScene" id=7]
+[ext_resource path="res://gui/floating_text/floating_text_spawner.tscn" type="PackedScene" id=8]
+[ext_resource path="res://gui/menu/menus/game_over_menu.tscn" type="PackedScene" id=9]
 
-[node name="Overworld" type="Node"]
-pause_mode = 2
+[node name="Overworld" type="Node2D"]
+pause_mode = 1
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
 
-[node name="OverworldCamera" type="Camera2D" parent="."]
-position = Vector2( 320, 180 )
+[node name="NightScriptInterpreter" parent="." instance=ExtResource( 5 )]
+pause_mode = 2
+_dialog_path = NodePath("../HUD/PlainDialog")
+
+[node name="LevelHost" type="Node2D" parent="."]
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="LevelCamera" type="Camera2D" parent="."]
 current = true
-process_mode = 0
 limit_smoothed = true
 smoothing_enabled = true
-smoothing_speed = 8.0
 editor_draw_screen = false
-script = ExtResource( 2 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
-[node name="Radar" parent="HUD" instance=ExtResource( 3 )]
+[node name="Radar" parent="HUD" instance=ExtResource( 4 )]
 
-[node name="FadeTransition" parent="HUD" instance=ExtResource( 4 )]
+[node name="FloatingTextSpawner" parent="HUD" instance=ExtResource( 8 )]
+_camera_path = NodePath("../../LevelCamera")
 
-[node name="RadioDialog" parent="HUD" instance=ExtResource( 6 )]
+[node name="PlainDialog" parent="HUD" instance=ExtResource( 6 )]
 
-[node name="FloatingText" type="Node" parent="HUD"]
-script = ExtResource( 5 )
+[node name="PauseMenu" parent="HUD" instance=ExtResource( 7 )]
+
+[node name="GameOverMenu" parent="HUD" instance=ExtResource( 9 )]
+
+[connection signal="camera_follow_request" from="LevelHost" to="LevelCamera" method="follow_anchor"]
+[connection signal="camera_limit_request" from="LevelHost" to="LevelCamera" method="set_limits"]
+[connection signal="camera_unfollow_request" from="LevelHost" to="LevelCamera" method="unfollow_anchor"]
+[connection signal="radar_camera_follow_request" from="LevelHost" to="HUD/Radar" method="camera_follow_anchor"]
+[connection signal="radar_camera_unfollow_request" from="LevelHost" to="HUD/Radar" method="camera_unfollow_anchor"]
+[connection signal="radar_clear_request" from="LevelHost" to="HUD/Radar" method="clear"]
+[connection signal="radar_refresh_actors_request" from="LevelHost" to="HUD/Radar" method="refresh_actors"]
+[connection signal="radar_render_node_request" from="LevelHost" to="HUD/Radar" method="render_node"]

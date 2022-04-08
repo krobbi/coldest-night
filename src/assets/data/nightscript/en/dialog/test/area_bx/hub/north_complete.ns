@@ -1,0 +1,17 @@
+# Save Terminal Dialog
+# Dialog line for cutscene.test.area_bx.hub.enter.
+
+meta cache false
+
+name "Koby"
+say "That's all the archival units in the storage wing."
+say "I've put together a key from the data,{p=0.25} which should have opened the east wing."
+say "There should be a robotics lab in there."
+
+name
+say "{s=0.1}..."
+
+name "Koby"
+say "Yeah it's weird.{p=0.5} they said that would happen."
+say "And no,{p=0.25} the rest of the data is encrypted."
+say "We better keep moving."

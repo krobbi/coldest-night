@@ -1,0 +1,24 @@
+# Patrol Route
+# Patrol route for 'susie' in test.area_bx.north
+
+label main
+	sleep 4
+	path do susie PSuE
+	look susie down
+	sleep 1
+	path do susie PSuB
+	look susie down
+	sleep 2
+	path do susie PSuC
+	path do susie PSuD
+	look susie up
+	sleep 2
+	look susie right
+	sleep 2
+	path do susie PSuB
+	path do susie PSuE
+	look susie down
+	sleep 2
+	path do susie PSuA
+	look susie left
+	goto main

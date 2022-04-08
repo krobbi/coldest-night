@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://gui/menu/menu_card.tscn" type="PackedScene" id=1]
+[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=2]
+[ext_resource path="res://gui/menu/menu_rows/slider_menu_row.tscn" type="PackedScene" id=3]
+
+[node name="AudioMenuCard" instance=ExtResource( 1 )]
+_heading_key = "audio"
+
+[node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
+margin_bottom = 140.0
+
+[node name="MasterVolumeSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 3 )]
+anchor_right = 0.0
+margin_right = 512.0
+_config_key = "audio.master_volume"
+
+[node name="MusicVolumeSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 3 )]
+anchor_right = 0.0
+margin_top = 36.0
+margin_right = 512.0
+margin_bottom = 68.0
+_config_key = "audio.music_volume"
+
+[node name="SFXVolumeSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 3 )]
+anchor_right = 0.0
+margin_top = 72.0
+margin_right = 512.0
+margin_bottom = 104.0
+_config_key = "audio.sfx_volume"
+
+[node name="BackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]
+anchor_right = 0.0
+margin_top = 108.0
+margin_right = 512.0
+margin_bottom = 140.0
+_text = "BUTTON.BACK"
+_sound_type = 2
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/BackButton" to="." method="request_pop"]

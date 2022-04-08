@@ -1,14 +1,50 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://entities/actors/actor.gd" type="Script" id=1]
 [ext_resource path="res://components/smooth_pivot/smooth_pivot.tscn" type="PackedScene" id=2]
+[ext_resource path="res://components/repulsive_area/repulsive_area.tscn" type="PackedScene" id=3]
+[ext_resource path="res://components/states/state_machine.gd" type="Script" id=4]
+[ext_resource path="res://assets/images/entities/actors/shadow.png" type="Texture" id=5]
+[ext_resource path="res://components/states/actors/scripted_actor_state.gd" type="Script" id=6]
+[ext_resource path="res://components/test/state_label/state_label.tscn" type="PackedScene" id=7]
 
-[node name="Actor" type="KinematicBody2D"]
+[sub_resource type="CircleShape2D" id=1]
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 16.0
+
+[node name="Actor" type="KinematicBody2D" groups=["actors"]]
 collision_layer = 0
-collision_mask = 0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource( 4 )
+_initial_state = "Scripted"
+
+[node name="Scripted" type="Node" parent="StateMachine"]
+script = ExtResource( 6 )
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="RepulsiveArea" parent="." instance=ExtResource( 3 )]
+
+[node name="RepulsiveShape" type="CollisionShape2D" parent="RepulsiveArea"]
+shape = SubResource( 2 )
+
+[node name="Shadow" type="Sprite" parent="."]
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="."]
+offset = Vector2( 0, -32 )
 
 [node name="SmoothPivot" parent="." instance=ExtResource( 2 )]
 
 [node name="CameraAnchor" type="Position2D" parent="SmoothPivot"]
 position = Vector2( 32, 0 )
+
+[node name="StateLabel" parent="." instance=ExtResource( 7 )]
+_state_machine_path = NodePath("../StateMachine")

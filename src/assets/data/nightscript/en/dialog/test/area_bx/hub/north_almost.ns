@@ -1,0 +1,8 @@
+# Save Terminal Dialog
+# Dialog line for cutscene.test.area_bx.hub.enter.
+
+meta cache false
+
+name "Koby"
+say "It looks like you'll have to go back into the storage wing."
+say "I think you've missed an archival unit."

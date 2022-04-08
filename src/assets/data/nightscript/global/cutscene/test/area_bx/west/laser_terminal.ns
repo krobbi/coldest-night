@@ -1,0 +1,33 @@
+# Laser Terminal
+# Common cutscene for laser terminal in test.area_bx.west.
+
+define state test:west_laser_state
+
+player freeze
+dialog show
+say "DIALOG.TEST.LASER_TERMINAL.PROMPT"
+
+menu option "DIALOG.TEST.LASER_TERMINAL.OPTION.REDIRECT" goto redirect
+menu option "DIALOG.TEST.LASER_TERMINAL.OPTION.CANCEL" goto exit
+menu show
+
+label redirect
+	goto toggle state
+	set state true
+	goto redirected
+
+
+label toggle
+	set state false
+	goto redirected
+
+
+label redirected
+	say "DIALOG.TEST.LASER_TERMINAL.REDIRECTED"
+	goto exit
+
+
+label exit
+	dialog hide
+	player unfreeze
+	exit

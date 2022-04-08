@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/settings/settings.gd" type="Script" id=1]
+[ext_resource path="res://gui/menu/menu_stack.tscn" type="PackedScene" id=2]
+
+[node name="Settings" type="Control"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 360 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="MenuStack" parent="." instance=ExtResource( 2 )]
+_root_card = "settings"
+
+[connection signal="root_popped" from="MenuStack" to="." method="_on_menu_stack_root_popped"]
