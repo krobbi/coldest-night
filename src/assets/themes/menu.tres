@@ -1,0 +1,53 @@
+[gd_resource type="Theme" load_steps=10 format=2]
+
+[ext_resource path="res://assets/fonts/coldnight.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/images/gui/checkboxes/unchecked.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/gui/checkboxes/checked.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/gui/sliders/grabber_area.png" type="Texture" id=4]
+[ext_resource path="res://assets/images/gui/sliders/slider.png" type="Texture" id=5]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="ImageTexture" id=2]
+flags = 0
+flags = 0
+
+[sub_resource type="StyleBoxTexture" id=4]
+texture = ExtResource( 4 )
+region_rect = Rect2( 0, 0, 12, 12 )
+margin_left = 5.0
+margin_right = 5.0
+margin_top = 5.0
+margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id=5]
+texture = ExtResource( 5 )
+region_rect = Rect2( 4, 4, 16, 16 )
+margin_left = 2.0
+margin_right = 2.0
+margin_top = 2.0
+margin_bottom = 2.0
+draw_center = false
+
+[resource]
+default_font = ExtResource( 1 )
+Button/colors/font_color = Color( 1, 1, 1, 1 )
+Button/colors/font_color_disabled = Color( 1, 1, 1, 1 )
+Button/colors/font_color_focus = Color( 1, 1, 1, 1 )
+Button/colors/font_color_hover = Color( 1, 1, 1, 1 )
+Button/styles/disabled = SubResource( 1 )
+Button/styles/focus = SubResource( 1 )
+Button/styles/hover = SubResource( 1 )
+Button/styles/normal = SubResource( 1 )
+Button/styles/pressed = SubResource( 1 )
+CheckButton/icons/off = ExtResource( 2 )
+CheckButton/icons/off_disabled = ExtResource( 2 )
+CheckButton/icons/on = ExtResource( 3 )
+CheckButton/icons/on_disabled = ExtResource( 3 )
+HSlider/icons/grabber = SubResource( 2 )
+HSlider/icons/grabber_disabled = SubResource( 2 )
+HSlider/icons/grabber_highlight = SubResource( 2 )
+HSlider/icons/tick = SubResource( 2 )
+HSlider/styles/grabber_area = SubResource( 4 )
+HSlider/styles/grabber_area_highlight = SubResource( 4 )
+HSlider/styles/slider = SubResource( 5 )

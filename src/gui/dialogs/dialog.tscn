@@ -1,22 +1,19 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://gui/dialogs/dialog.gd" type="Script" id=1]
-[ext_resource path="res://gui/dialogs/dialog_interpreter.gd" type="Script" id=2]
+[ext_resource path="res://gui/dialogs/dialog_tag_parser.gd" type="Script" id=2]
 
-[node name="Dialog" type="Node"]
+[node name="Dialog" type="Control"]
 pause_mode = 2
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 360 )
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
 
-[node name="Interpreter" type="Node" parent="."]
+[node name="DialogTagParser" type="Node" parent="."]
 script = ExtResource( 2 )
-
-[connection signal="dialog_closed" from="Interpreter" to="." method="_on_interpreter_dialog_closed"]
-[connection signal="dialog_closing" from="Interpreter" to="." method="_hide"]
-[connection signal="dialog_opened" from="Interpreter" to="." method="_on_interpreter_dialog_opened"]
-[connection signal="dialog_opening" from="Interpreter" to="." method="_show"]
-[connection signal="menu_displayed" from="Interpreter" to="." method="_display_menu"]
-[connection signal="menu_hidden" from="Interpreter" to="." method="_hide_menu"]
-[connection signal="message_displayed" from="Interpreter" to="." method="_display_message"]
-[connection signal="message_finished" from="Interpreter" to="." method="_finish_message"]
-[connection signal="option_hovered" from="Interpreter" to="." method="_hover_option"]
-[connection signal="option_selected" from="Interpreter" to="." method="_select_option"]

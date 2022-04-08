@@ -1,9 +1,8 @@
-[gd_resource type="DynamicFont" load_steps=2 format=2]
+[gd_resource type="DynamicFont" load_steps=3 format=2]
 
-[sub_resource type="DynamicFontData" id=1]
-antialiased = false
-hinting = 0
-font_path = "res://assets/fonts/coldnight.ttf"
+[ext_resource path="res://assets/fonts/coldnight.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://assets/fonts/atkinson_hyperlegible.otf" type="DynamicFontData" id=2]
 
 [resource]
-font_data = SubResource( 1 )
+font_data = ExtResource( 1 )
+fallback/0 = ExtResource( 2 )

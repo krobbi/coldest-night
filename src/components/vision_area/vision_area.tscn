@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://components/vision_area/vision_area.gd" type="Script" id=1]
+
+[node name="VisionArea" type="Area2D" groups=["vision_areas"]]
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="RayCast" type="RayCast2D" parent="."]
+cast_to = Vector2( 0, 0 )
+collision_mask = 12
+collide_with_areas = true
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered" flags=3]
+[connection signal="area_exited" from="." to="." method="_on_area_exited" flags=3]

@@ -1,0 +1,75 @@
+# Enter Hub Cutscene
+# Runs when the player enters text.area_bx.hub.
+
+define count test:archival_unit_count
+define seen_terminal test:hub_seen_terminal
+define seen_north_almost test:hub_seen_north_almost
+define seen_north_complete test:hub_seen_north_complete
+define seen_west_almost test:hub_seen_west_almost
+define seen_west_complete test:hub_seen_west_complete
+
+goto terminal seen_terminal == false
+goto north_almost count == 9
+goto north_complete count == 10
+goto west_almost count == 16
+goto west_complete count == 17
+goto exit
+
+label terminal
+	set seen_terminal true
+	player freeze
+	dialog show
+	run dialog.test.area_bx.hub.terminal_1
+	dialog hide
+	path do player Terminal
+	look player up
+	sleep 1
+	dialog show
+	run dialog.test.area_bx.hub.terminal_2
+	goto exit_dialog
+
+
+label north_almost
+	goto exit seen_north_almost
+	set seen_north_almost true
+	player freeze
+	dialog show
+	run dialog.test.area_bx.hub.north_almost
+	goto exit_dialog
+
+
+label north_complete
+	goto exit seen_north_complete
+	set seen_north_complete true
+	player freeze
+	dialog show
+	run dialog.test.area_bx.hub.north_complete
+	goto exit_dialog
+
+
+label west_almost
+	goto exit seen_west_almost
+	set seen_west_almost true
+	player freeze
+	dialog show
+	run dialog.test.area_bx.hub.west_almost
+	goto exit_dialog
+
+
+label west_complete
+	goto exit seen_west_complete
+	set seen_west_complete true
+	player freeze
+	dialog show
+	run dialog.test.area_bx.hub.west_complete
+	goto exit_dialog
+
+
+label exit_dialog
+	dialog hide
+	player unfreeze
+	goto exit
+
+
+label exit
+	exit

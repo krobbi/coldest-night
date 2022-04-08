@@ -1,0 +1,36 @@
+# Patrol Route
+# Patrol route for 'nora' in test.area_bx.north
+
+label main
+	sleep 5
+	path do nora PNoB
+	look nora right
+	sleep 2
+	look nora up
+	sleep 2
+	look nora left
+	sleep 3
+	path do nora PNoC
+	look nora left
+	sleep 4
+	path do nora PNoG
+	look nora left
+	sleep 2
+	path do nora PNoD
+	look nora left
+	sleep 2
+	look nora down
+	sleep 5
+	look nora right
+	path do nora PNoE
+	path do nora PNoF
+	look nora right
+	sleep 2
+	path do nora PNoG
+	look nora up
+	sleep 2
+	look nora down
+	sleep 2
+	path do nora PNoA
+	look nora right
+	goto main

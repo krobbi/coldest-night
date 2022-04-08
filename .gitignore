@@ -6,6 +6,7 @@ Thumbs.db
 # IDE:
 .idea
 .vscode
+*.code-workspace
 *.sublime-project
 *.sublime-workspace
 *.suo
@@ -14,24 +15,14 @@ Thumbs.db
 .import/
 .mono/
 data_*/
-export.cfg
-export_presets.cfg
 *.TMP
 *.translation
 
 # Defaulted Imports:
+*.csv.import
 *.ogg.import
 *.png.import
 *.wav.import
-
-# Export Output:
-project.binary
-*.dtc
-*.gdc
-*.gde
-*.remap
-*.res
-*.scn
 
 # Ignore:
 ignore/

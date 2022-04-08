@@ -1,0 +1,36 @@
+# Patrol Route
+# Patrol route for 'archie' in test.area_bx.north
+
+label main
+	sleep 6
+	path do archie PArB
+	look archie right
+	sleep 2
+	path do archie PArC
+	look archie right
+	sleep 2
+	path do archie PArD
+	look archie right
+	sleep 2
+	path do archie PArE
+	look archie right
+	sleep 2
+	path do archie PArF
+	path do archie PArG
+	look archie left
+	sleep 1
+	path do archie PArH
+	look archie left
+	sleep 2
+	path do archie PArI
+	look archie left
+	sleep 2
+	path do archie PArJ
+	look archie left
+	sleep 2
+	path do archie PArK
+	look archie left
+	sleep 2
+	path do archie PArA
+	look archie up
+	goto main

@@ -1,0 +1,90 @@
+# Coldest Night Credits
+
+## Lead Developer
+Chris Roberts (Krobbizoid)
+
+# Coldnight Font
+Stylized font
+https://github.com/krobbi/coldest-night/blob/main/font/index.md
+
+## Lead Designer
+Chris Roberts (Krobbizoid)
+
+The Coldnight font is released under the Creative Commons CC0 1.0 Universal (CC0 1.0) Public Domain Dedication.
+https://creativecommons.org/publicdomain/zero/1.0
+
+The public domain dedication only applies to the Coldnight font and its source materials. It does not apply to any other components of Coldest Night.
+
+Do not falsely imply that the Coldnight font has been used with endorsement.
+
+# Tools and Resources Used
+The following credits are not necessarily affiliated with Coldest Night or its copyright holder(s):
+
+# Godot Engine
+Game engine
+https://godotengine.org
+
+## Project Founders
+Godot Engine Founders
+
+## Lead Developer
+Godot Engine Lead Developers
+
+## Project Manager
+Godot Engine Project Managers
+
+## Developers
+Godot Engine Developers
+
+# Pixel Font Converter
+Bitmap font to TTF converter
+https://yal.cc/r/20/pixelfont
+
+## Lead Developer
+Vadim (YellowAfterlife)
+
+# Krita
+Image editor
+https://krita.org
+
+## Publisher
+KDE
+
+# Aseprite
+Animated sprite editor & pixel art tool
+https://www.aseprite.org
+
+## Publisher
+Igara Studio
+
+# Faraway48
+Color palette
+https://lospec.com/palette-list/faraway48
+
+## Creator
+Igor Ferreira (Diemorth)
+
+# Atkinson Hyperlegible Font
+Legible font
+https://brailleinstitute.org/freefont
+
+## Publisher
+Braille Institute of America, Inc.
+
+# LMMS
+Digital audio workstation
+https://lmms.io
+
+# Audacity®
+Digital audio workstation
+https://audacityteam.org
+
+The name Audacity® is a registered trademark of Dominic Mazzoni.
+
+# Licensing
+For full license texts, please refer to the readme.md file distributed with the game, or to dist/readme.md in the source repository.
+
+Copyright © 2021-2022 Chris Roberts (Krobbizoid)
+All rights reserved.
+
+# Thanks for playing!

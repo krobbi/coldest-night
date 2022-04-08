@@ -1,0 +1,54 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://utils/nightscript/debug/ns_compiler_test/ns_compiler_test.gd" type="Script" id=1]
+
+[node name="NightScriptCompilerTest" type="Control"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 360 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="ParseTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 360 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="SourceEdit" type="TextEdit" parent="HBoxContainer"]
+margin_right = 640.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 0, 360 )
+size_flags_horizontal = 3
+highlight_current_line = true
+show_line_numbers = true
+draw_tabs = true
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="DisassemblyEdit" type="TextEdit" parent="HBoxContainer"]
+visible = false
+margin_left = 322.0
+margin_right = 640.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 0, 360 )
+size_flags_horizontal = 3
+readonly = true
+highlight_current_line = true
+show_line_numbers = true
+draw_tabs = true
+virtual_keyboard_enabled = false
+
+[connection signal="timeout" from="ParseTimer" to="." method="_on_parse_timer_timeout"]
+[connection signal="text_changed" from="HBoxContainer/SourceEdit" to="." method="_on_source_edit_text_changed"]

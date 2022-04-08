@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://gui/menu/menu_row.tscn" type="PackedScene" id=1]
+[ext_resource path="res://gui/menu/menu_rows/slider_menu_row.gd" type="Script" id=2]
+
+[node name="SliderMenuRow" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+_focus_path = NodePath("Content/Slider")
+
+[node name="Label" type="Label" parent="Content" index="0"]
+anchor_bottom = 1.0
+margin_right = 248.0
+rect_min_size = Vector2( 248, 32 )
+mouse_filter = 1
+size_flags_horizontal = 0
+size_flags_vertical = 1
+text = "Setting"
+valign = 1
+clip_text = true
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Slider" type="HSlider" parent="Content" index="1"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -244.0
+margin_right = -4.0
+rect_min_size = Vector2( 240, 32 )
+mouse_filter = 1
+size_flags_horizontal = 0
+size_flags_vertical = 1
+__meta__ = {
+"_edit_lock_": true
+}

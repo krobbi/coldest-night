@@ -1,0 +1,49 @@
+# Start Dialog
+# Runs when the initial level is entered.
+
+define pester_count test:pester_count
+
+label main
+	player freeze
+	pause
+	dialog show
+
+	name "Ryan"
+	say "Nice!{p=0.5} You've made it in without a repeat of last week."
+	say "Just don't jump around a corner and get yourself caught this time."
+
+	name "Koby"
+	say "There are guards everywhere.{p=0.5} But you should be able to see that on my radar."
+	say "If it's calibrated properly you'll see where they are,{p=0.25} and their field of vision."
+	say "It could be vital for avoiding the guards."
+
+	goto pester pester_count >= 1
+	goto end_dialog
+
+
+label pester
+	say "It's taken a long time to perfect this kind of tracking."
+	say "I really hope I can trust you with it."
+	goto end_dialog
+
+
+label end_dialog
+	name "Ryan"
+	say "You need to collect data dumps of some archival units and find a way out."
+	say "Try to keep your patience,{p=0.25} and come back in one piece."
+
+	name "Koby"
+	say "I've parked an escape pod in the canyon to the south.{p=0.5} After I've got the data and dealt with the security network,{p=0.25} I can show you my sick maneuvers!"
+
+	name "Ryan"
+	say "Good luck!"
+
+	dialog hide
+	unpause
+	player unfreeze
+	checkpoint
+	goto repeat
+
+
+label repeat
+	exit

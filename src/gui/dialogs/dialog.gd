@@ -1,97 +1,73 @@
 class_name Dialog
-extends Node
+extends Control
 
 # Dialog Display Base
-# A dialog display is a GUI element that handles input and display to and from
-# the dialog system. The base dialog display can be extended to provide
-# different dialog displays driven by the same underlying dialog system.
+# A dialog display is a GUI element that handles displaying dialog messages.
 
-signal opened;
-signal closed;
+signal message_finished # warning-ignore: UNUSED_SIGNAL
+signal option_pressed(index) # warning-ignore: UNUSED_SIGNAL
 
-onready var _interpreter: DialogInterpreter = $Interpreter;
+onready var tags: DialogTagParser = $DialogTagParser
 
-# Virtual _ready method. Runs when the dialog display finishes entering the
-# scene
-func _ready() -> void:
-	set_process_input(false);
+# Abstract _show_dialog method. Runs when the dialog display is shown:
+func _show_dialog() -> void:
+	show()
 
 
-# Virtual _input method. Runs when the dialog display receives an input event
-# while it's input process is enabled. Handles input for the dialog interpreter:
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_accept") or event.is_action_pressed("click"):
-		_interpreter.input_ok();
-	elif event.is_action_pressed("ui_up"):
-		_interpreter.input_up();
-	elif event.is_action_pressed("ui_down"):
-		_interpreter.input_down();
+# Abstract _hide_dialog method. Runs when the dialog display is hidden:
+func _hide_dialog() -> void:
+	hide()
 
 
-# Opens the dialog display from a dialog source file's key:
-func open(key: String) -> void:
-	_interpreter.open(key);
+# Abstract _clear_name method. Runs when the name is cleared from the dialog
+# display:
+func _clear_name() -> void:
+	pass
 
 
-# Abstract _show method. Runs when the dialog interpreter is opening. Shows the
-# dialog display. Must call notify_open in the dialog interpreter when finished:
-func _show() -> void:
-	pass;
+# Abstract _display_name method. Runs when a name is displayed to the dialog
+# display:
+func _display_name(_speaker_name: String) -> void:
+	pass
 
 
-# Abstract _display_message method. Runs when the dialog interpreter displays a
-# message. Must call notify_message_displayed in the dialog interpreter when
-# finished:
-func _display_message(_text: String) -> void:
-	pass;
+# Abstract _display_message method. Runs when the dialog message is displayed to
+# the dialog display:
+func _display_message(_message: String) -> void:
+	pass
 
 
-# Abstract _display_menu method. Runs when the dialog interpreter displays a
-# menu:
-func _display_menu(_texts: PoolStringArray) -> void:
-	pass;
+# Abstract _display_options method. Runs when options are displayed to the
+# dialog display:
+func _display_options(_texts: PoolStringArray) -> void:
+	pass
 
 
-# Abstract _hover_option method. Runs when the dialog interpreter hovers over a
-# menu option:
-func _hover_option(_index: int) -> void:
-	pass;
+# Shows the dialog display:
+func show_dialog() -> void:
+	_show_dialog()
 
 
-# Abstract _select_option method. Runs when the dialog interpreter selects a
-# menu option:
-func _select_option(_index: int) -> void:
-	pass;
+# Hides the dialog display:
+func hide_dialog() -> void:
+	_hide_dialog()
 
 
-# Abstract _hide_menu method. Runs when the dialog interpreter hides the menu:
-func _hide_menu() -> void:
-	pass # Replace with function body.
+# Clears the name from the dialog display:
+func clear_name() -> void:
+	_clear_name()
 
 
-# Abstract _finish_message method. Runs when the dialog interpreter finishes the
-# current message. Must call notify_message_displayed in the dialog interpreter
-# when finished:
-func _finish_message() -> void:
-	pass;
+# Displays a name to the dialog display:
+func display_name(speaker_name: String) -> void:
+	_display_name(speaker_name)
 
 
-# Abstract _hide method. Runs when the dialog interpreter is closing. Hides the
-# dialog display. Must call notify_closed in the dialog interpreter when
-# finsihed:
-func _hide() -> void:
-	pass;
+# Displays a dialog message to the dialog display:
+func display_message(message: String) -> void:
+	_display_message(tags.parse(tr(message)))
 
 
-# Signal callback for dialog_opened in the dialog interpreter. Enables the
-# dialog display's input process and propagates an 'opened' signal:
-func _on_interpreter_dialog_opened() -> void:
-	set_process_input(true);
-	emit_signal("opened");
-
-
-# Signal callback for dialog_closed in the dialog interpreter. Disables the
-# dialog display's input process and propagates a 'closed' signal:
-func _on_interpreter_dialog_closed() -> void:
-	set_process_input(false);
-	emit_signal("closed");
+# Displays options to the dialog display:
+func display_options(texts: PoolStringArray) -> void:
+	_display_options(texts)

@@ -1,0 +1,33 @@
+# Save Terminal
+# Common cutscene for save terminals.
+
+label main
+	player freeze
+	dialog show
+	say "DIALOG.TEST.SAVE_TERMINAL.MAIN"
+	goto menu
+
+
+label repeat
+	player freeze
+	dialog show
+	say "DIALOG.TEST.SAVE_TERMINAL.REPEAT"
+	goto menu
+
+
+label menu
+	menu option "DIALOG.TEST.SAVE_TERMINAL.OPTION.SAVE" goto save
+	menu option "DIALOG.TEST.SAVE_TERMINAL.OPTION.NO_SAVE" goto exit
+	menu show
+
+
+label save
+	save
+	say "DIALOG.TEST.SAVE_TERMINAL.SAVED"
+	goto exit
+
+
+label exit
+	dialog hide
+	player unfreeze
+	exit
