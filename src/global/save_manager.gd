@@ -6,72 +6,20 @@ extends Object
 # manipulating, and saving save data. It can be accessed from any script by
 # using 'Global.save'.
 
-class CompressionResult extends Object:
-	
-	# Compression Result
-	# A compression result is a helper structure used by the save manager that
-	# handles finding the most effective compression method for a byte buffer.
-	
-	enum Mode {
-		FASTLZ = 0x00,
-		DEFLATE = 0x01,
-		ZSTD = 0x02,
-		GZIP = 0x03,
-		NONE = 0xff,
-	}
-	
-	var mode: int
-	var buffer_size: int
-	var compressed_size: int
-	var compressed_buffer: PoolByteArray
-	
-	# Constructor. Builds the compression result from a compression mode and
-	# byte buffer:
-	func _init(mode_val: int, buffer: PoolByteArray) -> void:
-		mode = mode_val
-		buffer_size = buffer.size()
-		
-		match mode:
-			Mode.FASTLZ, Mode.DEFLATE, Mode.ZSTD, Mode.GZIP:
-				compressed_buffer = buffer.compress(mode)
-				compressed_size = compressed_buffer.size()
-			_:
-				mode = Mode.NONE
-				compressed_size = buffer_size
-				compressed_buffer = buffer
-	
-	
-	# Gets a weight value from the compression result for comparaing the
-	# effectiveness of the compression result:
-	func get_weight() -> int:
-		var overhead: int = 0 if mode == Mode.NONE else 4
-		return overhead + compressed_size
-	
-	
-	# Creates a new optimal compression result from a byte buffer:
-	static func create(buffer: PoolByteArray, uncompressed: bool) -> CompressionResult:
-		if uncompressed:
-			return CompressionResult.new(Mode.NONE, buffer)
-		
-		var lightest: CompressionResult = CompressionResult.new(Mode.FASTLZ, buffer)
-		
-		for test_mode in [Mode.DEFLATE, Mode.ZSTD, Mode.GZIP, Mode.NONE]:
-			var test: CompressionResult = CompressionResult.new(test_mode, buffer)
-			
-			if test.get_weight() < lightest.get_weight():
-				lightest.free()
-				lightest = test
-			else:
-				test.free()
-		
-		return lightest
-
-
 enum PayloadFormat {
 	MERCURY = 0x00,
 }
 
 enum ChecksumMode {
+	DJB2_32 = 0x00,
+	NONE = 0xff,
+}
+
+enum CompressionMode {
+	FASTLZ = File.COMPRESSION_FASTLZ,
+	DEFLATE = File.COMPRESSION_DEFLATE,
+	ZSTD = File.COMPRESSION_ZSTD,
+	GZIP = File.COMPRESSION_GZIP,
 	NONE = 0xff,
 }
 
@@ -81,7 +29,7 @@ enum EncryptionMode {
 
 const SLOT_COUNT: int = 1
 const SAVES_DIR: String = "user://saves/"
-const FILE_MAX_SIZE: int = 65536
+const FILE_MAX_SIZE: int = 1048576 # 1MiB
 const FILE_MAGIC: int = 0x44_53_4e_43 # 'CNSD' in little-endian.
 const PAYLOAD_FORMAT: int = PayloadFormat.MERCURY
 
@@ -298,6 +246,23 @@ func _save_file(save_data: SaveData, payload_format: int, slot_index: int) -> vo
 	file.close()
 
 
+# Generates a DJB2-32 (Godot Engine's standard hash function) checksum from a
+# byte buffer:
+func _checksum_djb2_32(buffer: PoolByteArray) -> int:
+	return hash(buffer)
+
+
+# Validates a checksum from a checksum mode, checksum, and byte buffer:
+func _validate_checksum(checksum_mode: int, checksum: int, buffer: PoolByteArray) -> bool:
+	match checksum_mode:
+		ChecksumMode.DJB2_32:
+			return checksum == _checksum_djb2_32(buffer)
+		ChecksumMode.NONE:
+			return true
+		_:
+			return false # Invalid checksum mode.
+
+
 # Deserializes save data from a byte buffer and returns whether the save data
 # was deserialized successfully:
 func _deserialize_save_data(buffer: PoolByteArray, save_data: SaveData) -> bool:
@@ -313,33 +278,24 @@ func _deserialize_save_data(buffer: PoolByteArray, save_data: SaveData) -> bool:
 	
 	stream.jump(stream.get_u16()) # Skip index data.
 	var payload_format: int = stream.get_u8()
-	
-	if stream.get_u8() != ChecksumMode.NONE:
-		return false # Invalid checksum mode.
-	
+	var checksum_mode: int = stream.get_u8()
+	var checksum: int = 0 if checksum_mode == ChecksumMode.NONE else stream.get_u32()
 	var compression_mode: int = stream.get_u8()
-	var buffer_size: int
-	
-	if(
-			compression_mode == CompressionResult.Mode.FASTLZ
-			or compression_mode == CompressionResult.Mode.DEFLATE
-			or compression_mode == CompressionResult.Mode.ZSTD
-			or compression_mode == CompressionResult.Mode.GZIP
-	):
-		if not stream.can_read_data(9):
-			return false # Too short to contain buffer size.
-		
-		buffer_size = stream.get_u32()
-	elif compression_mode != CompressionResult.Mode.NONE:
-		return false # Invalid compression mode.
+	var buffer_size: int = 0 if compression_mode == CompressionMode.NONE else stream.get_u32()
 	
 	if stream.get_u8() != EncryptionMode.NONE or not stream.can_read_data_u32():
 		return false # Invalid encryption mode or too short to contain payload.
 	
 	var payload_buffer: PoolByteArray = stream.get_data_u32()
 	
-	if compression_mode != CompressionResult.Mode.NONE:
+	if compression_mode != CompressionMode.NONE:
+		if compression_mode < CompressionMode.FASTLZ or compression_mode > CompressionMode.GZIP:
+			return false # Invalid compression mode.
+		
 		payload_buffer = payload_buffer.decompress(buffer_size, compression_mode)
+	
+	if not _validate_checksum(checksum_mode, checksum, payload_buffer):
+		return false # Incorrect checksum.
 	
 	return _deserialize_save_data_payload(payload_buffer, payload_format, save_data)
 
@@ -361,53 +317,24 @@ func _deserialize_save_data_payload(
 # returns whether the save data's payload data was deserialized successfully:
 func _deserialize_save_data_payload_mercury(buffer: PoolByteArray, save_data: SaveData) -> bool:
 	var stream: SerialReadStream = SerialReadStream.new(buffer)
-	
-	if not stream.can_read_data(11):
-		return false # Too short to contain statistics save data.
-	
 	save_data.state = stream.get_u8()
 	save_data.stats.time_fraction = stream.get_f32()
 	save_data.stats.time_seconds = stream.get_u8()
 	save_data.stats.time_minutes = stream.get_u8()
 	save_data.stats.time_hours = stream.get_u16()
 	save_data.stats.alert_count = stream.get_u16()
-	
-	if not stream.can_read_data_u8(1):
-		return false # Too short to contain level and player count.
-	
 	save_data.level = stream.get_utf8_u8()
 	var actor_keys: PoolStringArray = PoolStringArray()
 	
 	for _i in range(stream.get_u8()):
-		if not stream.can_read_data_u8():
-			return false # Too short to contain actor key.
-		
 		var actor_key: String = stream.get_utf8_u8()
 		actor_keys.push_back(actor_key)
-		
-		if not stream.can_read_data_u8():
-			return false # Too short to contain player key.
-		
 		var player_data: PlayerSaveData = PlayerSaveData.new(actor_key, stream.get_utf8_u8())
-		
-		if not stream.can_read_data_u8():
-			player_data.free()
-			return false # Too short to contain level.
-		
 		player_data.level = stream.get_utf8_u8()
-		
-		if not stream.can_read_data_u8(12):
-			player_data.free()
-			return false # Too short to contain point, offset, and angle.
-		
 		player_data.point = stream.get_utf8_u8()
 		player_data.offset = stream.get_vec2_f32()
 		player_data.angle = stream.get_f32()
 		save_data.players[actor_key] = player_data
-	
-	# Too short to contain team, player, and flag namespace count:
-	if not stream.can_read_data_u8(3):
-		return false
 	
 	for _i in range(stream.get_u8()):
 		var actor_index: int = stream.get_u8()
@@ -425,20 +352,13 @@ func _deserialize_save_data_payload_mercury(buffer: PoolByteArray, save_data: Sa
 	save_data.player = save_data.team[player_index]
 	
 	for _i in range(stream.get_u16()):
-		# Too short to contain flag namespace and flag key count:
-		if not stream.can_read_data_u8(2):
-			return false
-		
 		var flag_namespace: String = stream.get_utf8_u8()
 		save_data.flags[flag_namespace] = {}
 		
 		for _j in range(stream.get_u16()):
-			if not stream.can_read_data_u8(2):
-				return false # Too short to contain flag key and flag value.
-			
 			save_data.flags[flag_namespace][stream.get_utf8_u8()] = stream.get_s16()
 	
-	return true
+	return not stream.get_error()
 
 
 # Serializes save data to a byte buffer from a payload format:
@@ -447,19 +367,23 @@ func _serialize_save_data(save_data: SaveData, payload_format: int) -> PoolByteA
 	stream.put_u32(FILE_MAGIC)
 	stream.put_data_u16(_serialize_save_data_index(save_data))
 	stream.put_u8(payload_format)
-	stream.put_u8(ChecksumMode.NONE)
-	var payload: CompressionResult = CompressionResult.create(
-			_serialize_save_data_payload(save_data, payload_format),
-			not _config.get_bool("advanced.compress_saves")
-	)
-	stream.put_u8(payload.mode)
+	var payload_buffer: PoolByteArray = _serialize_save_data_payload(save_data, payload_format)
 	
-	if payload.mode != CompressionResult.Mode.NONE:
-		stream.put_u32(payload.buffer_size)
+	if _config.get_bool("advanced.checksum_saves"):
+		stream.put_u8(ChecksumMode.DJB2_32)
+		stream.put_u32(_checksum_djb2_32(payload_buffer))
+	else:
+		stream.put_u8(ChecksumMode.NONE)
+	
+	if _config.get_bool("advanced.compress_saves"):
+		stream.put_u8(CompressionMode.DEFLATE)
+		stream.put_u32(payload_buffer.size())
+		payload_buffer = payload_buffer.compress(CompressionMode.DEFLATE)
+	else:
+		stream.put_u8(CompressionMode.NONE)
 	
 	stream.put_u8(EncryptionMode.NONE)
-	stream.put_data_u32(payload.compressed_buffer)
-	payload.free()
+	stream.put_data_u32(payload_buffer)
 	return stream.get_buffer()
 
 

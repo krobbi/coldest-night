@@ -106,6 +106,7 @@ var _data: Dictionary = {
 	"display.window_scale": 0,
 	"language.locale": "auto",
 	"advanced.show_advanced": false,
+	"advanced.checksum_saves": true,
 	"advanced.compress_saves": true,
 }
 

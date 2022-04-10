@@ -10,13 +10,6 @@ https://github.com/krobbi/coldest-night/blob/main/font/index.md
 ## Lead Designer
 Chris Roberts (Krobbizoid)
 
-The Coldnight font is released under the Creative Commons CC0 1.0 Universal (CC0 1.0) Public Domain Dedication.
-https://creativecommons.org/publicdomain/zero/1.0
-
-The public domain dedication only applies to the Coldnight font and its source materials. It does not apply to any other components of Coldest Night.
-
-Do not falsely imply that the Coldnight font has been used with endorsement.
-
 # Tools and Resources Used
 The following credits are not necessarily affiliated with Coldest Night or its copyright holder(s):
 
