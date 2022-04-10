@@ -76,9 +76,19 @@ func _eval_appearance_condition(condition: int) -> bool:
 		MenuRow.AppearanceCondition.NEVER:
 			return false
 		MenuRow.AppearanceCondition.DEBUG:
-			return OS.is_debug_build()
+			# DEBUG:BEGIN
+			if OS.is_debug_build():
+				return true
+			# DEBUG:END
+			
+			return false
 		MenuRow.AppearanceCondition.ADVANCED:
-			return OS.is_debug_build() or Global.config.get_bool("advanced.show_advanced")
+			# DEBUG:BEGIN
+			if OS.is_debug_build():
+				return true
+			# DEBUG:END
+			
+			return Global.config.get_bool("advanced.show_advanced")
 		MenuRow.AppearanceCondition.MULTIPLE_WINDOW_SCALES:
 			return Global.display.get_window_scale_max() > 1
 		MenuRow.AppearanceCondition.MULTIPLE_LOCALES:

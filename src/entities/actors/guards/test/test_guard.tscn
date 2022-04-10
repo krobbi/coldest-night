@@ -28,7 +28,7 @@ script = ExtResource( 7 )
 [node name="Cheating" type="Node" parent="StateMachine" index="5"]
 script = ExtResource( 9 )
 
-[node name="Sprite" parent="." index="4"]
+[node name="Sprite" parent="." index="5"]
 texture = ExtResource( 2 )
 
 [node name="VisionArea" parent="SmoothPivot" index="2" instance=ExtResource( 4 )]
@@ -54,3 +54,4 @@ position = Vector2( 352, 0 )
 
 [connection signal="player_lost" from="SmoothPivot/VisionArea" to="." method="_on_vision_area_player_lost"]
 [connection signal="player_seen" from="SmoothPivot/VisionArea" to="." method="_on_vision_area_player_seen"]
+[connection signal="suspicion_seen" from="SmoothPivot/VisionArea" to="." method="_on_vision_area_suspicion_seen"]

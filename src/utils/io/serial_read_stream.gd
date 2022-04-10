@@ -5,14 +5,28 @@ extends Reference
 # A serial read stream is an I/O utility that handles reading data from a byte
 # buffer.
 
+enum Error {
+	EOS = 0b001,
+	FLOAT_INF = 0b010,
+	FLOAT_NAN = 0b100,
+}
+
 var _buffer: StreamPeerBuffer = StreamPeerBuffer.new()
+var _error_flags: int = 0
 
 # Constructor. Passes the byte buffer to the serial read stream:
 func _init(buffer: PoolByteArray) -> void:
 	_buffer.big_endian = false
 	_buffer.seek(0)
+	_buffer.resize(buffer.size() + 1)
 	_buffer.put_data(buffer) # warning-ignore: RETURN_VALUE_DISCARDED
+	_buffer.put_u8(0x00) # End-of-stream padding.
 	_buffer.seek(0)
+
+
+# Gets an 8-bit boolean from the serial read stream:
+func get_b8() -> bool:
+	return bool(get_u8())
 
 
 # Gets an 8-bit unsigned integer from the serial read stream:
@@ -37,7 +51,14 @@ func get_u32() -> int:
 
 # Gets a 32-bit floating point number from the serial read stream:
 func get_f32() -> float:
-	return _buffer.get_float()
+	var value: float = _buffer.get_float()
+	
+	if is_inf(value):
+		_error_flags |= Error.FLOAT_INF
+	elif is_nan(value):
+		_error_flags |= Error.FLOAT_NAN
+	
+	return value
 
 
 # Gets a 2D vector with 32-bit floating point number components from the serial
@@ -83,10 +104,18 @@ func get_data_u32() -> PoolByteArray:
 	return get_data(get_u32())
 
 
+# Gets the serial read stream's error flags:
+func get_error() -> int:
+	if _buffer.get_position() >= _buffer.get_size():
+		_error_flags |= Error.EOS
+	
+	return _error_flags
+
+
 # Returns whether a chunk of data with a known byte length can be read from the
 # serial read stream:
 func can_read_data(bytes: int) -> bool:
-	return _buffer.get_position() + bytes <= _buffer.get_size()
+	return _buffer.get_position() + bytes < _buffer.get_size()
 
 
 # Returns whether a chunk of data with an 8-bit unsigned integer byte length

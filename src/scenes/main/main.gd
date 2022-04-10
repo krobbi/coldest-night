@@ -9,9 +9,11 @@ extends Control
 func _ready() -> void:
 	_initialize_game()
 	
+	# DEBUG:BEGIN
 	if OS.is_debug_build():
 		_start_game()
 		return
+	# DEBUG:END
 	
 	var animation_player: AnimationPlayer = $AnimationPlayer
 	var slide_rect: TextureRect = $SlideRect

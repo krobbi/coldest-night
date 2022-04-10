@@ -10,4 +10,4 @@ export(String) var program: String
 # Virtual _interact method. Runs when the run NightScript interactable is
 # interacted with by the current player. Runs a NightScript program:
 func _interact() -> void:
-	Global.events.emit_signal("run_ns_request", program)
+	Global.events.emit_signal("nightscript_run_program_request", program)

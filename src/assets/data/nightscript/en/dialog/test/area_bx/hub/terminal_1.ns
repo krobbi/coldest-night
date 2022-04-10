@@ -1,8 +1,6 @@
 # Save Terminal Dialog
 # Dialog line for cutscene.test.area_bx.hub.enter.
 
-meta cache false
-
 name "Koby"
 say "This seems to be some kind of hub area,{p=0.25} but things are much quieter than I thought."
 say "Anyway,{p=0.25} there should be a save terminal here,{p=0.25} next to the elevator."

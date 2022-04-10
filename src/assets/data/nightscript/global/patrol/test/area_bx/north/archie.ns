@@ -1,7 +1,7 @@
 # Patrol Route
 # Patrol route for 'archie' in test.area_bx.north
 
-label main
+while true
 	sleep 6
 	path do archie PArB
 	look archie right
@@ -33,4 +33,4 @@ label main
 	sleep 2
 	path do archie PArA
 	look archie up
-	goto main
+end

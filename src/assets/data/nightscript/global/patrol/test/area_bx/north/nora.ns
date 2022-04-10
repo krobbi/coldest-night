@@ -1,7 +1,7 @@
 # Patrol Route
 # Patrol route for 'nora' in test.area_bx.north
 
-label main
+while true
 	sleep 5
 	path do nora PNoB
 	look nora right
@@ -33,4 +33,4 @@ label main
 	sleep 2
 	path do nora PNoA
 	look nora right
-	goto main
+end

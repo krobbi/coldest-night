@@ -7,7 +7,7 @@ extends MenuRow
 signal pressed
 signal key_pressed(button_key)
 
-enum ActionType {CUSTOM, SAVE_SETTINGS, RESET_CONTROLS}
+enum ActionType {CUSTOM, SAVE_SETTINGS, RESET_CONTROLS, FLUSH_NIGHTSCRIPT_CACHE}
 enum SoundType {NONE, OK, CANCEL}
 
 export(String) var _button_key: String
@@ -29,6 +29,8 @@ func _on_button_pressed() -> void:
 			Global.config.save_file()
 		ActionType.RESET_CONTROLS:
 			Global.controls.reset_mappings()
+		ActionType.FLUSH_NIGHTSCRIPT_CACHE:
+			Global.events.emit_signal("nightscript_flush_cache_request")
 	
 	match _sound_type:
 		SoundType.OK:

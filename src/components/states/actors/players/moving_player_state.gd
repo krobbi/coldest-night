@@ -28,5 +28,7 @@ func _state_process(delta: float) -> void:
 		player.interact()
 	elif Input.is_action_just_pressed("change_player"):
 		player.request_change_player()
+	elif Input.is_action_just_pressed("pause"):
+		Global.events.emit_signal("pause_menu_open_menu_request")
 	
 	Global.events.emit_signal("accumulate_time_request", delta)

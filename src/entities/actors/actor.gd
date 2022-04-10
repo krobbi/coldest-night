@@ -7,26 +7,48 @@ extends KinematicBody2D
 
 signal radar_display_changed(radar_display)
 
+enum Facing {RIGHT, DOWN, LEFT, UP}
 enum RadarDisplay {NONE, PLAYER, IDLE, GUARD}
 
 export(String) var actor_key: String
+export(float) var animation_threshold: float = 40.0
 export(RadarDisplay) var radar_display: int = RadarDisplay.GUARD setget set_radar_display
 
+var facing: int = Facing.DOWN
 var velocity: Vector2 = Vector2.ZERO
 var nav_path: PoolVector2Array = PoolVector2Array()
 
 var _is_pathing: bool = false
 
 onready var state_machine: StateMachine = $StateMachine
+onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var repulsive_area: RepulsiveArea = $RepulsiveArea
 onready var smooth_pivot: SmoothPivot = $SmoothPivot
 onready var camera_anchor: Position2D = smooth_pivot.get_node("CameraAnchor")
 
 # Virtual _physics_process method. Runs on every physics frame. Processes the
-# actor's state machine and moves the actor:
+# actor's state machine, moves the actor, and updates the actor's animation:
 func _physics_process(delta: float) -> void:
 	state_machine.process_state(delta)
 	velocity = move_and_slide(velocity)
+	
+	var facing_vector: Vector2 = smooth_pivot.get_vector()
+	
+	if abs(facing_vector.x) >= abs(facing_vector.y):
+		if facing_vector.x >= 0.0:
+			facing = Facing.RIGHT
+		else:
+			facing = Facing.LEFT
+	else:
+		if facing_vector.y >= 0.0:
+			facing = Facing.DOWN
+		else:
+			facing = Facing.UP
+	
+	if get_speed() >= animation_threshold:
+		animation_player.play("run_%s" % get_facing_key())
+	else:
+		animation_player.play("idle_%s" % get_facing_key())
 
 
 # Sets the actor's radar display:
@@ -38,6 +60,24 @@ func set_radar_display(value: int) -> void:
 		RadarDisplay.NONE, RadarDisplay.PLAYER, RadarDisplay.IDLE, RadarDisplay.GUARD:
 			radar_display = value
 			emit_signal("radar_display_changed", radar_display)
+
+
+# Gets the actor's facing key:
+func get_facing_key() -> String:
+	match facing:
+		Facing.DOWN:
+			return "down"
+		Facing.LEFT:
+			return "left"
+		Facing.UP:
+			return "up"
+		Facing.RIGHT, _:
+			return "right"
+
+
+# Gets the actor's speed:
+func get_speed() -> float:
+	return velocity.length()
 
 
 # Gets whether the actor is pathfinding:

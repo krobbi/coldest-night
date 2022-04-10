@@ -52,6 +52,12 @@ func set_actor(value: Actor) -> void:
 	show()
 
 
+# Gets whether the radar actor renderer is available in the radar actor renderer
+# pool:
+func is_available() -> bool:
+	return not actor
+
+
 # Sets the radar actor renderer's display:
 func set_display(display: int) -> void:
 	match display:
@@ -68,9 +74,3 @@ func set_display(display: int) -> void:
 # Clears the radar actor renderer's actor:
 func clear_actor() -> void:
 	set_actor(null)
-
-
-# Returns whether the radar actor renderer is available in the radar actor
-# renderer pool:
-func is_available() -> bool:
-	return not actor

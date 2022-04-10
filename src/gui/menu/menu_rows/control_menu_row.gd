@@ -15,7 +15,7 @@ onready var _input_timer: Timer = $InputTimer
 func _ready() -> void:
 	$Content/Label.text = "CONTROL.ACTION.%s" % _action.to_upper()
 	set_awaiting_input(false)
-	Global.config.connect_value("controls.%s_mapping" % _action, self, "_on_config_value_changed")
+	Global.config.connect_string("controls.%s_mapping" % _action, self, "_on_config_value_changed")
 
 
 # Virtual _input method. Runs when the control menu row receives an input event.
@@ -66,7 +66,7 @@ func set_awaiting_input(value: bool) -> void:
 
 # Callback for the connected configuration value. Sets the control menu row's
 # state:
-func _on_config_value_changed(_value) -> void:
+func _on_config_value_changed(_value: String) -> void:
 	set_awaiting_input(false)
 
 

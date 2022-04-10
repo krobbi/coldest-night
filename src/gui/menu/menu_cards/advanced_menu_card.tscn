@@ -8,18 +8,44 @@
 _heading_key = "advanced"
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 68.0
+margin_bottom = 176.0
 
-[node name="CompressSavesCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
+[node name="ChecksumSavesCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_right = 512.0
-_config_key = "advanced.compress_saves"
+appearance_condition = 3
+_config_key = "advanced.checksum_saves"
 
-[node name="BackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 3 )]
+[node name="CompressSavesCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
 margin_bottom = 68.0
+appearance_condition = 3
+_config_key = "advanced.compress_saves"
+
+[node name="OptimizeNightScriptCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
+anchor_right = 0.0
+margin_top = 72.0
+margin_right = 512.0
+margin_bottom = 104.0
+appearance_condition = 2
+_config_key = "debug.optimize_nightscript"
+
+[node name="FlushNightScriptCacheButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 3 )]
+anchor_right = 0.0
+margin_top = 108.0
+margin_right = 512.0
+margin_bottom = 140.0
+appearance_condition = 2
+_text = "BUTTON.DEBUG.FLUSH_NIGHTSCRIPT_CACHE"
+_action_type = 3
+
+[node name="BackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 3 )]
+anchor_right = 0.0
+margin_top = 144.0
+margin_right = 512.0
+margin_bottom = 176.0
 _text = "BUTTON.BACK"
 _sound_type = 2
 

@@ -12,22 +12,17 @@ label repeat
 	player freeze
 	dialog show
 	say "DIALOG.TEST.SAVE_TERMINAL.REPEAT"
-	goto menu
 
 
 label menu
-	menu option "DIALOG.TEST.SAVE_TERMINAL.OPTION.SAVE" goto save
-	menu option "DIALOG.TEST.SAVE_TERMINAL.OPTION.NO_SAVE" goto exit
-	menu show
+	menu
+		option "DIALOG.TEST.SAVE_TERMINAL.OPTION.SAVE" do
+			save
+			say "DIALOG.TEST.SAVE_TERMINAL.SAVED"
+		end
 
+		option "DIALOG.TEST.SAVE_TERMINAL.OPTION.NO_SAVE" none
+	end
 
-label save
-	save
-	say "DIALOG.TEST.SAVE_TERMINAL.SAVED"
-	goto exit
-
-
-label exit
 	dialog hide
 	player unfreeze
-	exit

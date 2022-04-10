@@ -1,8 +1,6 @@
 # Save Terminal Dialog
 # Dialog line for cutscene.test.area_bx.hub.enter.
 
-meta cache false
-
 name "Koby"
 say "That's all the archival units in the storage wing."
 say "I've put together a key from the data,{p=0.25} which should have opened the east wing."

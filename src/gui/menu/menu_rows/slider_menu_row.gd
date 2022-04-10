@@ -2,7 +2,7 @@ class_name SliderMenuRow
 extends MenuRow
 
 # Slider Menu Row
-# A slider menu row is a menu row that contains a slider control for a
+# A slider menu row is a menu row that contains a slider control for a float
 # configuration value.
 
 export(String) var _config_key: String
@@ -20,7 +20,7 @@ func _ready() -> void:
 	_slider.max_value = _max_value
 	_slider.step = _step
 	_set_value_no_signal(Global.config.get_float(_config_key, _min_value))
-	Global.config.connect_value(_config_key, self, "_set_value_no_signal", TYPE_REAL)
+	Global.config.connect_float(_config_key, self, "_set_value_no_signal")
 
 
 # Virtual _exit_tree method. Runs when the slider menu row exits the scene tree.
@@ -47,5 +47,5 @@ func _set_value_no_signal(value: float) -> void:
 # Signal callback for value_changed on the slider. Runs when the slider's value
 # is changed. Sets the connected configuration value:
 func _on_slider_value_changed(value: float) -> void:
-	Global.config.set_value(_config_key, value)
+	Global.config.set_float(_config_key, value)
 	Global.audio.play_clip("sfx.menu_move")

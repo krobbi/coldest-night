@@ -8,68 +8,61 @@ define seen_north_complete test:hub_seen_north_complete
 define seen_west_almost test:hub_seen_west_almost
 define seen_west_complete test:hub_seen_west_complete
 
-goto terminal seen_terminal == false
-goto north_almost count == 9
-goto north_complete count == 10
-goto west_almost count == 16
-goto west_complete count == 17
-goto exit
-
-label terminal
+if seen_terminal == false
 	set seen_terminal true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.terminal_1
+	call dialog.test.area_bx.hub.terminal_1
 	dialog hide
 	path do player Terminal
 	look player up
 	sleep 1
 	dialog show
-	run dialog.test.area_bx.hub.terminal_2
-	goto exit_dialog
+	call dialog.test.area_bx.hub.terminal_2
+	dialog hide
+	player unfreeze
+elif count == 9
+	if seen_north_almost
+		exit
+	end
 
-
-label north_almost
-	goto exit seen_north_almost
 	set seen_north_almost true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.north_almost
-	goto exit_dialog
+	call dialog.test.area_bx.hub.north_almost
+	dialog hide
+	player unfreeze
+elif count == 10
+	if seen_north_complete
+		exit
+	end
 
-
-label north_complete
-	goto exit seen_north_complete
 	set seen_north_complete true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.north_complete
-	goto exit_dialog
+	call dialog.test.area_bx.hub.north_complete
+	dialog hide
+	player unfreeze
+elif count == 16
+	if seen_west_almost
+		exit
+	end
 
-
-label west_almost
-	goto exit seen_west_almost
 	set seen_west_almost true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.west_almost
-	goto exit_dialog
+	call dialog.test.area_bx.hub.west_almost
+	dialog hide
+	player unfreeze
+elif count == 17
+	if seen_west_complete
+		exit
+	end
 
-
-label west_complete
-	goto exit seen_west_complete
 	set seen_west_complete true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.west_complete
-	goto exit_dialog
-
-
-label exit_dialog
+	call dialog.test.area_bx.hub.west_complete
 	dialog hide
 	player unfreeze
-	goto exit
-
-
-label exit
-	exit
+end

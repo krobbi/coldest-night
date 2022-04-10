@@ -10,6 +10,8 @@ export(String) var level_name: String = "LEVEL.UNKNOWN"
 export(String) var music: String
 export(bool) var is_safe: bool = true
 export(bool) var has_radar: bool = true
+export(PoolStringArray) var cached_ns_programs: PoolStringArray
+export(PoolStringArray) var autorun_ns_programs: PoolStringArray
 
 var _points: Dictionary = {}
 

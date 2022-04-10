@@ -6,8 +6,6 @@ extends Control
 
 var _save_data: SaveData = Global.save.get_working_data()
 
-onready var _nightscript: NSInterpreter = $NightScriptInterpreter
-
 # Virtual _ready method. Runs when the loader scene is entered. Ensures the game
 # is not paused, starts the new game dialog on a new game, and changes to the
 # overworld scene:
@@ -17,7 +15,10 @@ func _ready() -> void:
 	match _save_data.state:
 		SaveData.State.NEW_GAME:
 			Global.audio.play_music("briefing")
-			_nightscript.run_program("dialog.test.new_game")
+			Global.events.safe_connect(
+					"nightscript_thread_finished", self, "_on_nightscript_thread_finished"
+			)
+			Global.events.emit_signal("nightscript_run_program_request", "dialog.test.new_game")
 		SaveData.State.COMPLETED:
 			Global.change_scene("results")
 		SaveData.State.NORMAL, _:
@@ -25,8 +26,11 @@ func _ready() -> void:
 			Global.change_scene("overworld", true, false)
 
 
-# Signal callback for program_finished on NightScript. Runs when the load dialog
+# Signal callback for a finished NightScript thread. Runs when the load dialog
 # finishes. Changes to the overworld scene:
-func _on_nightscript_program_finished() -> void:
+func _on_nightscript_thread_finished() -> void:
+	Global.events.safe_disconnect(
+			"nightscript_thread_finished", self, "_on_nightscript_thread_finished"
+	)
 	_save_data.state = SaveData.State.NORMAL
 	Global.change_scene("overworld", true, false)

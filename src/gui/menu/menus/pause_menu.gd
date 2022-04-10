@@ -6,41 +6,25 @@ extends ColorRect
 
 onready var _menu_stack: MenuStack = $MenuStack
 
-var _is_enabled: bool = true
 var _is_open: bool = false
 
 # Virtual _ready method. Runs when the pause menu finishes entering the scene
 # tree. Connects the pause menu to the event bus:
 func _ready() -> void:
-	Global.events.safe_connect("player_freeze_request", self, "disable")
-	Global.events.safe_connect("player_thaw_request", self, "enable")
+	Global.events.safe_connect("pause_menu_open_menu_request", self, "open_menu")
 
 
 # Virtual _input method. Runs when the pause menu receives an input event.
-# Handles controls for toggling the pause menu:
+# Handles controls for closing the pause menu:
 func _input(event: InputEvent) -> void:
-	if _is_enabled and event.is_action_pressed("pause"):
-		if _is_open:
-			close_menu()
-		else:
-			open_menu()
+	if _is_open and event.is_action_pressed("pause"):
+		close_menu()
 
 
 # Virtual _exit_tree method. Runs when the pause menu exits the scene tree.
 # Disconnects the pause menu from the event bus:
 func _exit_tree() -> void:
-	Global.events.safe_disconnect("player_freeze_request", self, "disable")
-	Global.events.safe_disconnect("player_thaw_request", self, "enable")
-
-
-# Enables the pause menu:
-func enable() -> void:
-	_is_enabled = true
-
-
-# Disables the pause menu:
-func disable() -> void:
-	_is_enabled = false
+	Global.events.safe_disconnect("pause_menu_open_menu_request", self, "open_menu")
 
 
 # Opens the pause menu:
@@ -61,10 +45,10 @@ func close_menu() -> void:
 		return
 	
 	_is_open = false
-	Global.tree.paused = false
 	hide()
 	_menu_stack.clear()
 	Global.audio.play_clip("sfx.menu_cancel")
+	Global.tree.set_deferred("paused", false)
 
 
 # Signal callback for key_button_pressed on the menu stack. Runs when a key

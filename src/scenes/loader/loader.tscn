@@ -2,7 +2,7 @@
 
 [ext_resource path="res://scenes/loader/loader.gd" type="Script" id=1]
 [ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=2]
-[ext_resource path="res://utils/nightscript/ns_interpreter.tscn" type="PackedScene" id=3]
+[ext_resource path="res://utils/nightscript/nightscript.tscn" type="PackedScene" id=3]
 
 [node name="Loader" type="Control"]
 pause_mode = 2
@@ -15,9 +15,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="NightScriptInterpreter" parent="." instance=ExtResource( 3 )]
-_dialog_path = NodePath("../PlainDialog")
+[node name="NightScript" parent="." instance=ExtResource( 3 )]
 
 [node name="PlainDialog" parent="." instance=ExtResource( 2 )]
-
-[connection signal="program_finished" from="NightScriptInterpreter" to="." method="_on_nightscript_program_finished"]

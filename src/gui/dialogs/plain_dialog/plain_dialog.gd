@@ -35,6 +35,7 @@ func _input(event: InputEvent) -> void:
 		if _has_message and _message_label.percent_visible >= 1.0:
 			_has_message = false
 			emit_signal("message_finished")
+			Global.events.emit_signal("dialog_message_finished")
 		else:
 			_pause_timer.stop()
 			_type_timer.stop()
@@ -192,3 +193,4 @@ func _on_pause_timer_timeout() -> void:
 func _on_option_pressed(index: int) -> void:
 	_destruct_options()
 	emit_signal("option_pressed", index)
+	Global.events.emit_signal("dialog_option_pressed", index)

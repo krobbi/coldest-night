@@ -42,9 +42,8 @@ func _init(config_ref: ConfigBus) -> void:
 	reset_mappings()
 	
 	for action in DEFAULT_MAPPINGS:
-		_config.connect_value(
-				"controls.%s_mapping" % action, self,
-				"_on_config_value_changed", TYPE_STRING, [action]
+		_config.connect_string(
+				"controls.%s_mapping" % action, self, "_on_config_value_changed", [action]
 		)
 
 
@@ -187,7 +186,7 @@ func map_event(action: String, event: InputEvent, swap: bool = true) -> void:
 				map_code(other_action, old_code, false)
 	
 	_mappings[action] = code
-	_config.set_value("controls.%s_mapping" % action, code)
+	_config.set_string("controls.%s_mapping" % action, code)
 
 
 # Resets all control mappings to their defaults:

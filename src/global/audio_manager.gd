@@ -34,9 +34,7 @@ func _init(player_parent_ref: Node, config_ref: ConfigBus, logger_ref: Logger) -
 			_buses[bus_map[bus_name]] = AudioServer.get_bus_index(bus_name)
 	
 	for bus_key in _buses:
-		_config.connect_value(
-				"audio.%s_volume" % bus_key, self, "_set_bus_volume", TYPE_REAL, [bus_key]
-		)
+		_config.connect_float("audio.%s_volume" % bus_key, self, "_set_bus_volume", [bus_key])
 
 
 # Sets the volume of an audio bus from its bus key:
@@ -50,7 +48,7 @@ func set_bus_volume(bus_key: String, value: float) -> void:
 		value = 100.0
 	
 	AudioServer.set_bus_volume_db(_buses[bus_key], linear2db(value * 0.01))
-	_config.set_value("audio.%s_volume" % bus_key, value)
+	_config.set_float("audio.%s_volume" % bus_key, value)
 
 
 # Gets the volume of an audio bus from its bus key:

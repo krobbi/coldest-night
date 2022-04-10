@@ -56,10 +56,12 @@ func _process(delta: float) -> void:
 
 # Gets the path to a credits file from the current locale:
 func _get_credits_path() -> String:
-	var base_path: String = "res://c/%s.txt"
+	var base_path: String = "res://%s.txt"
 	
+	# DEBUG:BEGIN
 	if OS.is_debug_build():
 		base_path = "res://assets/data/credits/credits_%s.txt"
+	# DEBUG:END
 	
 	var dir: Directory = Directory.new()
 	var path: String = base_path % Global.lang.locale

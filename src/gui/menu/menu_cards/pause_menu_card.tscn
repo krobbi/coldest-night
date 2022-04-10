@@ -23,7 +23,7 @@ margin_right = 512.0
 margin_bottom = 68.0
 appearance_condition = 2
 _button_key = "quick_save"
-_text = "BUTTON.QUICK_SAVE"
+_text = "BUTTON.DEBUG.QUICK_SAVE"
 
 [node name="QuickLoadButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
 anchor_right = 0.0
@@ -32,7 +32,7 @@ margin_right = 512.0
 margin_bottom = 104.0
 appearance_condition = 2
 _button_key = "quick_load"
-_text = "BUTTON.QUICK_LOAD"
+_text = "BUTTON.DEBUG.QUICK_LOAD"
 
 [node name="LoadCheckpointButtonMenuRow" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]
 anchor_right = 0.0
@@ -41,7 +41,7 @@ margin_right = 512.0
 margin_bottom = 140.0
 appearance_condition = 2
 _button_key = "load_checkpoint"
-_text = "BUTTON.LOAD_CHECKPOINT"
+_text = "BUTTON.DEBUG.LOAD_CHECKPOINT"
 
 [node name="SettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 2 )]
 anchor_right = 0.0

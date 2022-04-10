@@ -31,6 +31,7 @@ func _state_enter() -> void:
 func _state_process(delta: float) -> void:
 	if _remaining_turns <= 0:
 		guard.state_machine.change_state(finished_state)
+		Global.events.emit_signal("subtitle_display_request", "SUBTITLE.BARK.LOST")
 		return
 	
 	_wait_timer -= delta

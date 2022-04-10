@@ -1,60 +1,55 @@
 # Cynthia Introduction
-# Hidden dialog for earlier dialog options.
+# Dialog shown at end of demo.
 
 define pester_count test:pester_count
 
-label main
-	player freeze
-	dialog show
+player freeze
+dialog show
 
-	name "Cynthia"
-	say "Hey guys!{p=0.5} What's going on here?"
+name "Cynthia"
+say "Hey guys!{p=0.5} What's going on here?"
+
+name "Ryan"
+say "Cynthia,{p=0.25} is that you?!{p=0.5} I thought I said I was leaving this mission to Koby."
+say "We need to keep this channel quiet."
+
+name "Cynthia"
+say "Yeah,{p=0.25} yeah.{p=0.5} You've got all the MacGuffins and you're getting out,{p=0.25} right?"
+say "Why can't I chat with Kobes?"
+
+name "Koby"
+say "Hi Cynthy!"
+
+name "Ryan"
+say "Because we're busy here!{p=0.5}"
+say "He's on support,{p=0.25} and he knows his way around the radar system better than any of us."
+
+name "Cynthia"
+say "Oh come on,{p=0.25} I made that thing too!"
+
+name "Koby"
+say "But-"
+
+name "Cynthia"
+say "OK,{p=0.25} OK,{p=0.25} half of it."
+
+name "Koby"
+say "But I've been-"
+
+name "Cynthia"
+say "Maybe not half,{p=0.25} but I helped,{p=0.25} right Kobes?"
+
+name "Koby"
+say "Yeah,{p=0.25} that was really nice of you."
+
+name "Cynthia"
+say "Aw shush you big dork!"
+say "Who's a big dorky boy?"
+
+name "Ryan"
+say "Excuse me."
 	
-	name "Ryan"
-	say "Cynthia,{p=0.25} is that you?!{p=0.5} I thought I said I was leaving this mission to Koby."
-	say "We need to keep this channel quiet."
-
-	name "Cynthia"
-	say "Yeah,{p=0.25} yeah.{p=0.5} You've got all the MacGuffins and you're getting out,{p=0.25} right?"
-	say "Why can't I chat with Kobes?"
-
-	name "Koby"
-	say "Hi Cynthy!"
-
-	name "Ryan"
-	say "Because we're busy here!{p=0.5}"
-	say "He's on support,{p=0.25} and he knows his way around the radar system better than any of us."
-
-	name "Cynthia"
-	say "Oh come on,{p=0.25} I made that thing too!"
-
-	name "Koby"
-	say "But-"
-
-	name "Cynthia"
-	say "OK,{p=0.25} OK,{p=0.25} half of it."
-
-	name "Koby"
-	say "But I've been-"
-
-	name "Cynthia"
-	say "Maybe not half,{p=0.25} but I helped,{p=0.25} right Kobes?"
-
-	name "Koby"
-	say "Yeah,{p=0.25} that was really nice of you."
-
-	name "Cynthia"
-	say "Aw shush you big dork!"
-	say "Who's a big dorky boy?"
-
-	name "Ryan"
-	say "Excuse me."
-	
-	goto pester pester_count >= 2
-	goto post_pester
-
-
-label pester
+if pester_count >= 2
 	name "Cynthia"
 	say "What,{p=0.25} are you jealous?"
 
@@ -69,34 +64,28 @@ label pester
 
 	name "Ryan"
 	say "Please don't call me that."
+end
 
-	goto post_pester
+name "Cynthia"
+say "Sorry mister serious."
 
+name "Ryan"
+say "We can chat later,{p=0.25} OK?"
 
-label post_pester
-	name "Cynthia"
-	say "Sorry mister serious."
+name "Cynthia"
+say "Bye,{p=0.25} dorkaholics!"
 
-	name "Ryan"
-	say "We can chat later,{p=0.25} OK?"
+name "Koby"
+say "{s=0.1}..."
+say "I know she seems intense,{p=0.25} but she's nice really."
 
-	name "Cynthia"
-	say "Bye,{p=0.25} dorkaholics!"
+name "Cynthia"
+say "I can still hear you!"
 
-	name "Koby"
-	say "{s=0.1}..."
-	say "I know she seems intense,{p=0.25} but she's nice really."
+name "Ryan"
+say "Let's just get going already!{p=0.5} We don't have all day!"
 
-	name "Cynthia"
-	say "I can still hear you!"
-
-	name "Ryan"
-	say "Let's just get going already!{p=0.5} We don't have all day!"
-
-	dialog hide
-	player unfreeze
-	goto repeat
-
+dialog hide
+player unfreeze
 
 label repeat
-	exit

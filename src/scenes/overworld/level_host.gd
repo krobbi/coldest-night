@@ -10,7 +10,7 @@ signal camera_unfollow_request
 signal camera_limit_request(top_left, bottom_right)
 signal radar_render_node_request(node)
 signal radar_clear_request
-signal radar_refresh_actors_request
+signal radar_refresh_entities_request
 signal radar_camera_follow_request(anchor)
 signal radar_camera_unfollow_request()
 
@@ -67,7 +67,12 @@ func change_level(level_key: String) -> void:
 		remove_child(current_level)
 		current_level.free()
 	
+	Global.events.emit_signal("nightscript_stop_programs_request")
 	current_level = _create_level(level_key)
+	
+	for program_key in current_level.cached_ns_programs:
+		Global.events.emit_signal("nightscript_cache_program_request", program_key)
+	
 	add_child(current_level)
 	save_data.level = level_key
 	Global.save.save_checkpoint()
@@ -88,7 +93,11 @@ func change_level(level_key: String) -> void:
 			_activate_player(player)
 	
 	emit_signal("camera_limit_request", current_level.top_left, current_level.bottom_right)
-	emit_signal("radar_refresh_actors_request")
+	emit_signal("radar_refresh_entities_request")
+	
+	for program_key in current_level.autorun_ns_programs:
+		Global.events.emit_signal("nightscript_run_program_request", program_key)
+	
 	Global.events.emit_signal("fade_in_request")
 
 
