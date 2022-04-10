@@ -6,6 +6,10 @@ extends EditorExportPlugin
 # when exported in release mode. It is used to optimize the file size and
 # performance of the game in release builds.
 
+const EXCLUDE_COMMON: PoolStringArray = PoolStringArray([
+	"res://.vscode/",
+])
+
 const EXCLUDE_RELEASE: PoolStringArray = PoolStringArray([
 	"res://addons/cn_dev/",
 	"res://utils/nightscript/debug/",
@@ -24,6 +28,11 @@ func _export_begin(_features: PoolStringArray, is_debug: bool, _path: String, _f
 # Excludes, transforms, or adds resource files to the exported game in release
 # mode:
 func _export_file(path: String, _type: String, _features: PoolStringArray) -> void:
+	for exclude in EXCLUDE_COMMON:
+		if path.begins_with(exclude):
+			skip()
+			return
+	
 	if _is_debug:
 		return
 	
