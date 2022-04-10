@@ -16,7 +16,7 @@ var _supported_locales: PoolStringArray = PoolStringArray(TranslationServer.get_
 # Constructor. Connects the language manager's configuration values:
 func _init(config_ref: ConfigBus) -> void:
 	_config = config_ref
-	_config.connect_value("language.locale", self, "set_locale", TYPE_STRING)
+	_config.connect_string("language.locale", self, "set_locale")
 
 
 # Gets the default locale:
@@ -46,7 +46,7 @@ func set_locale(value: String) -> void:
 	
 	locale = normalize_locale(value)
 	TranslationServer.set_locale(locale)
-	_config.set_value("language.locale", locale)
+	_config.set_string("language.locale", locale)
 	emit_signal("locale_changed", locale)
 
 

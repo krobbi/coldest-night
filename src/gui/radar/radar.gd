@@ -38,10 +38,8 @@ func _ready() -> void:
 	set_process(false)
 	set_display_scale(Global.config.get_float("accessibility.radar_scale"))
 	set_display_opacity(Global.config.get_float("accessibility.radar_opacity"))
-	Global.config.connect_value("accessibility.radar_scale", self, "set_display_scale", TYPE_REAL)
-	Global.config.connect_value(
-			"accessibility.radar_opacity", self ,"set_display_opacity", TYPE_REAL
-	)
+	Global.config.connect_float("accessibility.radar_scale", self, "set_display_scale")
+	Global.config.connect_float("accessibility.radar_opacity", self ,"set_display_opacity")
 
 
 # Virtual _process method. Runs on every frame while the radar display's process
@@ -70,7 +68,7 @@ func set_display_scale(value: float) -> void:
 	rect_size = RESOLUTION * _display_scale
 	rect_position.x = 624.0 - rect_size.x
 	camera.zoom = Vector2(8.0, 8.0) / _display_scale
-	Global.config.set_value("accessibility.radar_scale", _display_scale)
+	Global.config.set_float("accessibility.radar_scale", _display_scale)
 
 
 # Sets the radar display's display opacity:
@@ -82,7 +80,7 @@ func set_display_opacity(value: float) -> void:
 	
 	_display_opacity = value
 	_background_polygon.modulate.a = _display_opacity * 0.01
-	Global.config.set_value("accessibility.radar_opacity", _display_opacity)
+	Global.config.set_float("accessibility.radar_opacity", _display_opacity)
 
 
 # Refreshes all rendered actors and vision areas on the radar display:

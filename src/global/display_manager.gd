@@ -47,17 +47,17 @@ func _init(tree_ref: SceneTree, config_ref: ConfigBus, logger_ref: Logger) -> vo
 	_config = config_ref
 	_logger = logger_ref
 	_viewport = _tree.root
-	_config.connect_value("accessibility.legible_font", self, "set_legible_font", TYPE_BOOL)
-	_config.connect_value("display.fullscreen", self, "set_fullscreen", TYPE_BOOL)
-	_config.connect_value("display.vsync", self, "set_vsync", TYPE_BOOL)
-	_config.connect_value("display.pixel_snap", self, "set_pixel_snap", TYPE_BOOL)
-	_config.connect_value("display.scale_mode", self, "_set_scale_mode_string", TYPE_STRING)
-	_config.connect_value("display.window_scale", self, "set_window_scale", TYPE_INT)
+	_config.connect_bool("accessibility.legible_font", self, "set_legible_font")
+	_config.connect_bool("display.fullscreen", self, "set_fullscreen")
+	_config.connect_bool("display.vsync", self, "set_vsync")
+	_config.connect_bool("display.pixel_snap", self, "set_pixel_snap")
+	_config.connect_string("display.scale_mode", self, "_set_scale_mode_string")
+	_config.connect_int("display.window_scale", self, "set_window_scale")
 
 
 # Sets whether an alternative, more legible font is used:
 func set_legible_font(value: bool) -> void:
-	_config.set_value("accessibility.legible_font", value)
+	_config.set_bool("accessibility.legible_font", value)
 	
 	if legible_font == value:
 		return
@@ -71,7 +71,7 @@ func set_legible_font(value: bool) -> void:
 
 # Sets whether the display is fullscreen:
 func set_fullscreen(value: bool) -> void:
-	_config.set_value("display.fullscreen", value)
+	_config.set_bool("display.fullscreen", value)
 	
 	if fullscreen == value:
 		return
@@ -100,7 +100,7 @@ func set_fullscreen(value: bool) -> void:
 
 # Sets whether the display uses vsync:
 func set_vsync(value: bool) -> void:
-	_config.set_value("display.vsync", value)
+	_config.set_bool("display.vsync", value)
 	
 	if vsync == value:
 		return
@@ -111,7 +111,7 @@ func set_vsync(value: bool) -> void:
 
 # Sets whether the display uses pixel snapping:
 func set_pixel_snap(value: bool) -> void:
-	_config.set_value("display.pixel_snap", value)
+	_config.set_bool("display.pixel_snap", value)
 	
 	if pixel_snap == value:
 		return
@@ -132,15 +132,15 @@ func set_scale_mode(value: int) -> void:
 		ScaleMode.STRETCH:
 			scale_mode = ScaleMode.STRETCH
 			_set_handling_resize(false)
-			_config.set_value("display.scale_mode", "stretch")
+			_config.set_string("display.scale_mode", "stretch")
 		ScaleMode.PIXEL:
 			scale_mode = ScaleMode.PIXEL
 			_set_handling_resize(not fullscreen)
-			_config.set_value("display.scale_mode", "pixel")
+			_config.set_string("display.scale_mode", "pixel")
 		ScaleMode.ASPECT, _:
 			scale_mode = ScaleMode.ASPECT
 			_set_handling_resize(false)
-			_config.set_value("display.scale_mode", "aspect")
+			_config.set_string("display.scale_mode", "aspect")
 	
 	_apply_screen_stretch()
 	
@@ -157,7 +157,7 @@ func set_window_scale(value: int) -> void:
 	else:
 		window_scale = value
 	
-	_config.set_value("display.window_scale", window_scale)
+	_config.set_int("display.window_scale", window_scale)
 	
 	if fullscreen:
 		_should_apply_window_scale = true
