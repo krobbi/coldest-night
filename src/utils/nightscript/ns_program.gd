@@ -13,7 +13,7 @@ var ops: Array = [NSOp.new(NSOp.HLT)]
 # Deserializes NightScript bytecode to the NightScript program:
 func deserialize_bytecode(bytecode: PoolByteArray) -> void:
 	var stream: SerialReadStream = SerialReadStream.new(bytecode)
-	is_cacheable = true if stream.get_u8() else false
+	is_cacheable = bool(stream.get_u8())
 	var string_count: int = stream.get_u16()
 	var string_table: PoolStringArray = PoolStringArray()
 	string_table.resize(string_count)

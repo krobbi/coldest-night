@@ -17,17 +17,11 @@ label main
 	say "If it's calibrated properly you'll see where they are,{p=0.25} and their field of vision."
 	say "It could be vital for avoiding the guards."
 
-	goto pester pester_count >= 1
-	goto end_dialog
-
-
-label pester
-	say "It's taken a long time to perfect this kind of tracking."
-	say "I really hope I can trust you with it."
-	goto end_dialog
-
-
-label end_dialog
+	if pester_count >= 1
+		say "It's taken a long time to perfect this kind of tracking."
+		say "I really hope I can trust you with it."
+	end if
+	
 	name "Ryan"
 	say "You need to collect data dumps of some archival units and find a way out."
 	say "Try to keep your patience,{p=0.25} and come back in one piece."

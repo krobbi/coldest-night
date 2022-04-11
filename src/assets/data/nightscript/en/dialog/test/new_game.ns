@@ -64,16 +64,15 @@ label for_sure
 
 
 label youre_flattering_me
-	goto youre_flattering_me_pester pester_count >= 1
-	say "No,{p=0.25} I'm not.{p=0.5} I think if you were just a little more patient we wouldn't be here right now."
-	say "You've got the potential."
-	goto post_menu_2
+	if pester_count >= 1
+		say "I'm not flattering you!{p=0.5} Just because I-"
+		set pester_count 2
+		say "But really,{p=0.25} you've almost done this before,{p=0.25} and now you've got the support."
+	else
+		say "No,{p=0.25} I'm not.{p=0.5} I think if you were just a little more patient we wouldn't be here right now."
+		say "You've got the potential."
+	end if
 
-
-label youre_flattering_me_pester
-	say "I'm not flattering you!{p=0.5} Just because I-"
-	set pester_count 2
-	say "But really,{p=0.25} you've almost done this before,{p=0.25} and now you've got the support."
 	goto post_menu_2
 
 
@@ -93,15 +92,10 @@ label post_menu_2
 	say "Yeah,{p=0.25} I get that feeling too.{p=0.5} I'm really dreading what might come of this."
 	say "But hey,{p=0.25} this should pay out nicely."
 	say "We'll get the signal to get started in a few hours."
-	goto end_pester pester_count >= 2
-	goto end
 
+	if pester_count >= 2
+		say "I'll be with Koby until then."
+	end if
 
-label end_pester
-	say "I'll be with Koby until then."
-	goto end
-
-
-label end
 	say "Get yourself ready."
 	dialog hide

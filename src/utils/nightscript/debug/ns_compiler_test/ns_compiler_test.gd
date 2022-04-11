@@ -43,7 +43,9 @@ func _escape_string(string: String) -> String:
 # Compiles and disassembles NightScript source code:
 func _disassemble_source(source: String) -> String:
 	_program.deserialize_bytecode(_compiler.compile_source(source))
-	var output: String = ""
+	var output: String = "meta cache %s\nmeta optimize false\n\n" % (
+			"true" if _program.is_cacheable else "false"
+	)
 	
 	# Find labels:
 	var labels: Dictionary = {}

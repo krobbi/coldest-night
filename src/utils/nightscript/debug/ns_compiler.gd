@@ -85,6 +85,20 @@ class IRNode extends Reference:
 	# Constructor. Sets the IR node's opcode:
 	func _init(op_val: int) -> void:
 		op = op_val
+	
+	
+	# Returns whether the IR node is a branch operation:
+	func is_branch() -> bool:
+		match op:
+			NSOp.JMP, NSOp.BEQ, NSOp.BNE, NSOp.BGT, NSOp.BGE:
+				return true
+			_:
+				return false
+	
+	
+	# Returns whether the IR node has a pointer operand:
+	func has_pointer() -> bool:
+		return NSOp.get_operands(op) & NSOp.OPERAND_PTR != 0
 
 
 class IntTrace extends Reference:
@@ -137,6 +151,7 @@ class IRBlock extends Reference:
 	# NightScript operations.
 	
 	var label: String
+	var block_next: IRBlock = null
 	var is_dead: bool = false
 	var nodes: Array = []
 	var x_trace: IntTrace = IntTrace.new()
@@ -147,6 +162,32 @@ class IRBlock extends Reference:
 	# Constructor. Sets the IR block's label:
 	func _init(label_val: String) -> void:
 		label = label_val
+	
+	
+	# Gets whether the IR block is important. An IR block is important if it
+	# should never be removed or adopted into another IR block:
+	func is_important() -> bool:
+		return label == "main" or label == "repeat" or label.begins_with("$$")
+	
+	
+	# Returns whether the IR block is empty:
+	func empty() -> bool:
+		return nodes.empty()
+	
+	
+	# Returns the size of the IR block:
+	func size() -> int:
+		return nodes.size()
+	
+	
+	# Clears the IR block's IR nodes and traces:
+	func clear() -> void:
+		nodes.clear()
+		is_dead = false
+		x_trace.untrace()
+		y_trace.untrace()
+		dialog_name_trace.untrace()
+		actor_key_trace.untrace()
 	
 	
 	# Marks the IR block as dead. An IR block becomes dead if any subsequent IR
@@ -170,6 +211,90 @@ class IRBlock extends Reference:
 			make_lyc(value.value)
 		elif value.is_flag():
 			make_lyf(value.flag)
+	
+	
+	# Adopts a copy of an IR node into the IR block if the IR block is not dead:
+	func adopt_node(node: IRNode) -> void:
+		match node.op:
+			NSOp.HLT:
+				make_hlt()
+			NSOp.RUN:
+				make_run(node.txt)
+			NSOp.SLP:
+				make_slp(node.val)
+			NSOp.JMP:
+				make_jmp(node.lbl)
+			NSOp.BEQ:
+				make_beq(node.lbl)
+			NSOp.BNE:
+				make_bne(node.lbl)
+			NSOp.BGT:
+				make_bgt(node.lbl)
+			NSOp.BGE:
+				make_bge(node.lbl)
+			NSOp.LXC:
+				make_lxc(node.val)
+			NSOp.LXF:
+				make_lxf(node.flg)
+			NSOp.STX:
+				make_stx(node.flg)
+			NSOp.LYC:
+				make_lyc(node.val)
+			NSOp.LYF:
+				make_lyf(node.flg)
+			NSOp.STY:
+				make_sty(node.flg)
+			NSOp.DGS:
+				make_dgs()
+			NSOp.DGH:
+				make_dgh()
+			NSOp.DNC:
+				make_dnc()
+			NSOp.DND:
+				make_dnd(node.txt)
+			NSOp.DGM:
+				make_dgm(node.txt)
+			NSOp.MNO:
+				make_mno(node.lbl, node.txt)
+			NSOp.MNS:
+				make_mns()
+			NSOp.LAK:
+				make_lak(node.txt)
+			NSOp.AFD:
+				make_afd()
+			NSOp.APF:
+				make_apf(node.txt)
+			NSOp.APR:
+				make_apr()
+			NSOp.APA:
+				make_apa()
+			NSOp.PLF:
+				make_plf()
+			NSOp.PLT:
+				make_plt()
+			NSOp.QTT:
+				make_qtt()
+			NSOp.PSE:
+				make_pse()
+			NSOp.UNP:
+				make_unp()
+			NSOp.SAV:
+				make_sav()
+			NSOp.CKP:
+				make_ckp()
+	
+	
+	# Adopts an array of nodes into the IR block:
+	func adopt_nodes(nodes_val: Array) -> void:
+		for node in nodes_val:
+			adopt_node(node)
+	
+	
+	# Readopts the IR block's IR nodes:
+	func readopt_nodes() -> void:
+		var nodes_val: Array = nodes.duplicate()
+		clear()
+		adopt_nodes(nodes_val)
 	
 	
 	# Makes an IR node at the back of the IR block if the IR block is not dead:
@@ -381,7 +506,7 @@ class IRBlock extends Reference:
 		make_standalone(NSOp.AFD)
 	
 	
-	# Makes an APF IR node at the back of the IR blocK:
+	# Makes an APF IR node at the back of the IR block:
 	func make_apf(txt: String) -> void:
 		make_text(NSOp.APF, txt)
 	
@@ -427,9 +552,23 @@ class IRBlock extends Reference:
 		make_standalone(NSOp.SAV)
 	
 	
-	# Makes a CKP IR node at the back of the IR blocK:
+	# Makes a CKP IR node at the back of the IR block:
 	func make_ckp() -> void:
 		make_standalone(NSOp.CKP)
+
+
+class StatementIf extends Reference:
+
+	# If Statement
+	# An if statement is a helper structure used by a NightScript compiler that
+	# is an intermediate representation of an if-elif-else statement in the
+	# statement stack.
+
+	var seen_else: bool = false
+	var block_entry: IRBlock = null
+	var block_test: IRBlock = null
+	var block_bodies: Array = []
+	var block_exit: IRBlock = null
 
 
 class TableFlag extends Reference:
@@ -496,12 +635,16 @@ class BytecodeTable extends Reference:
 enum CommandScanState {NORMAL, STRING, ESCAPE}
 enum Comparator {ERROR, EQ, NE, GT, GE, LT, LE}
 
-const DEFAULT_CONSTS: Dictionary = {"false": 0, "true": 1}
-const DEFAULT_METADATA: Dictionary = {"cache": 1}
+const RESERVED_CONSTS: Dictionary = {"false": 0, "true": 1}
+const DEFAULT_METADATA: Dictionary = {"cache": 1, "optimize": 1}
 
+var _pos_line: int = 0
+var _temp_block_count: int = 0
 var _metadata: Dictionary = {}
 var _scope_stack: Array = [{}]
+var _statement_stack: Array = []
 var _blocks: Array = []
+var _error_block: IRBlock = null
 var _current_block: IRBlock = null
 
 # Compiles a NightScript source file to NightScript bytecode from its path:
@@ -548,6 +691,26 @@ func _get_metadata(key: String) -> int:
 		return DEFAULT_METADATA.get(key, 0)
 
 
+# Gets an IR block from its label. Returns null if the IR block does not exist:
+func _get_block(label: String) -> IRBlock:
+	for block in _blocks:
+		if block.label == label:
+			return block
+	
+	return null
+
+
+# Gets whether the NightScript compiler's IR code is inside a statement:
+func _is_in_statement() -> bool:
+	return not _statement_stack.empty()
+
+
+# Gets whether the NightScript compiler's IR code is inside an if-elif-else
+# statement:
+func _is_in_statement_if() -> bool:
+	return not _statement_stack.empty() and _statement_stack[-1] is StatementIf
+
+
 # Returns whether an IR block exists from its label:
 func _has_block(label: String) -> bool:
 	for block in _blocks:
@@ -555,6 +718,18 @@ func _has_block(label: String) -> bool:
 			return true
 	
 	return false
+
+
+# Returns whether a label is valid:
+func _validate_label(label: String) -> bool:
+	if label.empty():
+		_err("Label is empty!")
+		return false
+	elif not label.is_valid_identifier():
+		_err("Label '%s' is invalid!" % label)
+		return false
+	else:
+		return true
 
 
 # Pushes a new current scope to the scope stack:
@@ -604,7 +779,20 @@ func _create_block(label: String) -> IRBlock:
 	
 	var block: IRBlock = IRBlock.new(label)
 	_blocks.insert(index, block)
+
+	if index > 0:
+		_blocks[index - 1].block_next = block
+	
+	if index < _blocks.size() - 1:
+		block.block_next = _blocks[index + 1]
+
 	return block
+
+
+# Creates a new temporary IR block after the current IR block:
+func _create_block_temp() -> IRBlock:
+	_temp_block_count += 1
+	return _create_block("$temp_%d" % _temp_block_count)
 
 
 # Scans an array of commands and arguments from a line of NightScript source
@@ -693,8 +881,8 @@ func _scan_commands(line: String) -> Array:
 func _scan_value(symbol: String) -> ParseValue:
 	if symbol.empty():
 		return _create_error("Value is empty!")
-	elif DEFAULT_CONSTS.has(symbol):
-		return ParseValue.create_const(DEFAULT_CONSTS[symbol])
+	elif RESERVED_CONSTS.has(symbol):
+		return ParseValue.create_const(RESERVED_CONSTS[symbol])
 	elif symbol.is_valid_identifier():
 		for i in range(_scope_stack.size() - 1, -1, -1):
 			var scope: Dictionary = _scope_stack[i]
@@ -702,7 +890,7 @@ func _scan_value(symbol: String) -> ParseValue:
 			if scope.has(symbol):
 				return scope[symbol]
 		
-		return _create_error("Value '%s' is undefined in the current scope!" % symbol)
+		return _create_error("Value '%s' is undeclared in the current scope!" % symbol)
 	elif symbol.is_valid_integer():
 		return ParseValue.create_const(int(symbol))
 	elif symbol.count(":") == 1:
@@ -750,21 +938,86 @@ func _scan_comparator(symbol: String) -> int:
 
 # Logs an error message:
 func _err(message: String) -> void:
-	Global.logger.err(message)
+	# Open error block:
+	if _error_block.empty():
+		Global.logger.msg("NightScript compiler error log:")
+		_error_block.make_plf()
+		_error_block.make_pse()
+		_error_block.make_dgs()
+	
+	if _pos_line:
+		Global.logger.err("\t%d: %s" % [_pos_line, message])
+		_error_block.make_dgm("ERROR ON LINE %d:{p=0.5}\n%s" % [_pos_line, message])
+	else:
+		Global.logger.err("\t%s" % message)
+		_error_block.make_dgm("ERROR:{p=0.5}\n%s" % message)
 
 
 # Resets the NightScript compiler's IR code:
 func _reset() -> void:
+	_pos_line = 0
+	_temp_block_count = 0
 	_metadata.clear()
 	_scope_stack = [{}]
+	_statement_stack.clear()
 	_blocks.clear()
+	_error_block = _create_block("$$error")
 	_current_block = _create_block("$$main")
+
+
+# Makes a conditional branch from the current IR block to a target label:
+func _make_branch(label: String, left: ParseValue, comparator: int, right: ParseValue) -> void:
+	if left.is_error():
+		_err("Left-hand value is invalid!")
+		return
+	elif comparator == Comparator.ERROR:
+		_err("Comparator is invalid!")
+		return
+	elif right.is_error():
+		_err("Right-hand value is invalid!")
+		return
+	elif left.is_const() and right.is_const():
+		if _eval_comparison(left.value, comparator, right.value):
+			_current_block.make_jmp(label)
+		
+		return
+	
+	match comparator:
+		Comparator.EQ:
+			_current_block.load_x(left)
+			_current_block.load_y(right)
+			_current_block.make_beq(label)
+		Comparator.NE:
+			_current_block.load_x(left)
+			_current_block.load_y(right)
+			_current_block.make_bne(label)
+		Comparator.GT:
+			_current_block.load_x(left)
+			_current_block.load_y(right)
+			_current_block.make_bgt(label)
+		Comparator.GE:
+			_current_block.load_x(left)
+			_current_block.load_y(right)
+			_current_block.make_bge(label)
+		Comparator.LT:
+			_current_block.load_y(left)
+			_current_block.load_x(right)
+			_current_block.make_bgt(label)
+		Comparator.LE:
+			_current_block.load_y(left)
+			_current_block.load_x(right)
+			_current_block.make_bge(label)
 
 
 # Parses NightScript source code to IR code:
 func _parse_source(source: String) -> void:
+	_pos_line = 0
+
 	for line in source.split("\n"):
+		_pos_line += 1
 		_parse_line(line)
+	
+	_pos_line = 0
 
 
 # Parses a line of NightScript source code to IR code:
@@ -906,6 +1159,34 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 				_current_block.make_ckp()
 			else:
 				_err("Command 'checkpoint' expects no arguments!")
+		"if":
+			match args.size():
+				1:
+					_parse_if(_scan_value(args[0]), Comparator.NE, ParseValue.create_const(0))
+				3:
+					_parse_if(_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2]))
+				_:
+					_err("Command 'if' expects 1 or 3 arguments!")
+		"elif":
+			match args.size():
+				1:
+					_parse_elif(_scan_value(args[0]), Comparator.NE, ParseValue.create_const(0))
+				3:
+					_parse_elif(
+							_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2])
+					)
+				_:
+					_err("Command 'elif' expects 1 or 3 arguments!")
+		"else":
+			if args.size() == 0:
+				_parse_else()
+			else:
+				_err("Command 'else' expects no arguments!")
+		"end":
+			if args.size() == 1:
+				_parse_end(args[0])
+			else:
+				_err("Command 'end' expects 1 argument!")
 		_:
 			if command.empty():
 				_err("Command is empty!")
@@ -933,10 +1214,10 @@ func _parse_define(identifier: String, value: ParseValue):
 		_err("Identifier is empty!")
 	elif not identifier.is_valid_identifier():
 		_err("Identifier '%s' is invalid!" % identifier)
-	elif DEFAULT_CONSTS.has(identifier):
-		_err("Value '%s' cannot be redefined!" % identifier)
+	elif RESERVED_CONSTS.has(identifier):
+		_err("Identifier '%s' is reserved!" % identifier)
 	elif _scope_stack[-1].has(identifier):
-		_err("Value '%s' is already defined in the current scope!" % identifier)
+		_err("Identifier '%s' is already declared in the current scope!" % identifier)
 	elif value.is_error():
 		return
 	else:
@@ -945,12 +1226,10 @@ func _parse_define(identifier: String, value: ParseValue):
 
 # Parses a label command from NightScript source code to IR code:
 func _parse_label(label: String) -> void:
-	if label.empty():
-		_err("Label is empty!")
-	elif not label.is_valid_identifier():
-		_err("Label '%s' is invalid!" % label)
+	if not _validate_label(label):
+		return
 	elif _has_block(label):
-		_err("Label '%s' is already defined!" % label)
+		_err("Label '%s' is already declared!" % label)
 	else:
 		_pop_scope()
 		_current_block = _create_block(label)
@@ -985,52 +1264,8 @@ func _parse_sleep(duration: ParseValue, unit: String) -> void:
 
 # Parses a goto command from NightScript source code to IR code:
 func _parse_goto(label: String, left: ParseValue, comparator: int, right: ParseValue) -> void:
-	if label.empty():
-		_err("Label is empty!")
-		return
-	elif not label.is_valid_identifier():
-		_err("Label '%s' is invalid!" % label)
-		return
-	elif left.is_error():
-		_err("Left-hand value is invalid!")
-		return
-	elif comparator == Comparator.ERROR:
-		_err("Comparator is invalid!")
-		return
-	elif right.is_error():
-		_err("Right-hand value is invalid!")
-		return
-	elif left.is_const() and right.is_const():
-		if _eval_comparison(left.value, comparator, right.value):
-			_current_block.make_jmp(label)
-		
-		return
-	
-	match comparator:
-		Comparator.EQ:
-			_current_block.load_x(left)
-			_current_block.load_y(right)
-			_current_block.make_beq(label)
-		Comparator.NE:
-			_current_block.load_x(left)
-			_current_block.load_y(right)
-			_current_block.make_bne(label)
-		Comparator.GT:
-			_current_block.load_x(left)
-			_current_block.load_y(right)
-			_current_block.make_bgt(label)
-		Comparator.GE:
-			_current_block.load_x(left)
-			_current_block.load_y(right)
-			_current_block.make_bge(label)
-		Comparator.LT:
-			_current_block.load_y(left)
-			_current_block.load_x(right)
-			_current_block.make_bgt(label)
-		Comparator.LE:
-			_current_block.load_y(left)
-			_current_block.load_x(right)
-			_current_block.make_bge(label)
+	if _validate_label(label):
+		_make_branch(label, left, comparator, right)
 
 
 # Parses a set command from NightScript source code to IR code:
@@ -1169,22 +1404,254 @@ func _parse_quit(command: String) -> void:
 			_err("Command 'quit' expects 'title'!")
 
 
+# Parses an if command from NightScript source code to IR code:
+func _parse_if(left: ParseValue, comparator: int, right: ParseValue) -> void:
+	var statement: StatementIf = StatementIf.new()
+	statement.block_exit = _create_block_temp()
+	var block_body: IRBlock = _create_block_temp()
+	statement.block_bodies.push_back(block_body)
+	var block_test: IRBlock = _create_block_temp()
+	statement.block_test = block_test
+	statement.block_entry = _current_block
+	_current_block.make_jmp(block_test.label)
+	_current_block = block_test
+	_make_branch(block_body.label, left, comparator, right)
+	_current_block = block_body
+	_push_scope()
+	_statement_stack.push_back(statement)
+
+
+# Parses an elif command from NightScript source code to IR code:
+func _parse_elif(left: ParseValue, comparator: int, right: ParseValue) -> void:
+	if not _is_in_statement_if():
+		_err("Command 'elif' was used outside of an if statement!")
+		return
+	
+	var statement: StatementIf = _statement_stack[-1]
+
+	if statement.seen_else:
+		_err("Command 'elif' was used after 'else' in the current if statement!")
+		return
+	
+	_current_block.make_jmp(statement.block_exit.label)
+	_pop_scope()
+	var block_body: IRBlock = _create_block_temp()
+	statement.block_bodies.push_back(block_body)
+	_current_block = statement.block_test
+	_make_branch(block_body.label, left, comparator, right)
+	_current_block = block_body
+	_push_scope()
+
+
+# Parses an else command from NightScript source code to IR code:
+func _parse_else() -> void:
+	if not _is_in_statement_if():
+		_err("Command 'else' was used outside of an if statement!")
+		return
+	
+	var statement: StatementIf = _statement_stack[-1]
+
+	if statement.seen_else:
+		_err("Command 'else' was already used in the current if statement!")
+		return
+	
+	statement.seen_else = true
+	_current_block.make_jmp(statement.block_exit.label)
+	_pop_scope()
+	var block_body: IRBlock = _create_block_temp()
+	statement.block_bodies.push_back(block_body)
+	statement.block_test.make_jmp(block_body.label)
+	_current_block = block_body
+	_push_scope()
+
+
+# Parses an end command from NightScript source code to IR code:
+func _parse_end(type: String) -> void:
+	match type:
+		"if":
+			_parse_end_if()
+		_:
+			_err("Command 'end' expects 'if'!")
+
+
+# Parses an end if command from NightScript source code to IR code:
+func _parse_end_if() -> void:
+	if not _is_in_statement_if():
+		_err("Command 'end if' was used outside of an if statement!")
+		return
+	
+	var statement: StatementIf = _statement_stack.pop_back()
+	_current_block.make_jmp(statement.block_exit.label)
+	_pop_scope()
+	statement.block_test.make_jmp(statement.block_exit.label)
+	_current_block = statement.block_exit
+
+
 # Finalizes the NightScript compiler's IR code:
 func _finalize() -> void:
+	_finalize_error_block()
+	_finalize_terminate()
+
+
+# Finalizes the error IR block in the NightScript compiler's IR code:
+func _finalize_error_block() -> void:
+	if _error_block.empty():
+		return
+	
+	_error_block.make_dgh()
+	_error_block.make_unp()
+	_error_block.make_plt()
+
+	if _has_block("repeat"):
+		var error_nodes: Array = _error_block.nodes.duplicate()
+		_error_block.clear()
+		_error_block.make_lxc(1)
+		_error_block.make_stx(ParseFlag.new("$", "r"))
+		_error_block.adopt_nodes(error_nodes)
+		_error_block.make_lxf(ParseFlag.new("$", "r"))
+		_error_block.make_lyc(0)
+		_error_block.make_bne("repeat")
+	
+	_error_block.make_jmp("main" if _has_block("main") else "$$main")
+
+
+# Adds a terminal HLT operation to the final parse block:
+func _finalize_terminate() -> void:
+	var block: IRBlock = _blocks[-1]
+	block.make_hlt()
+
+
+# Recreates the link references between IR blocks in the NightScript comiler's
+# IR code:
+func _link_blocks() -> void:
 	for i in range(_blocks.size()):
-		var block: IRBlock = _blocks[i]
-		
-		if not block.is_dead:
-			if i >= _blocks.size() - 1:
-				block.make_hlt()
-			else:
-				block.make_jmp(_blocks[i + 1].label)
+		if i < _blocks.size() - 1:
+			_blocks[i].block_next = _blocks[i + 1]
+		else:
+			_blocks[i].block_next = null
 
 
 # Performs post-parsing optimizations on the NightScript compiler's IR code
 # until no changes occur:
-func _optimize() -> void:
-	pass
+func _optimize(var iterations: int = 256) -> void:
+	if not _get_metadata("optimize"):
+		return
+	
+	var should_optimize: bool = true
+	
+	while should_optimize and iterations:
+		should_optimize = _optimize_thread_pointers()
+		should_optimize = _optimize_eliminate_unreachable_blocks() or should_optimize
+		should_optimize = _optimize_eliminate_subsequent_branches() or should_optimize
+		should_optimize = _optimize_eliminate_empty_blocks() or should_optimize
+		iterations -= 1
+
+
+# Redirects IR node's pointers to jump operations to the target jump operation's
+# target. Returns whether any optimization was performed:
+func _optimize_thread_pointers() -> bool:
+	var is_optimized: bool = false
+
+	for source_block in _blocks:
+		if source_block.empty():
+			continue
+		
+		var source_node: IRNode = source_block.nodes[0]
+		var source_label: String = source_block.label
+		var target_label: String = source_node.lbl
+
+		if source_node.op != NSOp.JMP or source_label == target_label:
+			continue
+		
+		for block in _blocks:
+			for node in block.nodes:
+				if node.has_pointer() and node.lbl == source_label:
+					node.lbl = target_label
+					is_optimized = true
+	
+	return is_optimized
+
+
+# Eliminates IR blocks that are not important and can never be reached. Returns
+# whether any optimization was performed:
+func _optimize_eliminate_unreachable_blocks() -> bool:
+	var pending_blocks: Array = []
+	var reachable_blocks: Array = []
+	pending_blocks.push_back(_get_block("main") if _has_block("main") else _get_block("$$main"))
+	pending_blocks.push_back(_get_block("repeat"))
+
+	while not pending_blocks.empty():
+		var block: IRBlock = pending_blocks.pop_back()
+
+		if not block or reachable_blocks.has(block):
+			continue
+		
+		reachable_blocks.push_back(block)
+
+		if not block.is_dead:
+			pending_blocks.push_back(block.block_next)
+		
+		for node in block.nodes:
+			if node.has_pointer():
+				pending_blocks.push_back(_get_block(node.lbl))
+	
+	var is_optimized: bool = false
+
+	for i in range(_blocks.size() - 1, -1, -1):
+		var block: IRBlock = _blocks[i]
+
+		if not block.is_important() and not reachable_blocks.has(block):
+			_blocks.remove(i)
+			is_optimized = true
+	
+	if is_optimized:
+		_link_blocks()
+	
+	return is_optimized
+
+
+# Eliminates IR nodes that branch directly to the subsequent IR block. Returns
+# whether any optimization was performed:
+func _optimize_eliminate_subsequent_branches() -> bool:
+	var is_optimized: bool = false
+
+	for i in range(_blocks.size() - 2, -1, -1):
+		var is_block_optimized: bool = false
+		var block: IRBlock = _blocks[i]
+		var next_label: String = block.block_next.label
+
+		for j in range(block.size() - 1, -1, -1):
+			var node: IRNode = block.nodes[j]
+
+			if node.is_branch() and node.lbl == next_label:
+				block.nodes.remove(j)
+				is_block_optimized = true
+			else:
+				break
+
+		if is_block_optimized:
+			block.readopt_nodes()
+			is_optimized = true
+	
+	return is_optimized
+
+
+# Eliminates IR blocks that are not important and are empty. Returns whether any
+# optimization was performed:
+func _optimize_eliminate_empty_blocks() -> bool:
+	var is_optimized: bool = false
+
+	for i in range(_blocks.size() - 1, -1, -1):
+		var block: IRBlock = _blocks[i]
+
+		if not block.is_important() and block.empty():
+			_blocks.remove(i)
+			is_optimized = true
+	
+	if is_optimized:
+		_link_blocks()
+	
+	return is_optimized
 
 
 # Generates NightScript bytecode from the NightScript compiler's IR code:
@@ -1194,12 +1661,21 @@ func _generate_bytecode() -> PoolByteArray:
 	
 	for block in _blocks:
 		pointers[block.label] = node_count
-		node_count += block.nodes.size()
+		node_count += block.size()
 	
 	var table: BytecodeTable = BytecodeTable.new()
 	var stream: SerialWriteStream = SerialWriteStream.new()
-	var vector_main: int = pointers.get("main", 0)
+	var vector_main: int = pointers.get("main", pointers.get("$$main", 0))
 	var vector_repeat: int = pointers.get("repeat", vector_main)
+
+	if not _error_block.empty():
+		if vector_main == vector_repeat:
+			vector_main = pointers.get("$$error", vector_main)
+			vector_repeat = vector_main
+		else:
+			vector_repeat = pointers.get("$$error", vector_repeat)
+			vector_main = vector_repeat + 2
+
 	stream.put_u16(vector_main)
 	stream.put_u16(vector_repeat)
 	stream.put_u16(node_count)

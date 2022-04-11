@@ -110,6 +110,11 @@ func get_err_name(code: int) -> String:
 	return tr("ERR.CODE.%s" % key)
 
 
+# Logs a message:
+func msg(message: String) -> void:
+	print(tr(message))
+
+
 # Logs an error message:
 func err(message: String) -> void:
 	message = tr(message)

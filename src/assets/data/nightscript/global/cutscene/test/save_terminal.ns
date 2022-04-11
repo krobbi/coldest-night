@@ -17,17 +17,17 @@ label repeat
 
 label menu
 	menu option "DIALOG.TEST.SAVE_TERMINAL.OPTION.SAVE" goto save
-	menu option "DIALOG.TEST.SAVE_TERMINAL.OPTION.NO_SAVE" goto exit
+	menu option "DIALOG.TEST.SAVE_TERMINAL.OPTION.NO_SAVE" goto no_save
 	menu show
 
 
 label save
 	save
 	say "DIALOG.TEST.SAVE_TERMINAL.SAVED"
-	goto exit
+	goto no_save
 
 
-label exit
+label no_save
 	dialog hide
 	player unfreeze
 	exit

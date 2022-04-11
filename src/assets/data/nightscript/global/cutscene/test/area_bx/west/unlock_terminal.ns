@@ -1,40 +1,35 @@
 # Unlock Terminal
 # Common cutscene for unlock terminal in test.area_bx.west.
 
-define unlocked test:west_unlocked
+define is_unlocked test:west_unlocked
 
 player freeze
 dialog show
-goto is_unlocked unlocked
-say "DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_UNLOCK"
-menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.UNLOCK" goto unlock
-goto menu
 
-
-label is_unlocked
+if is_unlocked
 	say "DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_LOCK"
 	menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.LOCK" goto lock
-	goto menu
+else
+	say "DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_UNLOCK"
+	menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.UNLOCK" goto unlock
+end if
 
+menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.CANCEL" goto cancel
+menu show
 
-label menu
-	menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.CANCEL" goto exit
-	menu show
+label lock
+	set is_unlocked false
+	say "DIALOG.TEST.UNLOCK_TERMINAL.LOCKED"
+	goto cancel
 
 
 label unlock
-	set unlocked true
+	set is_unlocked true
 	say "DIALOG.TEST.UNLOCK_TERMINAL.UNLOCKED"
-	goto exit
+	goto cancel
 
 
-label lock
-	set unlocked false
-	say "DIALOG.TEST.UNLOCK_TERMINAL.LOCKED"
-	goto exit
-
-
-label exit
+label cancel
 	dialog hide
 	player unfreeze
 	exit
