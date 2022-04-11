@@ -1,7 +1,7 @@
 # Patrol Route
 # Patrol route for 'susie' in test.area_bx.north
 
-label main
+while true
 	sleep 4
 	path do susie PSuE
 	look susie down
@@ -21,4 +21,4 @@ label main
 	sleep 2
 	path do susie PSuA
 	look susie left
-	goto main
+end

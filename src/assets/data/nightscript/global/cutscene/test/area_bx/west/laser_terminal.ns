@@ -16,7 +16,7 @@ label redirect
 		set state false
 	else
 		set state true
-	end if
+	end
 
 	say "DIALOG.TEST.LASER_TERMINAL.REDIRECTED"
 	goto cancel

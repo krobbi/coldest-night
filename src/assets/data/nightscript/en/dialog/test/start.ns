@@ -20,7 +20,7 @@ label main
 	if pester_count >= 1
 		say "It's taken a long time to perfect this kind of tracking."
 		say "I really hope I can trust you with it."
-	end if
+	end
 	
 	name "Ryan"
 	say "You need to collect data dumps of some archival units and find a way out."

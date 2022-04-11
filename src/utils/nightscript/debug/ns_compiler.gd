@@ -557,7 +557,22 @@ class IRBlock extends Reference:
 		make_standalone(NSOp.CKP)
 
 
-class StatementIf extends Reference:
+class Statement extends Reference:
+
+	# Statement Base
+	# A statement is a helper structure used by a NightScript compiler that is
+	# an intermediate representation of a statement in the statement stack.
+
+	var pos_line: int
+	var block_entry: IRBlock
+
+	# Constructor. Sets the statement's line position and entry IR block:
+	func _init(pos_line_val: int, block_entry_ref: IRBlock) -> void:
+		pos_line = pos_line_val
+		block_entry = block_entry_ref
+
+
+class StatementIf extends Statement:
 
 	# If Statement
 	# An if statement is a helper structure used by a NightScript compiler that
@@ -565,10 +580,31 @@ class StatementIf extends Reference:
 	# statement stack.
 
 	var seen_else: bool = false
-	var block_entry: IRBlock = null
 	var block_test: IRBlock = null
 	var block_bodies: Array = []
 	var block_exit: IRBlock = null
+
+	# Constructor. Passes the if statement's line position and entry IR block to
+	# the if statement:
+	func _init(pos_line: int, block_entry: IRBlock).(pos_line, block_entry) -> void:
+		pass
+
+
+class StatementWhile extends Statement:
+
+	# While Statement
+	# A while statement is a helper structure used by a NightScript compiler
+	# that is an intermediate representation of a while statement in the
+	# statement stack.
+
+	var block_body: IRBlock = null
+	var block_test: IRBlock = null
+	var block_exit: IRBlock = null
+
+	# Constructor. Passes the while statement's line position and entry IR block
+	# to the while statement:
+	func _init(pos_line: int, block_entry: IRBlock).(pos_line, block_entry) -> void:
+		pass
 
 
 class TableFlag extends Reference:
@@ -700,15 +736,15 @@ func _get_block(label: String) -> IRBlock:
 	return null
 
 
-# Gets whether the NightScript compiler's IR code is inside a statement:
-func _is_in_statement() -> bool:
-	return not _statement_stack.empty()
-
-
 # Gets whether the NightScript compiler's IR code is inside an if-elif-else
 # statement:
 func _is_in_statement_if() -> bool:
 	return not _statement_stack.empty() and _statement_stack[-1] is StatementIf
+
+
+# Gets whether the NightScript compiler's IR code is inside a while statement:
+func _is_in_statement_while() -> bool:
+	return not _statement_stack.empty() and _statement_stack[-1] is StatementWhile
 
 
 # Returns whether an IR block exists from its label:
@@ -878,13 +914,16 @@ func _scan_commands(line: String) -> Array:
 
 
 # Scans a parse value from its symbol:
-func _scan_value(symbol: String) -> ParseValue:
+func _scan_value(symbol: String, scope_peek: int = -1) -> ParseValue:
 	if symbol.empty():
 		return _create_error("Value is empty!")
 	elif RESERVED_CONSTS.has(symbol):
 		return ParseValue.create_const(RESERVED_CONSTS[symbol])
 	elif symbol.is_valid_identifier():
-		for i in range(_scope_stack.size() - 1, -1, -1):
+		if scope_peek < 0:
+			scope_peek += _scope_stack.size()
+		
+		for i in range(scope_peek, -1, -1):
 			var scope: Dictionary = _scope_stack[i]
 			
 			if scope.has(symbol):
@@ -1170,10 +1209,11 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 		"elif":
 			match args.size():
 				1:
-					_parse_elif(_scan_value(args[0]), Comparator.NE, ParseValue.create_const(0))
+					_parse_elif(_scan_value(args[0], -2), Comparator.NE, ParseValue.create_const(0))
 				3:
 					_parse_elif(
-							_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2])
+							_scan_value(args[0], -2), _scan_comparator(args[1]),
+							_scan_value(args[2], -2)
 					)
 				_:
 					_err("Command 'elif' expects 1 or 3 arguments!")
@@ -1182,11 +1222,24 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 				_parse_else()
 			else:
 				_err("Command 'else' expects no arguments!")
+		"while":
+			match args.size():
+				1:
+					_parse_while(_scan_value(args[0]), Comparator.NE, ParseValue.create_const(0))
+				3:
+					_parse_while(
+							_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2])
+					)
+				_:
+					_err("Command 'while' expects 1 or 3 arguments!")
 		"end":
-			if args.size() == 1:
-				_parse_end(args[0])
-			else:
-				_err("Command 'end' expects 1 argument!")
+			match args.size():
+				0:
+					_parse_end_implicit()
+				1:
+					_parse_end(args[0])
+				_:
+					_err("Command 'end' expects 0 or 1 arguments!")
 		_:
 			if command.empty():
 				_err("Command is empty!")
@@ -1208,7 +1261,7 @@ func _parse_meta(key: String, value: ParseValue) -> void:
 		_metadata[key] = value.value
 
 
-# Parses a define command from NightScirpt source code to IR code:
+# Parses a define command from NightScript source code to IR code:
 func _parse_define(identifier: String, value: ParseValue):
 	if identifier.empty():
 		_err("Identifier is empty!")
@@ -1229,7 +1282,7 @@ func _parse_label(label: String) -> void:
 	if not _validate_label(label):
 		return
 	elif _has_block(label):
-		_err("Label '%s' is already declared!" % label)
+		_err("Label '%s' already exists!" % label)
 	else:
 		_pop_scope()
 		_current_block = _create_block(label)
@@ -1406,15 +1459,13 @@ func _parse_quit(command: String) -> void:
 
 # Parses an if command from NightScript source code to IR code:
 func _parse_if(left: ParseValue, comparator: int, right: ParseValue) -> void:
-	var statement: StatementIf = StatementIf.new()
+	var statement: StatementIf = StatementIf.new(_pos_line, _current_block)
 	statement.block_exit = _create_block_temp()
 	var block_body: IRBlock = _create_block_temp()
 	statement.block_bodies.push_back(block_body)
-	var block_test: IRBlock = _create_block_temp()
-	statement.block_test = block_test
-	statement.block_entry = _current_block
-	_current_block.make_jmp(block_test.label)
-	_current_block = block_test
+	statement.block_test = _create_block_temp()
+	_current_block.make_jmp(statement.block_test.label)
+	_current_block = statement.block_test
 	_make_branch(block_body.label, left, comparator, right)
 	_current_block = block_body
 	_push_scope()
@@ -1465,13 +1516,40 @@ func _parse_else() -> void:
 	_push_scope()
 
 
+# Parses a while command from NightScript source code to IR code:
+func _parse_while(left: ParseValue, comparator: int, right: ParseValue) -> void:
+	var statement: StatementWhile = StatementWhile.new(_pos_line, _current_block)
+	statement.block_exit = _create_block_temp()
+	statement.block_test = _create_block_temp()
+	statement.block_body = _create_block_temp()
+	_current_block.make_jmp(statement.block_test.label)
+	_current_block = statement.block_test
+	_make_branch(statement.block_body.label, left, comparator, right)
+	_current_block.make_jmp(statement.block_exit.label)
+	_current_block = statement.block_body
+	_push_scope()
+	_statement_stack.push_back(statement)
+
+
+# Parses an implicit end command from NightScript source code to IR code:
+func _parse_end_implicit() -> void:
+	if _is_in_statement_if():
+		_parse_end_if()
+	elif _is_in_statement_while():
+		_parse_end_while()
+	else:
+		_err("Command 'end' was used outside of a statement!")
+
+
 # Parses an end command from NightScript source code to IR code:
 func _parse_end(type: String) -> void:
 	match type:
 		"if":
 			_parse_end_if()
+		"while":
+			_parse_end_while()
 		_:
-			_err("Command 'end' expects 'if'!")
+			_err("Command 'end' expects 'if' or 'while'!")
 
 
 # Parses an end if command from NightScript source code to IR code:
@@ -1487,10 +1565,59 @@ func _parse_end_if() -> void:
 	_current_block = statement.block_exit
 
 
+# Parses an end while command from NightScript source code to IR code:
+func _parse_end_while() -> void:
+	if not _is_in_statement_while():
+		_err("Command 'end while' was used outside of a while statement!")
+		return
+	
+	var statement: StatementWhile = _statement_stack.pop_back()
+	_current_block.make_jmp(statement.block_test.label)
+	_pop_scope()
+	_current_block = statement.block_exit
+
+
 # Finalizes the NightScript compiler's IR code:
 func _finalize() -> void:
+	_finalize_end_statements()
+	_finalize_validate_labels()
 	_finalize_error_block()
 	_finalize_terminate()
+
+
+# Ends open statements and logs error messages:
+func _finalize_end_statements() -> void:
+	while not _statement_stack.empty():
+		_pos_line = _statement_stack[-1].pos_line
+
+		if _is_in_statement_if():
+			_err("If statement was not ended!")
+			_parse_end_if()
+		elif _is_in_statement_while():
+			_err("While statement was not ended!")
+			_parse_end_while()
+		else:
+			_statement_stack.remove(_statement_stack.size() - 1)
+	
+	_pos_line = 0
+
+
+# Validates that all referenced labels exist and logs error messages:
+func _finalize_validate_labels() -> void:
+	var block_default: IRBlock = null
+
+	for block in _blocks:
+		for node in block.nodes:
+			if not node.has_pointer() or _has_block(node.lbl):
+				continue
+			
+			_err("Label '%s' does not exist!" % node.lbl)
+
+			if not block_default:
+				block_default = _create_block_temp()
+				block_default.make_hlt()
+			
+			node.lbl = block_default.label
 
 
 # Finalizes the error IR block in the NightScript compiler's IR code:
@@ -1521,7 +1648,7 @@ func _finalize_terminate() -> void:
 	block.make_hlt()
 
 
-# Recreates the link references between IR blocks in the NightScript comiler's
+# Recreates the link references between IR blocks in the NightScript compiler's
 # IR code:
 func _link_blocks() -> void:
 	for i in range(_blocks.size()):

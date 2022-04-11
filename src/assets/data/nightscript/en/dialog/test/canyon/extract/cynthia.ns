@@ -64,7 +64,7 @@ if pester_count >= 2
 
 	name "Ryan"
 	say "Please don't call me that."
-end if
+end
 
 name "Cynthia"
 say "Sorry mister serious."

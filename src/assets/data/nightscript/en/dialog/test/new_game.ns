@@ -71,7 +71,7 @@ label youre_flattering_me
 	else
 		say "No,{p=0.25} I'm not.{p=0.5} I think if you were just a little more patient we wouldn't be here right now."
 		say "You've got the potential."
-	end if
+	end
 
 	goto post_menu_2
 
@@ -95,7 +95,7 @@ label post_menu_2
 
 	if pester_count >= 2
 		say "I'll be with Koby until then."
-	end if
+	end
 
 	say "Get yourself ready."
 	dialog hide

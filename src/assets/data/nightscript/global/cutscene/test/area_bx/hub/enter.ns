@@ -24,7 +24,7 @@ if seen_terminal == false
 elif count == 9
 	if seen_north_almost
 		exit
-	end if
+	end
 
 	set seen_north_almost true
 	player freeze
@@ -35,7 +35,7 @@ elif count == 9
 elif count == 10
 	if seen_north_complete
 		exit
-	end if
+	end
 
 	set seen_north_complete true
 	player freeze
@@ -46,7 +46,7 @@ elif count == 10
 elif count == 16
 	if seen_west_almost
 		exit
-	end if
+	end
 
 	set seen_west_almost true
 	player freeze
@@ -57,7 +57,7 @@ elif count == 16
 elif count == 17
 	if seen_west_complete
 		exit
-	end if
+	end
 
 	set seen_west_complete true
 	player freeze
@@ -65,4 +65,4 @@ elif count == 17
 	run dialog.test.area_bx.hub.west_complete
 	dialog hide
 	player unfreeze
-end if
+end

@@ -12,7 +12,7 @@ if is_unlocked
 else
 	say "DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_UNLOCK"
 	menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.UNLOCK" goto unlock
-end if
+end
 
 menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.CANCEL" goto cancel
 menu show

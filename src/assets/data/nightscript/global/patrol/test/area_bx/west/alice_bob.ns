@@ -1,7 +1,7 @@
 # Patrol Route
 # Patrol route for 'alice' and 'bob' in test.area_bx.west.
 
-label main
+while true
 	sleep 5
 	path find alice PAlB
 	path do bob PBoB
@@ -12,4 +12,4 @@ label main
 	path do bob PBoA
 	look alice left
 	look bob left
-	goto main
+end
