@@ -108,6 +108,17 @@ func run_program(program_key: String) -> void:
 	_state = State.RUNNING
 
 
+# Caches a NightScript program from its program key:
+func cache_program(program_key: String) -> void:
+	if not _is_caching or program_key.empty() or _bytecode_cache.has(program_key):
+		return
+	
+	var bytecode: PoolByteArray = _get_bytecode(program_key)
+
+	if not bytecode.empty() and bytecode[0]:
+		_bytecode_cache[program_key] = bytecode
+
+
 # Flushes the NightScript bytecode cache:
 func flush_cache() -> void:
 	_bytecode_cache.clear()

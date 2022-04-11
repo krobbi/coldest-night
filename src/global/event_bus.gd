@@ -8,6 +8,7 @@ extends Object
 
 signal accumulate_alert_count_request # warning-ignore: UNUSED_SIGNAL
 signal accumulate_time_request(delta) # warning-ignore: UNUSED_SIGNAL
+signal cache_ns_request(program_key) # warning-ignore: UNUSED_SIGNAL
 signal camera_unfocus_request # warning-ignore: UNUSED_SIGNAL
 signal fade_in_request # warning-ignore: UNUSED_SIGNAL
 signal fade_out_request # warning-ignore: UNUSED_SIGNAL

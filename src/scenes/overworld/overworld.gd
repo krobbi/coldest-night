@@ -13,6 +13,7 @@ onready var level_camera: LevelCamera = $LevelCamera
 # overworld scene to the event bus and initializes the game state from save
 # data:
 func _ready() -> void:
+	Global.events.safe_connect("cache_ns_request", nightscript, "cache_program")
 	Global.events.safe_connect("run_ns_request", nightscript, "run_program")
 	level_host.load_state()
 
@@ -21,3 +22,4 @@ func _ready() -> void:
 # Disconnects the overworld scene from the event bus:
 func _exit_tree() -> void:
 	Global.events.safe_disconnect("run_ns_request", nightscript, "run_program")
+	Global.events.safe_disconnect("cache_ns_request", nightscript, "cache_program")

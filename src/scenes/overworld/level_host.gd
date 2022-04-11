@@ -68,6 +68,10 @@ func change_level(level_key: String) -> void:
 		current_level.free()
 	
 	current_level = _create_level(level_key)
+
+	for program_key in current_level.cached_ns_programs:
+		Global.events.emit_signal("cache_ns_request", program_key)
+
 	add_child(current_level)
 	save_data.level = level_key
 	Global.save.save_checkpoint()
