@@ -81,8 +81,11 @@ func _ready() -> void:
 # Virtual _process method. Runs on every frame. Steps the NightScript
 # interpreter:
 func _process(_delta: float) -> void:
-	if _state == State.RUNNING:
+	var steps: int = 16
+
+	while _state == State.RUNNING and steps:
 		_step()
+		steps -= 1
 
 
 # Virtual _exit_tree method. Runs when the NightScript interpreter exits the
@@ -173,7 +176,7 @@ func _get_bytecode(program_key: String) -> PoolByteArray:
 		var source: String = file.get_as_text()
 		file.close()
 		var compiler: Reference = load("res://utils/nightscript/debug/ns_compiler.gd").new()
-		return compiler.compile_source(source)
+		return compiler.compile_source(source, Global.config.get_bool("debug.optimize_nightscript"))
 	
 	var bytecode: PoolByteArray = file.get_buffer(file.get_len())
 	file.close()

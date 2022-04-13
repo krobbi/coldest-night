@@ -40,9 +40,26 @@ func _escape_string(string: String) -> String:
 	return output
 
 
+# Deserializes NightScript source code or NightScript hex bytecode to the
+# NightScript program:
+func _deserialize_source(source: String) -> void:
+	if source.begins_with("00 ") or source.begins_with("01 "):
+		var hex: PoolStringArray = source.split(" ", false)
+		var size: int = hex.size()
+		var bytecode: PoolByteArray = PoolByteArray()
+		bytecode.resize(size)
+
+		for i in range(size):
+			bytecode[i] = ("0x%s" % hex[i]).hex_to_int() & 0xff
+		
+		_program.deserialize_bytecode(bytecode)
+	else:
+		_program.deserialize_bytecode(_compiler.compile_source(source, true))
+
+
 # Compiles and disassembles NightScript source code:
 func _disassemble_source(source: String) -> String:
-	_program.deserialize_bytecode(_compiler.compile_source(source))
+	_deserialize_source(source)
 	var output: String = "meta cache %s\nmeta optimize false\n\n" % (
 			"true" if _program.is_cacheable else "false"
 	)

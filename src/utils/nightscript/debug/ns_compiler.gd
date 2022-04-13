@@ -2,7 +2,7 @@ extends Reference
 
 # NightScript Compiler
 # A NightScript compiler is a NightScript utility that compiles NightScript
-# source code from NightScript bytecode.
+# source code to NightScript bytecode.
 
 class ParseFlag extends Reference:
 	
@@ -17,6 +17,11 @@ class ParseFlag extends Reference:
 	func _init(namespace_val: String, key_val: String) -> void:
 		namespace = namespace_val
 		key = key_val
+	
+	
+	# Returns whether the parse flag equals another parse flag by value:
+	func equals(other: ParseFlag) -> bool:
+		return namespace == other.namespace and key == other.key
 
 
 class ParseValue extends Reference:
@@ -99,6 +104,29 @@ class IRNode extends Reference:
 	# Returns whether the IR node has a pointer operand:
 	func has_pointer() -> bool:
 		return NSOp.get_operands(op) & NSOp.OPERAND_PTR != 0
+	
+	
+	# Returns whether the IR node functionally equals another IR node by value:
+	func equals(other: IRNode, head_label: String = "", other_head_label: String = "") -> bool:
+		if op != other.op:
+			return false
+		
+		var operands: int = NSOp.get_operands(op)
+
+		if operands & NSOp.OPERAND_VAL and val != other.val:
+			return false
+		
+		if operands & NSOp.OPERAND_PTR and lbl != other.lbl:
+			if lbl != head_label or other.lbl != other_head_label:
+				return false
+		
+		if operands & NSOp.OPERAND_FLG and not flg.equals(other.flg):
+			return false
+		
+		if operands & NSOp.OPERAND_TXT and txt != other.txt:
+			return false
+		
+		return true
 
 
 class IntTrace extends Reference:
@@ -106,7 +134,7 @@ class IntTrace extends Reference:
 	# Int Trace
 	# An int trace is a helper structure used by a NightScript compiler that
 	# traces the state of an int register. It is used to optimize out
-	# unnecessary writes to int registers:
+	# unnecessary writes to int registers.
 	
 	var is_traced: bool = false
 	var value: int = 0
@@ -179,6 +207,37 @@ class IRBlock extends Reference:
 	func size() -> int:
 		return nodes.size()
 	
+	
+	# Returns whether the IR block functionally equals another IR block by
+	# value:
+	func equals(other: IRBlock) -> bool:
+		var size: int = size()
+		var other_size: int = other.size()
+		var exit: String = block_next.label if block_next else ""
+		var other_exit: String = other.block_next.label if other.block_next else ""
+
+		if is_dead:
+			if nodes[-1].op == NSOp.JMP:
+				size -= 1
+				exit = nodes[-1].lbl
+			else:
+				exit = ""
+		
+		if other.is_dead:
+			if other.nodes[-1].op == NSOp.JMP:
+				other_size -= 1
+				other_exit = other.nodes[-1].lbl
+			else:
+				other_exit = ""
+		
+		if size != other_size or exit != other_exit:
+			return false
+		
+		for i in range(size):
+			if not nodes[i].equals(other.nodes[i], label, other.label):
+				return false
+		
+		return true
 	
 	# Clears the IR block's IR nodes and traces:
 	func clear() -> void:
@@ -684,7 +743,7 @@ var _error_block: IRBlock = null
 var _current_block: IRBlock = null
 
 # Compiles a NightScript source file to NightScript bytecode from its path:
-func compile_path(path: String) -> PoolByteArray:
+func compile_path(path: String, optimize: bool) -> PoolByteArray:
 	_reset()
 	var file: File = File.new()
 	
@@ -706,16 +765,22 @@ func compile_path(path: String) -> PoolByteArray:
 		_err("NightScript source file '%s' does not exist!" % path)
 	
 	_finalize()
-	_optimize()
+
+	if optimize:
+		_optimize()
+	
 	return _generate_bytecode()
 
 
 # Compiles NightScript source code to NightScript bytecode:
-func compile_source(source: String) -> PoolByteArray:
+func compile_source(source: String, optimize: bool) -> PoolByteArray:
 	_reset()
 	_parse_source(source)
 	_finalize()
-	_optimize()
+
+	if optimize:
+		_optimize()
+	
 	return _generate_bytecode()
 
 
@@ -929,7 +994,7 @@ func _scan_value(symbol: String, scope_peek: int = -1) -> ParseValue:
 			if scope.has(symbol):
 				return scope[symbol]
 		
-		return _create_error("Value '%s' is undeclared in the current scope!" % symbol)
+		return _create_error("Identifier '%s' is undeclared in the current scope!" % symbol)
 	elif symbol.is_valid_integer():
 		return ParseValue.create_const(int(symbol))
 	elif symbol.count(":") == 1:
@@ -1373,11 +1438,7 @@ func _parse_menu(args: PoolStringArray) -> void:
 func _parse_menu_option(text: String, type: String, label: String) -> void:
 	if type != "goto":
 		_err("Command 'menu option' expects a 'goto' type!")
-	elif label.empty():
-		_err("Label is empty!")
-	elif not label.is_valid_identifier():
-		_err("Label '%s' is invalid!" % label)
-	else:
+	elif _validate_label(label):
 		_current_block.make_mno(label, text)
 
 
@@ -1582,6 +1643,7 @@ func _finalize() -> void:
 	_finalize_end_statements()
 	_finalize_validate_labels()
 	_finalize_error_block()
+	_finalize_clear_main()
 	_finalize_terminate()
 
 
@@ -1642,6 +1704,12 @@ func _finalize_error_block() -> void:
 	_error_block.make_jmp("main" if _has_block("main") else "$$main")
 
 
+# Clears the '$$main' parse block if a 'main' parse block exists:
+func _finalize_clear_main() -> void:
+	if _has_block("main"):
+		_get_block("$$main").clear()
+
+
 # Adds a terminal HLT operation to the final parse block:
 func _finalize_terminate() -> void:
 	var block: IRBlock = _blocks[-1]
@@ -1660,18 +1728,31 @@ func _link_blocks() -> void:
 
 # Performs post-parsing optimizations on the NightScript compiler's IR code
 # until no changes occur:
-func _optimize(var iterations: int = 256) -> void:
+func _optimize() -> void:
 	if not _get_metadata("optimize"):
 		return
 	
-	var should_optimize: bool = true
+	var is_optimized: bool = true
+	var iterations: int = 256
 	
-	while should_optimize and iterations:
-		should_optimize = _optimize_thread_pointers()
-		should_optimize = _optimize_eliminate_unreachable_blocks() or should_optimize
-		should_optimize = _optimize_eliminate_subsequent_branches() or should_optimize
-		should_optimize = _optimize_eliminate_empty_blocks() or should_optimize
+	while is_optimized and iterations:
+		is_optimized = false
 		iterations -= 1
+
+		for optimization in [
+			"thread_pointers",
+			"thread_halts",
+			"deduplicate_blocks",
+			"eliminate_unreachable_blocks",
+			"eliminate_subsequent_branches",
+			"eliminate_empty_blocks",
+		]:
+			var method: String = "_optimize_%s" % optimization
+			var sub_iterations: int = 256
+
+			while call(method) and sub_iterations:
+				is_optimized = true
+				sub_iterations -= 1
 
 
 # Redirects IR node's pointers to jump operations to the target jump operation's
@@ -1695,6 +1776,67 @@ func _optimize_thread_pointers() -> bool:
 				if node.has_pointer() and node.lbl == source_label:
 					node.lbl = target_label
 					is_optimized = true
+	
+	return is_optimized
+
+
+# Replaces jump operations to halt operations with halt operations. Returns
+# whether any optimization was performed:
+func _optimize_thread_halts() -> bool:
+	var is_optimized: bool = false
+
+	for source_block in _blocks:
+		if source_block.empty() or source_block.nodes[0].op != NSOp.HLT:
+			continue
+		
+		var source_label: String = source_block.label
+
+		for block in _blocks:
+			for node in block.nodes:
+				if node.op == NSOp.JMP and node.lbl == source_label:
+					node.op = NSOp.HLT
+					is_optimized = true
+	
+	return is_optimized
+
+
+# Redirects IR node's pointers to functionally identical IR blocks to the first
+# or most important duplicate IR block. Returns whether any optimization was
+# performed:
+func _optimize_deduplicate_blocks() -> bool:
+	var is_optimized: bool = false
+
+	for i in range(_blocks.size() - 1):
+		var block_a: IRBlock = _blocks[i]
+
+		for j in range(i + 1, _blocks.size()):
+			var block_b: IRBlock = _blocks[j]
+
+			if not block_a.equals(block_b):
+				continue
+			
+			var source_label: String = block_b.label
+			var target_label: String = block_a.label
+
+			if block_b.is_important():
+				if block_a.is_important():
+					continue
+				else:
+					source_label = block_a.label
+					target_label = block_b.label
+			
+			for block in _blocks:
+				if(
+						not block.is_dead and block.block_next
+						and block.block_next.label == source_label
+				):
+					block.make_jmp(target_label)
+					is_optimized = true
+				
+				for node in block.nodes:
+					if node.has_pointer() and node.lbl == source_label:
+						node.lbl = target_label
+						is_optimized = true
 	
 	return is_optimized
 

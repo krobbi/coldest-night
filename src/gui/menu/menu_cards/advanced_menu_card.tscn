@@ -8,7 +8,7 @@
 _heading_key = "advanced"
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 104.0
+margin_bottom = 140.0
 
 [node name="ChecksumSavesCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
 anchor_right = 0.0
@@ -24,11 +24,19 @@ margin_bottom = 68.0
 appearance_condition = 3
 _config_key = "advanced.compress_saves"
 
-[node name="BackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 3 )]
+[node name="OptimizeNightScriptCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_top = 72.0
 margin_right = 512.0
 margin_bottom = 104.0
+appearance_condition = 2
+_config_key = "debug.optimize_nightscript"
+
+[node name="BackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 3 )]
+anchor_right = 0.0
+margin_top = 108.0
+margin_right = 512.0
+margin_bottom = 140.0
 _text = "BUTTON.BACK"
 _sound_type = 2
 

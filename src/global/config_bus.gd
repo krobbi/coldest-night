@@ -128,6 +128,7 @@ var _data: Dictionary = {
 	"advanced.show_advanced": false,
 	"advanced.checksum_saves": true,
 	"advanced.compress_saves": true,
+	"debug.optimize_nightscript": false,
 }
 
 # Constructor. Passes the logger to the configuration bus:

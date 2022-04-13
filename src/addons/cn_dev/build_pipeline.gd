@@ -80,4 +80,4 @@ func _pipe_compile_nightscript(path: String) -> void:
 		locale = "g"
 	
 	var compiled_path: String = "res://n/%s/%sc" % [locale, path_parts.join(".")]
-	add_file(compiled_path, _nightscript_compiler.compile_path(path), false)
+	add_file(compiled_path, _nightscript_compiler.compile_path(path, true), false)
