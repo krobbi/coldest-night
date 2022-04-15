@@ -7,22 +7,19 @@ player freeze
 dialog show
 say "DIALOG.TEST.LASER_TERMINAL.PROMPT"
 
-menu option "DIALOG.TEST.LASER_TERMINAL.OPTION.REDIRECT" goto redirect
-menu option "DIALOG.TEST.LASER_TERMINAL.OPTION.CANCEL" goto cancel
-menu show
+menu
+	option "DIALOG.TEST.LASER_TERMINAL.OPTION.REDIRECT" do
+		if state
+			set state false
+		else
+			set state true
+		end
 
-label redirect
-	if state
-		set state false
-	else
-		set state true
+		say "DIALOG.TEST.LASER_TERMINAL.REDIRECTED"
 	end
 
-	say "DIALOG.TEST.LASER_TERMINAL.REDIRECTED"
-	goto cancel
+	option "DIALOG.TEST.LASER_TERMINAL.OPTION.CANCEL" none
+end
 
-
-label cancel
-	dialog hide
-	player unfreeze
-	exit
+dialog hide
+player unfreeze

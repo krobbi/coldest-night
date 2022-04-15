@@ -6,30 +6,23 @@ define is_unlocked test:west_unlocked
 player freeze
 dialog show
 
-if is_unlocked
-	say "DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_LOCK"
-	menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.LOCK" goto lock
-else
-	say "DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_UNLOCK"
-	menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.UNLOCK" goto unlock
+menu
+	if is_unlocked
+		say "DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_LOCK"
+		option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.LOCK" do
+			set is_unlocked false
+			say "DIALOG.TEST.UNLOCK_TERMINAL.LOCKED"
+		end
+	else
+		say "DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_UNLOCK"
+		option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.UNLOCK" do
+			set is_unlocked true
+			say "DIALOG.TEST.UNLOCK_TERMINAL.UNLOCKED"
+		end
+	end
+
+	option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.CANCEL" none
 end
 
-menu option "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.CANCEL" goto cancel
-menu show
-
-label lock
-	set is_unlocked false
-	say "DIALOG.TEST.UNLOCK_TERMINAL.LOCKED"
-	goto cancel
-
-
-label unlock
-	set is_unlocked true
-	say "DIALOG.TEST.UNLOCK_TERMINAL.UNLOCKED"
-	goto cancel
-
-
-label cancel
-	dialog hide
-	player unfreeze
-	exit
+dialog hide
+player unfreeze

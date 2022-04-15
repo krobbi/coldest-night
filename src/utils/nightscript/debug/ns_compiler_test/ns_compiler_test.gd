@@ -151,9 +151,9 @@ func _disassemble_source(source: String) -> String:
 			NSOp.DGM: # Dialog message:
 				output += "say %s" % txt
 			NSOp.MNO: # Menu option:
-				output += "menu option %s goto %s" % [txt, lbl]
+				output += "MNO %s %s" % [lbl, txt]
 			NSOp.MNS: # Menu show:
-				output += "menu show"
+				output += "MNS"
 			NSOp.LAK: # Load actor key:
 				output += "LAK %s" % txt
 			NSOp.AFD: # Actor face direction:

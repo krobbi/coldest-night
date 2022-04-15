@@ -624,6 +624,7 @@ class Statement extends Reference:
 
 	var pos_line: int
 	var block_entry: IRBlock
+	var block_exit: IRBlock = null
 
 	# Constructor. Sets the statement's line position and entry IR block:
 	func _init(pos_line_val: int, block_entry_ref: IRBlock) -> void:
@@ -634,14 +635,12 @@ class Statement extends Reference:
 class StatementIf extends Statement:
 
 	# If Statement
-	# An if statement is a helper structure used by a NightScript compiler that
-	# is an intermediate representation of an if-elif-else statement in the
+	# An if statement is a statement that represents an if statement in the
 	# statement stack.
 
 	var seen_else: bool = false
 	var block_test: IRBlock = null
 	var block_bodies: Array = []
-	var block_exit: IRBlock = null
 
 	# Constructor. Passes the if statement's line position and entry IR block to
 	# the if statement:
@@ -652,18 +651,49 @@ class StatementIf extends Statement:
 class StatementWhile extends Statement:
 
 	# While Statement
-	# A while statement is a helper structure used by a NightScript compiler
-	# that is an intermediate representation of a while statement in the
+	# A while statement is a statement that represents a while statement in the
 	# statement stack.
 
 	var block_body: IRBlock = null
 	var block_test: IRBlock = null
-	var block_exit: IRBlock = null
 
 	# Constructor. Passes the while statement's line position and entry IR block
 	# to the while statement:
 	func _init(pos_line: int, block_entry: IRBlock).(pos_line, block_entry) -> void:
 		pass
+
+
+class StatementMenu extends Statement:
+
+	# Menu Statement
+	# A menu statement is a statement that represents a menu statement in the
+	# statement stack.
+
+	var block_body: IRBlock = null
+
+	# Constructor. Passes the menu statement's line position and entry IR block
+	# to the menu statement:
+	func _init(pos_line: int, block_entry: IRBlock).(pos_line, block_entry) -> void:
+		pass
+
+
+class StatementOption extends Statement:
+
+	# Option Statement
+	# An option statement is a statement that represents an option statement in
+	# the statement stack.
+
+	var text: String
+	var block_body: IRBlock = null
+	var block_skip: IRBlock = null
+
+	# Constructor. Passes the option statement's menu statement, text, line
+	# position, and entry IR block to the option statement:
+	func _init(menu: StatementMenu, text_val: String, pos_line: int, block_entry: IRBlock).(
+			pos_line, block_entry
+	) -> void:
+		text = text_val
+		block_exit = menu.block_exit
 
 
 class TableFlag extends Reference:
@@ -731,7 +761,18 @@ enum CommandScanState {NORMAL, STRING, ESCAPE}
 enum Comparator {ERROR, EQ, NE, GT, GE, LT, LE}
 
 const RESERVED_CONSTS: Dictionary = {"false": 0, "true": 1}
-const DEFAULT_METADATA: Dictionary = {"cache": 1, "optimize": 1}
+const DEFAULT_METADATA: Dictionary = {
+	"cache": 1,
+	"optimize": 1,
+	"optimize_adopt_child_blocks": 1,
+	"optimize_deduplicate_blocks": 1,
+	"optimize_eliminate_empty_blocks": 1,
+	"optimize_eliminate_subsequent_branches": 1,
+	"optimize_eliminate_subsequent_halts": 1,
+	"optimize_eliminate_unreachable_blocks": 1,
+	"optimize_thread_halts": 1,
+	"optimize_thread_pointers": 1,
+}
 
 var _pos_line: int = 0
 var _temp_block_count: int = 0
@@ -801,8 +842,17 @@ func _get_block(label: String) -> IRBlock:
 	return null
 
 
-# Gets whether the NightScript compiler's IR code is inside an if-elif-else
-# statement:
+# Gets the topmost menu statement. Returns null if there are not menu statements
+# in the statement stack:
+func _get_statement_menu() -> StatementMenu:
+	for i in range(_statement_stack.size() - 1, -1, -1):
+		if _statement_stack[i] is StatementMenu:
+			return _statement_stack[i]
+	
+	return null
+
+
+# Gets whether the NightScript compiler's IR code is inside an if statement:
 func _is_in_statement_if() -> bool:
 	return not _statement_stack.empty() and _statement_stack[-1] is StatementIf
 
@@ -810,6 +860,34 @@ func _is_in_statement_if() -> bool:
 # Gets whether the NightScript compiler's IR code is inside a while statement:
 func _is_in_statement_while() -> bool:
 	return not _statement_stack.empty() and _statement_stack[-1] is StatementWhile
+
+
+# Gets whether the NightScript compiler's IR code is inside a menu statement:
+func _is_in_statement_menu() -> bool:
+	return not _statement_stack.empty() and _statement_stack[-1] is StatementMenu
+
+
+# Gets whether a menu statement exists in the statement stack:
+func _is_in_statement_menu_deep() -> bool:
+	for statement in _statement_stack:
+		if statement is StatementMenu:
+			return true
+	
+	return false
+
+
+# Gets whether the NightScript compiler's IR code is inside an option statement:
+func _is_in_statement_option() -> bool:
+	return not _statement_stack.empty() and _statement_stack[-1] is StatementOption
+
+
+# Gets whether an option statement exists in the statement stack:
+func _is_in_statement_option_deep() -> bool:
+	for statement in _statement_stack:
+		if statement is StatementOption:
+			return true
+	
+	return false
 
 
 # Returns whether an IR block exists from its label:
@@ -1217,12 +1295,6 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 				_current_block.make_dgm(args[0])
 			else:
 				_err("Command 'say' expects 1 argument!")
-		"menu":
-			match args.size():
-				1, 4:
-					_parse_menu(args)
-				_:
-					_err("Command 'menu' expects 1 or 4 arguments!")
 		"look":
 			if args.size() == 2:
 				_parse_look(args[0], args[1])
@@ -1297,6 +1369,17 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 					)
 				_:
 					_err("Command 'while' expects 1 or 3 arguments!")
+		"menu":
+			if args.size() == 0:
+				_parse_menu()
+			else:
+				_err("Command 'menu' expects no arguments!")
+		"option":
+			match args.size():
+				2, 3, 4:
+					_parse_option(args)
+				_:
+					_err("Command 'option' expects 2, 3, or 4 arguments!")
 		"end":
 			match args.size():
 				0:
@@ -1348,6 +1431,8 @@ func _parse_label(label: String) -> void:
 		return
 	elif _has_block(label):
 		_err("Label '%s' already exists!" % label)
+	elif _is_in_statement_menu_deep() and not _is_in_statement_option_deep():
+		_err("Labels cannot be created inside menu statements!")
 	else:
 		_pop_scope()
 		_current_block = _create_block(label)
@@ -1383,7 +1468,10 @@ func _parse_sleep(duration: ParseValue, unit: String) -> void:
 # Parses a goto command from NightScript source code to IR code:
 func _parse_goto(label: String, left: ParseValue, comparator: int, right: ParseValue) -> void:
 	if _validate_label(label):
-		_make_branch(label, left, comparator, right)
+		if _is_in_statement_menu_deep() and not _is_in_statement_option_deep():
+			_err("Command 'goto' cannot be used inside menu statements!")
+		else:
+			_make_branch(label, left, comparator, right)
 
 
 # Parses a set command from NightScript source code to IR code:
@@ -1412,34 +1500,6 @@ func _parse_name(name: String) -> void:
 		_current_block.make_dnc()
 	else:
 		_current_block.make_dnd(name)
-
-
-# Parses a menu command from NightScript source code to IR code:
-func _parse_menu(args: PoolStringArray) -> void:
-	var command: String = args[0]
-	args.remove(0)
-	
-	match command:
-		"option":
-			if args.size() == 3:
-				_parse_menu_option(args[0], args[1], args[2])
-			else:
-				_err("Command 'menu option' expects 3 arguments!")
-		"show":
-			if args.size() == 0:
-				_current_block.make_mns()
-			else:
-				_err("Command 'menu show' expects no arguments!")
-		_:
-			_err("Command 'menu' expects 'option' or 'show'!")
-
-
-# Parses a menu option command from NightScript source code to IR code:
-func _parse_menu_option(text: String, type: String, label: String) -> void:
-	if type != "goto":
-		_err("Command 'menu option' expects a 'goto' type!")
-	elif _validate_label(label):
-		_current_block.make_mno(label, text)
 
 
 # Parses a look command from NightScript source code to IR code:
@@ -1592,12 +1652,109 @@ func _parse_while(left: ParseValue, comparator: int, right: ParseValue) -> void:
 	_statement_stack.push_back(statement)
 
 
+# Parses a menu command from NightScript source code to IR code:
+func _parse_menu() -> void:
+	if _is_in_statement_menu_deep():
+		_err("Menu statements cannot be nested!")
+		return
+	
+	var statement: StatementMenu = StatementMenu.new(_pos_line, _current_block)
+	statement.block_exit = _create_block_temp()
+	statement.block_body = _create_block_temp()
+	_current_block.make_jmp(statement.block_body.label)
+	_current_block = statement.block_body
+	_push_scope()
+	_statement_stack.push_back(statement)
+
+
+# Parses an option command from NightScript source code to IR code:
+func _parse_option(args: PoolStringArray) -> void:
+	var statement: StatementMenu = _get_statement_menu()
+
+	if not statement:
+		_err("Command 'option' was used outside of a menu statement!")
+		return
+	
+	var text: String = args[0]
+	var type: String = args[1]
+	args.remove(1)
+	args.remove(0)
+
+	match type:
+		"none":
+			if args.size() == 0:
+				_parse_option_none(statement, text)
+			else:
+				_err("Command 'option none' expects no arguments!")
+		"goto":
+			if args.size() == 1:
+				_parse_option_goto(text, args[0])
+			else:
+				_err("Command 'option goto' expects 1 argument!")
+		"set":
+			if args.size() == 2:
+				_parse_option_set(statement, text, _scan_value(args[0]), _scan_value(args[1]))
+			else:
+				_err("Command 'option set' expects 2 arguments!")
+		"do":
+			if args.size() == 0:
+				_parse_option_do(statement, text)
+			else:
+				_err("Command 'option do' expects no arguments!")
+		_:
+			_err("Command 'option' expects a 'none', 'goto', 'set', or 'do' type!")
+
+
+# Parses an option none command from NightScript source code to IR code:
+func _parse_option_none(statement: StatementMenu, text: String) -> void:
+	_current_block.make_mno(statement.block_exit.label, text)
+
+
+# Parses an option goto command from NightScript source code to IR code:
+func _parse_option_goto(text: String, label: String) -> void:
+	if _validate_label(label):
+		_current_block.make_mno(label, text)
+
+
+# Parses an option set command from NightScript source code to IR code:
+func _parse_option_set(
+		statement: StatementMenu, text: String, left: ParseValue, right: ParseValue
+) -> void:
+	if not left.is_flag():
+		_err("Command 'option set' expects a variable left-hand value!")
+	elif not right.is_error():
+		var option_block: IRBlock = _create_block_temp()
+		option_block.load_x(right)
+		option_block.make_stx(left.flag)
+		option_block.make_jmp(statement.block_exit.label)
+		_current_block.make_mno(option_block.label, text)
+
+
+# Parses an option do command from NightScript source code to IR code:
+func _parse_option_do(menu: StatementMenu, text: String) -> void:
+	if _is_in_statement_option_deep():
+		_err("Option statements cannot be nested!")
+		return
+
+	var statement: StatementOption = StatementOption.new(menu, text, _pos_line, _current_block)
+	statement.block_skip = _create_block_temp()
+	statement.block_body = _create_block_temp()
+	_current_block.make_jmp(statement.block_skip.label)
+	_current_block = statement.block_body
+	_push_scope()
+	_statement_stack.push_back(statement)
+
+
 # Parses an implicit end command from NightScript source code to IR code:
 func _parse_end_implicit() -> void:
 	if _is_in_statement_if():
 		_parse_end_if()
 	elif _is_in_statement_while():
 		_parse_end_while()
+	elif _is_in_statement_menu():
+		_parse_end_menu()
+	elif _is_in_statement_option():
+		_parse_end_option()
 	else:
 		_err("Command 'end' was used outside of a statement!")
 
@@ -1609,8 +1766,12 @@ func _parse_end(type: String) -> void:
 			_parse_end_if()
 		"while":
 			_parse_end_while()
+		"menu":
+			_parse_end_menu()
+		"option":
+			_parse_end_option()
 		_:
-			_err("Command 'end' expects 'if' or 'while'!")
+			_err("Command 'end' expects 'if', 'while', 'menu', or 'option'!")
 
 
 # Parses an end if command from NightScript source code to IR code:
@@ -1638,6 +1799,31 @@ func _parse_end_while() -> void:
 	_current_block = statement.block_exit
 
 
+# Parses an end menu command from NightScript source code to IR code:
+func _parse_end_menu() -> void:
+	if not _is_in_statement_menu():
+		_err("Command 'end menu' was used outside of a menu statement!")
+		return
+	
+	var statement: StatementMenu = _statement_stack.pop_back()
+	_current_block.make_mns()
+	_pop_scope()
+	_current_block = statement.block_exit
+
+
+# Parses an end option command from NightScript source code to IR code:
+func _parse_end_option() -> void:
+	if not _is_in_statement_option():
+		_err("Command 'end option' was used outside of an option statement!")
+		return
+	
+	var statement: StatementOption = _statement_stack.pop_back()
+	_current_block.make_jmp(statement.block_exit.label)
+	_pop_scope()
+	_current_block = statement.block_skip
+	_current_block.make_mno(statement.block_body.label, statement.text)
+
+
 # Finalizes the NightScript compiler's IR code:
 func _finalize() -> void:
 	_finalize_end_statements()
@@ -1658,6 +1844,12 @@ func _finalize_end_statements() -> void:
 		elif _is_in_statement_while():
 			_err("While statement was not ended!")
 			_parse_end_while()
+		elif _is_in_statement_menu():
+			_err("Menu statement was not ended!")
+			_parse_end_menu()
+		elif _is_in_statement_option():
+			_err("Option statement was not ended!")
+			_parse_end_option()
 		else:
 			_statement_stack.remove(_statement_stack.size() - 1)
 	
@@ -1740,19 +1932,65 @@ func _optimize() -> void:
 		iterations -= 1
 
 		for optimization in [
+			"deduplicate_blocks",
 			"thread_pointers",
 			"thread_halts",
-			"deduplicate_blocks",
 			"eliminate_unreachable_blocks",
 			"eliminate_subsequent_branches",
+			"eliminate_subsequent_halts",
 			"eliminate_empty_blocks",
+			"adopt_child_blocks",
 		]:
+			if not _get_metadata("optimize_%s" % optimization):
+				continue
+			
 			var method: String = "_optimize_%s" % optimization
 			var sub_iterations: int = 256
 
 			while call(method) and sub_iterations:
 				is_optimized = true
 				sub_iterations -= 1
+
+
+# Redirects IR node's pointers to functionally identical IR blocks to the first
+# or most important duplicate IR block. Returns whether any optimization was
+# performed:
+func _optimize_deduplicate_blocks() -> bool:
+	var is_optimized: bool = false
+
+	for i in range(_blocks.size() - 1):
+		var block_a: IRBlock = _blocks[i]
+
+		for j in range(i + 1, _blocks.size()):
+			var block_b: IRBlock = _blocks[j]
+
+			if not block_a.equals(block_b):
+				continue
+			
+			var source_label: String = block_b.label
+			var target_label: String = block_a.label
+
+			if block_b.is_important():
+				if block_a.is_important():
+					continue
+				else:
+					source_label = block_a.label
+					target_label = block_b.label
+			
+			for block in _blocks:
+				if(
+						not block.is_dead and block.block_next
+						and block.block_next.label == source_label
+				):
+					block.make_jmp(target_label)
+					is_optimized = true
+				
+				for node in block.nodes:
+					if node.has_pointer() and node.lbl == source_label:
+						node.lbl = target_label
+						is_optimized = true
+	
+	return is_optimized
 
 
 # Redirects IR node's pointers to jump operations to the target jump operation's
@@ -1796,47 +2034,6 @@ func _optimize_thread_halts() -> bool:
 				if node.op == NSOp.JMP and node.lbl == source_label:
 					node.op = NSOp.HLT
 					is_optimized = true
-	
-	return is_optimized
-
-
-# Redirects IR node's pointers to functionally identical IR blocks to the first
-# or most important duplicate IR block. Returns whether any optimization was
-# performed:
-func _optimize_deduplicate_blocks() -> bool:
-	var is_optimized: bool = false
-
-	for i in range(_blocks.size() - 1):
-		var block_a: IRBlock = _blocks[i]
-
-		for j in range(i + 1, _blocks.size()):
-			var block_b: IRBlock = _blocks[j]
-
-			if not block_a.equals(block_b):
-				continue
-			
-			var source_label: String = block_b.label
-			var target_label: String = block_a.label
-
-			if block_b.is_important():
-				if block_a.is_important():
-					continue
-				else:
-					source_label = block_a.label
-					target_label = block_b.label
-			
-			for block in _blocks:
-				if(
-						not block.is_dead and block.block_next
-						and block.block_next.label == source_label
-				):
-					block.make_jmp(target_label)
-					is_optimized = true
-				
-				for node in block.nodes:
-					if node.has_pointer() and node.lbl == source_label:
-						node.lbl = target_label
-						is_optimized = true
 	
 	return is_optimized
 
@@ -1905,6 +2102,26 @@ func _optimize_eliminate_subsequent_branches() -> bool:
 	return is_optimized
 
 
+# Eliminates HLT IR nodes that precede HLT IR nodes. Returns whether any
+# optimization was performed:
+func _optimize_eliminate_subsequent_halts() -> bool:
+	var is_optimized: bool = false
+
+	for i in range(_blocks.size() - 2, -1, -1):
+		var block: IRBlock = _blocks[i]
+		var next_block: IRBlock = _blocks[i + 1]
+
+		if block.empty() or next_block.empty():
+			continue
+		
+		if block.nodes[-1].op == NSOp.HLT and next_block.nodes[0].op == NSOp.HLT:
+			block.nodes.remove(block.size() - 1)
+			block.readopt_nodes()
+			is_optimized = true
+
+	return is_optimized
+
+
 # Eliminates IR blocks that are not important and are empty. Returns whether any
 # optimization was performed:
 func _optimize_eliminate_empty_blocks() -> bool:
@@ -1920,6 +2137,83 @@ func _optimize_eliminate_empty_blocks() -> bool:
 	if is_optimized:
 		_link_blocks()
 	
+	return is_optimized
+
+
+# Adopts IR blocks that are not important and have a single entry point at the
+# end of another IR block into their parent IR block. Returns whether any
+# optimization was performed:
+func _optimize_adopt_child_blocks() -> bool:
+	var is_optimized: bool = false
+
+	for i in range(_blocks.size() - 1, -1, -1):
+		var child_block: IRBlock = _blocks[i]
+
+		if child_block.is_important():
+			continue
+		
+		var is_invalid: bool = false
+		var parent_blocks: Array = []
+		
+		for parent_block in _blocks:
+			if parent_block == _error_block and _error_block.empty():
+				continue
+			elif parent_block.label == "$$main" and _has_block("main"):
+				continue
+			elif parent_block.is_dead:
+				var parent_node: IRNode = parent_block.nodes[-1]
+
+				if parent_node.op == NSOp.JMP and parent_node.lbl == child_block.label:
+					parent_blocks.push_back(parent_block)
+			elif parent_block.block_next == child_block:
+				parent_blocks.push_back(parent_block)
+			
+			if parent_blocks.size() > 1:
+				break
+			
+			var body_end: int = parent_block.size()
+
+			while body_end > 0:
+				var parent_node: IRNode = parent_block.nodes[body_end - 1]
+
+				if parent_node.is_branch() and parent_node.lbl == child_block.label:
+					body_end -= 1
+				else:
+					break
+			
+			for j in range(body_end):
+				var parent_node: IRNode = parent_block.nodes[j]
+
+				if parent_node.has_pointer() and parent_node.lbl == child_block.label:
+					is_invalid = true
+					break
+		
+		if is_invalid or parent_blocks.size() != 1:
+			continue
+		
+		var parent_block: IRBlock = parent_blocks[0]
+
+		for j in range(parent_block.size() - 1, -1, -1):
+			var parent_node: IRNode = parent_block.nodes[j]
+
+			if parent_node.is_branch() and parent_node.lbl == child_block.label:
+				parent_block.nodes.remove(j)
+			else:
+				break
+		
+		parent_block.readopt_nodes()
+		parent_block.adopt_nodes(child_block.nodes.duplicate())
+
+		if not child_block.is_dead:
+			if child_block.block_next:
+				parent_block.make_jmp(child_block.block_next.label)
+			else:
+				parent_block.make_hlt()
+
+		_blocks.remove(i)
+		_link_blocks()
+		is_optimized = true
+
 	return is_optimized
 
 
