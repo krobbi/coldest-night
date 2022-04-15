@@ -43,18 +43,19 @@ func _escape_string(string: String) -> String:
 # Deserializes NightScript source code or NightScript hex bytecode to the
 # NightScript program:
 func _deserialize_source(source: String) -> void:
+	var bytecode: PoolByteArray = PoolByteArray()
+
 	if source.begins_with("00 ") or source.begins_with("01 "):
 		var hex: PoolStringArray = source.split(" ", false)
 		var size: int = hex.size()
-		var bytecode: PoolByteArray = PoolByteArray()
 		bytecode.resize(size)
 
 		for i in range(size):
 			bytecode[i] = ("0x%s" % hex[i]).hex_to_int() & 0xff
-		
-		_program.deserialize_bytecode(bytecode)
 	else:
-		_program.deserialize_bytecode(_compiler.compile_source(source, true))
+		bytecode = _compiler.compile_source(source, true)
+	
+	_program.deserialize_bytecode(bytecode)
 
 
 # Compiles and disassembles NightScript source code:

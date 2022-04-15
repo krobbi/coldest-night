@@ -842,7 +842,7 @@ func _get_block(label: String) -> IRBlock:
 	return null
 
 
-# Gets the topmost menu statement. Returns null if there are not menu statements
+# Gets the topmost menu statement. Returns null if there are no menu statements
 # in the statement stack:
 func _get_statement_menu() -> StatementMenu:
 	for i in range(_statement_stack.size() - 1, -1, -1):
@@ -850,6 +850,26 @@ func _get_statement_menu() -> StatementMenu:
 			return _statement_stack[i]
 	
 	return null
+
+
+# Gets the index of the topmost menu statement. Returns -1 if there are no menu
+# statements in the statement stack:
+func _get_statement_menu_index() -> int:
+	for i in range(_statement_stack.size() - 1, -1, -1):
+		if _statement_stack[i] is StatementMenu:
+			return i
+	
+	return -1
+
+
+# Gets the index of the topmost option statement. Returns -1 if there are no
+# option statements in the statement stack:
+func _get_statement_option_index() -> int:
+	for i in range(_statement_stack.size() - 1, -1, -1):
+		if _statement_stack[i] is StatementOption:
+			return i
+	
+	return -1
 
 
 # Gets whether the NightScript compiler's IR code is inside an if statement:
@@ -879,15 +899,6 @@ func _is_in_statement_menu_deep() -> bool:
 # Gets whether the NightScript compiler's IR code is inside an option statement:
 func _is_in_statement_option() -> bool:
 	return not _statement_stack.empty() and _statement_stack[-1] is StatementOption
-
-
-# Gets whether an option statement exists in the statement stack:
-func _is_in_statement_option_deep() -> bool:
-	for statement in _statement_stack:
-		if statement is StatementOption:
-			return true
-	
-	return false
 
 
 # Returns whether an IR block exists from its label:
@@ -1431,7 +1442,7 @@ func _parse_label(label: String) -> void:
 		return
 	elif _has_block(label):
 		_err("Label '%s' already exists!" % label)
-	elif _is_in_statement_menu_deep() and not _is_in_statement_option_deep():
+	elif _is_in_statement_menu_deep():
 		_err("Labels cannot be created inside menu statements!")
 	else:
 		_pop_scope()
@@ -1468,8 +1479,8 @@ func _parse_sleep(duration: ParseValue, unit: String) -> void:
 # Parses a goto command from NightScript source code to IR code:
 func _parse_goto(label: String, left: ParseValue, comparator: int, right: ParseValue) -> void:
 	if _validate_label(label):
-		if _is_in_statement_menu_deep() and not _is_in_statement_option_deep():
-			_err("Command 'goto' cannot be used inside menu statements!")
+		if _get_statement_menu_index() > _get_statement_option_index():
+			_err("Command 'goto' cannot be used directly inside menu statements!")
 		else:
 			_make_branch(label, left, comparator, right)
 
@@ -1654,8 +1665,8 @@ func _parse_while(left: ParseValue, comparator: int, right: ParseValue) -> void:
 
 # Parses a menu command from NightScript source code to IR code:
 func _parse_menu() -> void:
-	if _is_in_statement_menu_deep():
-		_err("Menu statements cannot be nested!")
+	if _get_statement_menu_index() > _get_statement_option_index():
+		_err("Menu statements cannot be directly nested!")
 		return
 	
 	var statement: StatementMenu = StatementMenu.new(_pos_line, _current_block)
@@ -1732,8 +1743,8 @@ func _parse_option_set(
 
 # Parses an option do command from NightScript source code to IR code:
 func _parse_option_do(menu: StatementMenu, text: String) -> void:
-	if _is_in_statement_option_deep():
-		_err("Option statements cannot be nested!")
+	if _get_statement_option_index() > _get_statement_menu_index():
+		_err("Option statements cannot be directly nested!")
 		return
 
 	var statement: StatementOption = StatementOption.new(menu, text, _pos_line, _current_block)
