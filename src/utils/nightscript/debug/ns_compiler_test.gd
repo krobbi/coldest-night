@@ -5,20 +5,13 @@ extends Control
 # of the NightScript compiler by compiling and disassembling NightScript source
 # code.
 
-var _compiler: Reference = preload("res://utils/nightscript/debug/ns_compiler.gd").new()
-var _program: NSProgram = NSProgram.new()
+const NSMachine: GDScript = NSInterpreter.NSMachine
+
+var _compiler: Reference = preload("res://utils/nightscript/compiler/ns_compiler.gd").new()
 
 onready var _parse_timer: Timer = $ParseTimer
 onready var _source_edit: TextEdit = $HBoxContainer/SourceEdit
 onready var _disassembly_edit: TextEdit = $HBoxContainer/DisassemblyEdit
-
-# Virtual _exit_tree method. Runs when the NightScript compiler test scene is
-# exited. Destructs and frees the NightScript compiler test scene's NightScript
-# program:
-func _exit_tree() -> void:
-	_program.destruct()
-	_program.free()
-
 
 # Escapes a string to a NightScript source code string:
 func _escape_string(string: String) -> String:
@@ -40,9 +33,9 @@ func _escape_string(string: String) -> String:
 	return output
 
 
-# Deserializes NightScript source code or NightScript hex bytecode to the
-# NightScript program:
-func _deserialize_source(source: String) -> void:
+# Deserializes NightScript source code or NightScript hex bytecode to a
+# NightScript machine:
+func _deserialize_source(source: String) -> NSMachine:
 	var bytecode: PoolByteArray = PoolByteArray()
 
 	if source.begins_with("00 ") or source.begins_with("01 "):
@@ -55,36 +48,36 @@ func _deserialize_source(source: String) -> void:
 	else:
 		bytecode = _compiler.compile_source(source, true)
 	
-	_program.deserialize_bytecode(bytecode)
+	return NSMachine.new(bytecode, false)
 
 
 # Compiles and disassembles NightScript source code:
 func _disassemble_source(source: String) -> String:
-	_deserialize_source(source)
+	var machine: NSMachine = _deserialize_source(source)
 	var output: String = "meta cache %s\nmeta optimize false\n\n" % (
-			"true" if _program.is_cacheable else "false"
+			"true" if machine.is_cacheable else "false"
 	)
 	
 	# Find labels:
 	var labels: Dictionary = {}
 	
-	labels[_program.vector_main] = "op_%d" % _program.vector_main
-	labels[_program.vector_repeat] = "op_%d" % _program.vector_repeat
+	labels[machine.vector_main] = "op_%d" % machine.vector_main
+	labels[machine.vector_repeat] = "op_%d" % machine.vector_repeat
 	
-	for op in _program.ops:
+	for op in machine.ops:
 		if NSOp.get_operands(op.op) & NSOp.OPERAND_PTR:
 			labels[op.val] = "op_%d" % op.val
 	
 	# Name labels:
 	var label_count: int = 0
 	
-	for i in range(_program.ops.size()):
+	for i in range(machine.ops.size()):
 		if not labels.has(i):
 			continue
 		
-		if _program.vector_main == i:
+		if machine.vector_main == i:
 			labels[i] = "main"
-		elif _program.vector_repeat == i:
+		elif machine.vector_repeat == i:
 			labels[i] = "repeat"
 		else:
 			label_count += 1
@@ -92,7 +85,7 @@ func _disassemble_source(source: String) -> String:
 	
 	var seen_label: bool = false
 	
-	for i in range(_program.ops.size()):
+	for i in range(machine.ops.size()):
 		if labels.has(i):
 			if i > 0:
 				output += "\n"
@@ -106,7 +99,7 @@ func _disassemble_source(source: String) -> String:
 		if seen_label:
 			output += "\t"
 		
-		var op: NSOp = _program.ops[i]
+		var op: NSOp = machine.ops[i]
 		var val: int = op.val
 		var lbl: String = labels.get(val, "op_%d" % val)
 		var flg: String = "%s:%s" % [op.txt, op.key]
@@ -182,6 +175,8 @@ func _disassemble_source(source: String) -> String:
 		
 		output += "\n"
 	
+	machine.destruct()
+	machine.free()
 	return output
 
 

@@ -16,7 +16,7 @@ __meta__ = {
 }
 
 [node name="NightScriptInterpreter" parent="." instance=ExtResource( 3 )]
-_dialog_path = NodePath("../PlainDialog")
+dialog_path = NodePath("../PlainDialog")
 
 [node name="PlainDialog" parent="." instance=ExtResource( 2 )]
 

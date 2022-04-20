@@ -10,7 +10,8 @@ _All rights reserved._
 # Contents
 1. [Coldest Night](#coldest-night)
 2. [Running](#running)
-3. [Exporting](#exporting)
+3. [Building](#building)
+   * [Build Pipeline](#build-pipeline)
 4. [Known Issues](#known-issues)
    * [Issues Affecting All Platforms](#issues-affecting-all-platforms)
    * [Issues Affecting MacOS](#issues-affecting-macos)
@@ -36,11 +37,9 @@ project source can be found in the `src/` directory. The `docs/` directory
 contains a GitHub Pages site for the game, which redirects to its itch.io page.
 
 Running the game will create directories and files in a
-`krobbizoid/coldest-night` directory alongside the Godot Engine editor
-data/settings folder (in `%AppData%` on Windows).
-
-Please use the target Godot Engine version and wait for all assets to be
-reimported before running or exporting the game from the Godot Engine editor.
+`krobbizoid/coldest-night/` directory alongside the Godot Engine editor
+data/settings folder (in `%AppData%` on Windows). This is known as the
+`user://` directory.
 
 __Do not distribute any builds or source material of the game.__
 
@@ -54,14 +53,36 @@ version of Coldest Night:
 | `0.5.0`           | `3.4.2`                     |
 | `0.5.1-dev`       | `3.4.4`                     |
 
-# Exporting
-The following requirements should be fulfilled to export the game successfully:
+# Building
+The following requirements should be fulfilled to successfully build the game
+in release mode:
 
 * The game should be exported from the Godot Engine editor in the target
-version.
+version after the game's assets have been reimported.
+* The `editor/convert_text_resources_to_binary_on_export` project setting must
+be disabled.
 * The `Coldest Night Development Toolkit` plugin must be enabled.
-* The export mode must be `Export all resources in the project`.
-* The include filter must include `*.ns` and `*.txt`.
+* The resource export mode must be `Export all resources in the project`.
+* The resource include filter must include `*.ns` and `*.txt`.
+* The GDScript export mode must be `Text`.
+
+Building the game in release mode will write to the `tmp.res` and `tmp.scn`
+files in the `user://` directory many times. There does not appear to be a
+documented method of converting text resources to binary without disk usage by
+using GDScript.
+
+## Build Pipeline
+The `Coldest Night Development Toolkit` plugin includes a 'build pipeline' that
+performs the following actions on release builds of the game:
+
+* Excludes unnecessary files from the game.
+* Compiles NightScript source files to compiled NightScript files.
+* Excludes GDScript source code between `# DEBUG:BEGIN` and `# DEBUG:END`
+comment lines.
+* Minifies GDScript source code and parses it to GDScript bytecode.
+* Converts text resources to binary.
+* Bypasses the default file remapping to reduce the size of remap files and
+store remapped files at short, obfuscated paths.
 
 # Known Issues
 You may encounter the following issues when running the game:

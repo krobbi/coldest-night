@@ -19,7 +19,7 @@ __meta__ = {
 
 [node name="NightScriptInterpreter" parent="." instance=ExtResource( 5 )]
 pause_mode = 2
-_dialog_path = NodePath("../HUD/PlainDialog")
+dialog_path = NodePath("../HUD/PlainDialog")
 
 [node name="LevelHost" type="Node2D" parent="."]
 script = ExtResource( 2 )

@@ -4,6 +4,7 @@
 define pester_count test:pester_count
 
 player freeze
+sleep 1
 pause
 dialog show
 

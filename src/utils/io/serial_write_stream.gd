@@ -18,6 +18,11 @@ func get_buffer() -> PoolByteArray:
 	return _buffer.data_array
 
 
+# Puts an 8-bit boolean to the serial write stream:
+func put_b8(value: bool) -> void:
+	put_u8(int(value))
+
+
 # Puts an 8-bit unsigned integer to the serial write stream:
 func put_u8(value: int) -> void:
 	_buffer.put_u8(value)

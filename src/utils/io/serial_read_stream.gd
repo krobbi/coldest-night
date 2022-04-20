@@ -24,6 +24,11 @@ func _init(buffer: PoolByteArray) -> void:
 	_buffer.seek(0)
 
 
+# Gets an 8-bit boolean from the serial read stream:
+func get_b8() -> bool:
+	return bool(get_u8())
+
+
 # Gets an 8-bit unsigned integer from the serial read stream:
 func get_u8() -> int:
 	return _buffer.get_u8()

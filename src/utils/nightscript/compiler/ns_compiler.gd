@@ -4,761 +4,21 @@ extends Reference
 # A NightScript compiler is a NightScript utility that compiles NightScript
 # source code to NightScript bytecode.
 
-class ParseFlag extends Reference:
-	
-	# Parse Flag
-	# A parse flag is a helper structure used by a NightScript compiler that
-	# represents a flag in NightScript source code.
-	
-	var namespace: String
-	var key: String
-	
-	# Constructor. Sets the parse flag's namespace and key:
-	func _init(namespace_val: String, key_val: String) -> void:
-		namespace = namespace_val
-		key = key_val
-	
-	
-	# Returns whether the parse flag equals another parse flag by value:
-	func equals(other: ParseFlag) -> bool:
-		return namespace == other.namespace and key == other.key
-
-
-class ParseValue extends Reference:
-	
-	# Parse Value
-	# A parse value is a helper structure used by a NightScript compiler that
-	# represents a value in NightScript source code.
-	
-	enum Type {ERROR, CONST, FLAG}
-	
-	var type: int
-	var value: int
-	var flag: ParseFlag = null
-	
-	# Constructor. Sets the parse value's type and value:
-	func _init(type_val: int, value_val: int, namespace: String, key: String) -> void:
-		type = type_val
-		value = value_val
-		
-		if type == Type.FLAG:
-			flag = ParseFlag.new(namespace, key)
-	
-	
-	# Gets whether the parse value is an error parse value:
-	func is_error() -> bool:
-		return type == Type.ERROR
-	
-	
-	# Gets whether the parse value is a constant parse value:
-	func is_const() -> bool:
-		return type == Type.CONST
-	
-	
-	# Gets whether the parse value is a flag parse value:
-	func is_flag() -> bool:
-		return type == Type.FLAG
-	
-	
-	# Creates a new error parse value:
-	static func create_error() -> ParseValue:
-		return ParseValue.new(Type.ERROR, 0, "", "")
-	
-	
-	# Creates a new constant parse value:
-	static func create_const(value_val: int) -> ParseValue:
-		return ParseValue.new(Type.CONST, value_val, "", "")
-	
-	
-	# Creates a new flag parse value:
-	static func create_flag(namespace: String, key: String) -> ParseValue:
-		return ParseValue.new(Type.FLAG, 0, namespace, key)
-
-
-class IRNode extends Reference:
-	
-	# IR Node
-	# An IR node is a helper structure used by a NightScript compiler that is an
-	# intermediate representation of a NightScript operation.
-	
-	var op: int
-	var val: int
-	var lbl: String
-	var flg: ParseFlag
-	var txt: String
-	
-	# Constructor. Sets the IR node's opcode:
-	func _init(op_val: int) -> void:
-		op = op_val
-	
-	
-	# Returns whether the IR node is a branch operation:
-	func is_branch() -> bool:
-		match op:
-			NSOp.JMP, NSOp.BEQ, NSOp.BNE, NSOp.BGT, NSOp.BGE:
-				return true
-			_:
-				return false
-	
-	
-	# Returns whether the IR node has a pointer operand:
-	func has_pointer() -> bool:
-		return NSOp.get_operands(op) & NSOp.OPERAND_PTR != 0
-	
-	
-	# Returns whether the IR node functionally equals another IR node by value:
-	func equals(other: IRNode, head_label: String = "", other_head_label: String = "") -> bool:
-		if op != other.op:
-			return false
-		
-		var operands: int = NSOp.get_operands(op)
-
-		if operands & NSOp.OPERAND_VAL and val != other.val:
-			return false
-		
-		if operands & NSOp.OPERAND_PTR and lbl != other.lbl:
-			if lbl != head_label or other.lbl != other_head_label:
-				return false
-		
-		if operands & NSOp.OPERAND_FLG and not flg.equals(other.flg):
-			return false
-		
-		if operands & NSOp.OPERAND_TXT and txt != other.txt:
-			return false
-		
-		return true
-
-
-class IntTrace extends Reference:
-	
-	# Int Trace
-	# An int trace is a helper structure used by a NightScript compiler that
-	# traces the state of an int register. It is used to optimize out
-	# unnecessary writes to int registers.
-	
-	var is_traced: bool = false
-	var value: int = 0
-	
-	# Traces that the int register has a known value:
-	func trace(value_val: int) -> void:
-		value = value_val
-		is_traced = true
-	
-	
-	# Traces that the int register has an unknown value:
-	func untrace() -> void:
-		is_traced = false
-
-
-class StringTrace extends Reference:
-	
-	# String Trace
-	# A string trace is a helper structure used by a NightScript compiler that
-	# traces the state of a string register. It is used to optimize out
-	# unnecessary writes to string registers.
-	
-	var is_traced: bool = false
-	var value: String = ""
-	
-	# Traces that the string register has a known value:
-	func trace(value_val: String) -> void:
-		value = value_val
-		is_traced = true
-	
-	
-	# Traces that the string register has an unknown value:
-	func untrace() -> void:
-		is_traced = false
-
-
-class IRBlock extends Reference:
-	
-	# IR Block
-	# An IR block is a helper structure used by a NightScript compiler that is
-	# an intermediate representation of a jump target and its subsequent
-	# NightScript operations.
-	
-	var label: String
-	var block_next: IRBlock = null
-	var is_dead: bool = false
-	var nodes: Array = []
-	var x_trace: IntTrace = IntTrace.new()
-	var y_trace: IntTrace = IntTrace.new()
-	var dialog_name_trace: StringTrace = StringTrace.new()
-	var actor_key_trace: StringTrace = StringTrace.new()
-	
-	# Constructor. Sets the IR block's label:
-	func _init(label_val: String) -> void:
-		label = label_val
-	
-	
-	# Gets whether the IR block is important. An IR block is important if it
-	# should never be removed or adopted into another IR block:
-	func is_important() -> bool:
-		return label == "main" or label == "repeat" or label.begins_with("$$")
-	
-	
-	# Returns whether the IR block is empty:
-	func empty() -> bool:
-		return nodes.empty()
-	
-	
-	# Returns the size of the IR block:
-	func size() -> int:
-		return nodes.size()
-	
-	
-	# Returns whether the IR block functionally equals another IR block by
-	# value:
-	func equals(other: IRBlock) -> bool:
-		var size: int = size()
-		var other_size: int = other.size()
-		var exit: String = block_next.label if block_next else ""
-		var other_exit: String = other.block_next.label if other.block_next else ""
-
-		if is_dead:
-			if nodes[-1].op == NSOp.JMP:
-				size -= 1
-				exit = nodes[-1].lbl
-			else:
-				exit = ""
-		
-		if other.is_dead:
-			if other.nodes[-1].op == NSOp.JMP:
-				other_size -= 1
-				other_exit = other.nodes[-1].lbl
-			else:
-				other_exit = ""
-		
-		if size != other_size or exit != other_exit:
-			return false
-		
-		for i in range(size):
-			if not nodes[i].equals(other.nodes[i], label, other.label):
-				return false
-		
-		return true
-	
-	# Clears the IR block's IR nodes and traces:
-	func clear() -> void:
-		nodes.clear()
-		is_dead = false
-		x_trace.untrace()
-		y_trace.untrace()
-		dialog_name_trace.untrace()
-		actor_key_trace.untrace()
-	
-	
-	# Marks the IR block as dead. An IR block becomes dead if any subsequent IR
-	# nodes in the IR block will never be reachable due to a logical
-	# impossibility:
-	func kill() -> void:
-		is_dead = true
-	
-	
-	# Loads the X register with a parse value:
-	func load_x(value: ParseValue) -> void:
-		if value.is_const():
-			make_lxc(value.value)
-		elif value.is_flag():
-			make_lxf(value.flag)
-	
-	
-	# Loads the Y register with a parse value:
-	func load_y(value: ParseValue) -> void:
-		if value.is_const():
-			make_lyc(value.value)
-		elif value.is_flag():
-			make_lyf(value.flag)
-	
-	
-	# Adopts a copy of an IR node into the IR block if the IR block is not dead:
-	func adopt_node(node: IRNode) -> void:
-		match node.op:
-			NSOp.HLT:
-				make_hlt()
-			NSOp.RUN:
-				make_run(node.txt)
-			NSOp.SLP:
-				make_slp(node.val)
-			NSOp.JMP:
-				make_jmp(node.lbl)
-			NSOp.BEQ:
-				make_beq(node.lbl)
-			NSOp.BNE:
-				make_bne(node.lbl)
-			NSOp.BGT:
-				make_bgt(node.lbl)
-			NSOp.BGE:
-				make_bge(node.lbl)
-			NSOp.LXC:
-				make_lxc(node.val)
-			NSOp.LXF:
-				make_lxf(node.flg)
-			NSOp.STX:
-				make_stx(node.flg)
-			NSOp.LYC:
-				make_lyc(node.val)
-			NSOp.LYF:
-				make_lyf(node.flg)
-			NSOp.STY:
-				make_sty(node.flg)
-			NSOp.DGS:
-				make_dgs()
-			NSOp.DGH:
-				make_dgh()
-			NSOp.DNC:
-				make_dnc()
-			NSOp.DND:
-				make_dnd(node.txt)
-			NSOp.DGM:
-				make_dgm(node.txt)
-			NSOp.MNO:
-				make_mno(node.lbl, node.txt)
-			NSOp.MNS:
-				make_mns()
-			NSOp.LAK:
-				make_lak(node.txt)
-			NSOp.AFD:
-				make_afd()
-			NSOp.APF:
-				make_apf(node.txt)
-			NSOp.APR:
-				make_apr()
-			NSOp.APA:
-				make_apa()
-			NSOp.PLF:
-				make_plf()
-			NSOp.PLT:
-				make_plt()
-			NSOp.QTT:
-				make_qtt()
-			NSOp.PSE:
-				make_pse()
-			NSOp.UNP:
-				make_unp()
-			NSOp.SAV:
-				make_sav()
-			NSOp.CKP:
-				make_ckp()
-	
-	
-	# Adopts an array of nodes into the IR block:
-	func adopt_nodes(nodes_val: Array) -> void:
-		for node in nodes_val:
-			adopt_node(node)
-	
-	
-	# Readopts the IR block's IR nodes:
-	func readopt_nodes() -> void:
-		var nodes_val: Array = nodes.duplicate()
-		clear()
-		adopt_nodes(nodes_val)
-	
-	
-	# Makes an IR node at the back of the IR block if the IR block is not dead:
-	func make_node(node: IRNode) -> void:
-		if not is_dead:
-			nodes.push_back(node)
-	
-	
-	# Makes an IR node with a standalone operation at the back of the IR block:
-	func make_standalone(op: int) -> void:
-		make_node(IRNode.new(op))
-	
-	
-	# Makes an IR node with a value operation at the back of the IR block:
-	func make_value(op: int, val: int) -> void:
-		var node: IRNode = IRNode.new(op)
-		node.val = val
-		make_node(node)
-	
-	
-	# Makes an IR node with a pointer operaton at the back of the IR block:
-	func make_pointer(op: int, lbl: String) -> void:
-		var node: IRNode = IRNode.new(op)
-		node.lbl = lbl
-		make_node(node)
-	
-	
-	# Makes an IR node with a flag operation at the back of the IR block:
-	func make_flag(op: int, flg: ParseFlag) -> void:
-		var node: IRNode = IRNode.new(op)
-		node.flg = flg
-		make_node(node)
-	
-	
-	# Makes an IR node with a text operation at the back of the IR block:
-	func make_text(op: int, txt: String) -> void:
-		var node: IRNode = IRNode.new(op)
-		node.txt = txt
-		make_node(node)
-	
-	
-	# Makes an IR node with a pointer and text operation at the back of the IR
-	# block:
-	func make_pointer_text(op: int, lbl: String, txt: String) -> void:
-		var node: IRNode = IRNode.new(op)
-		node.lbl = lbl
-		node.txt = txt
-		make_node(node)
-	
-	
-	# Makes an HLT IR node at the back of the IR block:
-	func make_hlt() -> void:
-		make_standalone(NSOp.HLT)
-		kill()
-	
-	
-	# Makes an RUN IR node at the back of the IR block:
-	func make_run(txt: String) -> void:
-		make_text(NSOp.RUN, txt)
-	
-	
-	# Makes an SLP IR node at the back of the IR block:
-	func make_slp(val: int) -> void:
-		make_value(NSOp.SLP, val)
-	
-	
-	# Makes a JMP IR node at the back of the IR block:
-	func make_jmp(lbl: String) -> void:
-		make_pointer(NSOp.JMP, lbl)
-		kill()
-	
-	
-	# Makes a BEQ IR node at the back of the IR block:
-	func make_beq(lbl: String) -> void:
-		if x_trace.is_traced and y_trace.is_traced:
-			if x_trace.value == y_trace.value:
-				make_jmp(lbl)
-			
-			return
-		
-		make_pointer(NSOp.BEQ, lbl)
-	
-	
-	# Makes a BNE IR node at the back of the IR block:
-	func make_bne(lbl: String) -> void:
-		if x_trace.is_traced and y_trace.is_traced:
-			if x_trace.value != y_trace.value:
-				make_jmp(lbl)
-			
-			return
-		
-		make_pointer(NSOp.BNE, lbl)
-	
-	
-	# Makes a BGT IR node at the back of the IR block:
-	func make_bgt(lbl: String) -> void:
-		if x_trace.is_traced and y_trace.is_traced:
-			if x_trace.value > y_trace.value:
-				make_jmp(lbl)
-			
-			return
-		
-		make_pointer(NSOp.BGT, lbl)
-	
-	
-	# Makes a BGE IR node at the back of the IR block:
-	func make_bge(lbl: String) -> void:
-		if x_trace.is_traced and y_trace.is_traced:
-			if x_trace.value >= y_trace.value:
-				make_jmp(lbl)
-			
-			return
-		
-		make_pointer(NSOp.BGE, lbl)
-	
-	
-	# Makes an LXC IR node at the back of the IR block:
-	func make_lxc(val: int) -> void:
-		if x_trace.is_traced and x_trace.value == val:
-			return
-		
-		make_value(NSOp.LXC, val)
-		x_trace.trace(val)
-	
-	
-	# Makes an LXF IR node at the back of the IR block:
-	func make_lxf(flg: ParseFlag) -> void:
-		make_flag(NSOp.LXF, flg)
-		x_trace.untrace()
-	
-	
-	# Makes an STX IR node at the back of the IR block:
-	func make_stx(flg: ParseFlag) -> void:
-		make_flag(NSOp.STX, flg)
-	
-	
-	# Makes an LYC IR node at the back of the IR block:
-	func make_lyc(val: int) -> void:
-		if y_trace.is_traced and y_trace.value == val:
-			return
-		
-		make_value(NSOp.LYC, val)
-		y_trace.trace(val)
-	
-	
-	# Makes an LYF IR node at the back of the IR block:
-	func make_lyf(flg: ParseFlag) -> void:
-		make_flag(NSOp.LYF, flg)
-		y_trace.untrace()
-	
-	
-	# Makes an STY IR node at the back of the IR block:
-	func make_sty(flg: ParseFlag) -> void:
-		make_flag(NSOp.STY, flg)
-	
-	
-	# Makes a DGS IR node at the back of the IR block:
-	func make_dgs() -> void:
-		make_standalone(NSOp.DGS)
-	
-	
-	# Makes a DGH IR node at the back of the IR block:
-	func make_dgh() -> void:
-		make_standalone(NSOp.DGH)
-	
-	
-	# Makes a DNC IR node at the back of the IR block:
-	func make_dnc() -> void:
-		make_standalone(NSOp.DNC)
-		dialog_name_trace.untrace()
-	
-	
-	# Makes a DND IR node at the back of the IR block:
-	func make_dnd(txt: String) -> void:
-		if dialog_name_trace.is_traced and dialog_name_trace.value == txt:
-			return
-		
-		make_text(NSOp.DND, txt)
-		dialog_name_trace.trace(txt)
-	
-	
-	# Makes a DGM IR node at the back of the IR block:
-	func make_dgm(txt: String) -> void:
-		make_text(NSOp.DGM, txt)
-	
-	
-	# Makes an MNO IR node at the back of the IR block:
-	func make_mno(lbl: String, txt: String) -> void:
-		make_pointer_text(NSOp.MNO, lbl, txt)
-	
-	
-	# Makes an MNS IR node at the back of the IR block:
-	func make_mns() -> void:
-		make_standalone(NSOp.MNS)
-		kill()
-	
-	
-	# Makes an LAK IR node at the back of the IR block:
-	func make_lak(txt: String) -> void:
-		if actor_key_trace.is_traced and actor_key_trace.value == txt:
-			return
-		
-		make_text(NSOp.LAK, txt)
-		actor_key_trace.trace(txt)
-	
-	
-	# Makes an AFD IR node at the back of the IR block:
-	func make_afd() -> void:
-		make_standalone(NSOp.AFD)
-	
-	
-	# Makes an APF IR node at the back of the IR block:
-	func make_apf(txt: String) -> void:
-		make_text(NSOp.APF, txt)
-	
-	
-	# Makes an APR IR node at the back of the IR block:
-	func make_apr() -> void:
-		make_standalone(NSOp.APR)
-	
-	
-	# Makes an APA IR node at the back of the IR block:
-	func make_apa() -> void:
-		make_standalone(NSOp.APA)
-	
-	
-	# Makes a PLF IR node at the back of the IR block:
-	func make_plf() -> void:
-		make_standalone(NSOp.PLF)
-	
-	
-	# Makes a PLT IR node at the back of the IR block:
-	func make_plt() -> void:
-		make_standalone(NSOp.PLT)
-	
-	
-	# Makes a QTT IR node at the back of the IR block:
-	func make_qtt() -> void:
-		make_standalone(NSOp.QTT)
-		kill()
-	
-	
-	# Makes a PSE IR node at the back of the IR block:
-	func make_pse() -> void:
-		make_standalone(NSOp.PSE)
-	
-	
-	# Makes a UNP IR node at the back of the IR block:
-	func make_unp() -> void:
-		make_standalone(NSOp.UNP)
-	
-	
-	# Makes an SAV IR node at the back of the IR block:
-	func make_sav() -> void:
-		make_standalone(NSOp.SAV)
-	
-	
-	# Makes a CKP IR node at the back of the IR block:
-	func make_ckp() -> void:
-		make_standalone(NSOp.CKP)
-
-
-class Statement extends Reference:
-
-	# Statement Base
-	# A statement is a helper structure used by a NightScript compiler that is
-	# an intermediate representation of a statement in the statement stack.
-
-	var pos_line: int
-	var block_entry: IRBlock
-	var block_exit: IRBlock = null
-
-	# Constructor. Sets the statement's line position and entry IR block:
-	func _init(pos_line_val: int, block_entry_ref: IRBlock) -> void:
-		pos_line = pos_line_val
-		block_entry = block_entry_ref
-
-
-class StatementIf extends Statement:
-
-	# If Statement
-	# An if statement is a statement that represents an if statement in the
-	# statement stack.
-
-	var seen_else: bool = false
-	var block_test: IRBlock = null
-	var block_bodies: Array = []
-
-	# Constructor. Passes the if statement's line position and entry IR block to
-	# the if statement:
-	func _init(pos_line: int, block_entry: IRBlock).(pos_line, block_entry) -> void:
-		pass
-
-
-class StatementWhile extends Statement:
-
-	# While Statement
-	# A while statement is a statement that represents a while statement in the
-	# statement stack.
-
-	var block_body: IRBlock = null
-	var block_test: IRBlock = null
-
-	# Constructor. Passes the while statement's line position and entry IR block
-	# to the while statement:
-	func _init(pos_line: int, block_entry: IRBlock).(pos_line, block_entry) -> void:
-		pass
-
-
-class StatementMenu extends Statement:
-
-	# Menu Statement
-	# A menu statement is a statement that represents a menu statement in the
-	# statement stack.
-
-	var block_body: IRBlock = null
-
-	# Constructor. Passes the menu statement's line position and entry IR block
-	# to the menu statement:
-	func _init(pos_line: int, block_entry: IRBlock).(pos_line, block_entry) -> void:
-		pass
-
-
-class StatementOption extends Statement:
-
-	# Option Statement
-	# An option statement is a statement that represents an option statement in
-	# the statement stack.
-
-	var text: String
-	var block_body: IRBlock = null
-	var block_skip: IRBlock = null
-
-	# Constructor. Passes the option statement's menu statement, text, line
-	# position, and entry IR block to the option statement:
-	func _init(menu: StatementMenu, text_val: String, pos_line: int, block_entry: IRBlock).(
-			pos_line, block_entry
-	) -> void:
-		text = text_val
-		block_exit = menu.block_exit
-
-
-class TableFlag extends Reference:
-	
-	# Table Flag
-	# A table flag is a helper structure used by a NightScript compiler that
-	# represents a flag entry in a NightScript bytecode table.
-	
-	var namespace: int
-	var key: int
-	
-	# Constructor. Sets the table flag's namespace and key:
-	func _init(namespace_val: int, key_val: int) -> void:
-		namespace = namespace_val
-		key = key_val
-	
-	
-	# Returns whether the table flag equals another table flag by value:
-	func equals(other: TableFlag) -> bool:
-		return namespace == other.namespace and key == other.key
-
-
-class BytecodeTable extends Reference:
-	
-	# Bytecode Table
-	# A bytecode table is a helper structure used by a NightScript compiler that
-	# is used for generating the table section of NightScript bytecode:
-	
-	var strings: PoolStringArray = PoolStringArray()
-	var flags: Array = []
-	
-	# Gets the ID of a string from the bytecode table. Registers the string to
-	# the bytecode table if it does not exist:
-	func get_string_id(string: String) -> int:
-		var size: int = strings.size()
-		
-		for i in range(size):
-			if strings[i] == string:
-				return i
-		
-		strings.push_back(string)
-		return size
-	
-	
-	# Gets the ID of a flag from the bytecode table. Registers the flag to the
-	# bytecode table if it does not exist:
-	func get_flag_id(flag: ParseFlag) -> int:
-		var table_flag: TableFlag = create_flag(flag)
-		var size: int = flags.size()
-		
-		for i in range(size):
-			if flags[i].equals(table_flag):
-				return i
-		
-		flags.push_back(table_flag)
-		return size
-	
-	
-	# Creates a table flag from a parse flag and the bytecode table's strings:
-	func create_flag(flag: ParseFlag) -> TableFlag:
-		return TableFlag.new(get_string_id(flag.namespace), get_string_id(flag.key))
-
-
 enum CommandScanState {NORMAL, STRING, ESCAPE}
 enum Comparator {ERROR, EQ, NE, GT, GE, LT, LE}
+
+const BytecodeTable: GDScript = preload("./bytecode/bytecode_table.gd").BytecodeTable
+const IRBlock: GDScript = preload("./ir_code/ir_block.gd").IRBlock
+const IRNode: GDScript = preload("./ir_code/ir_node.gd").IRNode
+const ParseFlag: GDScript = preload("./parse/parse_flag.gd").ParseFlag
+const ParseValue: GDScript = preload("./parse/parse_value.gd").ParseValue
+const ParseValueFactory: GDScript = preload("./parse/parse_value_factory.gd").ParseValueFactory
+const Statement: GDScript = preload("./statements/statement.gd").Statement
+const StatementDo: GDScript = preload("./statements/statement_do.gd").StatementDo
+const StatementIf: GDScript = preload("./statements/statement_if.gd").StatementIf
+const StatementMenu: GDScript = preload("./statements/statement_menu.gd").StatementMenu
+const StatementOption: GDScript = preload("./statements/statement_option.gd").StatementOption
+const StatementWhile: GDScript = preload("./statements/statement_while.gd").StatementWhile
 
 const RESERVED_CONSTS: Dictionary = {"false": 0, "true": 1}
 const DEFAULT_METADATA: Dictionary = {
@@ -842,6 +102,35 @@ func _get_block(label: String) -> IRBlock:
 	return null
 
 
+# Gets the topmost breakable statement. Returns null if there are no breakable
+# statements in the statement stack above the topmost menu statement:
+func _get_statement_breakable() -> Statement:
+	for i in range(_statement_stack.size() - 1, -1, -1):
+		var statement: Statement = _statement_stack[i]
+
+		if statement is StatementMenu:
+			return null
+		elif _statement_stack[i].is_breakable:
+			return _statement_stack[i]
+	
+	return null
+
+
+# Gets the topmost continuable statement. Returns null if there are no
+# continuable statements in the statement stack above the topmost menu
+# statement:
+func _get_statement_continuable() -> Statement:
+	for i in range(_statement_stack.size() - 1, -1, -1):
+		var statement: Statement = _statement_stack[i]
+
+		if statement is StatementMenu:
+			return null
+		elif _statement_stack[i].is_continuable:
+			return _statement_stack[i]
+	
+	return null
+
+
 # Gets the topmost menu statement. Returns null if there are no menu statements
 # in the statement stack:
 func _get_statement_menu() -> StatementMenu:
@@ -875,6 +164,11 @@ func _get_statement_option_index() -> int:
 # Gets whether the NightScript compiler's IR code is inside an if statement:
 func _is_in_statement_if() -> bool:
 	return not _statement_stack.empty() and _statement_stack[-1] is StatementIf
+
+
+# Gets whether the NightScript compiler's IR code is inside a do statement:
+func _is_in_statement_do() -> bool:
+	return not _statement_stack.empty() and _statement_stack[-1] is StatementDo
 
 
 # Gets whether the NightScript compiler's IR code is inside a while statement:
@@ -955,7 +249,7 @@ func _eval_comparison(left: int, comparator: int, right: int) -> bool:
 # Creates a new error parse value and logs an error message:
 func _create_error(message: String) -> ParseValue:
 	_err(message)
-	return ParseValue.create_error()
+	return ParseValueFactory.create_error()
 
 
 # Creates a new IR block after the current IR block from its label:
@@ -1072,7 +366,7 @@ func _scan_value(symbol: String, scope_peek: int = -1) -> ParseValue:
 	if symbol.empty():
 		return _create_error("Value is empty!")
 	elif RESERVED_CONSTS.has(symbol):
-		return ParseValue.create_const(RESERVED_CONSTS[symbol])
+		return ParseValueFactory.create_const(RESERVED_CONSTS[symbol])
 	elif symbol.is_valid_identifier():
 		if scope_peek < 0:
 			scope_peek += _scope_stack.size()
@@ -1085,7 +379,7 @@ func _scan_value(symbol: String, scope_peek: int = -1) -> ParseValue:
 		
 		return _create_error("Identifier '%s' is undeclared in the current scope!" % symbol)
 	elif symbol.is_valid_integer():
-		return ParseValue.create_const(int(symbol))
+		return ParseValueFactory.create_const(int(symbol))
 	elif symbol.count(":") == 1:
 		var flag_parts: PoolStringArray = symbol.split(":", true, 1)
 		var namespace: String = flag_parts[0]
@@ -1100,7 +394,7 @@ func _scan_value(symbol: String, scope_peek: int = -1) -> ParseValue:
 		elif not key.is_valid_identifier():
 			return _create_error("Flag '%s' has an invalid key!" % symbol)
 		else:
-			return ParseValue.create_flag(namespace, key)
+			return ParseValueFactory.create_flag(namespace, key)
 	else:
 		return _create_error("Value '%s' is invalid!" % symbol)
 
@@ -1242,6 +536,11 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 				_parse_define(args[0], _scan_value(args[1]))
 			else:
 				_err("Command 'define' expects 2 arguments!")
+		"const":
+			if args.size() == 2:
+				_parse_const(args[0], _scan_value(args[1]))
+			else:
+				_err("Command 'const' expects 2 arguments!")
 		"label":
 			if args.size() == 1:
 				_parse_label(args[0])
@@ -1269,12 +568,13 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 			match args.size():
 				1:
 					_parse_goto(
-							args[0], ParseValue.create_const(1), Comparator.NE,
-							ParseValue.create_const(0)
+							args[0], ParseValueFactory.create_const(1),
+							Comparator.NE, ParseValueFactory.create_const(0)
 					)
 				2:
 					_parse_goto(
-							args[0], _scan_value(args[1]), Comparator.NE, ParseValue.create_const(0)
+							args[0], _scan_value(args[1]), Comparator.NE,
+							ParseValueFactory.create_const(0)
 					)
 				4:
 					_parse_goto(
@@ -1349,7 +649,9 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 		"if":
 			match args.size():
 				1:
-					_parse_if(_scan_value(args[0]), Comparator.NE, ParseValue.create_const(0))
+					_parse_if(
+							_scan_value(args[0]), Comparator.NE, ParseValueFactory.create_const(0)
+					)
 				3:
 					_parse_if(_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2]))
 				_:
@@ -1357,7 +659,10 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 		"elif":
 			match args.size():
 				1:
-					_parse_elif(_scan_value(args[0], -2), Comparator.NE, ParseValue.create_const(0))
+					_parse_elif(
+							_scan_value(args[0], -2), Comparator.NE,
+							ParseValueFactory.create_const(0)
+					)
 				3:
 					_parse_elif(
 							_scan_value(args[0], -2), _scan_comparator(args[1]),
@@ -1370,10 +675,27 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 				_parse_else()
 			else:
 				_err("Command 'else' expects no arguments!")
+		"do":
+			match args.size():
+				0:
+					_parse_do(
+							ParseValueFactory.create_const(0), Comparator.NE,
+							ParseValueFactory.create_const(0)
+					)
+				1:
+					_parse_do(
+							_scan_value(args[0]), Comparator.NE, ParseValueFactory.create_const(0)
+					)
+				3:
+					_parse_do(_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2]))
+				_:
+					_err("Command 'do' expects 0, 1, or 3 arguments!")
 		"while":
 			match args.size():
 				1:
-					_parse_while(_scan_value(args[0]), Comparator.NE, ParseValue.create_const(0))
+					_parse_while(
+							_scan_value(args[0]), Comparator.NE, ParseValueFactory.create_const(0)
+					)
 				3:
 					_parse_while(
 							_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2])
@@ -1399,6 +721,16 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 					_parse_end(args[0])
 				_:
 					_err("Command 'end' expects 0 or 1 arguments!")
+		"break":
+			if args.size() == 0:
+				_parse_break()
+			else:
+				_err("Comand 'break' expects no arguments!")
+		"continue":
+			if args.size() == 0:
+				_parse_continue()
+			else:
+				_err("Command 'continue' expects no arguments!")
 		_:
 			if command.empty():
 				_err("Command is empty!")
@@ -1421,7 +753,7 @@ func _parse_meta(key: String, value: ParseValue) -> void:
 
 
 # Parses a define command from NightScript source code to IR code:
-func _parse_define(identifier: String, value: ParseValue):
+func _parse_define(identifier: String, value: ParseValue) -> void:
 	if identifier.empty():
 		_err("Identifier is empty!")
 	elif not identifier.is_valid_identifier():
@@ -1436,6 +768,24 @@ func _parse_define(identifier: String, value: ParseValue):
 		_scope_stack[-1][identifier] = value
 
 
+# Parses a const command from NightScript source code to IR code:
+func _parse_const(identifier: String, value: ParseValue) -> void:
+	if identifier.empty():
+		_err("Identifier is empty!")
+	elif not identifier.is_valid_identifier():
+		_err("Identifier '%s' is invalid!" % identifier)
+	elif RESERVED_CONSTS.has(identifier):
+		_err("Identifier '%s' is reserved!" % identifier)
+	elif _scope_stack[-1].has(identifier):
+		_err("Identifier '%s' is already declared in the current scope!" % identifier)
+	elif value.is_error():
+		pass
+	elif not value.is_const():
+		_err("Command 'const' expects a constant value!")
+	else:
+		_scope_stack[-1][identifier] = value
+
+
 # Parses a label command from NightScript source code to IR code:
 func _parse_label(label: String) -> void:
 	if not _validate_label(label):
@@ -1443,7 +793,7 @@ func _parse_label(label: String) -> void:
 	elif _has_block(label):
 		_err("Label '%s' already exists!" % label)
 	elif _is_in_statement_menu_deep():
-		_err("Labels cannot be created inside menu statements!")
+		_err("Labels cannot be created inside a menu statement!")
 	else:
 		_pop_scope()
 		_current_block = _create_block(label)
@@ -1480,7 +830,7 @@ func _parse_sleep(duration: ParseValue, unit: String) -> void:
 func _parse_goto(label: String, left: ParseValue, comparator: int, right: ParseValue) -> void:
 	if _validate_label(label):
 		if _get_statement_menu_index() > _get_statement_option_index():
-			_err("Command 'goto' cannot be used directly inside menu statements!")
+			_err("Command 'goto' cannot be used directly inside a menu statement!")
 		else:
 			_make_branch(label, left, comparator, right)
 
@@ -1648,12 +998,27 @@ func _parse_else() -> void:
 	_push_scope()
 
 
+# Parses a do command from NightScript source code to IR code:
+func _parse_do(left: ParseValue, comparator: int, right: ParseValue) -> void:
+	var statement: StatementDo = StatementDo.new(_pos_line, _current_block)
+	statement.block_exit = _create_block_temp()
+	statement.block_body = _create_block_temp()
+	statement.block_test = _create_block_temp()
+	_current_block.make_jmp(statement.block_body.label)
+	_current_block = statement.block_test
+	_make_branch(statement.block_body.label, left, comparator, right)
+	_current_block.make_jmp(statement.block_exit.label)
+	_current_block = statement.block_body
+	_push_scope()
+	_statement_stack.push_back(statement)
+
+
 # Parses a while command from NightScript source code to IR code:
 func _parse_while(left: ParseValue, comparator: int, right: ParseValue) -> void:
 	var statement: StatementWhile = StatementWhile.new(_pos_line, _current_block)
 	statement.block_exit = _create_block_temp()
-	statement.block_test = _create_block_temp()
 	statement.block_body = _create_block_temp()
+	statement.block_test = _create_block_temp()
 	_current_block.make_jmp(statement.block_test.label)
 	_current_block = statement.block_test
 	_make_branch(statement.block_body.label, left, comparator, right)
@@ -1680,10 +1045,13 @@ func _parse_menu() -> void:
 
 # Parses an option command from NightScript source code to IR code:
 func _parse_option(args: PoolStringArray) -> void:
-	var statement: StatementMenu = _get_statement_menu()
+	var menu: StatementMenu = _get_statement_menu()
 
-	if not statement:
+	if not menu:
 		_err("Command 'option' was used outside of a menu statement!")
+		return
+	elif _get_statement_option_index() > _get_statement_menu_index():
+		_err("Option staements cannot be directly nested!")
 		return
 	
 	var text: String = args[0]
@@ -1694,72 +1062,73 @@ func _parse_option(args: PoolStringArray) -> void:
 	match type:
 		"none":
 			if args.size() == 0:
-				_parse_option_none(statement, text)
+				_parse_option_none(menu, text)
 			else:
 				_err("Command 'option none' expects no arguments!")
-		"goto":
-			if args.size() == 1:
-				_parse_option_goto(text, args[0])
-			else:
-				_err("Command 'option goto' expects 1 argument!")
-		"set":
-			if args.size() == 2:
-				_parse_option_set(statement, text, _scan_value(args[0]), _scan_value(args[1]))
-			else:
-				_err("Command 'option set' expects 2 arguments!")
 		"do":
 			if args.size() == 0:
-				_parse_option_do(statement, text)
+				_parse_option_do(menu, text)
 			else:
 				_err("Command 'option do' expects no arguments!")
+		"set":
+			if args.size() == 2:
+				_parse_option_set(menu, text, _scan_value(args[0]), _scan_value(args[1]))
+			else:
+				_err("Command 'option set' expects 2 arguments!")
+		"goto":
+			if args.size() == 1:
+				_parse_option_goto(menu, text, args[0])
+			else:
+				_err("Command 'option goto' expects 1 argument!")
 		_:
-			_err("Command 'option' expects a 'none', 'goto', 'set', or 'do' type!")
+			_err("Command 'option' expects a 'none', 'do', 'set', or 'goto' type!")
 
 
 # Parses an option none command from NightScript source code to IR code:
-func _parse_option_none(statement: StatementMenu, text: String) -> void:
-	_current_block.make_mno(statement.block_exit.label, text)
-
-
-# Parses an option goto command from NightScript source code to IR code:
-func _parse_option_goto(text: String, label: String) -> void:
-	if _validate_label(label):
-		_current_block.make_mno(label, text)
-
-
-# Parses an option set command from NightScript source code to IR code:
-func _parse_option_set(
-		statement: StatementMenu, text: String, left: ParseValue, right: ParseValue
-) -> void:
-	if not left.is_flag():
-		_err("Command 'option set' expects a variable left-hand value!")
-	elif not right.is_error():
-		var option_block: IRBlock = _create_block_temp()
-		option_block.load_x(right)
-		option_block.make_stx(left.flag)
-		option_block.make_jmp(statement.block_exit.label)
-		_current_block.make_mno(option_block.label, text)
+func _parse_option_none(menu: StatementMenu, text: String) -> void:
+	_parse_option_do(menu, text)
+	_parse_end_option()
 
 
 # Parses an option do command from NightScript source code to IR code:
 func _parse_option_do(menu: StatementMenu, text: String) -> void:
-	if _get_statement_option_index() > _get_statement_menu_index():
-		_err("Option statements cannot be directly nested!")
-		return
-
-	var statement: StatementOption = StatementOption.new(menu, text, _pos_line, _current_block)
+	var statement: StatementOption = StatementOption.new(menu, _pos_line, _current_block)
 	statement.block_skip = _create_block_temp()
 	statement.block_body = _create_block_temp()
+	_current_block.make_mno(statement.block_body.label, text)
 	_current_block.make_jmp(statement.block_skip.label)
 	_current_block = statement.block_body
 	_push_scope()
 	_statement_stack.push_back(statement)
 
 
+# Parses an option set command from NightScript source code to IR code:
+func _parse_option_set(
+	menu: StatementMenu, text: String, left: ParseValue, right: ParseValue
+) -> void:
+	if not left.is_flag():
+		_err("Command 'option set' expects a variable left-hand value!")
+	elif not right.is_error():
+		_parse_option_do(menu, text)
+		_current_block.load_x(right)
+		_current_block.make_stx(left.flag)
+		_parse_end_option()
+
+
+# Parses an option goto command from NightScript source code to IR code:
+func _parse_option_goto(menu: StatementMenu, text: String, label: String) -> void:
+	if _validate_label(label):
+		_parse_option_do(menu, text)
+		_current_block.make_jmp(label)
+		_parse_end_option()
+
+
 # Parses an implicit end command from NightScript source code to IR code:
 func _parse_end_implicit() -> void:
 	if _is_in_statement_if():
 		_parse_end_if()
+	elif _is_in_statement_do():
+		_parse_end_do()
 	elif _is_in_statement_while():
 		_parse_end_while()
 	elif _is_in_statement_menu():
@@ -1775,6 +1144,8 @@ func _parse_end(type: String) -> void:
 	match type:
 		"if":
 			_parse_end_if()
+		"do":
+			_parse_end_do()
 		"while":
 			_parse_end_while()
 		"menu":
@@ -1782,7 +1153,7 @@ func _parse_end(type: String) -> void:
 		"option":
 			_parse_end_option()
 		_:
-			_err("Command 'end' expects 'if', 'while', 'menu', or 'option'!")
+			_err("Command 'end' expects 'if', 'do', 'while', 'menu', or 'option'!")
 
 
 # Parses an end if command from NightScript source code to IR code:
@@ -1795,6 +1166,18 @@ func _parse_end_if() -> void:
 	_current_block.make_jmp(statement.block_exit.label)
 	_pop_scope()
 	statement.block_test.make_jmp(statement.block_exit.label)
+	_current_block = statement.block_exit
+
+
+# Parses an end do command from NightScript source code to IR code:
+func _parse_end_do() -> void:
+	if not _is_in_statement_do():
+		_err("Command 'end do' was used outside of a do statement!")
+		return
+	
+	var statement: StatementDo = _statement_stack.pop_back()
+	_current_block.make_jmp(statement.block_test.label)
+	_pop_scope()
 	_current_block = statement.block_exit
 
 
@@ -1832,7 +1215,28 @@ func _parse_end_option() -> void:
 	_current_block.make_jmp(statement.block_exit.label)
 	_pop_scope()
 	_current_block = statement.block_skip
-	_current_block.make_mno(statement.block_body.label, statement.text)
+
+
+# Parses a break command from NightScript source code to IR code:
+func _parse_break() -> void:
+	var statement: Statement = _get_statement_breakable()
+
+	if not statement:
+		_err("Command 'break' was used outside of a valid breakable statement!")
+		return
+	
+	_current_block.make_jmp(statement.block_exit.label)
+
+
+# Parses a continue command from NightScript source code to IR code:
+func _parse_continue() -> void:
+	var statement: Statement = _get_statement_continuable()
+
+	if not statement:
+		_err("Command 'continue' was used outside of a valid continuable statement!")
+		return
+	
+	_current_block.make_jmp(statement.block_test.label)
 
 
 # Finalizes the NightScript compiler's IR code:
@@ -1852,6 +1256,9 @@ func _finalize_end_statements() -> void:
 		if _is_in_statement_if():
 			_err("If statement was not ended!")
 			_parse_end_if()
+		elif _is_in_statement_do():
+			_err("Do statement was not ended!")
+			_parse_end_do()
 		elif _is_in_statement_while():
 			_err("While statement was not ended!")
 			_parse_end_while()
@@ -2249,9 +1656,7 @@ func _generate_bytecode() -> PoolByteArray:
 		else:
 			vector_repeat = pointers.get("$$error", vector_repeat)
 			vector_main = vector_repeat + 2
-
-	stream.put_u16(vector_main)
-	stream.put_u16(vector_repeat)
+	
 	stream.put_u16(node_count)
 	
 	for block in _blocks:
@@ -2266,19 +1671,21 @@ func _generate_bytecode() -> PoolByteArray:
 				stream.put_u16(pointers.get(node.lbl, node_count - 1))
 			
 			if operands & NSOp.OPERAND_FLG:
-				stream.put_u16(table.get_flag_id(node.flg))
+				stream.put_u16(table.get_flag_id(node.flg) * 2)
 			
 			if operands & NSOp.OPERAND_TXT:
 				stream.put_u16(table.get_string_id(node.txt))
 	
 	var header_stream: SerialWriteStream = SerialWriteStream.new()
-	header_stream.put_u8(0x01 if _get_metadata("cache") else 0x00)
+	header_stream.put_b8(bool(_get_metadata("cache")))
+	header_stream.put_u16(vector_main)
+	header_stream.put_u16(vector_repeat)
 	header_stream.put_u16(table.strings.size())
 	
 	for string in table.strings:
 		header_stream.put_utf8_u16(string)
 	
-	header_stream.put_u16(table.flags.size())
+	header_stream.put_u16(table.flags.size() * 2)
 	
 	for flag in table.flags:
 		header_stream.put_u16(flag.namespace)

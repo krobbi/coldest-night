@@ -161,9 +161,24 @@ func err_credits_read(path: String, code: int) -> void:
 	err_coded(tr("ERR.MESSAGE.CREDITS_READ").format({"path": path}), code)
 
 
+# Logs a dir make error message:
+func err_dir_make(path: String, code: int) -> void:
+	err_coded(tr("ERR.MESSAGE.DIR_MAKE").format({"path": path}), code)
+
+
 # Logs a display handle resize error message:
 func err_display_handle_resize(code: int) -> void:
 	err_coded("ERR.MESSAGE.DISPLAY.HANDLE_RESIZE", code)
+
+
+# Logs a file read error message:
+func err_file_read(path: String, code: int) -> void:
+	err_coded(tr("ERR.MESSAGE.FILE_READ").format({"path": path}), code)
+
+
+# Logs a file write error message:
+func err_file_write(path: String, code: int) -> void:
+	err_coded(tr("ERR.MESSAGE.FILE_WRITE").format({"path": path}), code)
 
 
 # Logs a font not found error message:
@@ -199,6 +214,10 @@ func err_player_not_found(player_key: String) -> void:
 # Logs a regex compile error message:
 func err_regex_compile(pattern: String, code: int) -> void:
 	err_coded(tr("ERR.MESSAGE.REGEX_COMPILE").format({"pattern": pattern}), code)
+
+
+func err_resource_save(path: String, code: int) -> void:
+	err_coded(tr("ERR.MESSAGE.RESOURCE_SAVE").format({"path": path}), code)
 
 
 # Logs a save deserialize error message:

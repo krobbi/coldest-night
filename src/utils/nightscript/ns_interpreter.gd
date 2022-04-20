@@ -9,122 +9,170 @@ class NSMachine extends Object:
 	
 	# NightScript Machine
 	# A NightScript machine is a helper structure used by a NightScript
-	# interpreter that contains a NightScript program and its registers.
+	# interpreter that contains a NightScript program's properties, operations,
+	# and registers.
 	
-	var program: NSProgram = NSProgram.new()
+	var is_cacheable: bool
+	var vector_main: int
+	var vector_repeat: int
+	var ops: Array = []
 	var pc: int
 	var x: int = 0
 	var y: int = 0
+	var actor_key: String = ""
 	var option_pointers: Array = []
 	var option_texts: Array = []
-	var active_option_pointers: Array = []
-	var actor_key: String = ""
 	var pathing_actors: Array = []
 	
-	# Constructor. Deserializes the NightScript machine's NightScript program's
-	# bytecode and initializes the NightScript machine's registers:
+	# Constructor. Deserializes the NightScript machine from NightScript
+	# bytecode and whether its NightScript program has already been run:
 	func _init(bytecode: PoolByteArray, is_seen: bool) -> void:
-		program.deserialize_bytecode(bytecode)
-		pc = program.vector_repeat if is_seen else program.vector_main
+		var stream: SerialReadStream = SerialReadStream.new(bytecode)
+		is_cacheable = stream.get_b8()
+		vector_main = stream.get_u16()
+		vector_repeat = stream.get_u16()
+		pc = vector_repeat if is_seen else vector_main
+		var string_count: int = stream.get_u16()
+		var string_table: PoolStringArray = PoolStringArray()
+		string_table.resize(string_count)
+		
+		for i in range(string_count):
+			string_table[i] = stream.get_utf8_u16()
+		
+		var flag_part_count: int = stream.get_u16()
+		var flag_table: PoolIntArray = PoolIntArray()
+		flag_table.resize(flag_part_count)
+		
+		for i in range(flag_part_count):
+			flag_table[i] = stream.get_u16()
+		
+		var op_count: int = stream.get_u16()
+		ops.resize(op_count)
+		
+		for i in range(op_count):
+			var opcode: int = stream.get_u8()
+			var op: NSOp = NSOp.new(opcode)
+			var operands: int = NSOp.get_operands(opcode)
+			
+			if operands & NSOp.OPERAND_VAL:
+				op.val = stream.get_s16()
+			
+			if operands & NSOp.OPERAND_PTR:
+				op.val = stream.get_u16()
+			
+			if operands & NSOp.OPERAND_FLG:
+				var index: int = stream.get_u16()
+				op.txt = string_table[flag_table[index]]
+				op.key = string_table[flag_table[index + 1]]
+			
+			if operands & NSOp.OPERAND_TXT:
+				op.txt = string_table[stream.get_u16()]
+			
+			ops[i] = op
 	
 	
-	# Destructor. Destructs and frees the NightScript machine's NightScript
-	# program:
+	# Destructor. Frees the NightScript machine's NightScript operations:
 	func destruct() -> void:
-		program.destruct()
-		program.free()
+		for op in ops:
+			op.free()
 
 
 signal program_finished
 
-enum State {STOPPED, STARTING, RUNNING, AWAITING}
+enum State {STOPPED, RUNNING, AWAITING}
 
 const MACHINE_STACK_LIMIT: int = 8
+const RUN_STEP_LIMIT: int = 16
 const EMPTY_BYTECODE: PoolByteArray = PoolByteArray([
 	0x00, # Not cacheable.
-	0x00, 0x00, # 0 strings.
-	0x00, 0x00, # 0 flags.
 	0x00, 0x00, # Main vector.
 	0x00, 0x00, # Repeat vector.
+	0x00, 0x00, # 0 strings.
+	0x00, 0x00, # 0 flag parts.
 	0x01, 0x00, # 1 operation.
 	NSOp.HLT, # Halt.
 ])
 
-export(NodePath) var _dialog_path: NodePath = NodePath()
-export(String) var _autorun: String
+export(NodePath) var dialog_path: NodePath = NodePath()
+export(String) var autorun: String
 
 var _state: int = State.STOPPED
 var _dialog: Dialog = null
 var _is_caching: bool = true
-var _bytecode_cache: Dictionary = {}
+var _program_cache: Dictionary = {}
 var _machine_stack: Array = []
 var _machine: NSMachine = null
 
 # Virtual _ready method. Runs when the NightScript interpreter enters the scene
-# tree. Finds the NightScript interpreter's dialog display, connects the
-# NightScript interpreter to the language manager, and runs the NightScript
-# interpreter's autorun program:
+# tree. Disables the NightScript interpreter's physics process, finds the
+# NightScript interpreter's dialog display, connects the NightScript interpreter
+# to the language manager, and runs the NightScript interpreter's autorun
+# program:
 func _ready() -> void:
-	if _dialog_path and get_node(_dialog_path) is Dialog:
-		_dialog = get_node(_dialog_path)
+	set_physics_process(false)
+	
+	if dialog_path and get_node(dialog_path) is Dialog:
+		_dialog = get_node(dialog_path)
 	
 	var error: int = Global.lang.connect("locale_changed", self, "_on_lang_locale_changed")
 	
-	if error and Global.lang.is_connected("locale_changed", self, "_on_lang_locale_chanegd"):
-		Global.lang.disconnect("locale_changed", self, "_on_lang_locale_changed")
+	if error:
+		if Global.lang.is_connected("locale_changed", self, "_on_lang_locale_changed"):
+			Global.lang.disconnect("locale_changed", self, "_on_lang_locale_changed")
+		
 		_is_caching = false
 	
-	if not _autorun.empty():
-		run_program(_autorun)
+	if not autorun.empty():
+		run_program(autorun)
 
 
-# Virtual _process method. Runs on every frame. Steps the NightScript
+# Virtual _physics_process method. Runs on every physics frame while the
+# NightScript interpreter's physics process is enabled. Steps the NightScript
 # interpreter:
-func _process(_delta: float) -> void:
-	var steps: int = 16
-
+func _physics_process(_delta: float) -> void:
+	var steps: int = RUN_STEP_LIMIT
+	
 	while _state == State.RUNNING and steps:
 		_step()
 		steps -= 1
-
-
-# Virtual _exit_tree method. Runs when the NightScript interpreter exits the
-# scene tree. Destructs and frees the NightScript interpreter's NightScript
-# machines and disconnects the NightScript interpreter from the language
-# manager:
-func _exit_tree() -> void:
-	for machine in _machine_stack:
-		machine.destruct()
-		machine.free()
 	
-	if Global.lang.is_connected("locale_changed", self, "_on_lang_locale_changed"):
-		Global.lang.disconnect("locale_changed", self, "_on_lang_locale_changed")
+	if _state != State.RUNNING:
+		set_physics_process(false)
 
 
-# Runs a NightScript program from its program key:
+# Runs a NightScript program from its program key if the NightScript interpreter
+# is stopped:
 func run_program(program_key: String) -> void:
 	if _state != State.STOPPED:
 		return
-	
-	_state = State.STARTING
+		
 	_push_machine(program_key)
 	_state = State.RUNNING
-
-
-# Caches a NightScript program from its program key:
-func cache_program(program_key: String) -> void:
-	if not _is_caching or program_key.empty() or _bytecode_cache.has(program_key):
-		return
 	
-	var bytecode: PoolByteArray = _get_bytecode(program_key)
+	var steps: int = RUN_STEP_LIMIT
+	
+	while _state == State.RUNNING and steps:
+		_step()
+		steps -= 1
+	
+	if _state == State.RUNNING:
+		set_physics_process(true)
 
+
+# Caches a NightScript program from its program key if it is cacheable:
+func cache_program(program_key: String) -> void:
+	if not _is_caching or program_key.empty() or _program_cache.has(program_key):
+		return
+		
+	var bytecode: PoolByteArray = _get_program_bytecode(program_key)
+	
 	if not bytecode.empty() and bytecode[0]:
-		_bytecode_cache[program_key] = bytecode
+		_program_cache[program_key] = bytecode
 
 
-# Flushes the NightScript bytecode cache:
+# Flushes the NightScript program cache:
 func flush_cache() -> void:
-	_bytecode_cache.clear()
+	_program_cache.clear()
 
 
 # Sets a flag from its namespace and key:
@@ -137,24 +185,29 @@ func _get_flag(namespace: String, key: String) -> int:
 	return Global.save.get_working_data().get_flag(namespace, key)
 
 
-# Gets NightScript bytecode from a NightScript program key:
-func _get_bytecode(program_key: String) -> PoolByteArray:
-	if _bytecode_cache.has(program_key):
-		return _bytecode_cache[program_key]
+# Gets a NightScript program's NightScript bytecode from its program key:
+func _get_program_bytecode(program_key: String) -> PoolByteArray:
+	if _program_cache.has(program_key):
+		return _program_cache[program_key]
 	
-	var base_path: String = "res://n/%s/%s.nsc"
-	var global_locale: String = "g"
+	var base_path: String = "res://%s.%s.nsc"
 	
+	# DEBUG:BEGIN
 	if OS.is_debug_build():
 		program_key = program_key.replace(".", "/")
 		base_path = "res://assets/data/nightscript/%s/%s.ns"
-		global_locale = "global"
+	# DEBUG:END
 	
 	var file: File = File.new()
 	var path: String = base_path % [Global.lang.locale, program_key]
 	
 	if not file.file_exists(path):
-		path = base_path % [global_locale, program_key]
+		path = base_path % ["g", program_key]
+		
+		# DEBUG:BEGIN
+		if OS.is_debug_build():
+			path = base_path % ["global", program_key]
+		# DEBUG:END
 		
 		if not file.file_exists(path):
 			path = base_path % [Global.lang.get_default_locale(), program_key]
@@ -172,11 +225,13 @@ func _get_bytecode(program_key: String) -> PoolByteArray:
 		Global.logger.err_nsc_read(program_key, error)
 		return EMPTY_BYTECODE
 	
+	# DEBUG:BEGIN
 	if OS.is_debug_build():
 		var source: String = file.get_as_text()
 		file.close()
-		var compiler: Reference = load("res://utils/nightscript/debug/ns_compiler.gd").new()
+		var compiler: Reference = load("res://utils/nightscript/compiler/ns_compiler.gd").new()
 		return compiler.compile_source(source, Global.config.get_bool("debug.optimize_nightscript"))
+	# DEBUG:END
 	
 	var bytecode: PoolByteArray = file.get_buffer(file.get_len())
 	file.close()
@@ -193,25 +248,26 @@ func _get_scripted_actor(actor_key: String) -> Actor:
 	return null
 
 
-# Pushes a new NightScript machine to the NightScript machine stack from its
-# program key:
+# Pushes a new current NightScript machine to the NightScript machine stack from
+# its program key if the NightScript machine stack is not full:
 func _push_machine(program_key: String) -> void:
 	if _machine_stack.size() >= MACHINE_STACK_LIMIT:
 		return
 	
-	var bytecode: PoolByteArray = _get_bytecode(program_key)
-	_machine = NSMachine.new(bytecode, _get_flag("ns_seen", program_key) != 0)
+	var bytecode: PoolByteArray = _get_program_bytecode(program_key)
+	_machine = NSMachine.new(bytecode, bool(_get_flag("ns_seen", program_key)))
 	_machine_stack.push_back(_machine)
 	_set_flag("ns_seen", program_key, 1)
 	
 	if(
-			_is_caching and _machine.program.is_cacheable
-			and not program_key.empty() and not _bytecode_cache.has(program_key)
+			_is_caching and _machine.is_cacheable and not program_key.empty()
+			and not _program_cache.has(program_key)
 	):
-		_bytecode_cache[program_key] = bytecode
+		_program_cache[program_key] = bytecode
 
 
-# Pops the current NightScript machine from the NightScript machine stack:
+# Pops the current NightScript machine from the NightScript machine stack if it
+# is not empty:
 func _pop_machine() -> void:
 	if not _machine:
 		return
@@ -228,8 +284,8 @@ func _pop_machine() -> void:
 		_machine = _machine_stack[-1]
 
 
-# Pauses the NightScript interpreter until a signal is received from a source
-# object:
+# Pauses the NightScript interpreter until a signal is emitted from a source
+# object if it is running:
 func _await(source: Object, signal_name: String) -> void:
 	if _state != State.RUNNING:
 		return
@@ -242,9 +298,10 @@ func _await(source: Object, signal_name: String) -> void:
 		source.disconnect(signal_name, self, "_on_await_finished")
 
 
-# Pauses the NightScript interpreter until an option is pressed on the dialog:
+# Pauses the NightScript interpreter until an option is pressed on the dialog
+# display:
 func _await_option() -> void:
-	if _state != State.RUNNING or not _dialog:
+	if _state != State.RUNNING:
 		return
 	
 	var error: int = _dialog.connect(
@@ -259,7 +316,7 @@ func _await_option() -> void:
 
 # Steps the current NightScript machine:
 func _step() -> void:
-	var op: NSOp = _machine.program.ops[_machine.pc]
+	var op: NSOp = _machine.ops[_machine.pc]
 	_machine.pc += 1
 	
 	match op.op:
@@ -315,18 +372,12 @@ func _step() -> void:
 			_machine.option_pointers.push_back(op.val)
 			_machine.option_texts.push_back(op.txt)
 		NSOp.MNS: # Menu show:
-			if _machine.option_pointers.empty():
+			if not _dialog or _machine.option_pointers.empty():
 				_pop_machine()
 				return
 			
-			_machine.active_option_pointers = _machine.option_pointers.duplicate()
-			_machine.option_pointers.clear()
-			
-			if _dialog:
-				_await_option()
-				_dialog.display_options(_machine.option_texts)
-			
-			_machine.option_texts.clear()
+			_await_option()
+			_dialog.display_options(PoolStringArray(_machine.option_texts))
 		NSOp.LAK: # Load actor key:
 			_machine.actor_key = op.txt
 		NSOp.AFD: # Actor face direction:
@@ -346,7 +397,9 @@ func _step() -> void:
 					actor.run_nav_path()
 		NSOp.APA: # Actor path await:
 			for i in range(_machine.pathing_actors.size() - 1, -1, -1):
-				if not _machine.pathing_actors[i] or not _machine.pathing_actors[i].is_pathing():
+				var actor: Actor = _machine.pathing_actors[i]
+				
+				if not actor or not actor.is_pathing():
 					_machine.pathing_actors.remove(i)
 			
 			if not _machine.pathing_actors.empty():
@@ -368,28 +421,32 @@ func _step() -> void:
 			Global.save.save_checkpoint()
 
 
+# Signal callback for locale_changed on the language manager. Runs when the
+# locale changes. Flushes the NightScript program cache:
+func _on_lang_locale_changed(_locale: String) -> void:
+	flush_cache()
+
+
 # Signal callback for an awaited signal. Runs when the awaited signal is
-# received. Resumes the NightScript interpreter if it is awaiting:
+# emitted. Resumes the NightScript interpreter if it is awaiting:
 func _on_await_finished() -> void:
 	if _state == State.AWAITING:
 		_state = State.RUNNING
+		set_physics_process(true)
 
 
-# Signal callback for option_pressed on the dialog. Runs when a dialog option is
-# pressed. Branches and resumes the NightScript interpreter if it is awaiting:
+# Signal callback for option_pressed on the dialog display. Runs when a dialog
+# option is pressed. Branches and resumes the NightScript interpreter if it is
+# awaiting a menu option:
 func _on_dialog_option_pressed(index: int) -> void:
 	if _state != State.AWAITING:
 		return
 	
-	if index < 0 or index >= _machine.active_option_pointers.size():
-		index = _machine.active_option_pointers.size() - 1
+	if index < 0 or index >= _machine.option_pointers.size():
+		index = _machine.option_pointers.size() - 1
 	
-	_machine.pc = _machine.active_option_pointers[index]
-	_machine.active_option_pointers.clear()
+	_machine.pc = _machine.option_pointers[index]
+	_machine.option_pointers.clear()
+	_machine.option_texts.clear()
 	_state = State.RUNNING
-
-
-# Signal callback for locale_changed on the language manager. Runs when the
-# locale changes. Flushes the NightScript bytecode cache:
-func _on_lang_locale_changed(_locale: String) -> void:
-	flush_cache()
+	set_physics_process(true)
