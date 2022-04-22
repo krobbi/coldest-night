@@ -9,6 +9,28 @@ signal option_pressed(index) # warning-ignore: UNUSED_SIGNAL
 
 onready var tags: DialogTagParser = $DialogTagParser
 
+# Virtual _ready method. Runs when the dialog display finishes entering the
+# scene tree. Connects the dialog display to the event bus:
+func _ready() -> void:
+	Global.events.safe_connect("dialog_show_dialog_request", self, "show_dialog")
+	Global.events.safe_connect("dialog_hide_dialog_request", self, "hide_dialog")
+	Global.events.safe_connect("dialog_clear_name_request", self, "clear_name")
+	Global.events.safe_connect("dialog_display_name_request", self, "display_name")
+	Global.events.safe_connect("dialog_display_message_request", self, "display_message")
+	Global.events.safe_connect("dialog_display_options_request", self, "display_options")
+
+
+# Virtual _exit_tree method. Runs when the dialog display exits the scene tree.
+# Disconnects the dialog display from the event bus:
+func _exit_tree() -> void:
+	Global.events.safe_connect("dialog_display_options_request", self, "display_options")
+	Global.events.safe_connect("dialog_display_message_request", self, "display_message")
+	Global.events.safe_connect("dialog_display_name_request", self, "display_name")
+	Global.events.safe_connect("dialog_clear_name_request", self, "clear_name")
+	Global.events.safe_connect("dialog_hide_dialog_request", self, "hide_dialog")
+	Global.events.safe_connect("dialog_show_dialog_request", self, "show_dialog")
+
+
 # Abstract _show_dialog method. Runs when the dialog display is shown:
 func _show_dialog() -> void:
 	show()

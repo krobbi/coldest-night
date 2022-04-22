@@ -8,7 +8,8 @@ class IRNode extends Reference:
 	# IR Node
 	# An IR node is a helper structure used by a NightScript compiler that is an
 	# intermediate representation of a NightScript operation.
-
+	
+	const NSMachine: GDScript = NightScript.NSMachine
 	const ParseFlag: GDScript = preload("../parse/parse_flag.gd").ParseFlag
 	
 	var op: int
@@ -25,7 +26,7 @@ class IRNode extends Reference:
 	# Returns whether the IR node is a branch operation:
 	func is_branch() -> bool:
 		match op:
-			NSOp.JMP, NSOp.BEQ, NSOp.BNE, NSOp.BGT, NSOp.BGE:
+			NightScript.JMP, NightScript.BEQ, NightScript.BNE, NightScript.BGT, NightScript.BGE:
 				return true
 			_:
 				return false
@@ -33,7 +34,7 @@ class IRNode extends Reference:
 	
 	# Returns whether the IR node has a pointer operand:
 	func has_pointer() -> bool:
-		return NSOp.get_operands(op) & NSOp.OPERAND_PTR != 0
+		return NSMachine.get_operands(op) & NightScript.OPERAND_PTR != 0
 	
 	
 	# Returns whether the IR node functionally equals another IR node by value:
@@ -41,19 +42,19 @@ class IRNode extends Reference:
 		if op != other.op:
 			return false
 		
-		var operands: int = NSOp.get_operands(op)
+		var operands: int = NSMachine.get_operands(op)
 
-		if operands & NSOp.OPERAND_VAL and val != other.val:
+		if operands & NightScript.OPERAND_VAL and val != other.val:
 			return false
 		
-		if operands & NSOp.OPERAND_PTR and lbl != other.lbl:
+		if operands & NightScript.OPERAND_PTR and lbl != other.lbl:
 			if lbl != head_label or other.lbl != other_head_label:
 				return false
 		
-		if operands & NSOp.OPERAND_FLG and not flg.equals(other.flg):
+		if operands & NightScript.OPERAND_FLG and not flg.equals(other.flg):
 			return false
 		
-		if operands & NSOp.OPERAND_TXT and txt != other.txt:
+		if operands & NightScript.OPERAND_TXT and txt != other.txt:
 			return false
 		
 		return true

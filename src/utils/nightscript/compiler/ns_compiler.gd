@@ -10,6 +10,7 @@ enum Comparator {ERROR, EQ, NE, GT, GE, LT, LE}
 const BytecodeTable: GDScript = preload("./bytecode/bytecode_table.gd").BytecodeTable
 const IRBlock: GDScript = preload("./ir_code/ir_block.gd").IRBlock
 const IRNode: GDScript = preload("./ir_code/ir_node.gd").IRNode
+const NSMachine: GDScript = NightScript.NSMachine
 const ParseFlag: GDScript = preload("./parse/parse_flag.gd").ParseFlag
 const ParseValue: GDScript = preload("./parse/parse_value.gd").ParseValue
 const ParseValueFactory: GDScript = preload("./parse/parse_value_factory.gd").ParseValueFactory
@@ -32,6 +33,7 @@ const DEFAULT_METADATA: Dictionary = {
 	"optimize_eliminate_unreachable_blocks": 1,
 	"optimize_thread_halts": 1,
 	"optimize_thread_pointers": 1,
+	"pause": 1,
 }
 
 var _pos_line: int = 0
@@ -551,6 +553,11 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 				_current_block.make_hlt()
 			else:
 				_err("Command 'exit' expects no arguments!")
+		"call":
+			if args.size() == 1:
+				_current_block.make_clp(args[0])
+			else:
+				_err("Command 'call' exepects 1 argument!")
 		"run":
 			if args.size() == 1:
 				_current_block.make_run(args[0])
@@ -1424,7 +1431,7 @@ func _optimize_thread_pointers() -> bool:
 		var source_label: String = source_block.label
 		var target_label: String = source_node.lbl
 
-		if source_node.op != NSOp.JMP or source_label == target_label:
+		if source_node.op != NightScript.JMP or source_label == target_label:
 			continue
 		
 		for block in _blocks:
@@ -1442,15 +1449,15 @@ func _optimize_thread_halts() -> bool:
 	var is_optimized: bool = false
 
 	for source_block in _blocks:
-		if source_block.empty() or source_block.nodes[0].op != NSOp.HLT:
+		if source_block.empty() or source_block.nodes[0].op != NightScript.HLT:
 			continue
 		
 		var source_label: String = source_block.label
 
 		for block in _blocks:
 			for node in block.nodes:
-				if node.op == NSOp.JMP and node.lbl == source_label:
-					node.op = NSOp.HLT
+				if node.op == NightScript.JMP and node.lbl == source_label:
+					node.op = NightScript.HLT
 					is_optimized = true
 	
 	return is_optimized
@@ -1532,7 +1539,7 @@ func _optimize_eliminate_subsequent_halts() -> bool:
 		if block.empty() or next_block.empty():
 			continue
 		
-		if block.nodes[-1].op == NSOp.HLT and next_block.nodes[0].op == NSOp.HLT:
+		if block.nodes[-1].op == NightScript.HLT and next_block.nodes[0].op == NightScript.HLT:
 			block.nodes.remove(block.size() - 1)
 			block.readopt_nodes()
 			is_optimized = true
@@ -1581,7 +1588,7 @@ func _optimize_adopt_child_blocks() -> bool:
 			elif parent_block.is_dead:
 				var parent_node: IRNode = parent_block.nodes[-1]
 
-				if parent_node.op == NSOp.JMP and parent_node.lbl == child_block.label:
+				if parent_node.op == NightScript.JMP and parent_node.lbl == child_block.label:
 					parent_blocks.push_back(parent_block)
 			elif parent_block.block_next == child_block:
 				parent_blocks.push_back(parent_block)
@@ -1662,22 +1669,30 @@ func _generate_bytecode() -> PoolByteArray:
 	for block in _blocks:
 		for node in block.nodes:
 			stream.put_u8(node.op)
-			var operands: int = NSOp.get_operands(node.op)
+			var operands: int = NSMachine.get_operands(node.op)
 			
-			if operands & NSOp.OPERAND_VAL:
+			if operands & NightScript.OPERAND_VAL:
 				stream.put_s16(node.val)
 			
-			if operands & NSOp.OPERAND_PTR:
+			if operands & NightScript.OPERAND_PTR:
 				stream.put_u16(pointers.get(node.lbl, node_count - 1))
 			
-			if operands & NSOp.OPERAND_FLG:
+			if operands & NightScript.OPERAND_FLG:
 				stream.put_u16(table.get_flag_id(node.flg) * 2)
 			
-			if operands & NSOp.OPERAND_TXT:
+			if operands & NightScript.OPERAND_TXT:
 				stream.put_u16(table.get_string_id(node.txt))
 	
 	var header_stream: SerialWriteStream = SerialWriteStream.new()
-	header_stream.put_b8(bool(_get_metadata("cache")))
+	var program_flags: int = 0
+	
+	if _get_metadata("cache"):
+		program_flags |= NightScript.FLAG_CACHEABLE
+	
+	if _get_metadata("pause"):
+		program_flags |= NightScript.FLAG_PAUSABLE
+	
+	header_stream.put_u8(program_flags)
 	header_stream.put_u16(vector_main)
 	header_stream.put_u16(vector_repeat)
 	header_stream.put_u16(table.strings.size())

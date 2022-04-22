@@ -5,7 +5,8 @@ extends Control
 # of the NightScript compiler by compiling and disassembling NightScript source
 # code.
 
-const NSMachine: GDScript = NSInterpreter.NSMachine
+const NSMachine: GDScript = NightScript.NSMachine
+const NSOp: GDScript = NightScript.NSOp
 
 var _compiler: Reference = preload("res://utils/nightscript/compiler/ns_compiler.gd").new()
 
@@ -54,9 +55,9 @@ func _deserialize_source(source: String) -> NSMachine:
 # Compiles and disassembles NightScript source code:
 func _disassemble_source(source: String) -> String:
 	var machine: NSMachine = _deserialize_source(source)
-	var output: String = "meta cache %s\nmeta optimize false\n\n" % (
-			"true" if machine.is_cacheable else "false"
-	)
+	var output: String = "meta cache %s\nmeta pause %s\n\n" % [
+		"true" if machine.is_cacheable else "false", "true" if machine.is_pausable else "false"
+	]
 	
 	# Find labels:
 	var labels: Dictionary = {}
@@ -65,7 +66,7 @@ func _disassemble_source(source: String) -> String:
 	labels[machine.vector_repeat] = "op_%d" % machine.vector_repeat
 	
 	for op in machine.ops:
-		if NSOp.get_operands(op.op) & NSOp.OPERAND_PTR:
+		if NSMachine.get_operands(op.op) & NightScript.OPERAND_PTR:
 			labels[op.val] = "op_%d" % op.val
 	
 	# Name labels:
@@ -106,71 +107,73 @@ func _disassemble_source(source: String) -> String:
 		var txt: String = _escape_string(op.txt)
 		
 		match op.op:
-			NSOp.HLT: # Halt:
+			NightScript.HLT: # Halt:
 				output += "exit"
-			NSOp.RUN: # Run:
+			NightScript.CLP: # Call program:
+				output += "call %s" % txt
+			NightScript.RUN: # Run:
 				output += "run %s" % txt
-			NSOp.SLP: # Sleep:
+			NightScript.SLP: # Sleep:
 				output += "sleep %d cs" % val
-			NSOp.JMP: # Jump:
+			NightScript.JMP: # Jump:
 				output += "goto %s" % lbl
-			NSOp.BEQ: # Branch equals:
+			NightScript.BEQ: # Branch equals:
 				output += "BEQ %s" % lbl
-			NSOp.BNE: # Branch not equals:
+			NightScript.BNE: # Branch not equals:
 				output += "BNE %s" % lbl
-			NSOp.BGT: # Branch greater than:
+			NightScript.BGT: # Branch greater than:
 				output += "BGT %s" % lbl
-			NSOp.BGE: # Branch greater equals:
+			NightScript.BGE: # Branch greater equals:
 				output += "BGE %s" % lbl
-			NSOp.LXC: # Load X constant:
+			NightScript.LXC: # Load X constant:
 				output += "LXC %d" % val
-			NSOp.LXF: # Load X flag:
+			NightScript.LXF: # Load X flag:
 				output += "LXF %s" % flg
-			NSOp.STX: # Store X:
+			NightScript.STX: # Store X:
 				output += "STX %s" % flg
-			NSOp.LYC: # Load Y constant:
+			NightScript.LYC: # Load Y constant:
 				output += "LYC %d" % val
-			NSOp.LYF: # Load Y flag:
+			NightScript.LYF: # Load Y flag:
 				output += "LYF %s" % flg
-			NSOp.STY: # Store Y:
+			NightScript.STY: # Store Y:
 				output += "STY %s" % flg
-			NSOp.DGS: # Dialog show:
+			NightScript.DGS: # Dialog show:
 				output += "dialog show"
-			NSOp.DGH: # Dialog hide:
+			NightScript.DGH: # Dialog hide:
 				output += "dialog hide"
-			NSOp.DNC: # Dialog name clear:
+			NightScript.DNC: # Dialog name clear:
 				output += "name"
-			NSOp.DND: # Dialog name display:
+			NightScript.DND: # Dialog name display:
 				output += "name %s" % txt
-			NSOp.DGM: # Dialog message:
+			NightScript.DGM: # Dialog message:
 				output += "say %s" % txt
-			NSOp.MNO: # Menu option:
+			NightScript.MNO: # Menu option:
 				output += "MNO %s %s" % [lbl, txt]
-			NSOp.MNS: # Menu show:
+			NightScript.MNS: # Menu show:
 				output += "MNS"
-			NSOp.LAK: # Load actor key:
+			NightScript.LAK: # Load actor key:
 				output += "LAK %s" % txt
-			NSOp.AFD: # Actor face direction:
+			NightScript.AFD: # Actor face direction:
 				output += "AFD"
-			NSOp.APF: # Actor path find:
+			NightScript.APF: # Actor path find:
 				output += "APF %s" % txt
-			NSOp.APR: # Actor path run:
+			NightScript.APR: # Actor path run:
 				output += "APR"
-			NSOp.APA: # Actor path await:
+			NightScript.APA: # Actor path await:
 				output += "APA"
-			NSOp.PLF: # Player freeze:
+			NightScript.PLF: # Player freeze:
 				output += "player freeze"
-			NSOp.PLT: # Player thaw:
+			NightScript.PLT: # Player thaw:
 				output += "player unfreeze"
-			NSOp.QTT: # Quit to title:
+			NightScript.QTT: # Quit to title:
 				output += "quit title"
-			NSOp.PSE: # Pause:
+			NightScript.PSE: # Pause:
 				output += "pause"
-			NSOp.UNP: # Unpause:
+			NightScript.UNP: # Unpause:
 				output += "unpause"
-			NSOp.SAV: # Save:
+			NightScript.SAV: # Save:
 				output += "save"
-			NSOp.CKP: # Checkpoint:
+			NightScript.CKP: # Checkpoint:
 				output += "checkpoint"
 		
 		output += "\n"

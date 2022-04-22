@@ -12,13 +12,13 @@ if seen_terminal == false
 	set seen_terminal true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.terminal_1
+	call dialog.test.area_bx.hub.terminal_1
 	dialog hide
 	path do player Terminal
 	look player up
 	sleep 1
 	dialog show
-	run dialog.test.area_bx.hub.terminal_2
+	call dialog.test.area_bx.hub.terminal_2
 	dialog hide
 	player unfreeze
 elif count == 9
@@ -29,7 +29,7 @@ elif count == 9
 	set seen_north_almost true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.north_almost
+	call dialog.test.area_bx.hub.north_almost
 	dialog hide
 	player unfreeze
 elif count == 10
@@ -40,7 +40,7 @@ elif count == 10
 	set seen_north_complete true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.north_complete
+	call dialog.test.area_bx.hub.north_complete
 	dialog hide
 	player unfreeze
 elif count == 16
@@ -51,7 +51,7 @@ elif count == 16
 	set seen_west_almost true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.west_almost
+	call dialog.test.area_bx.hub.west_almost
 	dialog hide
 	player unfreeze
 elif count == 17
@@ -62,7 +62,7 @@ elif count == 17
 	set seen_west_complete true
 	player freeze
 	dialog show
-	run dialog.test.area_bx.hub.west_complete
+	call dialog.test.area_bx.hub.west_complete
 	dialog hide
 	player unfreeze
 end

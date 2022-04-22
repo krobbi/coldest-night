@@ -7,10 +7,10 @@ class BytecodeTable extends Reference:
 	
 	# Bytecode Table
 	# A bytecode table is a helper structure used by a NightScript compiler that
-	# is used for generating the table section of NightScript bytecode:
+	# is used for generating the table section of NightScript bytecode.
 	
-	const ParseFlag = preload("../parse/parse_flag.gd").ParseFlag
 	const BytecodeTableFlag = preload("./bytecode_table_flag.gd").BytecodeTableFlag
+	const ParseFlag = preload("../parse/parse_flag.gd").ParseFlag
 	
 	var strings: PoolStringArray = PoolStringArray()
 	var flags: Array = []

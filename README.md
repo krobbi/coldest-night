@@ -120,7 +120,7 @@ More lengthy or complex translations are determined from their file paths:
 NightScript source files may have a 'global' locale, meaning they do not need
 to be translated. If a complex script needs to display translatable text,
 (such as in a cutscene,) it can be given a global locale, but call external
-scripts containing dialog by using the `run <program key>` command. The
+scripts containing dialog by using the `call <program key>` command. The
 appropriate translation will be selected automatically.
 
 If more than one locale is available to the game, a language menu will appear
@@ -128,7 +128,7 @@ in the settings menu, otherwise it will be hidden. The translation system
 should respond automatically to the game's loaded locales and `locale/fallback`
 project setting.
 
-The story, and character names and other attributes may not be final and may
+The story, character names, and other attributes may not be final and may
 change.
 
 # Credits and Licensing

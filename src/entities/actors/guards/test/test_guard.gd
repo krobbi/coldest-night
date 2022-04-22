@@ -3,9 +3,7 @@ extends Actor
 # Test Guard
 # A test guard is a temporary guard actor used for testing guard AI.
 
-enum Facing {UP, RIGHT, DOWN, LEFT}
-
-export(Facing) var _facing: int = Facing.RIGHT
+export(Facing) var start_facing: int = Facing.RIGHT
 
 var target: Player = null
 var investigated_pos: Vector2 = Vector2.ZERO
@@ -13,14 +11,18 @@ var investigated_pos: Vector2 = Vector2.ZERO
 # Virtual _ready method. Runs when the guard finishes entering the scene tree.
 # Sets the guard's initial facing direction:
 func _ready() -> void:
-	match _facing:
+	match start_facing:
 		Facing.UP:
+			facing = Facing.UP
 			smooth_pivot.rotation = PI * -0.5
 		Facing.RIGHT:
+			facing = Facing.RIGHT
 			smooth_pivot.rotation = 0.0
 		Facing.DOWN:
+			facing = Facing.DOWN
 			smooth_pivot.rotation = PI * 0.5
 		Facing.LEFT:
+			facing = Facing.LEFT
 			smooth_pivot.rotation = PI
 
 

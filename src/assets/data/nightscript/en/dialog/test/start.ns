@@ -1,6 +1,8 @@
 # Start Dialog
 # Runs when the initial level is entered.
 
+meta pause false
+
 define pester_count test:pester_count
 
 player freeze

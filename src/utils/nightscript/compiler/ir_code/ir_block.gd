@@ -55,14 +55,14 @@ class IRBlock extends Reference:
 		var other_exit: String = other.block_next.label if other.block_next else ""
 
 		if is_dead:
-			if nodes[-1].op == NSOp.JMP:
+			if nodes[-1].op == NightScript.JMP:
 				size -= 1
 				exit = nodes[-1].lbl
 			else:
 				exit = ""
 		
 		if other.is_dead:
-			if other.nodes[-1].op == NSOp.JMP:
+			if other.nodes[-1].op == NightScript.JMP:
 				other_size -= 1
 				other_exit = other.nodes[-1].lbl
 			else:
@@ -113,71 +113,73 @@ class IRBlock extends Reference:
 	# Adopts a copy of an IR node into the IR block if the IR block is not dead:
 	func adopt_node(node: IRNode) -> void:
 		match node.op:
-			NSOp.HLT:
+			NightScript.HLT:
 				make_hlt()
-			NSOp.RUN:
+			NightScript.CLP:
+				make_clp(node.txt)
+			NightScript.RUN:
 				make_run(node.txt)
-			NSOp.SLP:
+			NightScript.SLP:
 				make_slp(node.val)
-			NSOp.JMP:
+			NightScript.JMP:
 				make_jmp(node.lbl)
-			NSOp.BEQ:
+			NightScript.BEQ:
 				make_beq(node.lbl)
-			NSOp.BNE:
+			NightScript.BNE:
 				make_bne(node.lbl)
-			NSOp.BGT:
+			NightScript.BGT:
 				make_bgt(node.lbl)
-			NSOp.BGE:
+			NightScript.BGE:
 				make_bge(node.lbl)
-			NSOp.LXC:
+			NightScript.LXC:
 				make_lxc(node.val)
-			NSOp.LXF:
+			NightScript.LXF:
 				make_lxf(node.flg)
-			NSOp.STX:
+			NightScript.STX:
 				make_stx(node.flg)
-			NSOp.LYC:
+			NightScript.LYC:
 				make_lyc(node.val)
-			NSOp.LYF:
+			NightScript.LYF:
 				make_lyf(node.flg)
-			NSOp.STY:
+			NightScript.STY:
 				make_sty(node.flg)
-			NSOp.DGS:
+			NightScript.DGS:
 				make_dgs()
-			NSOp.DGH:
+			NightScript.DGH:
 				make_dgh()
-			NSOp.DNC:
+			NightScript.DNC:
 				make_dnc()
-			NSOp.DND:
+			NightScript.DND:
 				make_dnd(node.txt)
-			NSOp.DGM:
+			NightScript.DGM:
 				make_dgm(node.txt)
-			NSOp.MNO:
+			NightScript.MNO:
 				make_mno(node.lbl, node.txt)
-			NSOp.MNS:
+			NightScript.MNS:
 				make_mns()
-			NSOp.LAK:
+			NightScript.LAK:
 				make_lak(node.txt)
-			NSOp.AFD:
+			NightScript.AFD:
 				make_afd()
-			NSOp.APF:
+			NightScript.APF:
 				make_apf(node.txt)
-			NSOp.APR:
+			NightScript.APR:
 				make_apr()
-			NSOp.APA:
+			NightScript.APA:
 				make_apa()
-			NSOp.PLF:
+			NightScript.PLF:
 				make_plf()
-			NSOp.PLT:
+			NightScript.PLT:
 				make_plt()
-			NSOp.QTT:
+			NightScript.QTT:
 				make_qtt()
-			NSOp.PSE:
+			NightScript.PSE:
 				make_pse()
-			NSOp.UNP:
+			NightScript.UNP:
 				make_unp()
-			NSOp.SAV:
+			NightScript.SAV:
 				make_sav()
-			NSOp.CKP:
+			NightScript.CKP:
 				make_ckp()
 	
 	
@@ -244,23 +246,28 @@ class IRBlock extends Reference:
 	
 	# Makes an HLT IR node at the back of the IR block:
 	func make_hlt() -> void:
-		make_standalone(NSOp.HLT)
+		make_standalone(NightScript.HLT)
 		kill()
+	
+	
+	# Makes a CLP IR node at the back of the IR block:
+	func make_clp(txt: String) -> void:
+		make_text(NightScript.CLP, txt)
 	
 	
 	# Makes an RUN IR node at the back of the IR block:
 	func make_run(txt: String) -> void:
-		make_text(NSOp.RUN, txt)
+		make_text(NightScript.RUN, txt)
 	
 	
 	# Makes an SLP IR node at the back of the IR block:
 	func make_slp(val: int) -> void:
-		make_value(NSOp.SLP, val)
+		make_value(NightScript.SLP, val)
 	
 	
 	# Makes a JMP IR node at the back of the IR block:
 	func make_jmp(lbl: String) -> void:
-		make_pointer(NSOp.JMP, lbl)
+		make_pointer(NightScript.JMP, lbl)
 		kill()
 	
 	
@@ -272,7 +279,7 @@ class IRBlock extends Reference:
 			
 			return
 		
-		make_pointer(NSOp.BEQ, lbl)
+		make_pointer(NightScript.BEQ, lbl)
 	
 	
 	# Makes a BNE IR node at the back of the IR block:
@@ -283,7 +290,7 @@ class IRBlock extends Reference:
 			
 			return
 		
-		make_pointer(NSOp.BNE, lbl)
+		make_pointer(NightScript.BNE, lbl)
 	
 	
 	# Makes a BGT IR node at the back of the IR block:
@@ -294,7 +301,7 @@ class IRBlock extends Reference:
 			
 			return
 		
-		make_pointer(NSOp.BGT, lbl)
+		make_pointer(NightScript.BGT, lbl)
 	
 	
 	# Makes a BGE IR node at the back of the IR block:
@@ -305,7 +312,7 @@ class IRBlock extends Reference:
 			
 			return
 		
-		make_pointer(NSOp.BGE, lbl)
+		make_pointer(NightScript.BGE, lbl)
 	
 	
 	# Makes an LXC IR node at the back of the IR block:
@@ -313,19 +320,19 @@ class IRBlock extends Reference:
 		if x_trace.is_traced and x_trace.value == val:
 			return
 		
-		make_value(NSOp.LXC, val)
+		make_value(NightScript.LXC, val)
 		x_trace.trace(val)
 	
 	
 	# Makes an LXF IR node at the back of the IR block:
 	func make_lxf(flg: ParseFlag) -> void:
-		make_flag(NSOp.LXF, flg)
+		make_flag(NightScript.LXF, flg)
 		x_trace.untrace()
 	
 	
 	# Makes an STX IR node at the back of the IR block:
 	func make_stx(flg: ParseFlag) -> void:
-		make_flag(NSOp.STX, flg)
+		make_flag(NightScript.STX, flg)
 	
 	
 	# Makes an LYC IR node at the back of the IR block:
@@ -333,34 +340,34 @@ class IRBlock extends Reference:
 		if y_trace.is_traced and y_trace.value == val:
 			return
 		
-		make_value(NSOp.LYC, val)
+		make_value(NightScript.LYC, val)
 		y_trace.trace(val)
 	
 	
 	# Makes an LYF IR node at the back of the IR block:
 	func make_lyf(flg: ParseFlag) -> void:
-		make_flag(NSOp.LYF, flg)
+		make_flag(NightScript.LYF, flg)
 		y_trace.untrace()
 	
 	
 	# Makes an STY IR node at the back of the IR block:
 	func make_sty(flg: ParseFlag) -> void:
-		make_flag(NSOp.STY, flg)
+		make_flag(NightScript.STY, flg)
 	
 	
 	# Makes a DGS IR node at the back of the IR block:
 	func make_dgs() -> void:
-		make_standalone(NSOp.DGS)
+		make_standalone(NightScript.DGS)
 	
 	
 	# Makes a DGH IR node at the back of the IR block:
 	func make_dgh() -> void:
-		make_standalone(NSOp.DGH)
+		make_standalone(NightScript.DGH)
 	
 	
 	# Makes a DNC IR node at the back of the IR block:
 	func make_dnc() -> void:
-		make_standalone(NSOp.DNC)
+		make_standalone(NightScript.DNC)
 		dialog_name_trace.untrace()
 	
 	
@@ -369,23 +376,23 @@ class IRBlock extends Reference:
 		if dialog_name_trace.is_traced and dialog_name_trace.value == txt:
 			return
 		
-		make_text(NSOp.DND, txt)
+		make_text(NightScript.DND, txt)
 		dialog_name_trace.trace(txt)
 	
 	
 	# Makes a DGM IR node at the back of the IR block:
 	func make_dgm(txt: String) -> void:
-		make_text(NSOp.DGM, txt)
+		make_text(NightScript.DGM, txt)
 	
 	
 	# Makes an MNO IR node at the back of the IR block:
 	func make_mno(lbl: String, txt: String) -> void:
-		make_pointer_text(NSOp.MNO, lbl, txt)
+		make_pointer_text(NightScript.MNO, lbl, txt)
 	
 	
 	# Makes an MNS IR node at the back of the IR block:
 	func make_mns() -> void:
-		make_standalone(NSOp.MNS)
+		make_standalone(NightScript.MNS)
 		kill()
 	
 	
@@ -394,61 +401,61 @@ class IRBlock extends Reference:
 		if actor_key_trace.is_traced and actor_key_trace.value == txt:
 			return
 		
-		make_text(NSOp.LAK, txt)
+		make_text(NightScript.LAK, txt)
 		actor_key_trace.trace(txt)
 	
 	
 	# Makes an AFD IR node at the back of the IR block:
 	func make_afd() -> void:
-		make_standalone(NSOp.AFD)
+		make_standalone(NightScript.AFD)
 	
 	
 	# Makes an APF IR node at the back of the IR block:
 	func make_apf(txt: String) -> void:
-		make_text(NSOp.APF, txt)
+		make_text(NightScript.APF, txt)
 	
 	
 	# Makes an APR IR node at the back of the IR block:
 	func make_apr() -> void:
-		make_standalone(NSOp.APR)
+		make_standalone(NightScript.APR)
 	
 	
 	# Makes an APA IR node at the back of the IR block:
 	func make_apa() -> void:
-		make_standalone(NSOp.APA)
+		make_standalone(NightScript.APA)
 	
 	
 	# Makes a PLF IR node at the back of the IR block:
 	func make_plf() -> void:
-		make_standalone(NSOp.PLF)
+		make_standalone(NightScript.PLF)
 	
 	
 	# Makes a PLT IR node at the back of the IR block:
 	func make_plt() -> void:
-		make_standalone(NSOp.PLT)
+		make_standalone(NightScript.PLT)
 	
 	
 	# Makes a QTT IR node at the back of the IR block:
 	func make_qtt() -> void:
-		make_standalone(NSOp.QTT)
+		make_standalone(NightScript.QTT)
 		kill()
 	
 	
 	# Makes a PSE IR node at the back of the IR block:
 	func make_pse() -> void:
-		make_standalone(NSOp.PSE)
+		make_standalone(NightScript.PSE)
 	
 	
 	# Makes a UNP IR node at the back of the IR block:
 	func make_unp() -> void:
-		make_standalone(NSOp.UNP)
+		make_standalone(NightScript.UNP)
 	
 	
 	# Makes an SAV IR node at the back of the IR block:
 	func make_sav() -> void:
-		make_standalone(NSOp.SAV)
+		make_standalone(NightScript.SAV)
 	
 	
 	# Makes a CKP IR node at the back of the IR block:
 	func make_ckp() -> void:
-		make_standalone(NSOp.CKP)
+		make_standalone(NightScript.CKP)

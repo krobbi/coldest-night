@@ -41,6 +41,7 @@ func freeze() -> void:
 	_is_frozen = true
 	_thaw_state = state_machine.get_key()
 	state_machine.change_state("Scripted")
+	disable_triggers()
 
 
 # Thaws the player:
@@ -49,6 +50,7 @@ func thaw() -> void:
 		return
 	
 	_is_frozen = false
+	enable_triggers()
 	state_machine.change_state(_thaw_state)
 
 

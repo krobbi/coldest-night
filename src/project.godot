@@ -195,14 +195,9 @@ _global_script_classes=[ {
 "path": "res://components/states/actors/players/moving_player_state.gd"
 }, {
 "base": "Node",
-"class": "NSInterpreter",
+"class": "NightScript",
 "language": "GDScript",
-"path": "res://utils/nightscript/ns_interpreter.gd"
-}, {
-"base": "Object",
-"class": "NSOp",
-"language": "GDScript",
-"path": "res://utils/nightscript/ns_op.gd"
+"path": "res://utils/nightscript/nightscript.gd"
 }, {
 "base": "MenuRow",
 "class": "OptionMenuRow",
@@ -382,8 +377,7 @@ _global_script_class_icons={
 "MenuRow": "",
 "MenuStack": "",
 "MovingPlayerState": "",
-"NSInterpreter": "",
-"NSOp": "",
+"NightScript": "",
 "OptionMenuRow": "",
 "PauseMenu": "",
 "PlainDialog": "",
