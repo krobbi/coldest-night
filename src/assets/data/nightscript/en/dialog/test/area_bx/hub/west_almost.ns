@@ -1,8 +1,6 @@
 # Save Terminal Dialog
 # Dialog line for cutscene.test.area_bx.hub.enter.
 
-meta cache false
-
 name "Koby"
 say "There's one more archival unit in the robotics lab."
 say "It might be in a small annex just past the end of the room,{p=0.25} which you'll need to unlock."

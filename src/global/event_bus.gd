@@ -31,17 +31,21 @@ signal nightscript_flush_cache_request # warning-ignore: UNUSED_SIGNAL
 signal nightscript_run_program_request(program_key) # warning-ignore: UNUSED_SIGNAL
 signal nightscript_stop_programs_request # warning-ignore: UNUSED_SIGNAL
 signal nightscript_thread_finished # warning-ignore: UNUSED_SIGNAL
+signal pause_menu_open_menu_request # warning-ignore: UNUSED_SIGNAL
 signal player_freeze_request # warning-ignore: UNUSED_SIGNAL
 signal player_thaw_request # warning-ignore: UNUSED_SIGNAL
 signal save_state_request # warning-ignore: UNUSED_SIGNAL
+signal subtitle_display_request(message) # warning-ignore: UNUSED_SIGNAL
 
 # Safely connects a signal from the event bus to a target object's receiver
 # method:
-func safe_connect(signal_name: String, target: Object, method: String) -> void:
+func safe_connect(
+		signal_name: String, target: Object, method: String, binds: Array = [], flags: int = 0
+) -> void:
 	if is_connected(signal_name, target, method):
 		return
 	
-	var error: int = connect(signal_name, target, method)
+	var error: int = connect(signal_name, target, method, binds, flags)
 	
 	if error and is_connected(signal_name, target, method):
 		disconnect(signal_name, target, method)

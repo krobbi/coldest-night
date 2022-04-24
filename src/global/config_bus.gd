@@ -124,6 +124,7 @@ var _data: Dictionary = {
 	"display.pixel_snap": false,
 	"display.scale_mode": "aspect",
 	"display.window_scale": 0,
+	"display.display_barks": true,
 	"language.locale": "auto",
 	"advanced.show_advanced": false,
 	"advanced.checksum_saves": true,

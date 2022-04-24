@@ -6,7 +6,7 @@ extends GuardState
 # pathfinding to its target's location, even if it is not visible. This state is
 # used to make guards appear more intelligent after losing a player.
 
-export(float) var cheat_duration: float = 1.86
+export(float) var cheat_duration: float = 1.9
 export(float) var speed: float = 170.0
 export(float) var acceleration: float = 1100.0
 export(float) var repel_speed: float = 180.0

@@ -27,9 +27,10 @@ func _on_continue_button_pressed() -> void:
 		return
 	
 	_is_continuing = true
-
-	if _save_data.state != SaveData.State.COMPLETED:
+	
+	if _save_data.state == SaveData.State.COMPLETED:
+		Global.change_scene("title")
+	else:
 		_save_data.state = SaveData.State.COMPLETED
 		Global.save.save_file()
-	
-	Global.change_scene("credits")
+		Global.change_scene("credits")

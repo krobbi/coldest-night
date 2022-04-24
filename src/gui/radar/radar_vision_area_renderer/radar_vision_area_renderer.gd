@@ -65,6 +65,12 @@ func set_vision_area(value: VisionArea) -> void:
 	set_physics_process(true)
 
 
+# Gets whether the radar vision area renderer is available in the radar vision
+# area renderer pool:
+func is_available() -> bool:
+	return not vision_area
+
+
 # Sets the radar vision area renderer's display:
 func set_display(display: int) -> void:
 	var target_color: Color = COLOR_NORMAL
@@ -78,16 +84,10 @@ func set_display(display: int) -> void:
 			target_color = COLOR_ALERT
 	
 	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(self, "modulate", modulate, target_color, 0.03, Tween.TRANS_SINE)
+	_tween.interpolate_property(self, "modulate", modulate, target_color, 0.08, Tween.TRANS_SINE)
 	_tween.start() # warning-ignore: RETURN_VALUE_DISCARDED
 
 
 # Clears the radar vision area renderer's vision area:
 func clear_vision_area() -> void:
 	set_vision_area(null)
-
-
-# Returns whether radar vision area renderer is available in the radar vision
-# area renderer pool:
-func is_available() -> bool:
-	return not vision_area

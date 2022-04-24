@@ -8,9 +8,14 @@ extends Area2D
 signal radar_display_changed(radar_display)
 signal player_seen(player, world_pos)
 signal player_lost(player, world_pos)
+signal suspicion_seen(world_pos)
 
 enum RadarDisplay {NONE, NORMAL, CAUTION, ALERT}
 
+export(float) var suspicion_distance: float = 256.0
+export(float) var suspicion_attenuation: float = 0.05
+export(float) var suspicion_speed: float = 1.4
+export(float) var alert_speed: float = 4.5
 export(RadarDisplay) var radar_display: int = RadarDisplay.NORMAL setget set_radar_display
 export(NodePath) var _near_edge_position: NodePath = NodePath()
 export(NodePath) var _far_edge_position: NodePath = NodePath()
@@ -19,6 +24,7 @@ export(NodePath) var _front_position: NodePath = NodePath()
 
 var _fov_areas: Array = []
 var _visible_areas: Array = []
+var _suspicious_areas: Dictionary = {}
 
 onready var _raycast: RayCast2D = $RayCast
 
@@ -31,7 +37,7 @@ func _ready() -> void:
 # Virtual _physics_process method. Runs on every physics frame while the vision
 # area has its physics process enabled. Tests line of sight with the vision
 # area's field of vision areas:
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	_raycast.global_rotation = 0.0
 	
 	for area in _fov_areas:
@@ -39,7 +45,16 @@ func _physics_process(_delta: float) -> void:
 		_raycast.force_raycast_update()
 		
 		if _raycast.get_collider() == area:
-			_add_visible_area(area)
+			var distance: float = global_position.distance_to(area.global_position)
+			
+			if distance >= suspicion_distance:
+				_add_area_suspicion(
+						area, suspicion_speed * delta / max(
+								0.1, (distance - suspicion_distance) * suspicion_attenuation
+						)
+				)
+			else:
+				_add_area_suspicion(area, alert_speed * delta)
 		else:
 			_remove_visible_area(area)
 
@@ -87,6 +102,28 @@ func get_front_pos() -> Vector2:
 	return Vector2(abs(get_node(_front_position).position.x), 0.0)
 
 
+# Adds suspicion to a visible area:
+func _add_area_suspicion(area: Area2D, value: float) -> void:
+	if _suspicious_areas.has(area):
+		var before: float = _suspicious_areas[area]
+		var after: float = min(1.0, before + value)
+		_suspicious_areas[area] = after
+		
+		if before < 1.0 and after >= 1.0:
+			_suspicious_areas[area] = 1.0
+			_add_visible_area(area)
+		elif before < 0.5 and after >= 0.5:
+			emit_signal("suspicion_seen", area.global_position)
+	elif value >= 1.0:
+		_suspicious_areas[area] = 1.0
+		_add_visible_area(area)
+	elif value >= 0.5:
+		_suspicious_areas[area] = value
+		emit_signal("suspicion_seen", area.global_position)
+	else:
+		_suspicious_areas[area] = value
+
+
 # Adds an area to the vision area's visible areas:
 func _add_visible_area(area: Area2D) -> void:
 	if _visible_areas.has(area):
@@ -102,6 +139,7 @@ func _add_visible_area(area: Area2D) -> void:
 
 # Removes an area from the vision area's visible areas:
 func _remove_visible_area(area: Area2D) -> void:
+	_suspicious_areas.erase(area) # warning-ignore: RETURN_VALUE_DISCARDED
 	var index: int = _visible_areas.find(area)
 	
 	if index == -1:

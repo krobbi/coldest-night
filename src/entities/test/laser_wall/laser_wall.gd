@@ -1,8 +1,11 @@
+class_name LaserWall
 extends StaticBody2D
 
 # Laser Wall
 # A laser wall is a test entity that forms an obstruction until a flag condition
 # is met.
+
+signal wall_visibility_changed(wall_visible)
 
 enum AppearanceCondition {ALWAYS, NEVER, EQ, NE, GT, GE, LT, LE}
 
@@ -52,12 +55,14 @@ func _exit_tree() -> void:
 func show_wall() -> void:
 	_obstructive_shape.set_deferred("disabled", false)
 	show()
+	emit_signal("wall_visibility_changed", true)
 
 
 # Hides the laser wall:
 func hide_wall() -> void:
 	hide()
 	_obstructive_shape.set_deferred("disabled", true)
+	emit_signal("wall_visibility_changed", false)
 
 
 # Evaluates the laser wall's appearance condition:

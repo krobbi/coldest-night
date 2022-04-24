@@ -1,7 +1,7 @@
 # ![Coldest Night](header.png)
 _Space is lonely_  
 __A stealth-focused RPG in Godot Engine.__  
-__Version 0.5.1-dev__  
+__Version 0.6.0__  
 __Krobbizoid Proprietary-Open Game Development License__ -
 https://krobbi.github.io/license/2021/2022/kpogdl.txt  
 __Copyright &copy; 2021-2022 Chris Roberts__ (Krobbizoid).  
@@ -51,7 +51,7 @@ version of Coldest Night:
 | `0.0.0` - `0.2.0` | `3.3.2`                     |
 | `0.3.0` - `0.4.0` | `3.3.3`                     |
 | `0.5.0`           | `3.4.2`                     |
-| `0.5.1-dev`       | `3.4.4`                     |
+| `0.6.0`           | `3.4.4`                     |
 
 # Building
 The following requirements should be fulfilled to successfully build the game

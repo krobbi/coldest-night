@@ -41,7 +41,7 @@ __meta__ = {
 }
 
 [node name="Radar" type="Node2D" parent="."]
-visible = false
+modulate = Color( 0, 0, 0, 0 )
 __meta__ = {
 "_edit_lock_": true
 }
