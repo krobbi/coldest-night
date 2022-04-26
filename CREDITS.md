@@ -12,14 +12,6 @@ _All rights reserved._
 Chris Roberts (Krobbizoid)
 ```
 
-# Coldnight Font
-[Stylized font](https://github.com/krobbi/coldest-night/blob/main/font/index.md).
-
-## Lead Designer
-```
-Chris Roberts (Krobbizoid)
-```
-
 # Tools and Resources Used
 _The following credits are not necessarily affiliated with Coldest Night or its
 copyright holder(s):_

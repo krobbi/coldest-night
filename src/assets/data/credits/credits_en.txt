@@ -3,13 +3,6 @@
 ## Lead Developer
 Chris Roberts (Krobbizoid)
 
-# Coldnight Font
-Stylized font
-https://github.com/krobbi/coldest-night/blob/main/font/index.md
-
-## Lead Designer
-Chris Roberts (Krobbizoid)
-
 # Tools and Resources Used
 The following credits are not necessarily affiliated with Coldest Night or its copyright holder(s):
 
@@ -77,7 +70,7 @@ The name Audacity® is a registered trademark of Dominic Mazzoni.
 # Licensing
 For full license texts, please refer to the readme.md file distributed with the game, or to dist/readme.md in the source repository.
 
-Copyright © 2021-2022 Chris Roberts (Krobbizoid)
+Copyright © 2021-2022 Chris Roberts (Krobbizoid).
 All rights reserved.
 
 # Thanks for playing!
