@@ -21,7 +21,10 @@ func _ready() -> void:
 	if error and Global.display.is_connected("screen_stretch_changed", self, "snap"):
 		Global.display.disconnect("screen_stretch_changed", self, "snap")
 	
+	Global.events.safe_connect("camera_set_limits_request", self, "set_limits")
 	Global.events.safe_connect("camera_unfocus_request", self, "unfocus")
+	Global.events.safe_connect("camera_follow_anchor_request", self, "follow_anchor")
+	Global.events.safe_connect("camera_unfollow_anchor_request", self, "unfollow_anchor")
 
 
 # Virtual _process method. Runs on every frame while the level camera's process
@@ -37,7 +40,10 @@ func _exit_tree() -> void:
 	if Global.display.is_connected("screen_stretch_changed", self, "snap"):
 		Global.display.disconnect("screen_stretch_changed", self, "snap")
 	
+	Global.events.safe_disconnect("camera_unfollow_anchor_request", self, "unfollow_anchor")
+	Global.events.safe_disconnect("camera_follow_anchor_request", self, "follow_anchor")
 	Global.events.safe_disconnect("camera_unfocus_request", self, "unfocus")
+	Global.events.safe_disconnect("camera_set_limits_request", self, "set_limits")
 
 
 # Sets the level camera's limits to boundary positions:

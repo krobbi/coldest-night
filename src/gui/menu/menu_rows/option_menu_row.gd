@@ -2,91 +2,147 @@ class_name OptionMenuRow
 extends MenuRow
 
 # Option Menu Row
-# An option menu row is a menu row that contains an options control for a
-# configuration value.
+# An option menu row is a menu row that contains a set of options.
 
-enum OptionSource {OPTIONS, WINDOW_SCALE, LOCALE}
+signal value_changed(value)
 
-export(String) var _config_key: String
-export(OptionSource) var _option_source: int = OptionSource.OPTIONS
-export(Dictionary) var _options: Dictionary
+enum OptionSource {
+	OPTIONS,
+	ACCESSIBILITY_COLOR_GRADING,
+	DISPLAY_WINDOW_SCALE,
+	DISPLAY_SCALE_MODE,
+	LANGUAGE_LOCALE,
+}
 
-var _option_values: Array
-var _option_count: int
+export(OptionSource) var option_source: int = OptionSource.OPTIONS setget set_option_source
+export(Dictionary) var options: Dictionary = {} setget set_options
+export(String) var text: String setget set_text
+
+var _option_names: PoolStringArray = PoolStringArray()
+var _option_values: Array = []
+var _option_count: int = 0
 var _selected_option: int = -1
 
+onready var _label: Label = $Content/Label
 onready var _button: Button = $Content/Button
 
 # Virtual _ready method. Runs when the option menu row finishes entering the
-# scene tree. Sets the option's text and state:
+# scene tree. Sets the option's values and text:
 func _ready() -> void:
-	$Content/Label.text = "OPTION.%s" % _config_key.to_upper()
-	
-	match _option_source:
-		OptionSource.WINDOW_SCALE:
-			_options = Global.display.get_window_scale_options()
-		OptionSource.LOCALE:
-			_options = Global.lang.get_locale_options()
-	
-	_option_values = _options.keys()
-	_option_count = _option_values.size()
-	
-	_select_value(Global.config.get_value(_config_key))
-	Global.config.connect_value(_config_key, self, "_select_value")
+	set_option_source(option_source)
+	set_options(options)
+	set_text(text)
 
 
-# Virtual _input event. Runs when the option menu row receives an input event.
-# Handles controls for selecting the previous and next options:
+# Virtual _input method. Runs when the option menu row receives an input event.
+# Handles controls for selecting options if the option menu row is selected:
 func _input(event: InputEvent) -> void:
-	if not is_selected():
-		return
-	elif event.is_action_pressed("ui_left", true):
-		_select_previous()
-	elif event.is_action_pressed("ui_right", true):
-		_select_next()
+	if is_selected:
+		if event.is_action_pressed("move_right", true):
+			select_next()
+		elif event.is_action_pressed("move_left", true):
+			select_previous()
 
 
-# Virtual _exit_tree method. Runs when the option menu row exits the scene tree.
-# Disconnects the connected configuration value from the option's state:
-func _exit_tree() -> void:
-	Global.config.disconnect_value(_config_key, self, "_select_value")
+# Abstract _change_value method. Runs when the selected option's value is
+# changed:
+func _change_value(_value) -> void:
+	pass
 
 
-# Selects an option from its option index and sets the connected configuration
-# value:
-func _select_option(option_index: int) -> void:
-	if _selected_option == option_index or option_index < 0 or option_index > _option_count:
+# Sets the option's source:
+func set_option_source(value: int) -> void:
+	option_source = value
+	
+	if not _button:
 		return
 	
-	if _selected_option != -1:
-		Global.audio.play_clip("sfx.menu_move")
+	match option_source:
+		OptionSource.ACCESSIBILITY_COLOR_GRADING:
+			set_options(ColorGrader.get_grading_options())
+		OptionSource.DISPLAY_WINDOW_SCALE:
+			set_options(Global.display.get_window_scale_options())
+		OptionSource.DISPLAY_SCALE_MODE:
+			set_options(Global.display.get_scale_mode_options())
+		OptionSource.LANGUAGE_LOCALE:
+			set_options(Global.lang.get_locale_options())
+		OptionSource.OPTIONS, _:
+			option_source = OptionSource.OPTIONS
+			set_options(options)
+
+
+# Sets the option's options:
+func set_options(value: Dictionary) -> void:
+	var previous_value = get_value()
+	options = value
+	var option_keys: Array = options.keys()
+	_option_names = PoolStringArray(option_keys)
+	_option_count = option_keys.size()
+	_option_values.resize(_option_count)
 	
-	_selected_option = option_index
-	_button.text = _options[_option_values[_selected_option]]
-	Global.config.set_value(_config_key, _option_values[_selected_option])
-
-
-# Selects an option from its option value:
-func _select_value(option_value) -> void:
 	for i in range(_option_count):
-		if typeof(_option_values[i]) == typeof(option_value) and _option_values[i] == option_value:
-			_select_option(i)
+		_option_values[i] = options[option_keys[i]]
+	
+	if _button:
+		set_value(previous_value, true)
+
+
+# Sets the option's text:
+func set_text(value: String) -> void:
+	text = value
+	
+	if _label:
+		_label.text = text
+
+
+# Sets the selected option's value if an option with that value exists. Selects
+# the first option if no option is selected:
+func set_value(value, no_signal: bool = false) -> void:
+	for i in range(_option_count):
+		var test_value = _option_values[i]
+		
+		if typeof(value) == typeof(test_value) and value == test_value:
+			select_option(i, no_signal)
 			return
+	
+	if _option_count == 0:
+		_button.text = "OPTION.NONE"
+	elif _selected_option >= 0 and _selected_option < _option_count:
+		_button.text = _option_names[_selected_option]
+	else:
+		select_option(0, no_signal)
 
 
-# Selects the previous option:
-func _select_previous() -> void:
+# Gets the selected option's value. Returns a default value if no option is
+# selected:
+func get_value(default = null):
+	if _selected_option >= 0 and _selected_option < _option_count:
+		return _option_values[_selected_option]
+	else:
+		return default
+
+
+# Selects an option from its index and emits the value_changed signal:
+func select_option(index: int, no_signal: bool = false) -> void:
+	if _selected_option == index or index < 0 or index >= _option_count:
+		return
+	
+	_selected_option = index
+	_button.text = _option_names[_selected_option]
+	
+	if not no_signal:
+		_change_value(_option_values[_selected_option])
+		Global.audio.play_clip("sfx.menu_move")
+		emit_signal("value_changed", _option_values[_selected_option])
+
+
+# Selects the previous option if there are multiple options:
+func select_previous() -> void:
 	if _option_count > 1:
-		_select_option((_selected_option - 1 + _option_count) % _option_count)
+		select_option((_selected_option - 1 + _option_count) % _option_count)
 
 
-# Selects the next option:
-func _select_next() -> void:
+# Selects the next option if there are multiple options:
+func select_next() -> void:
 	if _option_count > 1:
-		_select_option((_selected_option + 1) % _option_count)
-
-
-# Signal callback for pressed on the button. Runs when the button is pressed.
-# Selects the next option:
-func _on_button_pressed() -> void:
-	_select_next()
+		select_option((_selected_option + 1) % _option_count)

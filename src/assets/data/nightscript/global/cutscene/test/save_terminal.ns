@@ -1,28 +1,27 @@
+# NightScript Version 2
 # Save Terminal
 # Common cutscene for save terminals.
 
-label main
-	player freeze
-	dialog show
-	say "DIALOG.TEST.SAVE_TERMINAL.MAIN"
-	goto menu
+main:
+<*<!
+"DIALOG.TEST.SAVE_TERMINAL.MAIN"
+goto menu
 
 
-label repeat
-	player freeze
-	dialog show
-	say "DIALOG.TEST.SAVE_TERMINAL.REPEAT"
+repeat:
+<*<!
+"DIALOG.TEST.SAVE_TERMINAL.REPEAT"
+goto menu
 
 
-label menu
-	menu
-		option "DIALOG.TEST.SAVE_TERMINAL.OPTION.SAVE" do
-			save
-			say "DIALOG.TEST.SAVE_TERMINAL.SAVED"
-		end
+menu:
+&{
+	| "DIALOG.TEST.SAVE_TERMINAL.OPTION.SAVE" {
+		save
+		"DIALOG.TEST.SAVE_TERMINAL.SAVED"
+	}
+	
+	| "DIALOG.TEST.SAVE_TERMINAL.OPTION.NO_SAVE" {}
+}
 
-		option "DIALOG.TEST.SAVE_TERMINAL.OPTION.NO_SAVE" none
-	end
-
-	dialog hide
-	player unfreeze
+!>*>

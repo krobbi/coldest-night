@@ -7,7 +7,7 @@ extends StaticBody2D
 
 signal wall_visibility_changed(wall_visible)
 
-enum AppearanceCondition {ALWAYS, NEVER, EQ, NE, GT, GE, LT, LE}
+enum AppearanceCondition {ALWAYS, NEVER, RELEASE, DEBUG, EQ, NE, GT, GE, LT, LE}
 
 export(AppearanceCondition) var appearance_condition: int = AppearanceCondition.ALWAYS
 export(Vector2) var extents: Vector2 = Vector2(64.0, 0.0)
@@ -71,6 +71,20 @@ func _eval_appearance_condition() -> bool:
 	
 	match appearance_condition:
 		AppearanceCondition.NEVER:
+			return false
+		AppearanceCondition.RELEASE:
+			# DEBUG:BEGIN
+			if OS.is_debug_build():
+				return false
+			# DEBUG:END
+			
+			return true
+		AppearanceCondition.DEBUG:
+			# DEBUG:BEGIN
+			if OS.is_debug_build():
+				return true
+			# DEBUG:END
+			
 			return false
 		AppearanceCondition.EQ:
 			return value == compare_value

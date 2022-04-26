@@ -19,6 +19,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://components/states/actors/actor_state.gd"
 }, {
+"base": "MenuCard",
+"class": "AdvancedMenuCard",
+"language": "GDScript",
+"path": "res://gui/menu/menu_cards/advanced_menu_card.gd"
+}, {
 "base": "GuardState",
 "class": "AimingGuardState",
 "language": "GDScript",
@@ -59,15 +64,45 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/menu/menu_rows/checkbox_menu_row.gd"
 }, {
+"base": "ColorRect",
+"class": "ColorGrader",
+"language": "GDScript",
+"path": "res://gui/color_grader/color_grader.gd"
+}, {
 "base": "Object",
 "class": "ConfigBus",
 "language": "GDScript",
 "path": "res://global/config_bus.gd"
 }, {
+"base": "CheckboxMenuRow",
+"class": "ConfigCheckboxMenuRow",
+"language": "GDScript",
+"path": "res://gui/menu/menu_rows/config_checkbox_menu_row.gd"
+}, {
+"base": "OptionMenuRow",
+"class": "ConfigOptionMenuRow",
+"language": "GDScript",
+"path": "res://gui/menu/menu_rows/config_option_menu_row.gd"
+}, {
+"base": "SliderMenuRow",
+"class": "ConfigSliderMenuRow",
+"language": "GDScript",
+"path": "res://gui/menu/menu_rows/config_slider_menu_row.gd"
+}, {
+"base": "MenuRow",
+"class": "ControlMenuRow",
+"language": "GDScript",
+"path": "res://gui/menu/menu_rows/control_menu_row.gd"
+}, {
 "base": "Object",
 "class": "ControlsManager",
 "language": "GDScript",
 "path": "res://global/controls_manager.gd"
+}, {
+"base": "MenuCard",
+"class": "ControlsMenuCard",
+"language": "GDScript",
+"path": "res://gui/menu/menu_cards/controls_menu_card.gd"
 }, {
 "base": "Object",
 "class": "CreditsParser",
@@ -118,6 +153,11 @@ _global_script_classes=[ {
 "class": "GameOverMenu",
 "language": "GDScript",
 "path": "res://gui/menu/menus/game_over_menu.gd"
+}, {
+"base": "MenuCard",
+"class": "GameOverMenuCard",
+"language": "GDScript",
+"path": "res://gui/menu/menu_cards/game_over_menu_card.gd"
 }, {
 "base": "State",
 "class": "GuardState",
@@ -174,6 +214,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://components/states/actors/guards/looking_guard_state.gd"
 }, {
+"base": "MenuCard",
+"class": "MainMenuCard",
+"language": "GDScript",
+"path": "res://gui/menu/menu_cards/main_menu_card.gd"
+}, {
 "base": "Control",
 "class": "MenuCard",
 "language": "GDScript",
@@ -213,6 +258,16 @@ _global_script_classes=[ {
 "class": "PauseMenu",
 "language": "GDScript",
 "path": "res://gui/menu/menus/pause_menu.gd"
+}, {
+"base": "MenuCard",
+"class": "PauseMenuCard",
+"language": "GDScript",
+"path": "res://gui/menu/menu_cards/pause_menu_card.gd"
+}, {
+"base": "MenuCard",
+"class": "PauseQuitMenuCard",
+"language": "GDScript",
+"path": "res://gui/menu/menu_cards/pause_quit_menu_card.gd"
 }, {
 "base": "Dialog",
 "class": "PlainDialog",
@@ -274,6 +329,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://components/repulsive_area/repulsive_area.gd"
 }, {
+"base": "MenuCard",
+"class": "ResultsMenuCard",
+"language": "GDScript",
+"path": "res://gui/menu/menu_cards/results_menu_card.gd"
+}, {
 "base": "Interactable",
 "class": "RunNSInteractable",
 "language": "GDScript",
@@ -308,6 +368,11 @@ _global_script_classes=[ {
 "class": "SerialWriteStream",
 "language": "GDScript",
 "path": "res://utils/io/serial_write_stream.gd"
+}, {
+"base": "MenuCard",
+"class": "SettingsMenuCard",
+"language": "GDScript",
+"path": "res://gui/menu/menu_cards/settings_menu_card.gd"
 }, {
 "base": "MenuRow",
 "class": "SliderMenuRow",
@@ -357,6 +422,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Actor": "",
 "ActorState": "",
+"AdvancedMenuCard": "",
 "AimingGuardState": "",
 "AudioManager": "",
 "ButtonMenuRow": "",
@@ -365,8 +431,14 @@ _global_script_class_icons={
 "ChasingGuardState": "",
 "CheatingGuardState": "",
 "CheckboxMenuRow": "",
+"ColorGrader": "",
 "ConfigBus": "",
+"ConfigCheckboxMenuRow": "",
+"ConfigOptionMenuRow": "",
+"ConfigSliderMenuRow": "",
+"ControlMenuRow": "",
 "ControlsManager": "",
+"ControlsMenuCard": "",
 "CreditsParser": "",
 "Dialog": "",
 "DialogTagParser": "",
@@ -377,6 +449,7 @@ _global_script_class_icons={
 "FloatingTextSpawner": "",
 "FocusCameraTrigger": "",
 "GameOverMenu": "",
+"GameOverMenuCard": "",
 "GuardState": "",
 "Interactable": "",
 "Interactor": "",
@@ -388,6 +461,7 @@ _global_script_class_icons={
 "LevelHost": "",
 "Logger": "",
 "LookingGuardState": "",
+"MainMenuCard": "",
 "MenuCard": "",
 "MenuList": "",
 "MenuRow": "",
@@ -396,6 +470,8 @@ _global_script_class_icons={
 "NightScript": "",
 "OptionMenuRow": "",
 "PauseMenu": "",
+"PauseMenuCard": "",
+"PauseQuitMenuCard": "",
 "PlainDialog": "",
 "PlainDialogOption": "",
 "Player": "",
@@ -408,6 +484,7 @@ _global_script_class_icons={
 "RadarSegmentRenderer": "",
 "RadarVisionAreaRenderer": "",
 "RepulsiveArea": "",
+"ResultsMenuCard": "",
 "RunNSInteractable": "",
 "RunNSTrigger": "",
 "SaveData": "",
@@ -415,6 +492,7 @@ _global_script_class_icons={
 "ScriptedActorState": "",
 "SerialReadStream": "",
 "SerialWriteStream": "",
+"SettingsMenuCard": "",
 "SliderMenuRow": "",
 "SmoothPivot": "",
 "State": "",
@@ -437,7 +515,8 @@ boot_splash/image="res://assets/images/identity/boot_splash.png"
 boot_splash/use_filter=false
 boot_splash/bg_color=Color( 0.0509804, 0.027451, 0.0352941, 1 )
 config/icon="res://assets/images/identity/icon.png"
-config/windows_native_icon="res://natives/windows/icon.ico"
+config/macos_native_icon="res://natives/mac_osx/icon.icns"
+config/windows_native_icon="res://natives/windows_desktop/icon.ico"
 config/auto_accept_quit=false
 config/quit_on_go_back=false
 
@@ -455,6 +534,10 @@ window/size/width=640
 window/size/height=360
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
+
+[editor]
+
+scene_naming=2
 
 [editor_plugins]
 
@@ -612,8 +695,8 @@ common/enable_object_picking=false
 [rendering]
 
 2d/options/use_nvidia_rect_flicker_workaround=true
-quality/intended_usage/framebuffer_allocation=1
-quality/intended_usage/framebuffer_allocation.mobile=1
+quality/intended_usage/framebuffer_allocation=0
+quality/intended_usage/framebuffer_allocation.mobile=0
 quality/shadows/filter_mode=0
 quality/reflections/texture_array_reflections=false
 quality/reflections/high_quality_ggx=false

@@ -1,23 +1,25 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://gui/menu/menu_card.tscn" type="PackedScene" id=1]
+[ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
+[ext_resource path="res://gui/menu/menu_cards/settings_menu_card.gd" type="Script" id=2]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=3]
 
 [node name="SettingsMenuCard" instance=ExtResource( 1 )]
-_heading_key = "settings"
+script = ExtResource( 2 )
 
 [node name="VBoxContainer" parent="CenterContainer" index="0"]
-margin_left = 58.0
-margin_right = 582.0
+margin_left = 56.0
+margin_right = 584.0
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
-margin_right = 524.0
+margin_right = 528.0
+text = "HEADING.SETTINGS"
 
 [node name="HeadingSeparator" parent="CenterContainer/VBoxContainer" index="1"]
-margin_right = 524.0
+margin_right = 528.0
 
 [node name="ScrollContainer" parent="CenterContainer/VBoxContainer" index="2"]
-margin_right = 524.0
+margin_right = 528.0
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
 margin_bottom = 248.0
@@ -25,61 +27,80 @@ margin_bottom = 248.0
 [node name="ControlsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_right = 512.0
-_text = "BUTTON.CONTROLS"
+tooltip = "TOOLTIP.BUTTON.CONTROLS"
+text = "BUTTON.CONTROLS"
+icon = "controls"
+press_sound = 1
 
-[node name="AccessibilityButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 3 )]
+[node name="AccessibilitySettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
 margin_bottom = 68.0
-_text = "BUTTON.ACCESSIBILITY"
+tooltip = "TOOLTIP.BUTTON.ACCESSIBILITY_SETTINGS"
+text = "BUTTON.ACCESSIBILITY_SETTINGS"
+icon = "accessibility"
+press_sound = 1
 
-[node name="AudioButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 3 )]
+[node name="AudioSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 72.0
 margin_right = 512.0
 margin_bottom = 104.0
-_text = "BUTTON.AUDIO"
+tooltip = "TOOLTIP.BUTTON.AUDIO_SETTINGS"
+text = "BUTTON.AUDIO_SETTINGS"
+icon = "audio"
+press_sound = 1
 
-[node name="DisplayButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 3 )]
+[node name="DisplaySettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 108.0
 margin_right = 512.0
 margin_bottom = 140.0
-_text = "BUTTON.DISPLAY"
+tooltip = "TOOLTIP.BUTTON.DISPLAY_SETTINGS"
+text = "BUTTON.DISPLAY_SETTINGS"
+icon = "display"
+press_sound = 1
 
-[node name="LanguageButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 3 )]
+[node name="LanguageSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 144.0
 margin_right = 512.0
 margin_bottom = 176.0
 appearance_condition = 5
-_text = "BUTTON.LANGUAGE"
+tooltip = "TOOLTIP.OPTION.LANGUAGE.LOCALE"
+text = "BUTTON.LANGUAGE_SETTINGS"
+icon = "language"
+press_sound = 1
 
-[node name="AdvancedButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 3 )]
+[node name="AdvancedSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 180.0
 margin_right = 512.0
 margin_bottom = 212.0
 appearance_condition = 3
-_text = "BUTTON.ADVANCED"
+tooltip = "TOOLTIP.BUTTON.ADVANCED_SETTINGS"
+text = "BUTTON.ADVANCED_SETTINGS"
+icon = "advanced"
+press_sound = 1
 
-[node name="BackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 3 )]
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 216.0
 margin_right = 512.0
 margin_bottom = 248.0
-_text = "BUTTON.BACK"
-_action_type = 1
-_sound_type = 2
+tooltip = "TOOLTIP.BUTTON.GO_BACK"
+text = "BUTTON.GO_BACK"
+icon = "back"
+press_sound = 2
 
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]
-margin_right = 524.0
+margin_right = 528.0
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/ControlsButton" to="." method="request_push" binds= [ "controls" ]]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/AccessibilityButton" to="." method="request_push" binds= [ "accessibility" ]]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/AudioButton" to="." method="request_push" binds= [ "audio" ]]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/DisplayButton" to="." method="request_push" binds= [ "display" ]]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/LanguageButton" to="." method="request_push" binds= [ "language" ]]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/AdvancedButton" to="." method="request_push" binds= [ "advanced" ]]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/BackButton" to="." method="request_pop"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/AccessibilitySettingsButton" to="." method="request_push" binds= [ "accessibility" ]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/AudioSettingsButton" to="." method="request_push" binds= [ "audio" ]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/DisplaySettingsButton" to="." method="request_push" binds= [ "display" ]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/LanguageSettingsButton" to="." method="request_push" binds= [ "language" ]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/AdvancedSettingsButton" to="." method="request_push" binds= [ "advanced" ]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]

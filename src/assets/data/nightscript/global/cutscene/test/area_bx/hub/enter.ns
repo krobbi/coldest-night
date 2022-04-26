@@ -1,68 +1,46 @@
+# NightScript Version 2
 # Enter Hub Cutscene
 # Runs when the player enters text.area_bx.hub.
 
-define count test:archival_unit_count
-define seen_terminal test:hub_seen_terminal
-define seen_north_almost test:hub_seen_north_almost
-define seen_north_complete test:hub_seen_north_complete
-define seen_west_almost test:hub_seen_west_almost
-define seen_west_complete test:hub_seen_west_complete
+define count = test.archival_unit_count
+define seen_terminal = test.hub_seen_terminal
+define seen_north_almost = test.hub_seen_north_almost
+define seen_north_complete = test.hub_seen_north_complete
+define seen_west_almost = test.hub_seen_west_almost
+define seen_west_complete = test.hub_seen_west_complete
 
-if seen_terminal == false
-	set seen_terminal true
-	player freeze
-	dialog show
-	call dialog.test.area_bx.hub.terminal_1
-	dialog hide
-	path do player Terminal
-	look player up
-	sleep 1
-	dialog show
-	call dialog.test.area_bx.hub.terminal_2
-	dialog hide
-	player unfreeze
-elif count == 9
-	if seen_north_almost
-		exit
-	end
+const NORTH_TOTAL = 10
+const WEST_TOTAL = NORTH_TOTAL + 7
 
-	set seen_north_almost true
-	player freeze
-	dialog show
-	call dialog.test.area_bx.hub.north_almost
-	dialog hide
-	player unfreeze
-elif count == 10
-	if seen_north_complete
-		exit
-	end
-
-	set seen_north_complete true
-	player freeze
-	dialog show
-	call dialog.test.area_bx.hub.north_complete
-	dialog hide
-	player unfreeze
-elif count == 16
-	if seen_west_almost
-		exit
-	end
-
-	set seen_west_almost true
-	player freeze
-	dialog show
-	call dialog.test.area_bx.hub.west_almost
-	dialog hide
-	player unfreeze
-elif count == 17
-	if seen_west_complete
-		exit
-	end
-
-	set seen_west_complete true
-	player freeze
-	dialog show
-	call dialog.test.area_bx.hub.west_complete
-	dialog hide
-	player unfreeze
-end
+if not seen_terminal {
+	seen_terminal = true
+	<*<!
+	call "dialog.test.area_bx.hub.terminal_1"
+	!>
+	"player" -> "Terminal"
+	"player" > up
+	:1
+	<!
+	call "dialog.test.area_bx.hub.terminal_2"
+	!>*>
+} else if not seen_north_almost and count == NORTH_TOTAL - 1 {
+	seen_north_almost = true
+	<*<!
+	call "dialog.test.area_bx.hub.north_almost"
+	!>*>
+} else if not seen_north_complete and count == NORTH_TOTAL {
+	seen_north_complete = true
+	<*<!
+	call "dialog.test.area_bx.hub.north_complete"
+	!>*>
+} else if not seen_west_almost and count == WEST_TOTAL - 1 {
+	seen_west_almost = true
+	<*<!
+	call "dialog.test.area_bx.hub.west_almost"
+	!>*>
+} else if not seen_west_complete and count == WEST_TOTAL {
+	seen_west_complete = true
+	<*<!
+	call "dialog.test.area_bx.hub.west_complete"
+	!>*>
+}

@@ -16,8 +16,8 @@ var fullscreen: bool = ProjectSettings.get_setting(
 ) setget set_fullscreen
 var vsync: bool = ProjectSettings.get_setting("display/window/vsync/use_vsync") setget set_vsync
 var pixel_snap: bool = false setget set_pixel_snap
-var scale_mode: int = ScaleMode.ASPECT setget set_scale_mode
 var window_scale: int = 1 setget set_window_scale
+var scale_mode: int = ScaleMode.ASPECT setget set_scale_mode
 
 var _tree: SceneTree
 var _config: ConfigBus
@@ -32,13 +32,13 @@ var _window_scale_default: int = _get_max_window_scale(64.0, 0.0333)
 var _is_handling_resize: bool = false
 var _should_apply_window_scale: bool = false
 
-# Preloading these themes as constants would cause unimported asset dependencies
-# to be lost:
+# HACK: Preloading these themes as constants would cause any unimported
+# dependencies (such as image files) to be lost from the themes:
 var _text_themes: Array = [
-	load("res://assets/themes/floating_text.tres"),
 	load("res://assets/themes/dialogs/plain_dialog.tres"),
-	load("res://assets/themes/menu.tres"),
-	load("res://assets/themes/title.tres"),
+	load("res://assets/themes/menu_card.tres"),
+	load("res://assets/themes/menu_row.tres"),
+	load("res://assets/themes/popup_text.tres"),
 ]
 
 # Constructor. Connects the display manager's configuration values:
@@ -51,8 +51,8 @@ func _init(tree_ref: SceneTree, config_ref: ConfigBus, logger_ref: Logger) -> vo
 	_config.connect_bool("display.fullscreen", self, "set_fullscreen")
 	_config.connect_bool("display.vsync", self, "set_vsync")
 	_config.connect_bool("display.pixel_snap", self, "set_pixel_snap")
-	_config.connect_string("display.scale_mode", self, "_set_scale_mode_string")
 	_config.connect_int("display.window_scale", self, "set_window_scale")
+	_config.connect_string("display.scale_mode", self, "_set_scale_mode_string")
 
 
 # Sets whether an alternative, more legible font is used:
@@ -123,6 +123,23 @@ func set_pixel_snap(value: bool) -> void:
 		_apply_pixel_perfect()
 
 
+# Sets the display's window scale:
+func set_window_scale(value: int) -> void:
+	if _window_scale_default == value or value <= 0:
+		window_scale = _window_scale_default
+	elif value >= _window_scale_max:
+		window_scale = _window_scale_max
+	else:
+		window_scale = value
+	
+	_config.set_int("display.window_scale", window_scale)
+	
+	if fullscreen:
+		_should_apply_window_scale = true
+	else:
+		_apply_window_scale()
+
+
 # Sets the display's scale mode:
 func set_scale_mode(value: int) -> void:
 	if scale_mode == value:
@@ -148,43 +165,35 @@ func set_scale_mode(value: int) -> void:
 		_apply_pixel_perfect()
 
 
-# Sets the display's window scale:
-func set_window_scale(value: int) -> void:
-	if _window_scale_default == value or value <= 0:
-		window_scale = _window_scale_default
-	elif value >= _window_scale_max:
-		window_scale = _window_scale_max
-	else:
-		window_scale = value
-	
-	_config.set_int("display.window_scale", window_scale)
-	
-	if fullscreen:
-		_should_apply_window_scale = true
-	else:
-		_apply_window_scale()
-
-
 # Gets the display's maximum window scale:
 func get_window_scale_max() -> int:
 	return _window_scale_max
 
 
-# Gets a dictionary of window scale options and their strings:
+# Gets a dictionary of window scale options:
 func get_window_scale_options() -> Dictionary:
 	var options: Dictionary = {}
 	
 	for i in range(1, _window_scale_max + 1):
-		options[i] = "%dx" % i
+		options["%dx" % i] = i
 	
 	return options
+
+
+# Gets a dictionary of scale mode options:
+func get_scale_mode_options() -> Dictionary:
+	return {
+		"OPTION.DISPLAY.SCALE_MODE.STRETCH": "stretch",
+		"OPTION.DISPLAY.SCALE_MODE.ASPECT": "aspect",
+		"OPTION.DISPLAY.SCALE_MODE.PIXEL": "pixel",
+	}
 
 
 # Destructor. Disconnects the display manager's configuration values and stops
 # handling resizing the display:
 func destruct() -> void:
-	_config.disconnect_value("display.window_scale", self, "set_window_scale")
 	_config.disconnect_value("display.scale_mode", self, "_set_scale_mode_string")
+	_config.disconnect_value("display.window_scale", self, "set_window_scale")
 	_config.disconnect_value("display.pixel_snap", self, "set_pixel_snap")
 	_config.disconnect_value("display.vsync", self, "set_vsync")
 	_config.disconnect_value("display.fullscreen", self, "set_fullscreen")
@@ -268,7 +277,7 @@ func _apply_window_scale() -> void:
 
 # Loads a font from its font key:
 func _load_font(font_key: String) -> DynamicFont:
-	var path: String = "res://assets/fonts/%s.tres" % font_key.replace(".", "/")
+	var path: String = "res://assets/fonts/%s.tres" % font_key
 	
 	if ResourceLoader.exists(path, "DynamicFont"):
 		return load(path) as DynamicFont

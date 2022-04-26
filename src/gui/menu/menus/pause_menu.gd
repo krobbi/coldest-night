@@ -4,66 +4,62 @@ extends ColorRect
 # Pause Menu
 # The pause menu is a menu that is displayed when the game is paused.
 
+var is_open: bool = false setget set_open
+var opacity: float = 80.0 setget set_opacity
+
 onready var _menu_stack: MenuStack = $MenuStack
 
-var _is_open: bool = false
-
 # Virtual _ready method. Runs when the pause menu finishes entering the scene
-# tree. Connects the pause menu to the event bus:
+# tree. Connects the pause menu to the event bus and configuration bus:
 func _ready() -> void:
 	Global.events.safe_connect("pause_menu_open_menu_request", self, "open_menu")
-
-
-# Virtual _input method. Runs when the pause menu receives an input event.
-# Handles controls for closing the pause menu:
-func _input(event: InputEvent) -> void:
-	if _is_open and event.is_action_pressed("pause"):
-		close_menu()
+	Global.config.connect_float("accessibility.pause_opacity", self, "set_opacity")
 
 
 # Virtual _exit_tree method. Runs when the pause menu exits the scene tree.
-# Disconnects the pause menu from the event bus:
+# Disconnects the pause menu from the event bus and configuration bus:
 func _exit_tree() -> void:
 	Global.events.safe_disconnect("pause_menu_open_menu_request", self, "open_menu")
+	Global.config.disconnect_value("accessibility.pause_opacity", self, "set_opacity")
+
+
+# Sets whether the pause menu is open:
+func set_open(value: bool) -> void:
+	if value:
+		open_menu()
+	else:
+		close_menu()
+
+
+# Sets the pause menu's opacity:
+func set_opacity(value: float) -> void:
+	if value < 0.0:
+		value = 0.0
+	elif value > 100.0 or is_inf(value) or is_nan(value):
+		value = 100.0
+	
+	opacity = value
+	color.a = opacity * 0.01
 
 
 # Opens the pause menu:
 func open_menu() -> void:
-	if _is_open:
+	if is_open:
 		return
 	
-	_is_open = true
+	is_open = true
 	Global.tree.paused = true
+	_menu_stack.push_card("pause")
 	show()
 	Global.audio.play_clip("sfx.menu_move")
-	_menu_stack.set_root("pause")
 
 
 # Closes the pause menu:
 func close_menu() -> void:
-	if not _is_open:
+	if not is_open:
 		return
 	
-	_is_open = false
+	is_open = false
 	hide()
 	_menu_stack.clear()
-	Global.audio.play_clip("sfx.menu_cancel")
 	Global.tree.set_deferred("paused", false)
-
-
-# Signal callback for key_button_pressed on the menu stack. Runs when a key
-# button is pressed. Performs pause menu actions:
-func _on_menu_stack_key_button_pressed(button_key: String) -> void:
-	match button_key:
-		"pause.resume_game":
-			close_menu()
-		"pause.quick_save":
-			Global.save.save_game()
-		"pause.quick_load":
-			Global.save.load_slot()
-			Global.change_scene("loader")
-		"pause.load_checkpoint":
-			Global.save.load_checkpoint()
-			Global.change_scene("loader")
-		"pause.quit_to_title":
-			Global.change_scene("title")

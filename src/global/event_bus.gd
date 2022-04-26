@@ -8,7 +8,11 @@ extends Object
 
 signal accumulate_alert_count_request # warning-ignore: UNUSED_SIGNAL
 signal accumulate_time_request(delta) # warning-ignore: UNUSED_SIGNAL
+signal camera_follow_anchor_request(anchor) # warning-ignore: UNUSED_SIGNAL
+# warning-ignore: UNUSED_SIGNAL
+signal camera_set_limits_request(top_left, bottom_right)
 signal camera_unfocus_request # warning-ignore: UNUSED_SIGNAL
+signal camera_unfollow_anchor_request # warning-ignore: UNUSED_SIGNAL
 signal dialog_clear_name_request # warning-ignore: UNUSED_SIGNAL
 signal dialog_display_message_request(name) # warning-ignore: UNUSED_SIGNAL
 signal dialog_display_name_request(name) # warning-ignore: UNUSED_SIGNAL
@@ -25,17 +29,25 @@ signal flag_changed(namespace, key, value) # warning-ignore: UNUSED_SIGNAL
 # warning-ignore: UNUSED_SIGNAL
 signal floating_text_display_request(text, world_pos)
 signal game_over_request # warning-ignore: UNUSED_SIGNAL
-signal nightscript_cache_program_request(program_key) # warning-ignore: UNUSED_SIGNAL
-signal nightscript_call_program_request(thread, program_key) # warning-ignore: UNUSED_SIGNAL
+# warning-ignore: UNUSED_SIGNAL
+signal nightscript_cache_program_request(program_key)
 signal nightscript_flush_cache_request # warning-ignore: UNUSED_SIGNAL
-signal nightscript_run_program_request(program_key) # warning-ignore: UNUSED_SIGNAL
+# warning-ignore: UNUSED_SIGNAL
+signal nightscript_run_program_request(program_key)
 signal nightscript_stop_programs_request # warning-ignore: UNUSED_SIGNAL
 signal nightscript_thread_finished # warning-ignore: UNUSED_SIGNAL
 signal pause_menu_open_menu_request # warning-ignore: UNUSED_SIGNAL
 signal player_freeze_request # warning-ignore: UNUSED_SIGNAL
 signal player_thaw_request # warning-ignore: UNUSED_SIGNAL
+# warning-ignore: UNUSED_SIGNAL
+signal radar_camera_follow_anchor_request(anchor)
+signal radar_camera_unfollow_anchor_request # warning-ignore: UNUSED_SIGNAL
+signal radar_clear_request # warning-ignore: UNUSED_SIGNAL
+signal radar_refresh_entities_request # warning-ignore: UNUSED_SIGNAL
+signal radar_render_node_request(node) # warning-ignore: UNUSED_SIGNAL
 signal save_state_request # warning-ignore: UNUSED_SIGNAL
 signal subtitle_display_request(message) # warning-ignore: UNUSED_SIGNAL
+signal tooltip_display_request(message) # warning-ignore: UNUSED_SIGNAL
 
 # Safely connects a signal from the event bus to a target object's receiver
 # method:

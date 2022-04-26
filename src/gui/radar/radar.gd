@@ -38,13 +38,20 @@ onready var _walls_renderer: RadarSegmentRenderer = $Viewport/Foreground/Walls
 
 # Virtual _ready method. Runs when the radar display finishes entering the scene
 # tree. Disables the radar display's process, sets the radar display's display
-# scale, and connects the radar display's configuration values:
+# scale, and connects the radar display to the configuration bus and event bus:
 func _ready() -> void:
 	set_process(false)
 	set_display_scale(Global.config.get_float("accessibility.radar_scale"))
 	set_display_opacity(Global.config.get_float("accessibility.radar_opacity"))
 	Global.config.connect_float("accessibility.radar_scale", self, "set_display_scale")
 	Global.config.connect_float("accessibility.radar_opacity", self ,"set_display_opacity")
+	Global.events.safe_connect("radar_refresh_entities_request", self, "refresh_entities")
+	Global.events.safe_connect("radar_render_node_request", self, "render_node")
+	Global.events.safe_connect("radar_clear_request", self, "clear")
+	Global.events.safe_connect("radar_camera_follow_anchor_request", self, "camera_follow_anchor")
+	Global.events.safe_connect(
+			"radar_camera_unfollow_anchor_request", self, "camera_unfollow_anchor"
+	)
 
 
 # Virtual _process method. Runs on every frame while the radar display's process
@@ -54,8 +61,17 @@ func _process(_delta: float) -> void:
 
 
 # Virtual _exit_tree method. Runs when the radar display exits the scene tree.
-# Disconnects the radar display's configuration values:
+# Disconnects the radar display from the configuration bus and event bus:
 func _exit_tree() -> void:
+	Global.events.safe_disconnect(
+			"radar_camera_unfollow_anchor_request", self, "camera_unfollow_anchor"
+	)
+	Global.events.safe_disconnect(
+			"radar_camera_follow_anchor_request", self, "camera_follow_anchor"
+	)
+	Global.events.safe_disconnect("radar_clear_request", self, "clear")
+	Global.events.safe_disconnect("radar_render_node_request", self, "render_node")
+	Global.events.safe_disconnect("radar_refresh_entities_request", self, "refresh_entities")
 	Global.config.disconnect_value("accessibility.radar_opacity", self, "set_display_opacity")
 	Global.config.disconnect_value("accessibility.radar_scale", self, "set_display_scale")
 
@@ -84,7 +100,7 @@ func set_display_opacity(value: float) -> void:
 		value = 100.0
 	
 	_display_opacity = value
-	_background_polygon.modulate.a = _display_opacity * 0.01
+	_background_polygon.color.a = _display_opacity * 0.01
 	Global.config.set_float("accessibility.radar_opacity", _display_opacity)
 
 

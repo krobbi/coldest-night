@@ -5,12 +5,12 @@
 
 [node name="ButtonMenuRow" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
-_focus_path = NodePath("Content/Button")
+focus_node_path = NodePath("Content/Button")
 
 [node name="Button" type="Button" parent="Content" index="0"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 496, 32 )
+rect_min_size = Vector2( 480, 32 )
 mouse_filter = 1
 text = "Button"
 flat = true

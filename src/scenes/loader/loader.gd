@@ -16,7 +16,8 @@ func _ready() -> void:
 		SaveData.State.NEW_GAME:
 			Global.audio.play_music("briefing")
 			Global.events.safe_connect(
-					"nightscript_thread_finished", self, "_on_nightscript_thread_finished"
+					"nightscript_thread_finished", self,
+					"_on_nightscript_thread_finished", [], CONNECT_ONESHOT
 			)
 			Global.events.emit_signal("nightscript_run_program_request", "dialog.test.new_game")
 		SaveData.State.COMPLETED:
@@ -29,8 +30,5 @@ func _ready() -> void:
 # Signal callback for a finished NightScript thread. Runs when the load dialog
 # finishes. Changes to the overworld scene:
 func _on_nightscript_thread_finished() -> void:
-	Global.events.safe_disconnect(
-			"nightscript_thread_finished", self, "_on_nightscript_thread_finished"
-	)
 	_save_data.state = SaveData.State.NORMAL
 	Global.change_scene("overworld", true, false)

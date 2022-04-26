@@ -34,7 +34,6 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):
 		if _has_message and _message_label.percent_visible >= 1.0:
 			_has_message = false
-			emit_signal("message_finished")
 			Global.events.emit_signal("dialog_message_finished")
 		else:
 			_pause_timer.stop()
@@ -165,8 +164,8 @@ func _on_tags_speed_requested(speed: float) -> void:
 	_type_timer.start()
 
 
-# Signal callback for timeout on the type timer. Types the next character of the
-# dialog message:
+# Signal callback for timeout on the type timer. Runs when the type timer times
+# out. Types the next character of the dialog message:
 func _on_type_timer_timeout() -> void:
 	if _message_label.percent_visible >= 1.0:
 		_type_timer.stop()
@@ -181,16 +180,15 @@ func _on_type_timer_timeout() -> void:
 		_speech_player.play()
 
 
-# Signal callback for timeout on the pause timer. Resumes typing the dialog
-# message:
+# Signal callback for timeout on the pause timer. Runs when the pause timer
+# times out. Resumes typing the dialog message:
 func _on_pause_timer_timeout() -> void:
 	_type_timer.start()
 
 
 # Signal callback for pressed on an option. Runs when an option is pressed.
-# Destructs the plain dialog display's options and emits the option pressed
-# signal:
+# Destructs the plain dialog display's options and emits the
+# dialog_option_pressed event:
 func _on_option_pressed(index: int) -> void:
 	_destruct_options()
-	emit_signal("option_pressed", index)
 	Global.events.emit_signal("dialog_option_pressed", index)

@@ -1,0 +1,44 @@
+[gd_resource type="Theme" load_steps=8 format=2]
+
+[ext_resource path="res://assets/fonts/coldnight.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/images/gui/boxes/horizontal.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/gui/bars/content_vertical.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/gui/bars/border.png" type="Texture" id=4]
+
+[sub_resource type="StyleBoxTexture" id=1]
+texture = ExtResource( 2 )
+region_rect = Rect2( 0, 0, 3, 2 )
+margin_left = 1.0
+margin_right = 1.0
+modulate_color = Color( 1, 0.596078, 0.054902, 1 )
+
+[sub_resource type="StyleBoxTexture" id=2]
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 16, 11 )
+margin_left = 5.0
+margin_right = 5.0
+margin_top = 5.0
+margin_bottom = 5.0
+modulate_color = Color( 1, 0.596078, 0.054902, 1 )
+
+[sub_resource type="StyleBoxTexture" id=3]
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource( 4 )
+region_rect = Rect2( 0, 0, 16, 16 )
+margin_left = 2.0
+margin_right = 2.0
+margin_top = 2.0
+margin_bottom = 2.0
+modulate_color = Color( 1, 0.596078, 0.054902, 1 )
+draw_center = false
+
+[resource]
+default_font = ExtResource( 1 )
+HSeparator/styles/separator = SubResource( 1 )
+Label/colors/font_color = Color( 0.945098, 0.94902, 0.945098, 1 )
+VScrollBar/styles/grabber = SubResource( 2 )
+VScrollBar/styles/grabber_highlight = SubResource( 2 )
+VScrollBar/styles/grabber_pressed = SubResource( 2 )
+VScrollBar/styles/scroll = SubResource( 3 )
+VScrollBar/styles/scroll_focus = SubResource( 3 )

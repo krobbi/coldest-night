@@ -5,6 +5,14 @@ extends Node2D
 # Levels are sub-scenes of the overworld scene that represent areas in the game
 # world.
 
+enum NavTile {
+	NONE = -1,
+	NAVIGABLE = 0,
+	OBSTRUCTIVE = 1,
+	OCCLUSIVE = 2,
+	SOLID = 3,
+}
+
 export(String) var area_name: String = "AREA.UNKNOWN"
 export(String) var level_name: String = "LEVEL.UNKNOWN"
 export(String) var music: String
@@ -14,9 +22,9 @@ export(PoolStringArray) var cached_ns_programs: PoolStringArray
 export(PoolStringArray) var autorun_ns_programs: PoolStringArray
 
 var _points: Dictionary = {}
+var _nav_regions: Array = []
 
 onready var midground: YSort = $Midground
-onready var navigation: Navigation2D = $Navigation
 onready var radar: Node2D = $Radar
 onready var origin: Vector2 = $Origin.position
 onready var top_left: Vector2 = $TopLeft.position
@@ -26,30 +34,49 @@ onready var bottom_right: Vector2 = $BottomRight.position
 func _ready() -> void:
 	Global.audio.play_music(music)
 	
-	navigation.hide()
-	var navigation_map: TileMap = navigation.get_node("NavigationMap")
+	var nav_tile_map: TileMap = $NavTileMap
+	var nav_tile_set: TileSet = nav_tile_map.tile_set
+	var nav_cell_size: Vector2 = nav_tile_map.cell_size
+	nav_tile_map.hide()
+	
 	var occlusion_map: TileMap = TileMap.new()
 	occlusion_map.name = "OcclusionMap"
 	occlusion_map.hide()
-	occlusion_map.cell_size = navigation_map.cell_size
-	occlusion_map.cell_quadrant_size = navigation_map.cell_quadrant_size
+	occlusion_map.cell_size = nav_cell_size
+	occlusion_map.cell_quadrant_size = nav_tile_map.cell_quadrant_size
 	occlusion_map.collision_layer = 4
 	occlusion_map.collision_mask = 0
-	occlusion_map.tile_set = navigation_map.tile_set
+	occlusion_map.tile_set = nav_tile_set
 	
-	# Move occlusive tiles to occlusion map:
-	for cell in navigation_map.get_used_cells_by_id(2):
-		navigation_map.set_cellv(cell, -1)
-		occlusion_map.set_cellv(cell, 1)
+	for cell in nav_tile_map.get_used_cells_by_id(NavTile.OCCLUSIVE):
+		nav_tile_map.set_cellv(cell, NavTile.NONE)
+		occlusion_map.set_cellv(cell, NavTile.OBSTRUCTIVE)
 	
-	# Move solid tiles to occlusion map:
-	for cell in navigation_map.get_used_cells_by_id(3):
-		navigation_map.set_cellv(cell, 1)
-		occlusion_map.set_cellv(cell, 1)
+	for cell in nav_tile_map.get_used_cells_by_id(NavTile.SOLID):
+		nav_tile_map.set_cellv(cell, NavTile.OBSTRUCTIVE)
+		occlusion_map.set_cellv(cell, NavTile.OBSTRUCTIVE)
 	
 	add_child(occlusion_map)
-	navigation_map.update_dirty_quadrants()
+	nav_tile_map.update_dirty_quadrants()
 	occlusion_map.update_dirty_quadrants()
+	
+	# HACK: Bypass error when baking navigation map:
+	var nav_map: RID = Global.tree.root.world_2d.navigation_map
+	
+	for cell in nav_tile_map.get_used_cells_by_id(NavTile.NAVIGABLE):
+		var coord: Vector2 = nav_tile_map.get_cell_autotile_coord(int(cell.x), int(cell.y))
+		var nav_poly: NavigationPolygon = nav_tile_set.autotile_get_navigation_polygon(
+				NavTile.NAVIGABLE, coord
+		)
+		
+		var nav_region: RID = Navigation2DServer.region_create()
+		Navigation2DServer.region_set_map(nav_region, nav_map)
+		Navigation2DServer.region_set_navigation_layers(nav_region, nav_tile_map.navigation_layers)
+		Navigation2DServer.region_set_transform(nav_region, Transform2D(0.0, cell * nav_cell_size))
+		Navigation2DServer.region_set_navpoly(nav_region, nav_poly)
+		_nav_regions.push_back(nav_region)
+	
+	Navigation2DServer.map_force_update(nav_map)
 	
 	$Radar.hide()
 	
@@ -58,6 +85,14 @@ func _ready() -> void:
 	for point_node in $Points.get_children():
 		if point_node is Position2D and point_node.name != "World":
 			_points[point_node.name] = point_node.position
+
+
+# Virtual _exit_tree method. Runs when the level exits the scene tree. Frees the
+# level's navigation regions:
+func _exit_tree() -> void:
+	for nav_region in _nav_regions:
+		Navigation2DServer.region_set_map(nav_region, RID())
+		Navigation2DServer.free_rid(nav_region)
 
 
 # Gets a point's world position. Returns the level's origin position if the

@@ -64,7 +64,7 @@ func _get_credits_path() -> String:
 	# DEBUG:END
 	
 	var dir: Directory = Directory.new()
-	var path: String = base_path % Global.lang.locale
+	var path: String = base_path % Global.lang.get_locale()
 	
 	if dir.file_exists(path):
 		return path
@@ -78,4 +78,4 @@ func _exit_credits() -> void:
 		return
 	
 	_is_exiting = true
-	Global.change_scene("title")
+	Global.change_scene("menu")

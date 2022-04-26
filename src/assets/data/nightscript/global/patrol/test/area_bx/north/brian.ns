@@ -1,33 +1,34 @@
+# NightScript Version 2
 # Patrol Route
 # Patrol route for 'brian' in test.area_bx.north
 
-while true
-	sleep 8
-	path do brian PBrB
-	look brian left
-	sleep 2
-	look brian right
-	sleep 1
-	path do brian PBrC
-	look brian right
-	sleep 2
-	look brian down
-	sleep 2
-	look brian right
-	sleep 3
-	path do brian PBrD
-	look brian up
-	sleep 2
-	look brian down
-	sleep 1
-	path do brian PBrE
-	look brian down
-	sleep 5
-	path do brian PBrC
-	look brian left
-	sleep 2
-	look brian right
-	sleep 2
-	path do brian PBrA
-	look brian up
-end
+while true {
+	:8
+	"brian" -> "PBrB"
+	"brian" > left
+	:2
+	"brian" > right
+	:1
+	"brian" -> "PBrC"
+	"brian" > right
+	:2
+	"brian" > down
+	:2
+	"brian" > right
+	:3
+	"brian" -> "PBrD"
+	"brian" > up
+	:2
+	"brian" > down
+	:1
+	"brian" -> "PBrE"
+	"brian" > down
+	:5
+	"brian" -> "PBrC"
+	"brian" > left
+	:2
+	"brian" > right
+	:2
+	"brian" -> "PBrA"
+	"brian" > up
+}

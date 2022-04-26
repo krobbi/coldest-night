@@ -4,6 +4,9 @@ extends Control
 # Menu Row Base
 # A menu row is a GUI element that contains a row of a menu.
 
+signal selected
+signal deselected
+
 enum AppearanceCondition {
 	ALWAYS,
 	NEVER,
@@ -14,20 +17,19 @@ enum AppearanceCondition {
 	HAS_SAVE,
 }
 
-const COLOR_SELECT: Color = Color("#ff980e")
-const COLOR_DESELECT: Color = Color("#d94f0c")
+const _COLOR_SELECT: Color = Color("#ff980e")
+const _COLOR_DESELECT: Color = Color("#d94f0c")
+const _TWEEN_TIME: float = 0.25
+const _TWEEN_TRANS: int = Tween.TRANS_SINE
 
+export(NodePath) var focus_node_path: NodePath = NodePath()
 export(AppearanceCondition) var appearance_condition: int = AppearanceCondition.ALWAYS
+export(String) var tooltip: String
 
-export(NodePath) var _focus_path: NodePath = NodePath("Content")
+var is_selected: bool = false setget set_selected
 
-var _is_selected: bool = false
-
-onready var focus_node: Control = get_node(_focus_path)
-
-onready var _tween: Tween = $Tween
-onready var _select_rect: ColorRect = $SelectRect
-onready var _underline_rect: ColorRect = $UnderlineRect
+onready var _select_rect: Panel = $SelectRect
+onready var _underline_rect: Panel = $UnderlineRect
 onready var _content: Control = $Content
 
 # Abstract _select method. Runs when the menu row is selected:
@@ -40,48 +42,86 @@ func _deselect() -> void:
 	pass
 
 
-# Gets whether the menu row is selected:
-func is_selected() -> bool:
-	return _is_selected
+# Sets whether the menu row is selected:
+func set_selected(value: bool) -> void:
+	if value:
+		select()
+	else:
+		deselect()
 
 
-# Marks the menu row as selected:
+# Gets the menu row's focus node:
+func get_focus_node() -> Control:
+	return get_node(focus_node_path) as Control
+
+
+# Gets whether the menu row should appear:
+func get_should_appear() -> bool:
+	match appearance_condition:
+		AppearanceCondition.NEVER:
+			return false
+		AppearanceCondition.DEBUG:
+			# DEBUG:BEGIN
+			if OS.is_debug_build():
+				return true
+			# DEBUG:END
+			
+			return false
+		AppearanceCondition.ADVANCED:
+			# DEBUG:BEGIN
+			if OS.is_debug_build():
+				return true
+			# DEBUG:END
+			
+			return Global.config.get_bool("advanced.show_advanced")
+		AppearanceCondition.MULTIPLE_WINDOW_SCALES:
+			return Global.display.get_window_scale_max() > 1
+		AppearanceCondition.MULTIPLE_LOCALES:
+			return Global.lang.get_locale_count() > 1
+		AppearanceCondition.HAS_SAVE:
+			return Global.save.get_working_data().state != SaveData.State.NEW_GAME
+		AppearanceCondition.ALWAYS, _:
+			return true
+
+
+# Selects the menu row:
 func select() -> void:
+	if is_selected:
+		return
+	
+	is_selected = true
+	var tween: SceneTreeTween = create_tween().set_trans(_TWEEN_TRANS).set_parallel()
 	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(
-			_select_rect, "rect_size", _select_rect.rect_size,
-			Vector2(8.0, 28.0), 0.1, Tween.TRANS_SINE
-	)
+	tween.tween_property(_select_rect, "rect_size:x", 8.0, _TWEEN_TIME)
 	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(
-			_underline_rect, "rect_size", _underline_rect.rect_size,
-			Vector2(508.0, 2.0), 0.1, Tween.TRANS_SINE
-	)
+	tween.tween_property(_underline_rect, "rect_size:x", 496.0, _TWEEN_TIME)
 	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(
-			_content, "modulate", _content.modulate, COLOR_SELECT, 0.1, Tween.TRANS_SINE
-	)
-	_tween.start() # warning-ignore: RETURN_VALUE_DISCARDED
+	tween.tween_property(_content, "modulate", _COLOR_SELECT, _TWEEN_TIME)
+	
+	if Global.config.get_bool("accessibility.reduced_motion"):
+		tween.custom_step(_TWEEN_TIME) # warning-ignore: RETURN_VALUE_DISCARDED
+	
 	_select()
-	_is_selected = true
+	Global.events.emit_signal("tooltip_display_request", tooltip)
+	emit_signal("selected")
 
 
-# Marks the menu row as not selected:
+# Deselects the menu row:
 func deselect() -> void:
-	_is_selected = false
+	if not is_selected:
+		return
+	
+	is_selected = false
+	var tween: SceneTreeTween = create_tween().set_trans(_TWEEN_TRANS).set_parallel()
 	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(
-			_select_rect, "rect_size", _select_rect.rect_size,
-			Vector2(0.0, 28.0), 0.1, Tween.TRANS_SINE
-	)
+	tween.tween_property(_select_rect, "rect_size:x", 0.0, _TWEEN_TIME)
 	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(
-			_underline_rect, "rect_size", _underline_rect.rect_size,
-			Vector2(0.0, 2.0), 0.1, Tween.TRANS_SINE
-	)
+	tween.tween_property(_underline_rect, "rect_size:x", 0.0, _TWEEN_TIME)
 	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(
-			_content, "modulate", _content.modulate, COLOR_DESELECT, 0.1, Tween.TRANS_SINE
-	)
-	_tween.start() # warning-ignore: RETURN_VALUE_DISCARDED
+	tween.tween_property(_content, "modulate", _COLOR_DESELECT, _TWEEN_TIME)
+	
+	if Global.config.get_bool("accessibility.reduced_motion"):
+		tween.custom_step(_TWEEN_TIME) # warning-ignore: RETURN_VALUE_DISCARDED
+	
 	_deselect()
+	emit_signal("deselected")

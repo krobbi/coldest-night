@@ -3,7 +3,7 @@ __Coldnight Font__
 __Version 1.0.0__  
 __Public domain.__
 
-[Go Back](../README.md)
+[Go Back](../readme.md)
 
 # Contents
 1. [Coldnight Font](#coldnight-font)

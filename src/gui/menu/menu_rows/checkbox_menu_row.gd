@@ -2,29 +2,52 @@ class_name CheckboxMenuRow
 extends MenuRow
 
 # Checkbox Menu Row
-# A checkbox menu row is a menu row that contains a checkbox control for a bool
-# configuration value.
+# A checkbox menu row is a menu row that contains a checkbox.
 
-export(String) var _config_key: String
+signal toggled(value)
+
+export(bool) var is_pressed: bool setget set_pressed
+export(String) var text: String setget set_text
 
 onready var _checkbox: CheckButton = $Content/CheckButton
 
-# Virtual _ready method. Runs when the checkbox menu row enters the scene tree.
-# Sets the checkbox's text and state:
+# Virtual _ready method. Runs when the checkbox menu row finishes entering the
+# scene tree. Sets the whether the checkbox is pressed and its text:
 func _ready() -> void:
-	_checkbox.text = "CHECKBOX.%s" % _config_key.to_upper()
-	_checkbox.set_pressed_no_signal(Global.config.get_bool(_config_key))
-	Global.config.connect_bool(_config_key, _checkbox, "set_pressed_no_signal")
+	set_pressed_no_signal(is_pressed)
+	set_text(text)
 
 
-# Virtual _exit_tree method. Runs when the checkbox menu row exits the scene
-# tree. Disconnects the connected configuration value from the checkbox's state:
-func _exit_tree() -> void:
-	Global.config.disconnect_value(_config_key, _checkbox, "set_pressed_no_signal")
+# Abstract _toggle method. Runs when the checkbox is toggled:
+func _toggle(_value: bool) -> void:
+	pass
 
 
-# Signal callback for toggled on the checkbox. Runs when the checkbox is toggled
-# Sets the connected configuration value:
+# Sets whether the checkbox is pressed:
+func set_pressed(value: bool) -> void:
+	is_pressed = value
+	
+	if _checkbox:
+		_checkbox.pressed = is_pressed
+
+
+# Sets whether the checkbox is pressed without emitting the toggled signal:
+func set_pressed_no_signal(value: bool) -> void:
+	is_pressed = value
+	_checkbox.set_pressed_no_signal(is_pressed)
+
+
+# Sets the checkbox's text:
+func set_text(value: String) -> void:
+	text = value
+	
+	if _checkbox:
+		_checkbox.text = text
+
+
+# Signal callback for toggled on the checkbox. Runs when the checkbox is
+# toggled. Emits the toggled signal:
 func _on_checkbox_toggled(button_pressed: bool) -> void:
-	Global.config.set_bool(_config_key, button_pressed)
+	_toggle(button_pressed)
 	Global.audio.play_clip("sfx.menu_move" if button_pressed else "sfx.menu_cancel")
+	emit_signal("toggled", button_pressed)

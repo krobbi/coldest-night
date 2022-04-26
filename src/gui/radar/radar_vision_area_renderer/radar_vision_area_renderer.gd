@@ -5,14 +5,11 @@ extends Polygon2D
 # A radar vision area renderer is a component of the radar display that renders
 # the size, position, and rotation of a vision area.
 
-const COLOR_NONE: Color = Color.transparent
-const COLOR_NORMAL: Color = Color("#45c5d9")
-const COLOR_CAUTION: Color = Color("#fff959")
-const COLOR_ALERT: Color = Color("#ad1818")
+const _COLOR_NORMAL: Color = Color("#45c5d9")
+const _COLOR_CAUTION: Color = Color("#fff959")
+const _COLOR_ALERT: Color = Color("#ad1818")
 
 var vision_area: VisionArea = null setget set_vision_area
-
-onready var _tween: Tween = $Tween
 
 # Virtual _ready method. Runs when the radar vision area renderer enters the
 # scene tree. Disables the radar vision area renderer's physics process:
@@ -73,19 +70,18 @@ func is_available() -> bool:
 
 # Sets the radar vision area renderer's display:
 func set_display(display: int) -> void:
-	var target_color: Color = COLOR_NORMAL
+	var target_color: Color = _COLOR_NORMAL
 	
 	match display:
 		VisionArea.RadarDisplay.NONE:
-			target_color = COLOR_NONE
+			target_color = Color.transparent
 		VisionArea.RadarDisplay.CAUTION:
-			target_color = COLOR_CAUTION
+			target_color = _COLOR_CAUTION
 		VisionArea.RadarDisplay.ALERT:
-			target_color = COLOR_ALERT
+			target_color = _COLOR_ALERT
 	
 	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(self, "modulate", modulate, target_color, 0.08, Tween.TRANS_SINE)
-	_tween.start() # warning-ignore: RETURN_VALUE_DISCARDED
+	create_tween().tween_property(self, "modulate", target_color, 0.08).set_trans(Tween.TRANS_SINE)
 
 
 # Clears the radar vision area renderer's vision area:

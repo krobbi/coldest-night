@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://gui/menu/menu_rows/slider_menu_row.tscn" type="PackedScene" id=1]
+[ext_resource path="res://gui/menu/menu_rows/config_slider_menu_row.gd" type="Script" id=2]
+
+[node name="ConfigSliderMenuRow" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="Label" parent="Content" index="0"]
+text = "Config slider"

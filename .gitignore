@@ -1,28 +1,41 @@
-# System:
+# OS:
 .DS_Store
 desktop.ini
 Thumbs.db
 
 # IDE:
-.idea
-.vscode
+.idea/
+.vscode/
 *.code-workspace
 *.sublime-project
 *.sublime-workspace
 *.suo
 
-# Godot:
+# Godot Engine:
 .import/
 .mono/
 data_*/
 *.TMP
 *.translation
 
-# Defaulted Imports:
+# Defaulted Godot Engine Imports:
 *.csv.import
 *.ogg.import
 *.png.import
 *.wav.import
+
+# Godot Engine Exports:
+dist/linux-demo/
+dist/mac-demo/
+dist/win-demo/
+
+# Python Scripts:
+__pycache__/
+*$py.class
+*.py
+*.pyc
+*.pyd
+*.pyo
 
 # Ignore:
 ignore/

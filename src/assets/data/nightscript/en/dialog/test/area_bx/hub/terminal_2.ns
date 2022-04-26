@@ -1,5 +1,6 @@
+# NightScript Version 2
 # Save Terminal Dialog
 # Dialog line for cutscene.test.area_bx.hub.enter.
 
-name "Koby"
-say "Be sure to use it,{p=0.25} you don't want to get caught out!"
+"Koby":
+"Be sure to use it,{p=0.25} you don't want to get caught out!"

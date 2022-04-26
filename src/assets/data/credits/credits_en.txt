@@ -3,13 +3,6 @@
 ## Lead Developer
 Chris Roberts (Krobbizoid)
 
-# Coldnight Font
-Stylized font
-https://github.com/krobbi/coldest-night/blob/main/font/index.md
-
-## Lead Designer
-Chris Roberts (Krobbizoid)
-
 # Tools and Resources Used
 The following credits are not necessarily affiliated with Coldest Night or its copyright holder(s):
 
@@ -29,12 +22,12 @@ Godot Engine Project Managers
 ## Developers
 Godot Engine Developers
 
-# Pixel Font Converter
-Bitmap font to TTF converter
-https://yal.cc/r/20/pixelfont
+# Aseprite
+Animated sprite editor & pixel art tool
+https://www.aseprite.org
 
-## Lead Developer
-Vadim (YellowAfterlife)
+## Publisher
+Igara Studio
 
 # Krita
 Image editor
@@ -43,19 +36,26 @@ https://krita.org
 ## Publisher
 KDE
 
-# Aseprite
-Animated sprite editor & pixel art tool
-https://www.aseprite.org
-
-## Publisher
-Igara Studio
-
 # Faraway48
 Color palette
 https://lospec.com/palette-list/faraway48
 
 ## Creator
 Igor Ferreira (Diemorth)
+
+# Pixel Font Converter
+Bitmap font to TTF converter
+https://yal.cc/r/20/pixelfont
+
+## Lead Developer
+Vadim (YellowAfterlife)
+
+# make-icns
+PNG to ICNS converter
+https://www.npmjs.com/package/make-icns
+
+## Author
+Vu Dang Khoa Chiem (Doudou8)
 
 # Atkinson Hyperlegible Font
 Legible font
@@ -77,7 +77,7 @@ The name Audacity® is a registered trademark of Dominic Mazzoni.
 # Licensing
 For full license texts, please refer to the readme.md file distributed with the game, or to dist/readme.md in the source repository.
 
-Copyright © 2021-2022 Chris Roberts (Krobbizoid)
+Copyright © 2021-2022 Chris Roberts (Krobbizoid).
 All rights reserved.
 
 # Thanks for playing!

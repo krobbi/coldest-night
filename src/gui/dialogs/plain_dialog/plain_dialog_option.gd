@@ -5,24 +5,25 @@ extends Button
 # A plain dialog option display is a GUI element of a plain dialog display that
 # displays a button for a dialog option.
 
-onready var _tween: Tween = $Tween
 onready var _select_rect: ColorRect = $SelectRect
 
 # Marks the plain dialog option display as selected:
 func select() -> void:
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(
-			_select_rect, "rect_size", _select_rect.rect_size,
-			Vector2(8.0, 16.0), 0.1, Tween.TRANS_SINE
-	)
-	_tween.start() # warning-ignore: RETURN_VALUE_DISCARDED
+	_tween_select_rect_width(8.0)
 
 
 # Marks the plain dialog option display as not selected:
 func deselect() -> void:
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(
-			_select_rect, "rect_size", _select_rect.rect_size,
-			Vector2(0.0, 16.0), 0.1, Tween.TRANS_SINE
-	)
-	_tween.start() # warning-ignore: RETURN_VALUE_DISCARDED
+	_tween_select_rect_width(0.0)
+
+
+# Tweens the plain dialog option display's select rect's width to a target
+# width:
+func _tween_select_rect_width(width: float) -> void:
+	if Global.config.get_bool("accessibility.reduced_motion"):
+		_select_rect.rect_size.x = width
+	else:
+		# warning-ignore: RETURN_VALUE_DISCARDED
+		create_tween().tween_property(_select_rect, "rect_size:x", width, 0.1).set_trans(
+				Tween.TRANS_SINE
+		)

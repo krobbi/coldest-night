@@ -1,2 +1,22 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+*              text=auto
+.gitattributes text eol=lf
+.gitignore     text eol=lf
+*.cfg          text eol=lf
+*.ebnf         text eol=lf
+*.gd           text eol=lf linguist-language=GDScript
+*.godot        text eol=lf
+*.html         text eol=lf
+*.icns         -text
+*.ico          -text
+*.json         text eol=lf
+*.md           text eol=lf
+*.ns           text eol=lf
+*.ogg          -text
+*.otf          -text
+*.png          -text
+*.tres         text eol=lf
+*.tscn         text eol=lf
+*.ttf          -text
+*.txt          text eol=lf
+*.wav          -text
+*.zip          -text

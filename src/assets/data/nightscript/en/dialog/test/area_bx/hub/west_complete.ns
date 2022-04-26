@@ -1,9 +1,10 @@
+# NightScript Version 2
 # Save Terminal Dialog
 # Dialog line for cutscene.test.area_bx.hub.enter.
 
-name "Koby"
-say "That's all the data we needed!{p=0.5} You can make your way out now,{p=0.25} start heading south."
-say "There's a security checkpoint to the east,{p=0.25} but I can't get that open."
-say "And the elevator's been stuck and it's been pretty light on guards too."
-say "Clearly there is something more going on here."
-say "You'd better get out before everyone comes back,{p=0.25} my sick maneuvers are waiting for you."
+"Koby":
+"That's all the data we needed!{p=0.5} You can make your way out now,{p=0.25} start heading south."
+"There's a security checkpoint to the east,{p=0.25} but I can't get that open."
+"And the elevator's been stuck and it's been pretty light on guards too."
+"Clearly there is something more going on here."
+"You'd better get out before everyone comes back,{p=0.25} my sick maneuvers are waiting for you."

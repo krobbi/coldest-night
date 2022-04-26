@@ -34,8 +34,6 @@ class NSMachine extends Object:
 	var vector_repeat: int
 	var ops: Array = []
 	var pc: int
-	var x: int = 0
-	var y: int = 0
 	var actor_key: String
 	var option_pointers: Array = []
 	var option_texts: Array = []
@@ -102,11 +100,11 @@ class NSMachine extends Object:
 		match opcode:
 			CLP, RUN, DND, DGM, LAK, APF:
 				return OPERAND_TXT
-			SLP, LXC, LYC:
-				return OPERAND_VAL
-			JMP, BEQ, BNE, BGT, BGE:
+			JMP, BNZ:
 				return OPERAND_PTR
-			LXF, STX, LYF, STY:
+			PHC:
+				return OPERAND_VAL
+			PHF, STF:
 				return OPERAND_FLG
 			MNO:
 				return OPERAND_PTR | OPERAND_TXT
@@ -121,13 +119,17 @@ class NSThread extends Object:
 	# that represents a thread of NightScript execution and contains a stack of
 	# NightScript machines.
 	
-	enum State {STOPPED, RUNNING, AWAITING}
+	signal call_program_request(program_key)
+	
+	enum State {STOPPED, RUNNING, AWAITING, SLEEPING}
 	
 	const MACHINE_STACK_LIMIT: int = 16
 	
 	var state: int = State.RUNNING
+	var sleep_timer: float = 0.0
 	var machine_stack: Array = []
 	var machine: NSMachine = null
+	var stack: Array = []
 	
 	# Sets a flag from its namespace and key:
 	func set_flag(namespace: String, key: String, value: int) -> void:
@@ -188,40 +190,79 @@ class NSThread extends Object:
 		machine.pc += 1
 		
 		match op.op:
+			# Control flow:
 			HLT: # Halt:
 				pop_machine()
 			CLP: # Call program:
-				Global.events.emit_signal("nightscript_call_program_request", self, op.txt)
+				emit_signal("call_program_request", op.txt)
 			RUN: # Run:
 				Global.events.emit_signal("nightscript_run_program_request", op.txt)
 			SLP: # Sleep:
-				await(Global.tree.create_timer(float(op.val) * 0.01), "timeout")
+				sleep_timer = float(stack.pop_back()) * 0.01
+				state = State.SLEEPING
 			JMP: # Jump:
 				machine.pc = op.val
-			BEQ: # Branch equals:
-				if machine.x == machine.y:
+			BNZ: # Branch not zero:
+				if stack.pop_back() != 0:
 					machine.pc = op.val
-			BNE: # Branch not equals:
-				if machine.x != machine.y:
-					machine.pc = op.val
-			BGT: # Branch greater than:
-				if machine.x > machine.y:
-					machine.pc = op.val
-			BGE: # Branch greater equals:
-				if machine.x >= machine.y:
-					machine.pc = op.val
-			LXC: # Load X constant:
-				machine.x = op.val
-			LXF: # Load X flag:
-				machine.x = get_flag(op.txt, op.key)
-			STX: # Store X:
-				set_flag(op.txt, op.key, machine.x)
-			LYC: # Load Y constant:
-				machine.y = op.val
-			LYF: # Load Y flag:
-				machine.y = get_flag(op.txt, op.key)
-			STY: # Store Y:
-				set_flag(op.txt, op.key, machine.y)
+			
+			# Stack operations:
+			PHC: # Push constant:
+				stack.push_back(op.val)
+			PHF: # Push flag:
+				stack.push_back(get_flag(op.txt, op.key))
+			DUP: # Duplicate:
+				stack.push_back(stack[-1])
+			POP: # Pop:
+				stack.remove(stack.size() - 1)
+			STF: # Store flag:
+				set_flag(op.txt, op.key, stack[-1])
+			
+			# Stack arithmetic and logic:
+			NEG: # Negate:
+				stack.push_back(-stack.pop_back())
+			ADD: # Add:
+				stack.push_back(stack.pop_back() + stack.pop_back())
+			SUB: # Subtract:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(left - right)
+			MUL: # Multiply:
+				stack.push_back(stack.pop_back() * stack.pop_back())
+			CEQ: # Compare equals:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left == right))
+			CNE: # Compare not equals:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left != right))
+			CGT: # Compare greater than:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left > right))
+			CGE: # Compare greater equals:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left >= right))
+			CLT: # Compare less than:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left < right))
+			CLE: # Compare less equals:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left <= right))
+			NOT: # Not:
+				stack.push_back(int(stack.pop_back() == 0))
+			AND: # And:
+				stack.push_back(int(stack.pop_back() != 0 and stack.pop_back() != 0))
+			LOR: # Logical or:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left != 0 or right != 0))
+			
+			# Dialog operations:
 			DGS: # Dialog show:
 				Global.events.emit_signal("dialog_show_dialog_request")
 			DGH: # Dialog hide:
@@ -261,13 +302,17 @@ class NSThread extends Object:
 				Global.events.emit_signal(
 						"dialog_display_options_request", PoolStringArray(machine.option_texts)
 				)
+			
+			# Actor operations:
 			LAK: # Load actor key:
 				machine.actor_key = op.txt
 			AFD: # Actor face direction:
 				var actor: Actor = _get_scripted_actor(machine.actor_key)
 				
 				if actor:
-					actor.smooth_pivot.pivot_to(deg2rad(float(machine.x)))
+					actor.smooth_pivot.pivot_to(deg2rad(float(stack.pop_back())))
+				else:
+					stack.remove(stack.size() - 1)
 			APF: # Actor path find:
 				var actor: Actor = _get_scripted_actor(machine.actor_key)
 				
@@ -291,9 +336,11 @@ class NSThread extends Object:
 				Global.events.emit_signal("player_freeze_request")
 			PLT: # Player thaw:
 				Global.events.emit_signal("player_thaw_request")
+			
+			# External operations:
 			QTT: # Quit to title:
 				state = State.STOPPED
-				Global.change_scene("title")
+				Global.change_scene("menu")
 			PSE: # Pause:
 				Global.tree.paused = true
 			UNP: # Unpause:
@@ -345,44 +392,60 @@ class NSThread extends Object:
 
 
 enum {
+	# Section 0 - Control flow:
 	HLT = 0x00, # Halt.
 	CLP = 0x01, # Call program.
 	RUN = 0x02, # Run.
 	SLP = 0x03, # Sleep.
 	JMP = 0x04, # Jump.
-	BEQ = 0x05, # Branch equals.
-	BNE = 0x06, # Branch not equals.
-	BGT = 0x07, # Branch greater than.
-	BGE = 0x08, # Branch greater equals.
+	BNZ = 0x05, # Branch not zero.
 	
-	LXC = 0x10, # Load X constant.
-	LXF = 0x11, # Load X flag.
-	STX = 0x12, # Store X.
-	LYC = 0x13, # Load Y constant.
-	LYF = 0x14, # Load Y flag.
-	STY = 0x15, # Store Y.
+	# Section 1 - Stack operations:
+	PHC = 0x10, # Push constant.
+	PHF = 0x11, # Push flag.
+	DUP = 0x12, # Duplicate.
+	POP = 0x13, # Pop.
+	STF = 0x14, # Store flag.
 	
-	DGS = 0x20, # Dialog show.
-	DGH = 0x21, # Dialog hide.
-	DNC = 0x22, # Dialog name clear.
-	DND = 0x23, # Dialog name display.
-	DGM = 0x24, # Dialog message.
-	MNO = 0x25, # Menu option.
-	MNS = 0x26, # Menu show.
+	# Section 2 - Stack arithmetic and logic:
+	NEG = 0x20, # Negate.
+	ADD = 0x21, # Add.
+	SUB = 0x22, # Subtract.
+	MUL = 0x23, # Multiply.
+	CEQ = 0x24, # Compare equals.
+	CNE = 0x25, # Compare not equals.
+	CGT = 0x26, # Compare greater than.
+	CGE = 0x27, # Compare greater equals.
+	CLT = 0x28, # Compare less than.
+	CLE = 0x29, # Compare less equals.
+	NOT = 0x2a, # Not.
+	AND = 0x2b, # And.
+	LOR = 0x2c, # Logical or.
 	
-	LAK = 0x30, # Load actor key.
-	AFD = 0x31, # Actor face direction.
-	APF = 0x32, # Actor path find.
-	APR = 0x33, # Actor path run.
-	APA = 0x34, # Actor path await.
-	PLF = 0x35, # Player freeze.
-	PLT = 0x36, # Player thaw.
+	# Section 3 - Dialog operations:
+	DGS = 0x30, # Dialog show.
+	DGH = 0x31, # Dialog hide.
+	DNC = 0x32, # Dialog name clear.
+	DND = 0x33, # Dialog name display.
+	DGM = 0x34, # Dialog message.
+	MNO = 0x35, # Menu option.
+	MNS = 0x36, # Menu show.
 	
-	QTT = 0x40, # Quit to title.
-	PSE = 0x41, # Pause.
-	UNP = 0x42, # Unpause.
-	SAV = 0x43, # Save.
-	CKP = 0x44, # Checkpoint.
+	# Section 4 - Actor operations:
+	LAK = 0x40, # Load actor key.
+	AFD = 0x41, # Actor face direction.
+	APF = 0x42, # Actor path find.
+	APR = 0x43, # Actor path run.
+	APA = 0x44, # Actor path await.
+	PLF = 0x45, # Player freeze.
+	PLT = 0x46, # Player thaw.
+	
+	# Section 5 - External operations:
+	QTT = 0x50, # Quit to title.
+	PSE = 0x51, # Pause.
+	UNP = 0x52, # Unpause.
+	SAV = 0x53, # Save.
+	CKP = 0x54, # Checkpoint.
 }
 
 enum {
@@ -398,7 +461,7 @@ enum {
 }
 
 const THREAD_LIMIT: int = 16
-const RUN_STEP_LIMIT: int = 16
+const RUN_STEP_LIMIT: int = 32
 const EMPTY_BYTECODE: PoolByteArray = PoolByteArray([
 	0x00, # Not cacheable or pausable.
 	0x00, 0x00, # Main vector.
@@ -422,7 +485,6 @@ func _ready() -> void:
 	Global.events.safe_connect("nightscript_stop_programs_request", self, "stop_programs")
 	Global.events.safe_connect("nightscript_cache_program_request", self, "cache_program")
 	Global.events.safe_connect("nightscript_flush_cache_request", self, "flush_cache")
-	Global.events.safe_connect("nightscript_call_program_request", self, "_call_program")
 	
 	var error: int = Global.lang.connect("locale_changed", self, "_on_lang_locale_changed")
 	
@@ -435,12 +497,18 @@ func _ready() -> void:
 
 # Virtual _physics process. Runs on every physics frame. Steps the NightScript
 # component:
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	for i in range(_threads.size() - 1, -1, -1):
 		var thread: NSThread = _threads[i]
 		
 		if thread.machine.is_pausable and Global.tree.paused:
 			continue
+		
+		if thread.state == NSThread.State.SLEEPING:
+			thread.sleep_timer -= delta
+			
+			if thread.sleep_timer <= 0.0:
+				thread.state = NSThread.State.RUNNING
 		
 		var steps: int = RUN_STEP_LIMIT
 		
@@ -449,6 +517,9 @@ func _physics_process(_delta: float) -> void:
 			steps -= 1
 		
 		if thread.state == NSThread.State.STOPPED:
+			if thread.is_connected("call_program_request", self, "_call_program"):
+				thread.disconnect("call_program_request", self, "_call_program")
+			
 			thread.destruct()
 			thread.free()
 			_threads.remove(i)
@@ -466,7 +537,6 @@ func _exit_tree() -> void:
 	if Global.lang.is_connected("locale_changed", self, "_on_lang_locale_changed"):
 		Global.lang.disconnect("locale_changed", self, "_on_lang_locale_changed")
 	
-	Global.events.safe_disconnect("nightscript_call_program_request", self, "_call_program")
 	Global.events.safe_disconnect("nightscript_flush_cache_request", self, "flush_cache")
 	Global.events.safe_disconnect("nightscript_cache_program_request", self, "cache_program")
 	Global.events.safe_disconnect("nightscript_stop_programs_request", self, "stop_programs")
@@ -480,7 +550,12 @@ func run_program(program_key: String) -> void:
 		return
 	
 	var thread: NSThread = NSThread.new()
-	_call_program(thread, program_key)
+	var error: int = thread.connect("call_program_request", self, "_call_program", [thread])
+	
+	if error and thread.is_connected("call_program_request", self, "_call_program"):
+		thread.disconnect("call_program_request", self, "_call_program")
+	
+	_call_program(program_key, thread)
 	var steps: int = RUN_STEP_LIMIT
 	
 	while thread.state == NSThread.State.RUNNING and steps:
@@ -488,6 +563,9 @@ func run_program(program_key: String) -> void:
 		steps -= 1
 	
 	if thread.state == NSThread.State.STOPPED:
+		if thread.is_connected("call_program_request", self, "_call_program"):
+			thread.disconnect("call_program_request", self, "_call_program")
+		
 		thread.destruct()
 		thread.free()
 		Global.events.emit_signal("nightscript_thread_finished")
@@ -501,6 +579,9 @@ func stop_programs() -> void:
 	set_physics_process(false)
 	
 	for thread in _threads:
+		if thread.is_connected("call_program_request", self, "_call_program"):
+			thread.disconnect("call_program_request", self, "_call_program")
+		
 		thread.destruct()
 		thread.free()
 	
@@ -529,12 +610,12 @@ func _get_bytecode(program_key: String):
 		return _program_cache[program_key]
 	
 	var file: File = File.new()
-	var path: String = "res://%s.%s.nsc" % [Global.lang.locale, program_key]
+	var path: String = "res://%s.%s.nsc" % [Global.lang.get_locale(), program_key]
 	
 	# DEBUG:BEGIN
 	if OS.is_debug_build():
 		path = "res://assets/data/nightscript/%s/%s.ns" % [
-			Global.lang.locale, program_key.replace(".", "/")
+			Global.lang.get_locale(), program_key.replace(".", "/")
 		]
 	# DEBUG:END
 	
@@ -583,7 +664,7 @@ func _get_bytecode(program_key: String):
 
 
 # Calls a NightScript program on top of an existing NightScript thread:
-func _call_program(thread: NSThread, program_key: String) -> void:
+func _call_program(program_key: String, thread: NSThread) -> void:
 	var bytecode: PoolByteArray = _get_bytecode(program_key)
 	
 	if(

@@ -8,4 +8,7 @@ __meta__ = {
 "_gizmo_extents_": 16.0
 }
 
-[node name="Tween" type="Tween" parent="."]
+[node name="TweenTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="TweenTimer" to="." method="_on_tween_timer_timeout"]

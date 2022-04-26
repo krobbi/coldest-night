@@ -1,0 +1,47 @@
+# NightScript Version 2
+# Devlog
+# Devlog for Coldest Night.
+
+meta is_cacheable = false
+meta is_pausable = false
+
+<!
+"The following devlog may be long and rambly,{p=0.25} Are you sure you want to read it?"
+
+&{
+	| "Yes" {}
+	| "No" {
+		!>
+		exit
+	}
+}
+
+"???":
+"Hello.{p=0.5} I'm a mysterious silhouette.{p=0.5} Welcome to my poorly drawn seascape background."
+"But also,{p=0.25} to my devlog-"
+"-and by extension,{p=0.25} [color=#ff980e]Coldest Night[/color]!"
+"After one and a half years of on-and-off development,{p=0.25} hopefully there would be more to it."
+"To be honest,{p=0.25} I'm not all that happy with it."
+"Game development is pretty hard and time consuming."
+"Up until now,{p=0.25} this game has been called a 'Prototype' on itch.io."
+"Today,{p=0.25} this changes."
+"It will be 'On hold'."
+"Yes,{p=0.25} basically I'm here to say that this project is probably doomed."
+"Maybe some ideas will come of this,{p=0.25} maybe something will be released eventually."
+"Don't count on it."
+"This has been a valuable experience for teaching me how to make games."
+"But more importantly,{p=0.25} how not to make games."
+"Like this wonderful dialog system.{p=0.5} It's so effective for writing with minimal boilerplate!"
+"It compiles down to its own special bytecode,{p=0.25} and runs through an interpreter!"
+"It's not all that important.{p=0.5} I could have used something simpler and more extensible."
+"I could have focused on gameplay,{p=0.25} and kept myself motivated."
+"Despite being unhappy with this project,{p=0.25} I'm still proud of it."
+"It might be the longest-term, biggest piece of{p=1.0} code I've ever written."
+"But I'm not thinking practically about it."
+"I hope you still enjoy what little there is."
+"Other than that,{p=0.25} this version just bumps the version of Godot Engine being used."
+"The builds themselves should be formatted a little better."
+"There is one major feature,{p=0.25} several color grading options in the accessibility settings."
+"That's all for now.{p=0.5} I hope to see you again soon,{p=0.25} but there's no guarantee."
+"Goodbye,{p=0.25} and thanks for playing!"
+!>

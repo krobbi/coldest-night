@@ -113,17 +113,22 @@ var _data: Dictionary = {
 	"controls.pause_mapping": "key.%d" % KEY_ESCAPE,
 	"controls.toggle_fullscreen_mapping": "key.%d" % KEY_F11,
 	"accessibility.legible_font": false,
+	"accessibility.reduced_motion": false,
+	"accessibility.tooltips": true,
 	"accessibility.never_game_over": false,
 	"accessibility.radar_scale": 1.0,
 	"accessibility.radar_opacity": 50.0,
+	"accessibility.pause_opacity": 80.0,
+	"accessibility.color_grading": "none",
+	"audio.mute": false,
 	"audio.master_volume": 100.0,
 	"audio.music_volume": 100.0,
 	"audio.sfx_volume": 100.0,
 	"display.fullscreen": false,
 	"display.vsync": true,
 	"display.pixel_snap": false,
-	"display.scale_mode": "aspect",
 	"display.window_scale": 0,
+	"display.scale_mode": "aspect",
 	"display.display_barks": true,
 	"language.locale": "auto",
 	"advanced.show_advanced": false,
@@ -206,7 +211,8 @@ func get_string(config_key: String, default: String = "") -> String:
 
 # Connects a configuration value to a receiver method:
 func connect_value(
-		config_key: String, target: Object, method: String, cast_type: int = 0, binds: Array = []
+		config_key: String, target: Object, method: String,
+		cast_type: int = TYPE_NIL, binds: Array = []
 ) -> void:
 	if not _data.has(config_key) or not is_instance_valid(target) or not target.has_method(method):
 		return

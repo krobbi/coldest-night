@@ -1,0 +1,61 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scenes/devlog/devlog.gd" type="Script" id=1]
+[ext_resource path="res://utils/nightscript/nightscript.tscn" type="PackedScene" id=2]
+[ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/images/scenes/devlog/background.png" type="Texture" id=4]
+[ext_resource path="res://assets/images/scenes/devlog/silhouette.png" type="Texture" id=5]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform float speed = 0.2f;
+uniform float magnitude = 0.02f;
+uniform float wobble = 3.0f;
+
+void fragment(){
+	COLOR = texture(TEXTURE, UV + vec2(sin(TIME * speed + UV.y * wobble) * magnitude, 0.0));
+}
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/speed = 0.2
+shader_param/magnitude = 0.02
+shader_param/wobble = 3.0
+
+[node name="Devlog" type="Control"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="NightScript" parent="." instance=ExtResource( 2 )]
+
+[node name="BackgroundRect" type="TextureRect" parent="."]
+material = SubResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 4 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="SilhouetteRect" type="TextureRect" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 32.0
+margin_top = -254.0
+margin_right = 187.0
+margin_bottom = 24.0
+texture = ExtResource( 5 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="PlainDialog" parent="." instance=ExtResource( 3 )]

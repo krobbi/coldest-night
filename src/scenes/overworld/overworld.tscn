@@ -50,12 +50,3 @@ _camera_path = NodePath("../../LevelCamera")
 [node name="PauseMenu" parent="HUD" instance=ExtResource( 7 )]
 
 [node name="GameOverMenu" parent="HUD" instance=ExtResource( 9 )]
-
-[connection signal="camera_follow_request" from="LevelHost" to="LevelCamera" method="follow_anchor"]
-[connection signal="camera_limit_request" from="LevelHost" to="LevelCamera" method="set_limits"]
-[connection signal="camera_unfollow_request" from="LevelHost" to="LevelCamera" method="unfollow_anchor"]
-[connection signal="radar_camera_follow_request" from="LevelHost" to="HUD/Radar" method="camera_follow_anchor"]
-[connection signal="radar_camera_unfollow_request" from="LevelHost" to="HUD/Radar" method="camera_unfollow_anchor"]
-[connection signal="radar_clear_request" from="LevelHost" to="HUD/Radar" method="clear"]
-[connection signal="radar_refresh_entities_request" from="LevelHost" to="HUD/Radar" method="refresh_entities"]
-[connection signal="radar_render_node_request" from="LevelHost" to="HUD/Radar" method="render_node"]

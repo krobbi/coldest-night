@@ -10,11 +10,9 @@ signal faded_out
 
 enum State {FADED_IN, FADED_OUT, FADING_IN, FADING_OUT}
 
-const COLOR_FADE_IN: Color = Color("#00ad1818")
-
 var _state: int = State.FADED_IN
 
-onready var _tween: Tween = $Tween
+onready var _animation_player: AnimationPlayer = $AnimationPlayer
 
 # Virtual _ready method. Runs when the fade transition finishes entering the
 # scene tree. Connects the fade transition to the event bus:
@@ -42,10 +40,8 @@ func fade_in() -> void:
 			yield(self, "faded_out")
 	
 	_state = State.FADING_IN
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(self, "modulate", modulate, COLOR_FADE_IN, 0.2, Tween.TRANS_SINE)
-	_tween.start() # warning-ignore: RETURN_VALUE_DISCARDED
-	yield(_tween, "tween_all_completed")
+	_animation_player.play("fade_in")
+	yield(_animation_player, "animation_finished")
 	hide()
 	_state = State.FADED_IN
 	emit_signal("faded_in")
@@ -64,10 +60,8 @@ func fade_out() -> void:
 	
 	_state = State.FADING_OUT
 	show()
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	_tween.interpolate_property(self, "modulate", modulate, Color.white, 0.2, Tween.TRANS_SINE)
-	_tween.start() # warning-ignore: RETURN_VALUE_DISCARDED
-	yield(_tween, "tween_all_completed")
+	_animation_player.play("fade_out")
+	yield(_animation_player, "animation_finished")
 	_state = State.FADED_OUT
 	emit_signal("faded_out")
 

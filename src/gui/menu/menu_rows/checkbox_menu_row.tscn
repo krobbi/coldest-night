@@ -5,14 +5,14 @@
 
 [node name="CheckboxMenuRow" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
-_focus_path = NodePath("Content/CheckButton")
+focus_node_path = NodePath("Content/CheckButton")
 
 [node name="CheckButton" type="CheckButton" parent="Content" index="0"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 496, 32 )
+rect_min_size = Vector2( 480, 32 )
 mouse_filter = 1
-text = "Setting"
+text = "Checkbox"
 flat = true
 clip_text = true
 __meta__ = {

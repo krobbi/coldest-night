@@ -33,8 +33,7 @@ gui_disable_input = true
 [node name="Background" type="CanvasLayer" parent="Viewport"]
 
 [node name="ColorPolygon" type="Polygon2D" parent="Viewport/Background"]
-modulate = Color( 1, 1, 1, 0.5 )
-color = Color( 0.239216, 0.0196078, 0.0941176, 1 )
+color = Color( 0.239216, 0.0196078, 0.0941176, 0.501961 )
 polygon = PoolVector2Array( 0, 0, 384, 0, 384, 288, 0, 288 )
 
 [node name="Foreground" type="CanvasLayer" parent="Viewport"]

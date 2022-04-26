@@ -1,91 +1,85 @@
+# NightScript Version 2
 # Cynthia Introduction
 # Dialog shown at end of demo.
 
-define pester_count test:pester_count
+define pester_count test.pester_count
 
-player freeze
-dialog show
+<*<!
+"Cynthia":
+"Hey guys!{p=0.5} What's up?"
 
-name "Cynthia"
-say "Hey guys!{p=0.5} What's going on here?"
+"Ryan":
+"Cynthia,{p=0.25} is that you?{p=0.5} I thought I said I was leaving this mission to Koby."
+"We need to keep this channel quiet."
 
-name "Ryan"
-say "Cynthia,{p=0.25} is that you?!{p=0.5} I thought I said I was leaving this mission to Koby."
-say "We need to keep this channel quiet."
+"Cynthia":
+"I thought you were done by now!{p=0.5} Surely I can chat with Kobes?"
 
-name "Cynthia"
-say "Yeah,{p=0.25} yeah.{p=0.5} You've got all the MacGuffins and you're getting out,{p=0.25} right?"
-say "Why can't I chat with Kobes?"
+"Koby":
+"Hi Cindy!"
 
-name "Koby"
-say "Hi Cynthy!"
+"Ryan":
+"We're busy here!"
+"He's on support,{p=0.25} and he knows his way around the radar system better than any of us."
 
-name "Ryan"
-say "Because we're busy here!{p=0.5}"
-say "He's on support,{p=0.25} and he knows his way around the radar system better than any of us."
+"Cynthia":
+"Oh come on,{p=0.25} I made that thing too!"
 
-name "Cynthia"
-say "Oh come on,{p=0.25} I made that thing too!"
+"Koby":
+"But-"
 
-name "Koby"
-say "But-"
+"Cynthia":
+"OK,{p=0.25} I didn't make the whole thing exactly,{p=0.25} but I helped,{p=0.25} right?"
 
-name "Cynthia"
-say "OK,{p=0.25} OK,{p=0.25} half of it."
+"Koby":
+"Yeah,{p=0.25} it was really nice of you."
 
-name "Koby"
-say "But I've been-"
+"Cynthia":
+"Aw shush!"
 
-name "Cynthia"
-say "Maybe not half,{p=0.25} but I helped,{p=0.25} right Kobes?"
+"Ryan":
+"Excuse me."
 
-name "Koby"
-say "Yeah,{p=0.25} that was really nice of you."
-
-name "Cynthia"
-say "Aw shush you big dork!"
-say "Who's a big dorky boy?"
-
-name "Ryan"
-say "Excuse me."
+if pester_count >= 2 {
+	"Cynthia":
+	"What,{p=0.25} you jealous or something?"
 	
-if pester_count >= 2
-	name "Cynthia"
-	say "What,{p=0.25} are you jealous?"
+	"Ryan":
+	"{s=0.1}..."
+	
+	"Koby":
+	"{s=0.1}..."
+	
+	"Cynthia":
+	"Don't worry Ry-bread,{p=0.25} I don't like him like that."
+	
+	"Ryan":
+	"{s=0.1}..."
+	"I swear I'm going to cut this call."
+	
+	"Cynthia":
+	"No need,{p=0.25} I'm kinda busy right now."
+	
+	"Ryan":
+	"You can't be serious{s=0.1}..."
+	
+	"Cynthia":
+	"I am!{p=0.5} I was gonna get coffee!"
+} else {
+	"Cynthia":
+	"OK,{p=0.25} fine.{p=0.5} I can wait."
+	"I was going to get a coffee anyway.{p=0.5} Honestly seems more interesting than this."
+}
 
-	name "Ryan"
-	say "{s=0.1}..."
+"Ryan":
+"Well,{p=0.25} I just wanted to say-"
 
-	name "Koby"
-	say "{s=0.1}..."
+"Cynthia":
+"Getting coffee,{p=0.25} can't hear you!"
 
-	name "Cynthia"
-	say "Don't worry Ry-bread,{p=0.25} I don't like him like that."
+"Ryan":
+"{s=0.1}..."
+"Let's just get going already."
+!>*>
 
-	name "Ryan"
-	say "Please don't call me that."
-end
-
-name "Cynthia"
-say "Sorry mister serious."
-
-name "Ryan"
-say "We can chat later,{p=0.25} OK?"
-
-name "Cynthia"
-say "Bye,{p=0.25} dorkaholics!"
-
-name "Koby"
-say "{s=0.1}..."
-say "I know she seems intense,{p=0.25} but she's nice really."
-
-name "Cynthia"
-say "I can still hear you!"
-
-name "Ryan"
-say "Let's just get going already!{p=0.5} We don't have all day!"
-
-dialog hide
-player unfreeze
-
-label repeat
+repeat:

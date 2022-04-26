@@ -186,6 +186,11 @@ func err_font_not_found(font_key: String) -> void:
 	err(tr("ERR.MESSAGE.FONT_NOT_FOUND").format({"font_key": font_key}))
 
 
+# Logs an icon not found error message:
+func err_icon_not_found(icon_key: String) -> void:
+	err(tr("ERR.MESSAGE.ICON_NOT_FOND").format({"icon_key": icon_key}))
+
+
 # Logs a level not found error message:
 func err_level_not_found(level_key: String) -> void:
 	err(tr("ERR.MESSAGE.LEVEL_NOT_FOUND").format({"level_key": level_key}))

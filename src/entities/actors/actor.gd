@@ -18,6 +18,7 @@ var facing: int = Facing.DOWN
 var velocity: Vector2 = Vector2.ZERO
 var nav_path: PoolVector2Array = PoolVector2Array()
 
+var _nav_map: RID = Global.tree.root.world_2d.navigation_map
 var _is_pathing: bool = false
 
 onready var state_machine: StateMachine = $StateMachine
@@ -90,12 +91,7 @@ func is_pathing() -> bool:
 
 # Finds a navigation path to a world position:
 func find_nav_path(world_pos: Vector2) -> void:
-	var level_host = find_parent("LevelHost")
-	
-	if not level_host or not level_host.current_level:
-		return
-	
-	nav_path = level_host.current_level.navigation.get_simple_path(position, world_pos)
+	nav_path = Navigation2DServer.map_get_path(_nav_map, position, world_pos, true)
 
 
 # Finds a navigation path to a point:

@@ -5,7 +5,7 @@ extends Label
 # A subtitle display is a GUI element that displays a subtitle.
 
 onready var _wait_timer: Timer = $WaitTimer
-onready var _hide_timer: Timer = $HideTimer
+onready var _animation_player: AnimationPlayer = $AnimationPlayer
 
 var _next_message: String = ""
 
@@ -23,21 +23,15 @@ func _exit_tree() -> void:
 
 # Displays a subtitle to the subtitle display:
 func display_subtitle(message: String) -> void:
-	if _hide_timer.is_stopped() and Global.config.get_bool("display.display_barks"):
+	if Global.config.get_bool("display.display_barks"):
 		_next_message = message
-		_wait_timer.start()
+		
+		if _wait_timer.is_stopped():
+			_wait_timer.start()
 
 
-# Signal callback for timeout on the wait timer. Runs when the wait timer
-# finishes. Displays the next message:
+# Signal callback for timeout on the wait timer. Runs when the wait timer times
+# out. Displays the next message:
 func _on_wait_timer_timeout() -> void:
 	text = _next_message
-	show()
-	_hide_timer.start()
-
-
-# Signal callback for timeout on the hide timer. Runs when the hide timer
-# finishes. Hides the subtitle:
-func _on_hide_timer_timeout() -> void:
-	hide()
-	text = ""
+	_animation_player.play("display")

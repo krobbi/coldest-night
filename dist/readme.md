@@ -1,7 +1,7 @@
 # Coldest Night
-_Space is lonely_  
+_Space is lonely._  
 __A stealth-focused RPG in Godot Engine.__  
-__Version 0.6.0__  
+__Version 0.7.0__  
 __Krobbizoid Proprietary-Open Game Development License__ -
 https://krobbi.github.io/license/2021/2022/kpogdl.txt  
 __Copyright &copy; 2021-2022 Chris Roberts__ (Krobbizoid).  

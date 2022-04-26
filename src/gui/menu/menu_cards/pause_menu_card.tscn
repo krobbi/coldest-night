@@ -1,62 +1,90 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://gui/menu/menu_card.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=2]
+[ext_resource path="res://gui/menu/menu_cards/fixed_menu_card.tscn" type="PackedScene" id=1]
+[ext_resource path="res://gui/menu/menu_cards/pause_menu_card.gd" type="Script" id=2]
+[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=3]
 
 [node name="PauseMenuCard" instance=ExtResource( 1 )]
-_heading_key = "pause"
+script = ExtResource( 2 )
 
-[node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 212.0
+[node name="VBoxContainer" parent="CenterContainer" index="0"]
+margin_top = 55.0
+margin_bottom = 305.0
 
-[node name="ResumeGameButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
+[node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
+text = "HEADING.PAUSED"
+
+[node name="MenuList" parent="CenterContainer/VBoxContainer" index="2"]
+margin_bottom = 242.0
+
+[node name="ResumeGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="0" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_right = 512.0
-_button_key = "resume_game"
-_text = "BUTTON.RESUME_GAME"
-_sound_type = 0
+tooltip = "TOOLTIP.BUTTON.RESUME_GAME"
+text = "BUTTON.RESUME_GAME"
+icon = "next"
+press_sound = 2
 
-[node name="QuickSaveButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
+[node name="QuickSaveButton" parent="CenterContainer/VBoxContainer/MenuList" index="1" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
 margin_bottom = 68.0
 appearance_condition = 2
-_button_key = "quick_save"
-_text = "BUTTON.DEBUG.QUICK_SAVE"
+tooltip = "TOOLTIP.BUTTON.DEBUG.QUICK_SAVE"
+text = "BUTTON.DEBUG.QUICK_SAVE"
+icon = "save"
+press_sound = 1
 
-[node name="QuickLoadButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
+[node name="QuickLoadButton" parent="CenterContainer/VBoxContainer/MenuList" index="2" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 72.0
 margin_right = 512.0
 margin_bottom = 104.0
 appearance_condition = 2
-_button_key = "quick_load"
-_text = "BUTTON.DEBUG.QUICK_LOAD"
+tooltip = "TOOLTIP.BUTTON.DEBUG.QUICK_LOAD"
+text = "BUTTON.DEBUG.QUICK_LOAD"
+icon = "load"
+press_sound = 1
 
-[node name="LoadCheckpointButtonMenuRow" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]
+[node name="LoadCheckpointButton" parent="CenterContainer/VBoxContainer/MenuList" index="3" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 108.0
 margin_right = 512.0
 margin_bottom = 140.0
 appearance_condition = 2
-_button_key = "load_checkpoint"
-_text = "BUTTON.DEBUG.LOAD_CHECKPOINT"
+tooltip = "TOOLTIP.BUTTON.DEBUG.LOAD_CHECKPOINT"
+text = "BUTTON.DEBUG.LOAD_CHECKPOINT"
+icon = "load"
+press_sound = 1
 
-[node name="SettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 2 )]
+[node name="SettingsButton" parent="CenterContainer/VBoxContainer/MenuList" index="4" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 144.0
 margin_right = 512.0
 margin_bottom = 176.0
-_text = "BUTTON.SETTINGS"
+tooltip = "TOOLTIP.BUTTON.SETTINGS"
+text = "BUTTON.SETTINGS"
+icon = "settings"
+press_sound = 1
 
-[node name="QuitToTitleButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 2 )]
+[node name="QuitToMainMenuButton" parent="CenterContainer/VBoxContainer/MenuList" index="5" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 180.0
 margin_right = 512.0
 margin_bottom = 212.0
-_button_key = "quit_to_title"
-_text = "BUTTON.QUIT_TO_TITLE"
-_sound_type = 2
+tooltip = "TOOLTIP.BUTTON.QUIT_TO_MAIN_MENU"
+text = "BUTTON.QUIT_TO_MAIN_MENU"
+icon = "quit"
+press_sound = 2
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/SettingsButton" to="." method="request_push" binds= [ "settings" ]]
+[node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]
+margin_top = 246.0
+margin_bottom = 250.0
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/ResumeGameButton" to="." method="request_pop"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/QuickSaveButton" to="." method="_on_quick_save_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/QuickLoadButton" to="." method="_on_quick_load_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/LoadCheckpointButton" to="." method="_on_load_checkpoint_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/SettingsButton" to="." method="request_push" binds= [ "settings" ]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/QuitToMainMenuButton" to="." method="request_push" binds= [ "pause_quit" ]]

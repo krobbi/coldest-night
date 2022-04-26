@@ -9,6 +9,11 @@ extends Control
 func display_text(text: String) -> void:
 	$Label.text = text
 	var animation_player: AnimationPlayer = $AnimationPlayer
-	animation_player.play("display")
+	
+	if Global.config.get_bool("accessibility.reduced_motion"):
+		animation_player.play("display_reduced_motion")
+	else:
+		animation_player.play("display")
+	
 	yield(animation_player, "animation_finished")
 	queue_free()

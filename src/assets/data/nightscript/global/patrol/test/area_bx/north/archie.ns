@@ -1,36 +1,37 @@
+# NightScript Version 2
 # Patrol Route
 # Patrol route for 'archie' in test.area_bx.north
 
-while true
-	sleep 6
-	path do archie PArB
-	look archie right
-	sleep 2
-	path do archie PArC
-	look archie right
-	sleep 2
-	path do archie PArD
-	look archie right
-	sleep 2
-	path do archie PArE
-	look archie right
-	sleep 2
-	path do archie PArF
-	path do archie PArG
-	look archie left
-	sleep 1
-	path do archie PArH
-	look archie left
-	sleep 2
-	path do archie PArI
-	look archie left
-	sleep 2
-	path do archie PArJ
-	look archie left
-	sleep 2
-	path do archie PArK
-	look archie left
-	sleep 2
-	path do archie PArA
-	look archie up
-end
+while true {
+	:6
+	"archie" -> "PArB"
+	"archie" > right
+	:2
+	"archie" -> "PArC"
+	"archie" > right
+	:2
+	"archie" -> "PArD"
+	"archie" > right
+	:2
+	"archie" -> "PArE"
+	"archie" > right
+	:2
+	"archie" -> "PArF"
+	"archie" -> "PArG"
+	"archie" > left
+	:1
+	"archie" -> "PArH"
+	"archie" > left
+	:2
+	"archie" -> "PArI"
+	"archie" > left
+	:2
+	"archie" -> "PArJ"
+	"archie" > left
+	:2
+	"archie" -> "PArK"
+	"archie" > left
+	:2
+	"archie" -> "PArA"
+	"archie" > up
+}

@@ -2,43 +2,70 @@ class_name ButtonMenuRow
 extends MenuRow
 
 # Button Menu Row
-# A button menu row is a menu row that contains an action button.
+# A button menu row is a menu row that contains a button.
 
 signal pressed
-signal key_pressed(button_key)
 
-enum ActionType {CUSTOM, SAVE_SETTINGS, RESET_CONTROLS, FLUSH_NIGHTSCRIPT_CACHE}
-enum SoundType {NONE, OK, CANCEL}
+enum PressSound {NONE, OK, CANCEL}
 
-export(String) var _button_key: String
-export(String) var _text: String
-export(ActionType) var _action_type: int = ActionType.CUSTOM
-export(SoundType) var _sound_type: int = SoundType.OK
+export(String) var text: String setget set_text
+export(
+		String, "", "accessibility", "advanced", "audio", "back", "clear", "controls", "credits",
+		"display", "language", "load", "next", "quit", "save", "settings"
+) var icon: String = "" setget set_icon
+export(PressSound) var press_sound: int = PressSound.OK
 
-# Virtual _ready method. Runs when the button menu row enters the scene tree.
-# Sets the button's text:
+onready var _button: Button = $Content/Button
+
+# Virtual _ready method. Runs when the button menu row finishes entering the
+# scene tree. Sets the button's text and icon:
 func _ready() -> void:
-	$Content/Button.text = _text
+	set_text(text)
+	set_icon(icon)
+
+
+# Abstract _press method. Runs when the button is pressed:
+func _press() -> void:
+	pass
+
+
+# Sets the button's text:
+func set_text(value: String) -> void:
+	text = value
+	
+	if _button:
+		_button.text = text
+
+
+# Sets the button's icon:
+func set_icon(value: String) -> void:
+	icon = value
+	
+	if not _button:
+		return
+	elif icon.empty():
+		_button.icon = null
+		return
+	
+	var path: String = "res://assets/images/gui/icons/%s.png" % icon
+	
+	if ResourceLoader.exists(path, "Texture"):
+		_button.icon = load(path)
+	else:
+		_button.icon = null
+		Global.logger.err_icon_not_found(icon)
+		icon = ""
 
 
 # Signal callback for pressed on the button. Runs when the button is pressed.
 # Emits the pressed signal:
 func _on_button_pressed() -> void:
-	match _action_type:
-		ActionType.SAVE_SETTINGS:
-			Global.config.save_file()
-		ActionType.RESET_CONTROLS:
-			Global.controls.reset_mappings()
-		ActionType.FLUSH_NIGHTSCRIPT_CACHE:
-			Global.events.emit_signal("nightscript_flush_cache_request")
+	_press()
 	
-	match _sound_type:
-		SoundType.OK:
+	match press_sound:
+		PressSound.OK:
 			Global.audio.play_clip("sfx.menu_ok")
-		SoundType.CANCEL:
+		PressSound.CANCEL:
 			Global.audio.play_clip("sfx.menu_cancel")
 	
 	emit_signal("pressed")
-	
-	if not _button_key.empty():
-		emit_signal("key_pressed", _button_key)
