@@ -97,9 +97,9 @@ displays has not been tested.
 inputs has not been tested.
 
 ## Issues Affecting MacOS
-* There is no native icon for MacOS. The native icon from versions 0.3.0 and
-below has been removed due to being poorly formatted and potentially causing a
-crash when running the game.
+* The native MacOS icon from versions 0.3.0 and below is poorly formatted and
+may cause a crash when running the game.
+* There is no native MacOS icon between version 0.4.0 and 0.6.0.
 
 ## Issues Affecting Windows
 * Using an audio playback format with a sample rate other than 44100 Hz may

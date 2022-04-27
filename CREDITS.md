@@ -21,12 +21,12 @@ copyright holder(s):_
 __Copyright &copy; 2007-2022 Juan Linietsky, Ariel Manzur.__  
 __Copyright &copy; 2014-2022 Godot Engine contributors.__
 
-## Pixel Font Converter
-[Bitmap font to TTF converter](https://yal.cc/r/20/pixelfont).
+## Aseprite
+[Animated sprite editor & pixel art tool](https://www.aseprite.org).
 
-### Lead Developer
+### Publisher
 ```
-Vadim (YellowAfterlife)
+Igara Studio
 ```
 
 ## Krita
@@ -37,20 +37,28 @@ Vadim (YellowAfterlife)
 KDE
 ```
 
-## Aseprite
-[Animated sprite editor & pixel art tool](https://www.aseprite.org).
-
-### Publisher
-```
-Igara Studio
-```
-
 ## Faraway48
 [Color palette](https://lospec.com/palette-list/faraway48).
 
 ### Creator
 ```
 Igor Ferreira (Diemorth)
+```
+
+## Pixel Font Converter
+[Bitmap font to TTF converter](https://yal.cc/r/20/pixelfont).
+
+### Lead Developer
+```
+Vadim (YellowAfterlife)
+```
+
+## make-icns
+[PNG to ICNS converter](https://www.npmjs.com/package/make-icns).
+
+### Author
+```
+Vu Dang Khoa Chiem (Doudou8)
 ```
 
 ## Atkinson Hyperlegible Font
