@@ -529,12 +529,12 @@ func _get_bytecode(program_key: String):
 		return _program_cache[program_key]
 	
 	var file: File = File.new()
-	var path: String = "res://%s.%s.nsc" % [Global.lang.locale, program_key]
+	var path: String = "res://%s.%s.nsc" % [Global.lang.get_locale(), program_key]
 	
 	# DEBUG:BEGIN
 	if OS.is_debug_build():
 		path = "res://assets/data/nightscript/%s/%s.ns" % [
-			Global.lang.locale, program_key.replace(".", "/")
+			Global.lang.get_locale(), program_key.replace(".", "/")
 		]
 	# DEBUG:END
 	
