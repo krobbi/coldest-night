@@ -123,11 +123,12 @@ class NSThread extends Object:
 	
 	signal call_program_request(program_key)
 	
-	enum State {STOPPED, RUNNING, AWAITING}
+	enum State {STOPPED, RUNNING, AWAITING, SLEEPING}
 	
 	const MACHINE_STACK_LIMIT: int = 16
 	
 	var state: int = State.RUNNING
+	var sleep_timer: float = 0.0
 	var machine_stack: Array = []
 	var machine: NSMachine = null
 	
@@ -197,7 +198,8 @@ class NSThread extends Object:
 			RUN: # Run:
 				Global.events.emit_signal("nightscript_run_program_request", op.txt)
 			SLP: # Sleep:
-				await(Global.tree.create_timer(float(op.val) * 0.01), "timeout")
+				sleep_timer = float(op.val) * 0.01
+				state = State.SLEEPING
 			JMP: # Jump:
 				machine.pc = op.val
 			BEQ: # Branch equals:
@@ -436,12 +438,18 @@ func _ready() -> void:
 
 # Virtual _physics process. Runs on every physics frame. Steps the NightScript
 # component:
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	for i in range(_threads.size() - 1, -1, -1):
 		var thread: NSThread = _threads[i]
 		
 		if thread.machine.is_pausable and Global.tree.paused:
 			continue
+		
+		if thread.state == NSThread.State.SLEEPING:
+			thread.sleep_timer -= delta
+			
+			if thread.sleep_timer <= 0.0:
+				thread.state = NSThread.State.RUNNING
 		
 		var steps: int = RUN_STEP_LIMIT
 		
