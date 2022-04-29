@@ -34,7 +34,6 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):
 		if _has_message and _message_label.percent_visible >= 1.0:
 			_has_message = false
-			emit_signal("message_finished")
 			Global.events.emit_signal("dialog_message_finished")
 		else:
 			_pause_timer.stop()
@@ -188,9 +187,8 @@ func _on_pause_timer_timeout() -> void:
 
 
 # Signal callback for pressed on an option. Runs when an option is pressed.
-# Destructs the plain dialog display's options and emits the option pressed
-# signal:
+# Destructs the plain dialog display's options and emits the
+# dialog_option_pressed event:
 func _on_option_pressed(index: int) -> void:
 	_destruct_options()
-	emit_signal("option_pressed", index)
 	Global.events.emit_signal("dialog_option_pressed", index)

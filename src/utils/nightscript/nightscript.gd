@@ -121,6 +121,8 @@ class NSThread extends Object:
 	# that represents a thread of NightScript execution and contains a stack of
 	# NightScript machines.
 	
+	signal call_program_request(program_key)
+	
 	enum State {STOPPED, RUNNING, AWAITING}
 	
 	const MACHINE_STACK_LIMIT: int = 16
@@ -191,7 +193,7 @@ class NSThread extends Object:
 			HLT: # Halt:
 				pop_machine()
 			CLP: # Call program:
-				Global.events.emit_signal("nightscript_call_program_request", self, op.txt)
+				emit_signal("call_program_request", op.txt)
 			RUN: # Run:
 				Global.events.emit_signal("nightscript_run_program_request", op.txt)
 			SLP: # Sleep:
@@ -422,7 +424,6 @@ func _ready() -> void:
 	Global.events.safe_connect("nightscript_stop_programs_request", self, "stop_programs")
 	Global.events.safe_connect("nightscript_cache_program_request", self, "cache_program")
 	Global.events.safe_connect("nightscript_flush_cache_request", self, "flush_cache")
-	Global.events.safe_connect("nightscript_call_program_request", self, "_call_program")
 	
 	var error: int = Global.lang.connect("locale_changed", self, "_on_lang_locale_changed")
 	
@@ -449,6 +450,9 @@ func _physics_process(_delta: float) -> void:
 			steps -= 1
 		
 		if thread.state == NSThread.State.STOPPED:
+			if thread.is_connected("call_program_request", self, "_call_program"):
+				thread.disconnect("call_program_request", self, "_call_program")
+			
 			thread.destruct()
 			thread.free()
 			_threads.remove(i)
@@ -466,7 +470,6 @@ func _exit_tree() -> void:
 	if Global.lang.is_connected("locale_changed", self, "_on_lang_locale_changed"):
 		Global.lang.disconnect("locale_changed", self, "_on_lang_locale_changed")
 	
-	Global.events.safe_disconnect("nightscript_call_program_request", self, "_call_program")
 	Global.events.safe_disconnect("nightscript_flush_cache_request", self, "flush_cache")
 	Global.events.safe_disconnect("nightscript_cache_program_request", self, "cache_program")
 	Global.events.safe_disconnect("nightscript_stop_programs_request", self, "stop_programs")
@@ -480,7 +483,12 @@ func run_program(program_key: String) -> void:
 		return
 	
 	var thread: NSThread = NSThread.new()
-	_call_program(thread, program_key)
+	var error: int = thread.connect("call_program_request", self, "_call_program", [thread])
+	
+	if error and thread.is_connected("call_program_request", self, "_call_program"):
+		thread.disconnect("call_program_request", self, "_call_program")
+	
+	_call_program(program_key, thread)
 	var steps: int = RUN_STEP_LIMIT
 	
 	while thread.state == NSThread.State.RUNNING and steps:
@@ -488,6 +496,9 @@ func run_program(program_key: String) -> void:
 		steps -= 1
 	
 	if thread.state == NSThread.State.STOPPED:
+		if thread.is_connected("call_program_request", self, "_call_program"):
+			thread.disconnect("call_program_request", self, "_call_program")
+		
 		thread.destruct()
 		thread.free()
 		Global.events.emit_signal("nightscript_thread_finished")
@@ -501,6 +512,9 @@ func stop_programs() -> void:
 	set_physics_process(false)
 	
 	for thread in _threads:
+		if thread.is_connected("call_program_request", self, "_call_program"):
+			thread.disconnect("call_program_request", self, "_call_program")
+		
 		thread.destruct()
 		thread.free()
 	
@@ -583,7 +597,7 @@ func _get_bytecode(program_key: String):
 
 
 # Calls a NightScript program on top of an existing NightScript thread:
-func _call_program(thread: NSThread, program_key: String) -> void:
+func _call_program(program_key: String, thread: NSThread) -> void:
 	var bytecode: PoolByteArray = _get_bytecode(program_key)
 	
 	if(

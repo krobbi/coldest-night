@@ -4,9 +4,6 @@ extends Control
 # Dialog Display Base
 # A dialog display is a GUI element that handles displaying dialog messages.
 
-signal message_finished # warning-ignore: UNUSED_SIGNAL
-signal option_pressed(index) # warning-ignore: UNUSED_SIGNAL
-
 onready var tags: DialogTagParser = $DialogTagParser
 
 # Virtual _ready method. Runs when the dialog display finishes entering the
@@ -54,13 +51,15 @@ func _display_name(_speaker_name: String) -> void:
 
 
 # Abstract _display_message method. Runs when the dialog message is displayed to
-# the dialog display:
+# the dialog display. The dialog_message_finished event should be emitted when
+# the user continues from the dialog message:
 func _display_message(_message: String) -> void:
 	pass
 
 
 # Abstract _display_options method. Runs when options are displayed to the
-# dialog display:
+# dialog display. The dialog_option_pressed event should be emitted when the
+# user presses an option:
 func _display_options(_texts: PoolStringArray) -> void:
 	pass
 
