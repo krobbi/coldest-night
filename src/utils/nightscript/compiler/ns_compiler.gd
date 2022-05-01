@@ -436,19 +436,17 @@ func _scan_comparator(symbol: String) -> int:
 
 # Logs an error message:
 func _err(message: String) -> void:
-	# Open error block:
 	if _error_block.empty():
 		Global.logger.msg("NightScript compiler error log:")
-		_error_block.make_plf()
-		_error_block.make_pse()
-		_error_block.make_dgs()
 	
 	if _pos_line:
 		Global.logger.err("\t%d: %s" % [_pos_line, message])
-		_error_block.make_dgm("ERROR ON LINE %d:{p=0.5}\n%s" % [_pos_line, message])
+		_error_block.make_dnd("Error on Line %d" % _pos_line)
 	else:
 		Global.logger.err("\t%s" % message)
-		_error_block.make_dgm("ERROR:{p=0.5}\n%s" % message)
+		_error_block.make_dnd("Error")
+	
+	_error_block.make_dgm(message)
 
 
 # Resets the NightScript compiler's IR code:
@@ -1295,19 +1293,31 @@ func _finalize_error_block() -> void:
 	if _error_block.empty():
 		return
 	
-	_error_block.make_dgh()
-	_error_block.make_unp()
-	_error_block.make_plt()
-
+	var error_nodes: Array = _error_block.nodes.duplicate()
+	_error_block.clear()
+	
 	if _has_block("repeat"):
-		var error_nodes: Array = _error_block.nodes.duplicate()
-		_error_block.clear()
 		_error_block.make_lxc(1)
-		_error_block.make_stx(ParseFlag.new("$", "r"))
-		_error_block.adopt_nodes(error_nodes)
-		_error_block.make_lxf(ParseFlag.new("$", "r"))
-		_error_block.make_lyc(0)
-		_error_block.make_bne("repeat")
+		_error_block.x_trace.untrace() # Register X can't be determined.
+	
+	_error_block.make_plf()
+	
+	if not _get_metadata("pause"):
+		_error_block.make_pse()
+	
+	_error_block.make_dgs()
+	_error_block.adopt_nodes(error_nodes)
+	_error_block.make_dnc()
+	_error_block.make_dgh()
+	
+	if not _get_metadata("pause"):
+		_error_block.make_unp()
+	
+	_error_block.make_plt()
+	_error_block.make_slp(0) # HACK: Wait 1 frame in case of refreezing player.
+	
+	if _has_block("repeat"):
+		_error_block.make_bne("repeat") # Register Y should be initialized to 0.
 	
 	_error_block.make_jmp("main" if _has_block("main") else "$$main")
 
@@ -1653,7 +1663,7 @@ func _generate_bytecode() -> PoolByteArray:
 			vector_repeat = vector_main
 		else:
 			vector_repeat = pointers.get("$$error", vector_repeat)
-			vector_main = vector_repeat + 2
+			vector_main = vector_repeat + 1
 	
 	stream.put_u16(node_count)
 	
@@ -1677,7 +1687,7 @@ func _generate_bytecode() -> PoolByteArray:
 	var header_stream: SerialWriteStream = SerialWriteStream.new()
 	var program_flags: int = 0
 	
-	if _get_metadata("cache"):
+	if _get_metadata("cache") and _error_block.empty():
 		program_flags |= NightScript.FLAG_CACHEABLE
 	
 	if _get_metadata("pause"):
