@@ -13,7 +13,6 @@ const IRNode: GDScript = preload("./ir_code/ir_node.gd").IRNode
 const NSMachine: GDScript = NightScript.NSMachine
 const ParseFlag: GDScript = preload("./parse/parse_flag.gd").ParseFlag
 const ParseValue: GDScript = preload("./parse/parse_value.gd").ParseValue
-const ParseValueFactory: GDScript = preload("./parse/parse_value_factory.gd").ParseValueFactory
 const Statement: GDScript = preload("./statements/statement.gd").Statement
 const StatementDo: GDScript = preload("./statements/statement_do.gd").StatementDo
 const StatementIf: GDScript = preload("./statements/statement_if.gd").StatementIf
@@ -251,7 +250,17 @@ func _eval_comparison(left: int, comparator: int, right: int) -> bool:
 # Creates a new error parse value and logs an error message:
 func _create_error(message: String) -> ParseValue:
 	_err(message)
-	return ParseValueFactory.create_error()
+	return ParseValue.new(ParseValue.Type.ERROR, 0, "", "")
+
+
+# Creates a new constant parse value:
+func _create_const(value: int) -> ParseValue:
+	return ParseValue.new(ParseValue.Type.CONST, value, "", "")
+
+
+# Creates a new flag parse value:
+func _create_flag(namespace: String, key: String) -> ParseValue:
+	return ParseValue.new(ParseValue.Type.FLAG, 0, namespace, key)
 
 
 # Creates a new IR block after the current IR block from its label:
@@ -368,7 +377,7 @@ func _scan_value(symbol: String, scope_peek: int = -1) -> ParseValue:
 	if symbol.empty():
 		return _create_error("Value is empty!")
 	elif RESERVED_CONSTS.has(symbol):
-		return ParseValueFactory.create_const(RESERVED_CONSTS[symbol])
+		return _create_const(RESERVED_CONSTS[symbol])
 	elif symbol.is_valid_identifier():
 		if scope_peek < 0:
 			scope_peek += _scope_stack.size()
@@ -381,7 +390,7 @@ func _scan_value(symbol: String, scope_peek: int = -1) -> ParseValue:
 		
 		return _create_error("Identifier '%s' is undeclared in the current scope!" % symbol)
 	elif symbol.is_valid_integer():
-		return ParseValueFactory.create_const(int(symbol))
+		return _create_const(int(symbol))
 	elif symbol.count(":") == 1:
 		var flag_parts: PoolStringArray = symbol.split(":", true, 1)
 		var namespace: String = flag_parts[0]
@@ -396,7 +405,7 @@ func _scan_value(symbol: String, scope_peek: int = -1) -> ParseValue:
 		elif not key.is_valid_identifier():
 			return _create_error("Flag '%s' has an invalid key!" % symbol)
 		else:
-			return ParseValueFactory.create_flag(namespace, key)
+			return _create_flag(namespace, key)
 	else:
 		return _create_error("Value '%s' is invalid!" % symbol)
 
@@ -574,15 +583,9 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 		"goto":
 			match args.size():
 				1:
-					_parse_goto(
-							args[0], ParseValueFactory.create_const(1),
-							Comparator.NE, ParseValueFactory.create_const(0)
-					)
+					_parse_goto(args[0], _create_const(1), Comparator.NE, _create_const(0))
 				2:
-					_parse_goto(
-							args[0], _scan_value(args[1]), Comparator.NE,
-							ParseValueFactory.create_const(0)
-					)
+					_parse_goto(args[0], _scan_value(args[1]), Comparator.NE, _create_const(0))
 				4:
 					_parse_goto(
 							args[0], _scan_value(args[1]),
@@ -656,9 +659,7 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 		"if":
 			match args.size():
 				1:
-					_parse_if(
-							_scan_value(args[0]), Comparator.NE, ParseValueFactory.create_const(0)
-					)
+					_parse_if(_scan_value(args[0]), Comparator.NE, _create_const(0))
 				3:
 					_parse_if(_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2]))
 				_:
@@ -666,10 +667,7 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 		"elif":
 			match args.size():
 				1:
-					_parse_elif(
-							_scan_value(args[0], -2), Comparator.NE,
-							ParseValueFactory.create_const(0)
-					)
+					_parse_elif(_scan_value(args[0], -2), Comparator.NE, _create_const(0))
 				3:
 					_parse_elif(
 							_scan_value(args[0], -2), _scan_comparator(args[1]),
@@ -685,14 +683,9 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 		"do":
 			match args.size():
 				0:
-					_parse_do(
-							ParseValueFactory.create_const(0), Comparator.NE,
-							ParseValueFactory.create_const(0)
-					)
+					_parse_do(_create_const(0), Comparator.NE, _create_const(0))
 				1:
-					_parse_do(
-							_scan_value(args[0]), Comparator.NE, ParseValueFactory.create_const(0)
-					)
+					_parse_do(_scan_value(args[0]), Comparator.NE, _create_const(0))
 				3:
 					_parse_do(_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2]))
 				_:
@@ -700,9 +693,7 @@ func _parse_command(command: String, args: PoolStringArray) -> void:
 		"while":
 			match args.size():
 				1:
-					_parse_while(
-							_scan_value(args[0]), Comparator.NE, ParseValueFactory.create_const(0)
-					)
+					_parse_while(_scan_value(args[0]), Comparator.NE, _create_const(0))
 				3:
 					_parse_while(
 							_scan_value(args[0]), _scan_comparator(args[1]), _scan_value(args[2])
