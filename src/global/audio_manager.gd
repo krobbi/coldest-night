@@ -6,6 +6,8 @@ extends Object
 # and audio clips and controlling the volume of audio buses. It can be accessed
 # from any script by using 'Global.audio'.
 
+var is_muted: bool = false setget set_muted
+
 var _player_parent: Node
 var _config: ConfigBus
 var _logger: Logger
@@ -33,8 +35,16 @@ func _init(player_parent_ref: Node, config_ref: ConfigBus, logger_ref: Logger) -
 		if bus_map.has(bus_name):
 			_buses[bus_map[bus_name]] = AudioServer.get_bus_index(bus_name)
 	
+	_config.connect_bool("audio.mute", self, "set_muted")
+	
 	for bus_key in _buses:
 		_config.connect_float("audio.%s_volume" % bus_key, self, "_set_bus_volume", [bus_key])
+
+
+# Sets whether the audio is muted:
+func set_muted(value: bool) -> void:
+	is_muted = value
+	AudioServer.set_bus_mute(0, is_muted)
 
 
 # Sets the volume of an audio bus from its bus key:
@@ -124,6 +134,8 @@ func stop_music() -> void:
 func destruct() -> void:
 	for bus_key in _buses:
 		_config.disconnect_value("audio.%s_volume" % bus_key, self, "_set_bus_volume")
+	
+	_config.disconnect_value("audio.mute", self, "set_muted")
 
 
 # Sets the volume of an audio bus from its bus key:

@@ -78,4 +78,4 @@ func _exit_credits() -> void:
 		return
 	
 	_is_exiting = true
-	Global.change_scene("title")
+	Global.change_scene("menu")

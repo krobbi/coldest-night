@@ -21,7 +21,7 @@ func _ready() -> void:
 	for slide_key in ["krobbizoid"]:
 		var path: String = "res://assets/images/identity/slides/%s.png" % slide_key
 		
-		if not ResourceLoader.exists(path, "StreamTexture"):
+		if not ResourceLoader.exists(path, "Texture"):
 			continue
 		
 		slide_rect.texture = load(path)
@@ -38,9 +38,8 @@ func _initialize_game() -> void:
 	Global.config.broadcast_values()
 
 
-# Starts the game by loading the save file and changing to the title screen
-# scene:
+# Starts the game by loading the save file and changing to the menu scene:
 func _start_game() -> void:
 	Global.save.select_slot(0)
 	Global.save.load_file()
-	Global.change_scene("title")
+	Global.change_scene("menu")

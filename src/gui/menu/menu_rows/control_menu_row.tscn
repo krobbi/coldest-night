@@ -1,15 +1,30 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://gui/menu/menu_row.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_rows/control_menu_row.gd" type="Script" id=2]
+[ext_resource path="res://assets/images/gui/buttons/menu_row.png" type="Texture" id=3]
+
+[sub_resource type="StyleBoxTexture" id=1]
+content_margin_left = 4.0
+content_margin_right = 4.0
+content_margin_top = 4.0
+content_margin_bottom = 8.0
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 6, 10 )
+margin_left = 2.0
+margin_right = 2.0
+margin_top = 2.0
+margin_bottom = 6.0
+draw_center = false
 
 [node name="ControlMenuRow" groups=["control_menu_rows"] instance=ExtResource( 1 )]
 script = ExtResource( 2 )
-_focus_path = NodePath("Content/Button")
+focus_node_path = NodePath("Content/Button")
 
 [node name="Label" type="Label" parent="Content" index="0"]
 anchor_bottom = 1.0
-margin_right = 248.0
+margin_right = 240.0
+rect_min_size = Vector2( 240, 32 )
 mouse_filter = 1
 size_flags_horizontal = 0
 size_flags_vertical = 1
@@ -24,24 +39,25 @@ __meta__ = {
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -248.0
-margin_right = -4.0
-rect_min_size = Vector2( 244, 0 )
+margin_left = -240.0
+rect_min_size = Vector2( 240, 32 )
 mouse_filter = 1
 size_flags_horizontal = 0
+custom_styles/hover = SubResource( 1 )
+custom_styles/pressed = SubResource( 1 )
+custom_styles/focus = SubResource( 1 )
+custom_styles/disabled = SubResource( 1 )
+custom_styles/normal = SubResource( 1 )
 toggle_mode = true
 text = "Input"
-flat = true
 clip_text = true
-align = 2
 __meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
+"_edit_lock_": true
 }
 
 [node name="InputTimer" type="Timer" parent="." index="4"]
 wait_time = 8.0
 one_shot = true
 
-[connection signal="toggled" from="Content/Button" to="." method="_on_button_toggled"]
+[connection signal="toggled" from="Content/Button" to="." method="set_awaiting_input"]
 [connection signal="timeout" from="InputTimer" to="." method="_on_input_timer_timeout"]

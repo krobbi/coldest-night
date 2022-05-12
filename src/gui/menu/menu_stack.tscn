@@ -8,6 +8,5 @@ anchor_bottom = 1.0
 rect_min_size = Vector2( 640, 360 )
 script = ExtResource( 1 )
 __meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
+"_edit_lock_": true
 }

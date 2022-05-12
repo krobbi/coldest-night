@@ -100,7 +100,7 @@ func set_display_opacity(value: float) -> void:
 		value = 100.0
 	
 	_display_opacity = value
-	_background_polygon.modulate.a = _display_opacity * 0.01
+	_background_polygon.color.a = _display_opacity * 0.01
 	Global.config.set_float("accessibility.radar_opacity", _display_opacity)
 
 

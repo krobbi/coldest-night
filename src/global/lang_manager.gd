@@ -42,12 +42,12 @@ func get_locale_count() -> int:
 	return _supported_locales.size()
 
 
-# Gets a dictionary of locale options and their strings:
+# Gets a dictionary of locale options:
 func get_locale_options() -> Dictionary:
 	var options: Dictionary = {}
 	
 	for supported_locale in _supported_locales:
-		options[supported_locale] = "OPTION.LANGUAGE.LOCALE.%s" % supported_locale.to_upper()
+		options["OPTION.LANGUAGE.LOCALE.%s" % supported_locale.to_upper()] = supported_locale
 	
 	return options
 

@@ -9,13 +9,12 @@ visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_min_size = Vector2( 640, 360 )
-color = Color( 0.0509804, 0.027451, 0.0352941, 0.752941 )
+color = Color( 0.0509804, 0.027451, 0.0352941, 0.8 )
 script = ExtResource( 1 )
 __meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
+"_edit_lock_": true
 }
 
 [node name="MenuStack" parent="." instance=ExtResource( 2 )]
 
-[connection signal="key_button_pressed" from="MenuStack" to="." method="_on_menu_stack_key_button_pressed"]
+[connection signal="root_popped" from="MenuStack" to="." method="close_menu"]

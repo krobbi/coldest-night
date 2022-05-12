@@ -297,7 +297,7 @@ class NSThread extends Object:
 				Global.events.emit_signal("player_thaw_request")
 			QTT: # Quit to title:
 				state = State.STOPPED
-				Global.change_scene("title")
+				Global.change_scene("menu")
 			PSE: # Pause:
 				Global.tree.paused = true
 			UNP: # Unpause:

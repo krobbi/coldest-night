@@ -47,6 +47,7 @@ signal radar_refresh_entities_request # warning-ignore: UNUSED_SIGNAL
 signal radar_render_node_request(node) # warning-ignore: UNUSED_SIGNAL
 signal save_state_request # warning-ignore: UNUSED_SIGNAL
 signal subtitle_display_request(message) # warning-ignore: UNUSED_SIGNAL
+signal tooltip_display_request(message) # warning-ignore: UNUSED_SIGNAL
 
 # Safely connects a signal from the event bus to a target object's receiver
 # method:
