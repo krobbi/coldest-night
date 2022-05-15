@@ -41,6 +41,8 @@ var _metadata: Dictionary = {}
 var _scope_stack: Array = [{}]
 var _statement_stack: Array = []
 var _blocks: Array = []
+var _error_main: IRBlock = null
+var _error_repeat: IRBlock = null
 var _error_block: IRBlock = null
 var _current_block: IRBlock = null
 
@@ -457,6 +459,8 @@ func _reset() -> void:
 	_scope_stack = [{}]
 	_statement_stack.clear()
 	_blocks.clear()
+	_error_main = _create_block("$$error_main")
+	_error_repeat = _create_block("$$error_repeat")
 	_error_block = _create_block("$$error")
 	_current_block = _create_block("$$main")
 
@@ -478,31 +482,30 @@ func _make_branch(label: String, left: ParseValue, comparator: int, right: Parse
 		
 		return
 	
+	_current_block.push_value(left)
+	
+	# Create a shortcut if we're already checking for non-zero:
+	if comparator == Comparator.NE and right.is_const() and right.value == 0:
+		_current_block.make_bnz(label)
+		return
+	
+	_current_block.push_value(right)
+	
 	match comparator:
 		Comparator.EQ:
-			_current_block.load_x(left)
-			_current_block.load_y(right)
-			_current_block.make_beq(label)
+			_current_block.make_ceq()
 		Comparator.NE:
-			_current_block.load_x(left)
-			_current_block.load_y(right)
-			_current_block.make_bne(label)
+			_current_block.make_cne()
 		Comparator.GT:
-			_current_block.load_x(left)
-			_current_block.load_y(right)
-			_current_block.make_bgt(label)
+			_current_block.make_cgt()
 		Comparator.GE:
-			_current_block.load_x(left)
-			_current_block.load_y(right)
-			_current_block.make_bge(label)
+			_current_block.make_cge()
 		Comparator.LT:
-			_current_block.load_y(left)
-			_current_block.load_x(right)
-			_current_block.make_bgt(label)
+			_current_block.make_clt()
 		Comparator.LE:
-			_current_block.load_y(left)
-			_current_block.load_x(right)
-			_current_block.make_bge(label)
+			_current_block.make_cle()
+	
+	_current_block.make_bnz(label)
 
 
 # Parses NightScript source code to IR code:
@@ -819,7 +822,8 @@ func _parse_sleep(duration: ParseValue, unit: String) -> void:
 			_err("Command 'sleep' expects 'ms', 'cs', 'ds', 's', or 'm' time units!")
 			return
 	
-	_current_block.make_slp(int(clamp(round(float(duration.value) * multiplier), 1.0, 30000.0)))
+	_current_block.make_phc(int(clamp(round(float(duration.value) * multiplier), 1.0, 30000.0)))
+	_current_block.make_slp()
 
 
 # Parses a goto command from NightScript source code to IR code:
@@ -836,8 +840,8 @@ func _parse_set(left: ParseValue, right: ParseValue) -> void:
 	if not left.is_flag():
 		_err("Command 'set' expects a variable left-hand value!")
 	elif not right.is_error():
-		_current_block.load_x(right)
-		_current_block.make_stx(left.flag)
+		_current_block.push_value(right)
+		_current_block.make_stf(left.flag)
 
 
 # Parses a dialog command from NightScript source code to IR code:
@@ -877,7 +881,7 @@ func _parse_look(actor_key: String, direction: String) -> void:
 			return
 	
 	_current_block.make_lak(actor_key)
-	_current_block.make_lxc(angle)
+	_current_block.make_phc(angle)
 	_current_block.make_afd()
 
 
@@ -1106,8 +1110,8 @@ func _parse_option_set(
 		_err("Command 'option set' expects a variable left-hand value!")
 	elif not right.is_error():
 		_parse_option_do(menu, text)
-		_current_block.load_x(right)
-		_current_block.make_stx(left.flag)
+		_current_block.push_value(right)
+		_current_block.make_stf(left.flag)
 		_parse_end_option()
 
 
@@ -1297,8 +1301,10 @@ func _finalize_error_block() -> void:
 	_error_block.clear()
 	
 	if _has_block("repeat"):
-		_error_block.make_lxc(1)
-		_error_block.x_trace.untrace() # Register X can't be determined.
+		_error_main.make_phc(0)
+		_error_main.make_jmp(_error_block.label)
+		_error_repeat.make_phc(1)
+		_error_repeat.make_jmp(_error_block.label)
 	
 	_error_block.make_plf()
 	
@@ -1314,10 +1320,13 @@ func _finalize_error_block() -> void:
 		_error_block.make_unp()
 	
 	_error_block.make_plt()
-	_error_block.make_slp(0) # HACK: Wait 1 frame in case of refreezing player.
+	
+	# HACK: Wait 1 frame in case of refreezing player:
+	_error_block.make_phc(0)
+	_error_block.make_slp()
 	
 	if _has_block("repeat"):
-		_error_block.make_bne("repeat") # Register Y should be initialized to 0.
+		_error_block.make_bnz("repeat")
 	
 	_error_block.make_jmp("main" if _has_block("main") else "$$main")
 
@@ -1662,8 +1671,8 @@ func _generate_bytecode() -> PoolByteArray:
 			vector_main = pointers.get("$$error", vector_main)
 			vector_repeat = vector_main
 		else:
-			vector_repeat = pointers.get("$$error", vector_repeat)
-			vector_main = vector_repeat + 1
+			vector_main = pointers.get("$$error_main", vector_main)
+			vector_repeat = pointers.get("$$error_repeat", vector_repeat)
 	
 	stream.put_u16(node_count)
 	

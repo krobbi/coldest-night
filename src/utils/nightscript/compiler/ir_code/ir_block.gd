@@ -10,7 +10,6 @@ class IRBlock extends Reference:
 	# an intermediate representation of a jump target and its subsequent
 	# NightScript operations.
 	
-	const IntTrace: GDScript = preload("./utils/int_trace.gd").IntTrace
 	const IRNode: GDScript = preload("./ir_node.gd").IRNode
 	const ParseFlag: GDScript = preload("../parse/parse_flag.gd").ParseFlag
 	const ParseValue: GDScript = preload("../parse/parse_value.gd").ParseValue
@@ -20,8 +19,6 @@ class IRBlock extends Reference:
 	var block_next: IRBlock = null
 	var is_dead: bool = false
 	var nodes: Array = []
-	var x_trace: IntTrace = IntTrace.new() # DEPRECATED
-	var y_trace: IntTrace = IntTrace.new() # DEPRECATED
 	var dialog_name_trace: StringTrace = StringTrace.new()
 	var actor_key_trace: StringTrace = StringTrace.new()
 	
@@ -53,7 +50,7 @@ class IRBlock extends Reference:
 		var other_size: int = other.size()
 		var exit: String = block_next.label if block_next else ""
 		var other_exit: String = other.block_next.label if other.block_next else ""
-
+		
 		if is_dead:
 			if nodes[-1].op == NightScript.JMP:
 				size -= 1
@@ -81,8 +78,6 @@ class IRBlock extends Reference:
 	func clear() -> void:
 		nodes.clear()
 		is_dead = false
-		x_trace.untrace()
-		y_trace.untrace()
 		dialog_name_trace.untrace()
 		actor_key_trace.untrace()
 	
@@ -113,7 +108,7 @@ class IRBlock extends Reference:
 			NightScript.RUN:
 				make_run(node.txt)
 			NightScript.SLP:
-				make_slp(node.val)
+				make_slp()
 			NightScript.JMP:
 				make_jmp(node.lbl)
 			NightScript.BNZ:
@@ -182,32 +177,6 @@ class IRBlock extends Reference:
 				make_sav()
 			NightScript.CKP:
 				make_ckp()
-			
-			
-			# DEPRECATED: Register operations:
-			NightScript.LXC:
-				make_lxc(node.val)
-			NightScript.LXF:
-				make_lxf(node.flg)
-			NightScript.STX:
-				make_stx(node.flg)
-			NightScript.LYC:
-				make_lyc(node.val)
-			NightScript.LYF:
-				make_lyf(node.flg)
-			NightScript.STY:
-				make_sty(node.flg)
-			
-			
-			# DEPRECATED: Register branch operations:
-			NightScript.BEQ:
-				make_beq(node.lbl)
-			NightScript.BNE:
-				make_bne(node.lbl)
-			NightScript.BGT:
-				make_bgt(node.lbl)
-			NightScript.BGE:
-				make_bge(node.lbl)
 	
 	
 	# Adopts an array of nodes into the IR block:
@@ -288,8 +257,8 @@ class IRBlock extends Reference:
 	
 	
 	# Makes an SLP IR node at the back of the IR block:
-	func make_slp(val: int) -> void:
-		make_value(NightScript.SLP, val)
+	func make_slp() -> void:
+		make_standalone(NightScript.SLP)
 	
 	
 	# Makes a JMP IR node at the back of the IR block:
@@ -452,103 +421,3 @@ class IRBlock extends Reference:
 	# Makes a CKP IR node at the back of the IR block:
 	func make_ckp() -> void:
 		make_standalone(NightScript.CKP)
-	
-	
-	# DEPRECATED: Loads the X register with a parse value:
-	func load_x(value: ParseValue) -> void:
-		if value.is_const():
-			make_lxc(value.value)
-		elif value.is_flag():
-			make_lxf(value.flag)
-	
-	
-	# DEPRECATED: Loads the Y register with a parse value:
-	func load_y(value: ParseValue) -> void:
-		if value.is_const():
-			make_lyc(value.value)
-		elif value.is_flag():
-			make_lyf(value.flag)
-	
-	
-	# DEPRECATED: Makes a BEQ IR node at the back of the IR block:
-	func make_beq(lbl: String) -> void:
-		if x_trace.is_traced and y_trace.is_traced:
-			if x_trace.value == y_trace.value:
-				make_jmp(lbl)
-			
-			return
-		
-		make_pointer(NightScript.BEQ, lbl)
-	
-	
-	# DEPRECATED: Makes a BNE IR node at the back of the IR block:
-	func make_bne(lbl: String) -> void:
-		if x_trace.is_traced and y_trace.is_traced:
-			if x_trace.value != y_trace.value:
-				make_jmp(lbl)
-			
-			return
-		
-		make_pointer(NightScript.BNE, lbl)
-	
-	
-	# DEPRECATED: Makes a BGT IR node at the back of the IR block:
-	func make_bgt(lbl: String) -> void:
-		if x_trace.is_traced and y_trace.is_traced:
-			if x_trace.value > y_trace.value:
-				make_jmp(lbl)
-			
-			return
-		
-		make_pointer(NightScript.BGT, lbl)
-	
-	
-	# DEPRECATED: Makes a BGE IR node at the back of the IR block:
-	func make_bge(lbl: String) -> void:
-		if x_trace.is_traced and y_trace.is_traced:
-			if x_trace.value >= y_trace.value:
-				make_jmp(lbl)
-			
-			return
-		
-		make_pointer(NightScript.BGE, lbl)
-	
-	
-	# DEPRECATED: Makes an LXC IR node at the back of the IR block:
-	func make_lxc(val: int) -> void:
-		if x_trace.is_traced and x_trace.value == val:
-			return
-		
-		make_value(NightScript.LXC, val)
-		x_trace.trace(val)
-	
-	
-	# DEPRECATED: Makes an LXF IR node at the back of the IR block:
-	func make_lxf(flg: ParseFlag) -> void:
-		make_flag(NightScript.LXF, flg)
-		x_trace.untrace()
-	
-	
-	# DEPRECATED: Makes an STX IR node at the back of the IR block:
-	func make_stx(flg: ParseFlag) -> void:
-		make_flag(NightScript.STX, flg)
-	
-	
-	# DEPRECATED: Makes an LYC IR node at the back of the IR block:
-	func make_lyc(val: int) -> void:
-		if y_trace.is_traced and y_trace.value == val:
-			return
-		
-		make_value(NightScript.LYC, val)
-		y_trace.trace(val)
-	
-	
-	# DEPRECATED: Makes an LYF IR node at the back of the IR block:
-	func make_lyf(flg: ParseFlag) -> void:
-		make_flag(NightScript.LYF, flg)
-		y_trace.untrace()
-	
-	
-	# DEPRECATED: Makes an STY IR node at the back of the IR block:
-	func make_sty(flg: ParseFlag) -> void:
-		make_flag(NightScript.STY, flg)

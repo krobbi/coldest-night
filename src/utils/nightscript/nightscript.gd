@@ -34,8 +34,6 @@ class NSMachine extends Object:
 	var vector_repeat: int
 	var ops: Array = []
 	var pc: int
-	var x: int = 0
-	var y: int = 0
 	var actor_key: String
 	var option_pointers: Array = []
 	var option_texts: Array = []
@@ -102,25 +100,14 @@ class NSMachine extends Object:
 		match opcode:
 			CLP, RUN, DND, DGM, LAK, APF:
 				return OPERAND_TXT
-			SLP, PHC:
-				return OPERAND_VAL
 			JMP, BNZ:
 				return OPERAND_PTR
+			PHC:
+				return OPERAND_VAL
 			PHF, STF:
 				return OPERAND_FLG
 			MNO:
 				return OPERAND_PTR | OPERAND_TXT
-			
-			# DEPRECATED: Register branch operations:
-			BEQ, BNE, BGT, BGE:
-				return OPERAND_PTR
-			
-			# DEPRECATED: Register operations:
-			LXC, LYC:
-				return OPERAND_VAL
-			LXF, STX, LYF, STY:
-				return OPERAND_FLG
-			
 			_:
 				return 0
 
@@ -142,7 +129,7 @@ class NSThread extends Object:
 	var sleep_timer: float = 0.0
 	var machine_stack: Array = []
 	var machine: NSMachine = null
-	var expr_stack: Array = []
+	var stack: Array = []
 	
 	# Sets a flag from its namespace and key:
 	func set_flag(namespace: String, key: String, value: int) -> void:
@@ -211,45 +198,45 @@ class NSThread extends Object:
 			RUN: # Run:
 				Global.events.emit_signal("nightscript_run_program_request", op.txt)
 			SLP: # Sleep:
-				sleep_timer = float(op.val) * 0.01
+				sleep_timer = float(stack.pop_back()) * 0.01
 				state = State.SLEEPING
 			JMP: # Jump:
 				machine.pc = op.val
 			BNZ: # Branch not zero:
-				if expr_stack.pop_back():
+				if stack.pop_back():
 					machine.pc = op.val
 			
 			# Stack operations:
 			PHC: # Push constant:
-				expr_stack.push_back(op.val)
+				stack.push_back(op.val)
 			PHF: # Push flag:
-				expr_stack.push_back(get_flag(op.txt, op.key))
+				stack.push_back(get_flag(op.txt, op.key))
 			STF: # Store flag:
-				set_flag(op.txt, op.key, expr_stack.pop_back())
+				set_flag(op.txt, op.key, stack.pop_back())
 			CEQ: # Compare equals:
-				var right: int = expr_stack.pop_back()
-				var left: int = expr_stack.pop_back()
-				expr_stack.push_back(int(left == right))
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left == right))
 			CNE: # Compare not equals:
-				var right: int = expr_stack.pop_back()
-				var left: int = expr_stack.pop_back()
-				expr_stack.push_back(int(left != right))
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left != right))
 			CGT: # Compare greater than:
-				var right: int = expr_stack.pop_back()
-				var left: int = expr_stack.pop_back()
-				expr_stack.push_back(int(left > right))
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left > right))
 			CGE: # Compare greater equals:
-				var right: int = expr_stack.pop_back()
-				var left: int = expr_stack.pop_back()
-				expr_stack.push_back(int(left >= right))
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left >= right))
 			CLT: # Compare less than:
-				var right: int = expr_stack.pop_back()
-				var left: int = expr_stack.pop_back()
-				expr_stack.push_back(int(left < right))
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left < right))
 			CLE: # Compare less equals:
-				var right: int = expr_stack.pop_back()
-				var left: int = expr_stack.pop_back()
-				expr_stack.push_back(int(left <= right))
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left <= right))
 			
 			# Dialog operations:
 			DGS: # Dialog show:
@@ -299,7 +286,9 @@ class NSThread extends Object:
 				var actor: Actor = _get_scripted_actor(machine.actor_key)
 				
 				if actor:
-					actor.smooth_pivot.pivot_to(deg2rad(float(machine.x)))
+					actor.smooth_pivot.pivot_to(deg2rad(float(stack.pop_back())))
+				else:
+					stack.remove(stack.size() - 1)
 			APF: # Actor path find:
 				var actor: Actor = _get_scripted_actor(machine.actor_key)
 				
@@ -336,34 +325,6 @@ class NSThread extends Object:
 				Global.save.save_game()
 			CKP: # Checkpoint:
 				Global.save.save_checkpoint()
-			
-			# DEPRECATED: Register branch operations:
-			BEQ: # Branch equals:
-				if machine.x == machine.y:
-					machine.pc = op.val
-			BNE: # Branch not equals:
-				if machine.x != machine.y:
-					machine.pc = op.val
-			BGT: # Branch greater than:
-				if machine.x > machine.y:
-					machine.pc = op.val
-			BGE: # Branch greater equals:
-				if machine.x >= machine.y:
-					machine.pc = op.val
-			
-			# DEPRECATED: Register operations:
-			LXC: # Load X constant:
-				machine.x = op.val
-			LXF: # Load X flag:
-				machine.x = get_flag(op.txt, op.key)
-			STX: # Store X:
-				set_flag(op.txt, op.key, machine.x)
-			LYC: # Load Y constant:
-				machine.y = op.val
-			LYF: # Load Y flag:
-				machine.y = get_flag(op.txt, op.key)
-			STY: # Store Y:
-				set_flag(op.txt, op.key, machine.y)
 	
 	
 	# Gets a scripted actor from its actor key. Returns null if the scripted
@@ -450,20 +411,6 @@ enum {
 	UNP = 0x42, # Unpause.
 	SAV = 0x43, # Save.
 	CKP = 0x44, # Checkpoint.
-	
-	# DEPRECATED: Section e - Register branch operations:
-	BEQ = 0xe5, # Branch equals.
-	BNE = 0xe6, # Branch not equals.
-	BGT = 0xe7, # Branch greater than.
-	BGE = 0xe8, # Branch greater equals.
-	
-	# DEPRECATED: Section f - Register operations:
-	LXC = 0xf0, # Load X constant.
-	LXF = 0xf1, # Load X flag.
-	STX = 0xf2, # Store X.
-	LYC = 0xf3, # Load Y constant.
-	LYF = 0xf4, # Load Y flag.
-	STY = 0xf5, # Store Y.
 }
 
 enum {
@@ -479,7 +426,7 @@ enum {
 }
 
 const THREAD_LIMIT: int = 16
-const RUN_STEP_LIMIT: int = 16
+const RUN_STEP_LIMIT: int = 32
 const EMPTY_BYTECODE: PoolByteArray = PoolByteArray([
 	0x00, # Not cacheable or pausable.
 	0x00, 0x00, # Main vector.

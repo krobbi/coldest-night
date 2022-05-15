@@ -28,11 +28,6 @@ class IRNode extends Reference:
 		match op:
 			NightScript.JMP, NightScript.BNZ:
 				return true
-			
-			# DEPRECATED: Migrating to stack-based operations:
-			NightScript.BEQ, NightScript.BNE, NightScript.BGT, NightScript.BGE:
-				return true
-			
 			_:
 				return false
 	
