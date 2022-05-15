@@ -26,8 +26,13 @@ class IRNode extends Reference:
 	# Returns whether the IR node is a branch operation:
 	func is_branch() -> bool:
 		match op:
-			NightScript.JMP, NightScript.BEQ, NightScript.BNE, NightScript.BGT, NightScript.BGE:
+			NightScript.JMP:
 				return true
+			
+			# DEPRECATED: Migrating to stack-based operations:
+			NightScript.BEQ, NightScript.BNE, NightScript.BGT, NightScript.BGE:
+				return true
+			
 			_:
 				return false
 	

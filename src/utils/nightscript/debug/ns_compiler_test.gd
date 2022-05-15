@@ -85,6 +85,7 @@ func _disassemble_source(source: String) -> String:
 			labels[i] = "label_%d" % label_count
 	
 	var seen_label: bool = false
+	var deprecated_message: String = "BUG: Compiler emitted a deprecated operation!"
 	
 	for i in range(machine.ops.size()):
 		if labels.has(i):
@@ -107,6 +108,7 @@ func _disassemble_source(source: String) -> String:
 		var txt: String = _escape_string(op.txt)
 		
 		match op.op:
+			# Control flow:
 			NightScript.HLT: # Halt:
 				output += "exit"
 			NightScript.CLP: # Call program:
@@ -117,26 +119,8 @@ func _disassemble_source(source: String) -> String:
 				output += "sleep %d cs" % val
 			NightScript.JMP: # Jump:
 				output += "goto %s" % lbl
-			NightScript.BEQ: # Branch equals:
-				output += "BEQ %s" % lbl
-			NightScript.BNE: # Branch not equals:
-				output += "BNE %s" % lbl
-			NightScript.BGT: # Branch greater than:
-				output += "BGT %s" % lbl
-			NightScript.BGE: # Branch greater equals:
-				output += "BGE %s" % lbl
-			NightScript.LXC: # Load X constant:
-				output += "LXC %d" % val
-			NightScript.LXF: # Load X flag:
-				output += "LXF %s" % flg
-			NightScript.STX: # Store X:
-				output += "STX %s" % flg
-			NightScript.LYC: # Load Y constant:
-				output += "LYC %d" % val
-			NightScript.LYF: # Load Y flag:
-				output += "LYF %s" % flg
-			NightScript.STY: # Store Y:
-				output += "STY %s" % flg
+			
+			# Dialog operations:
 			NightScript.DGS: # Dialog show:
 				output += "dialog show"
 			NightScript.DGH: # Dialog hide:
@@ -151,6 +135,8 @@ func _disassemble_source(source: String) -> String:
 				output += "MNO %s %s" % [lbl, txt]
 			NightScript.MNS: # Menu show:
 				output += "MNS"
+			
+			# Actor operations:
 			NightScript.LAK: # Load actor key:
 				output += "LAK %s" % txt
 			NightScript.AFD: # Actor face direction:
@@ -175,6 +161,30 @@ func _disassemble_source(source: String) -> String:
 				output += "save"
 			NightScript.CKP: # Checkpoint:
 				output += "checkpoint"
+				
+			# DEPRECATED: Register branch operations:
+			NightScript.BEQ: # Branch equals:
+				output += "BEQ %s # %s" % [lbl, deprecated_message]
+			NightScript.BNE: # Branch not equals:
+				output += "BNE %s # %s" % [lbl, deprecated_message]
+			NightScript.BGT: # Branch greater than:
+				output += "BGT %s # %s" % [lbl, deprecated_message]
+			NightScript.BGE: # Branch greater equals:
+				output += "BGE %s # %s" % [lbl, deprecated_message]
+			
+			# DEPRECATED: Register operations:
+			NightScript.LXC: # Load X constant:
+				output += "LXC %d # %s" % [val, deprecated_message]
+			NightScript.LXF: # Load X flag:
+				output += "LXF %s # %s" % [flg, deprecated_message]
+			NightScript.STX: # Store X:
+				output += "STX %s # %s" % [flg, deprecated_message]
+			NightScript.LYC: # Load Y constant:
+				output += "LYC %d # %s" % [val, deprecated_message]
+			NightScript.LYF: # Load Y flag:
+				output += "LYF %s # %s" % [flg, deprecated_message]
+			NightScript.STY: # Store Y:
+				output += "STY %s # %s" % [flg, deprecated_message]
 		
 		output += "\n"
 	

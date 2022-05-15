@@ -102,14 +102,23 @@ class NSMachine extends Object:
 		match opcode:
 			CLP, RUN, DND, DGM, LAK, APF:
 				return OPERAND_TXT
-			SLP, LXC, LYC:
+			SLP:
 				return OPERAND_VAL
-			JMP, BEQ, BNE, BGT, BGE:
+			JMP:
 				return OPERAND_PTR
-			LXF, STX, LYF, STY:
-				return OPERAND_FLG
 			MNO:
 				return OPERAND_PTR | OPERAND_TXT
+			
+			# DEPRECATED: Register branch operations:
+			BEQ, BNE, BGT, BGE:
+				return OPERAND_PTR
+			
+			# DEPRECATED: Register operations:
+			LXC, LYC:
+				return OPERAND_VAL
+			LXF, STX, LYF, STY:
+				return OPERAND_FLG
+			
 			_:
 				return 0
 
@@ -191,6 +200,7 @@ class NSThread extends Object:
 		machine.pc += 1
 		
 		match op.op:
+			# Control flow:
 			HLT: # Halt:
 				pop_machine()
 			CLP: # Call program:
@@ -202,30 +212,8 @@ class NSThread extends Object:
 				state = State.SLEEPING
 			JMP: # Jump:
 				machine.pc = op.val
-			BEQ: # Branch equals:
-				if machine.x == machine.y:
-					machine.pc = op.val
-			BNE: # Branch not equals:
-				if machine.x != machine.y:
-					machine.pc = op.val
-			BGT: # Branch greater than:
-				if machine.x > machine.y:
-					machine.pc = op.val
-			BGE: # Branch greater equals:
-				if machine.x >= machine.y:
-					machine.pc = op.val
-			LXC: # Load X constant:
-				machine.x = op.val
-			LXF: # Load X flag:
-				machine.x = get_flag(op.txt, op.key)
-			STX: # Store X:
-				set_flag(op.txt, op.key, machine.x)
-			LYC: # Load Y constant:
-				machine.y = op.val
-			LYF: # Load Y flag:
-				machine.y = get_flag(op.txt, op.key)
-			STY: # Store Y:
-				set_flag(op.txt, op.key, machine.y)
+			
+			# Dialog operations:
 			DGS: # Dialog show:
 				Global.events.emit_signal("dialog_show_dialog_request")
 			DGH: # Dialog hide:
@@ -265,6 +253,8 @@ class NSThread extends Object:
 				Global.events.emit_signal(
 						"dialog_display_options_request", PoolStringArray(machine.option_texts)
 				)
+			
+			# Actor operations:
 			LAK: # Load actor key:
 				machine.actor_key = op.txt
 			AFD: # Actor face direction:
@@ -295,6 +285,8 @@ class NSThread extends Object:
 				Global.events.emit_signal("player_freeze_request")
 			PLT: # Player thaw:
 				Global.events.emit_signal("player_thaw_request")
+			
+			# External operations:
 			QTT: # Quit to title:
 				state = State.STOPPED
 				Global.change_scene("menu")
@@ -306,6 +298,34 @@ class NSThread extends Object:
 				Global.save.save_game()
 			CKP: # Checkpoint:
 				Global.save.save_checkpoint()
+			
+			# DEPRECATED: Register branch operations:
+			BEQ: # Branch equals:
+				if machine.x == machine.y:
+					machine.pc = op.val
+			BNE: # Branch not equals:
+				if machine.x != machine.y:
+					machine.pc = op.val
+			BGT: # Branch greater than:
+				if machine.x > machine.y:
+					machine.pc = op.val
+			BGE: # Branch greater equals:
+				if machine.x >= machine.y:
+					machine.pc = op.val
+			
+			# DEPRECATED: Register operations:
+			LXC: # Load X constant:
+				machine.x = op.val
+			LXF: # Load X flag:
+				machine.x = get_flag(op.txt, op.key)
+			STX: # Store X:
+				set_flag(op.txt, op.key, machine.x)
+			LYC: # Load Y constant:
+				machine.y = op.val
+			LYF: # Load Y flag:
+				machine.y = get_flag(op.txt, op.key)
+			STY: # Store Y:
+				set_flag(op.txt, op.key, machine.y)
 	
 	
 	# Gets a scripted actor from its actor key. Returns null if the scripted
@@ -349,23 +369,14 @@ class NSThread extends Object:
 
 
 enum {
+	# Section 0 - Control flow:
 	HLT = 0x00, # Halt.
 	CLP = 0x01, # Call program.
 	RUN = 0x02, # Run.
 	SLP = 0x03, # Sleep.
 	JMP = 0x04, # Jump.
-	BEQ = 0x05, # Branch equals.
-	BNE = 0x06, # Branch not equals.
-	BGT = 0x07, # Branch greater than.
-	BGE = 0x08, # Branch greater equals.
 	
-	LXC = 0x10, # Load X constant.
-	LXF = 0x11, # Load X flag.
-	STX = 0x12, # Store X.
-	LYC = 0x13, # Load Y constant.
-	LYF = 0x14, # Load Y flag.
-	STY = 0x15, # Store Y.
-	
+	# Section 2 = Dialog operations:
 	DGS = 0x20, # Dialog show.
 	DGH = 0x21, # Dialog hide.
 	DNC = 0x22, # Dialog name clear.
@@ -374,6 +385,7 @@ enum {
 	MNO = 0x25, # Menu option.
 	MNS = 0x26, # Menu show.
 	
+	# Section 3 - Actor operations:
 	LAK = 0x30, # Load actor key.
 	AFD = 0x31, # Actor face direction.
 	APF = 0x32, # Actor path find.
@@ -382,11 +394,26 @@ enum {
 	PLF = 0x35, # Player freeze.
 	PLT = 0x36, # Player thaw.
 	
+	# Section 4 - External operations:
 	QTT = 0x40, # Quit to title.
 	PSE = 0x41, # Pause.
 	UNP = 0x42, # Unpause.
 	SAV = 0x43, # Save.
 	CKP = 0x44, # Checkpoint.
+	
+	# DEPRECATED: Section e - Register branch operations:
+	BEQ = 0xe5, # Branch equals.
+	BNE = 0xe6, # Branch not equals.
+	BGT = 0xe7, # Branch greater than.
+	BGE = 0xe8, # Branch greater equals.
+	
+	# DEPRECATED: Section f - Register operations:
+	LXC = 0xf0, # Load X constant.
+	LXF = 0xf1, # Load X flag.
+	STX = 0xf2, # Store X.
+	LYC = 0xf3, # Load Y constant.
+	LYF = 0xf4, # Load Y flag.
+	STY = 0xf5, # Store Y.
 }
 
 enum {

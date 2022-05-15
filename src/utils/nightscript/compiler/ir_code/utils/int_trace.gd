@@ -2,6 +2,7 @@ extends Object
 
 # Int Trace Wrapper
 # Wrapper class for the NightScript compiler's IntTrace class.
+# DEPRECATED: Migrating to stack-based operations.
 
 class IntTrace extends Reference:
 	
@@ -9,6 +10,7 @@ class IntTrace extends Reference:
 	# An int trace is a helper structure used by a NightScript compiler that
 	# traces the state of an int register. It is used to optimize out
 	# unnecessary writes to int registers.
+	# DEPRECATED: Migrating to stack-based operations.
 	
 	var is_traced: bool = false
 	var value: int = 0
