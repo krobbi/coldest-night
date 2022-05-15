@@ -102,10 +102,12 @@ class NSMachine extends Object:
 		match opcode:
 			CLP, RUN, DND, DGM, LAK, APF:
 				return OPERAND_TXT
-			SLP:
+			SLP, PHC:
 				return OPERAND_VAL
-			JMP:
+			JMP, BNZ:
 				return OPERAND_PTR
+			PHF, STF:
+				return OPERAND_FLG
 			MNO:
 				return OPERAND_PTR | OPERAND_TXT
 			
@@ -140,6 +142,7 @@ class NSThread extends Object:
 	var sleep_timer: float = 0.0
 	var machine_stack: Array = []
 	var machine: NSMachine = null
+	var expr_stack: Array = []
 	
 	# Sets a flag from its namespace and key:
 	func set_flag(namespace: String, key: String, value: int) -> void:
@@ -212,6 +215,41 @@ class NSThread extends Object:
 				state = State.SLEEPING
 			JMP: # Jump:
 				machine.pc = op.val
+			BNZ: # Branch not zero:
+				if expr_stack.pop_back():
+					machine.pc = op.val
+			
+			# Stack operations:
+			PHC: # Push constant:
+				expr_stack.push_back(op.val)
+			PHF: # Push flag:
+				expr_stack.push_back(get_flag(op.txt, op.key))
+			STF: # Store flag:
+				set_flag(op.txt, op.key, expr_stack.pop_back())
+			CEQ: # Compare equals:
+				var right: int = expr_stack.pop_back()
+				var left: int = expr_stack.pop_back()
+				expr_stack.push_back(int(left == right))
+			CNE: # Compare not equals:
+				var right: int = expr_stack.pop_back()
+				var left: int = expr_stack.pop_back()
+				expr_stack.push_back(int(left != right))
+			CGT: # Compare greater than:
+				var right: int = expr_stack.pop_back()
+				var left: int = expr_stack.pop_back()
+				expr_stack.push_back(int(left > right))
+			CGE: # Compare greater equals:
+				var right: int = expr_stack.pop_back()
+				var left: int = expr_stack.pop_back()
+				expr_stack.push_back(int(left >= right))
+			CLT: # Compare less than:
+				var right: int = expr_stack.pop_back()
+				var left: int = expr_stack.pop_back()
+				expr_stack.push_back(int(left < right))
+			CLE: # Compare less equals:
+				var right: int = expr_stack.pop_back()
+				var left: int = expr_stack.pop_back()
+				expr_stack.push_back(int(left <= right))
 			
 			# Dialog operations:
 			DGS: # Dialog show:
@@ -375,8 +413,20 @@ enum {
 	RUN = 0x02, # Run.
 	SLP = 0x03, # Sleep.
 	JMP = 0x04, # Jump.
+	BNZ = 0x05, # Branch not zero.
 	
-	# Section 2 = Dialog operations:
+	# Section 1 - Stack operations:
+	PHC = 0x10, # Push constant.
+	PHF = 0x11, # Push flag.
+	STF = 0x12, # Store flag.
+	CEQ = 0x13, # Compare equals.
+	CNE = 0x14, # Compare not equals.
+	CGT = 0x15, # Compare greater than.
+	CGE = 0x16, # Compare greater equals.
+	CLT = 0x17, # Compare less than.
+	CLE = 0x18, # Compare less equals.
+	
+	# Section 2 - Dialog operations:
 	DGS = 0x20, # Dialog show.
 	DGH = 0x21, # Dialog hide.
 	DNC = 0x22, # Dialog name clear.

@@ -119,6 +119,28 @@ func _disassemble_source(source: String) -> String:
 				output += "sleep %d cs" % val
 			NightScript.JMP: # Jump:
 				output += "goto %s" % lbl
+			NightScript.BNZ: # Branch not zero:
+				output += "BNZ %s" % lbl
+			
+			# Stack operations:
+			NightScript.PHC:
+				output += "PHC %d" % val
+			NightScript.PHF:
+				output += "PHF %s" % flg
+			NightScript.STF:
+				output += "STF %s" % flg
+			NightScript.CEQ:
+				output += "CEQ"
+			NightScript.CNE:
+				output += "CNE"
+			NightScript.CGT:
+				output += "CGT"
+			NightScript.CGE:
+				output += "CGE"
+			NightScript.CLT:
+				output += "CLT"
+			NightScript.CLE:
+				output += "CLE"
 			
 			# Dialog operations:
 			NightScript.DGS: # Dialog show:

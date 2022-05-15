@@ -94,9 +94,18 @@ class IRBlock extends Reference:
 		is_dead = true
 	
 	
+	# Pushes a parse value to the expression stack:
+	func push_value(value: ParseValue) -> void:
+		if value.is_const():
+			make_phc(value.value)
+		elif value.is_flag():
+			make_phf(value.flag)
+	
+	
 	# Adopts a copy of an IR node into the IR block if the IR block is not dead:
 	func adopt_node(node: IRNode) -> void:
 		match node.op:
+			# Control flow:
 			NightScript.HLT:
 				make_hlt()
 			NightScript.CLP:
@@ -107,26 +116,30 @@ class IRBlock extends Reference:
 				make_slp(node.val)
 			NightScript.JMP:
 				make_jmp(node.lbl)
-			NightScript.BEQ:
-				make_beq(node.lbl)
-			NightScript.BNE:
-				make_bne(node.lbl)
-			NightScript.BGT:
-				make_bgt(node.lbl)
-			NightScript.BGE:
-				make_bge(node.lbl)
-			NightScript.LXC:
-				make_lxc(node.val)
-			NightScript.LXF:
-				make_lxf(node.flg)
-			NightScript.STX:
-				make_stx(node.flg)
-			NightScript.LYC:
-				make_lyc(node.val)
-			NightScript.LYF:
-				make_lyf(node.flg)
-			NightScript.STY:
-				make_sty(node.flg)
+			NightScript.BNZ:
+				make_bnz(node.lbl)
+			
+			# Stack operations:
+			NightScript.PHC:
+				make_phc(node.val)
+			NightScript.PHF:
+				make_phf(node.flg)
+			NightScript.STF:
+				make_stf(node.flg)
+			NightScript.CEQ:
+				make_ceq()
+			NightScript.CNE:
+				make_cne()
+			NightScript.CGT:
+				make_cgt()
+			NightScript.CGE:
+				make_cge()
+			NightScript.CLT:
+				make_clt()
+			NightScript.CLE:
+				make_cle()
+			
+			# Dialog operations:
 			NightScript.DGS:
 				make_dgs()
 			NightScript.DGH:
@@ -141,6 +154,8 @@ class IRBlock extends Reference:
 				make_mno(node.lbl, node.txt)
 			NightScript.MNS:
 				make_mns()
+			
+			# Actor operations:
 			NightScript.LAK:
 				make_lak(node.txt)
 			NightScript.AFD:
@@ -155,6 +170,8 @@ class IRBlock extends Reference:
 				make_plf()
 			NightScript.PLT:
 				make_plt()
+			
+			# External operations:
 			NightScript.QTT:
 				make_qtt()
 			NightScript.PSE:
@@ -165,6 +182,32 @@ class IRBlock extends Reference:
 				make_sav()
 			NightScript.CKP:
 				make_ckp()
+			
+			
+			# DEPRECATED: Register operations:
+			NightScript.LXC:
+				make_lxc(node.val)
+			NightScript.LXF:
+				make_lxf(node.flg)
+			NightScript.STX:
+				make_stx(node.flg)
+			NightScript.LYC:
+				make_lyc(node.val)
+			NightScript.LYF:
+				make_lyf(node.flg)
+			NightScript.STY:
+				make_sty(node.flg)
+			
+			
+			# DEPRECATED: Register branch operations:
+			NightScript.BEQ:
+				make_beq(node.lbl)
+			NightScript.BNE:
+				make_bne(node.lbl)
+			NightScript.BGT:
+				make_bgt(node.lbl)
+			NightScript.BGE:
+				make_bge(node.lbl)
 	
 	
 	# Adopts an array of nodes into the IR block:
@@ -253,6 +296,56 @@ class IRBlock extends Reference:
 	func make_jmp(lbl: String) -> void:
 		make_pointer(NightScript.JMP, lbl)
 		kill()
+	
+	
+	# Makes a BNZ IR node at the back of the IR block:
+	func make_bnz(lbl: String) -> void:
+		make_pointer(NightScript.BNZ, lbl)
+	
+	
+	# Makes a PHC IR node at the back of the IR block:
+	func make_phc(val: int) -> void:
+		make_value(NightScript.PHC, val)
+	
+	
+	# Makes a PHF IR node at the back of the IR block:
+	func make_phf(flg: ParseFlag) -> void:
+		make_flag(NightScript.PHF, flg)
+	
+	
+	# Makes a STF IR node at the back of the IR block:
+	func make_stf(flg: ParseFlag) -> void:
+		make_flag(NightScript.STF, flg)
+	
+	
+	# Makes a CEQ IR node at the back of the IR block:
+	func make_ceq() -> void:
+		make_standalone(NightScript.CEQ)
+	
+	
+	# Makes a CNE IR node at the back of the IR block:
+	func make_cne() -> void:
+		make_standalone(NightScript.CNE)
+	
+	
+	# Makes a CGT IR node at the back of the IR block:
+	func make_cgt() -> void:
+		make_standalone(NightScript.CGT)
+	
+	
+	# Makes a CGE IR node at the back of the IR block:
+	func make_cge() -> void:
+		make_standalone(NightScript.CGE)
+	
+	
+	# Makes a CLT IR node at the back of the IR block:
+	func make_clt() -> void:
+		make_standalone(NightScript.CLT)
+	
+	
+	# Makes a CLE IR node at the back of the IR block:
+	func make_cle() -> void:
+		make_standalone(NightScript.CLE)
 	
 	
 	# Makes a DGS IR node at the back of the IR block:
