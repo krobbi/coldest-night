@@ -128,6 +128,14 @@ func _disassemble_source(source: String) -> String:
 				output += "PHF %s" % flg
 			NightScript.STF:
 				output += "STF %s" % flg
+			NightScript.NEG:
+				output += "NEG"
+			NightScript.ADD:
+				output += "ADD"
+			NightScript.SUB:
+				output += "SUB"
+			NightScript.MUL:
+				output += "MUL"
 			NightScript.CEQ:
 				output += "CEQ"
 			NightScript.CNE:
@@ -140,6 +148,12 @@ func _disassemble_source(source: String) -> String:
 				output += "CLT"
 			NightScript.CLE:
 				output += "CLE"
+			NightScript.NOT:
+				output += "NOT"
+			NightScript.AND:
+				output += "AND"
+			NightScript.LOR:
+				output += "LOR"
 			
 			# Dialog operations:
 			NightScript.DGS: # Dialog show:

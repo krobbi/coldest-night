@@ -213,6 +213,16 @@ class NSThread extends Object:
 				stack.push_back(get_flag(op.txt, op.key))
 			STF: # Store flag:
 				set_flag(op.txt, op.key, stack.pop_back())
+			NEG: # Negate:
+				stack.push_back(-stack.pop_back())
+			ADD: # Add:
+				stack.push_back(stack.pop_back() + stack.pop_back())
+			SUB: # Subtract:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(left - right)
+			MUL: # Multiply:
+				stack.push_back(stack.pop_back() * stack.pop_back())
 			CEQ: # Compare equals:
 				var right: int = stack.pop_back()
 				var left: int = stack.pop_back()
@@ -237,6 +247,14 @@ class NSThread extends Object:
 				var right: int = stack.pop_back()
 				var left: int = stack.pop_back()
 				stack.push_back(int(left <= right))
+			NOT: # Not:
+				stack.push_back(int(stack.pop_back() == 0))
+			AND: # And:
+				stack.push_back(int(stack.pop_back() and stack.pop_back()))
+			LOR: # Logical or:
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(left or right))
 			
 			# Dialog operations:
 			DGS: # Dialog show:
@@ -380,12 +398,19 @@ enum {
 	PHC = 0x10, # Push constant.
 	PHF = 0x11, # Push flag.
 	STF = 0x12, # Store flag.
-	CEQ = 0x13, # Compare equals.
-	CNE = 0x14, # Compare not equals.
-	CGT = 0x15, # Compare greater than.
-	CGE = 0x16, # Compare greater equals.
-	CLT = 0x17, # Compare less than.
-	CLE = 0x18, # Compare less equals.
+	NEG = 0x13, # Negate.
+	ADD = 0x14, # Add.
+	SUB = 0x15, # Subtract.
+	MUL = 0x16, # Multiply.
+	CEQ = 0x17, # Compare equals.
+	CNE = 0x18, # Compare not equals.
+	CGT = 0x19, # Compare greater than.
+	CGE = 0x1a, # Compare greater equals.
+	CLT = 0x1b, # Compare less than.
+	CLE = 0x1c, # Compare less equals.
+	NOT = 0x1d, # Not.
+	AND = 0x1e, # And.
+	LOR = 0x1f, # Logical or.
 	
 	# Section 2 - Dialog operations:
 	DGS = 0x20, # Dialog show.

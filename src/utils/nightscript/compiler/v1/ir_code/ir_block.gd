@@ -121,6 +121,14 @@ class IRBlock extends Reference:
 				make_phf(node.flg)
 			NightScript.STF:
 				make_stf(node.flg)
+			NightScript.NEG:
+				make_neg()
+			NightScript.ADD:
+				make_add()
+			NightScript.SUB:
+				make_sub()
+			NightScript.MUL:
+				make_mul()
 			NightScript.CEQ:
 				make_ceq()
 			NightScript.CNE:
@@ -133,6 +141,12 @@ class IRBlock extends Reference:
 				make_clt()
 			NightScript.CLE:
 				make_cle()
+			NightScript.NOT:
+				make_not()
+			NightScript.AND:
+				make_and()
+			NightScript.LOR:
+				make_lor()
 			
 			# Dialog operations:
 			NightScript.DGS:
@@ -287,6 +301,26 @@ class IRBlock extends Reference:
 		make_flag(NightScript.STF, flg)
 	
 	
+	# Makes an NEG IR node at the back of the IR block:
+	func make_neg() -> void:
+		make_standalone(NightScript.NEG)
+	
+	
+	# Makes an ADD IR node at the back of the IR block:
+	func make_add() -> void:
+		make_standalone(NightScript.ADD)
+	
+	
+	# Makes an SUB IR node at the back of the IR block:
+	func make_sub() -> void:
+		make_standalone(NightScript.SUB)
+	
+	
+	# Makes an MUL IR node at the back of the IR block:
+	func make_mul() -> void:
+		make_standalone(NightScript.MUL)
+	
+	
 	# Makes a CEQ IR node at the back of the IR block:
 	func make_ceq() -> void:
 		make_standalone(NightScript.CEQ)
@@ -315,6 +349,21 @@ class IRBlock extends Reference:
 	# Makes a CLE IR node at the back of the IR block:
 	func make_cle() -> void:
 		make_standalone(NightScript.CLE)
+	
+	
+	# Makes an NOT IR node at the back of the IR block:
+	func make_not() -> void:
+		make_standalone(NightScript.NOT)
+	
+	
+	# Makes an AND IR node at the back of the IR block:
+	func make_and() -> void:
+		make_standalone(NightScript.AND)
+	
+	
+	# Makes an LOR IR node at the back of the IR block:
+	func make_lor() -> void:
+		make_standalone(NightScript.LOR)
 	
 	
 	# Makes a DGS IR node at the back of the IR block:
