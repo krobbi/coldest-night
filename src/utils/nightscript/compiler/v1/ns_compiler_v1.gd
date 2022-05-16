@@ -46,36 +46,6 @@ var _error_repeat: IRBlock = null
 var _error_block: IRBlock = null
 var _current_block: IRBlock = null
 
-# Compiles a NightScript source file to NightScript bytecode from its path:
-func compile_path(path: String, optimize: bool) -> PoolByteArray:
-	_reset()
-	var file: File = File.new()
-	
-	if file.file_exists(path):
-		var error: int = file.open(path, File.READ)
-		
-		if error:
-			if file.is_open():
-				file.close()
-			
-			_err("Failed to read from NightScript source file '%s'! Error: %s (%d)" % [
-				path, Global.logger.get_err_name(error), error
-			])
-		else:
-			var source: String = file.get_as_text()
-			file.close()
-			_parse_source(source)
-	else:
-		_err("NightScript source file '%s' does not exist!" % path)
-	
-	_finalize()
-
-	if optimize:
-		_optimize()
-	
-	return _generate_bytecode()
-
-
 # Compiles NightScript source code to NightScript bytecode:
 func compile_source(source: String, optimize: bool) -> PoolByteArray:
 	_reset()
