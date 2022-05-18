@@ -5,9 +5,11 @@ extends Control
 # of the NightScript compiler by compiling and disassembling NightScript source
 # code.
 
+const ASTNode: GDScript = preload("../compiler/v2/ast_node.gd")
 const Lexer: GDScript = preload("../compiler/v2/lexer.gd")
 const NSMachine: GDScript = NightScript.NSMachine
 const NSOp: GDScript = NightScript.NSOp
+const Parser: GDScript = preload("../compiler/v2/parser.gd")
 const Token: GDScript = preload("../compiler/v2/token.gd")
 
 var _compiler: Reference = preload("res://utils/nightscript/compiler/ns_compiler.gd").new()
@@ -31,6 +33,7 @@ func _compile_to_string(source: String) -> String:
 	for token in tokens:
 		output += "%s\n" % _token_to_string(token)
 	
+	output += "\n# Abstract syntax tree:\n%s" % _ast_node_to_string(Parser.new().get_ast(tokens))
 	return output
 
 
@@ -79,6 +82,61 @@ func _token_to_string(token: Token) -> String:
 			return "Symbol: )"
 		_:
 			return "Unknown token"
+
+
+# Recursively converts an AST node and its children to a string representation:
+func _ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
+	var output: String = ""
+	var depth: int = flags.size()
+	
+	for i in range(depth):
+		var flag: bool = flags[i]
+		
+		if i == depth - 1:
+			output += "|-" if flag else "|_"
+		else:
+			output += "| " if flag else "  "
+	
+	output += "("
+	
+	match node.type:
+		ASTNode.INT:
+			output += String(node.int_value)
+		ASTNode.FLAG:
+			output += "%s:%s" % [node.string_value, node.key_value]
+		ASTNode.NEGATE, ASTNode.SUBTRACT:
+			output += "-"
+		ASTNode.ADD:
+			output += "+"
+		ASTNode.MULTIPLY:
+			output += "*"
+		ASTNode.EQUALS:
+			output += "=="
+		ASTNode.NOT_EQUALS:
+			output += "!="
+		ASTNode.GREATER_THAN:
+			output += ">"
+		ASTNode.GREATER_EQUALS:
+			output += ">="
+		ASTNode.LESS_THAN:
+			output += "<"
+		ASTNode.LESS_EQUALS:
+			output += "<="
+		ASTNode.NOT:
+			output += "not"
+		ASTNode.AND:
+			output += "and"
+		ASTNode.OR:
+			output += "or"
+	
+	output += ")\n"
+	
+	for i in range(node.children.size()):
+		flags.push_back(i < node.children.size() - 1)
+		output += _ast_node_to_string(node.children[i], flags)
+		flags.remove(depth)
+	
+	return output
 
 
 # Converts a NightScript machine to an assembly-level string:

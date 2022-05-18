@@ -1,7 +1,7 @@
 extends Reference
 
 # Lexer
-# The lexer is a component of the NightScript compiler that converts NightScrpit
+# The lexer is a component of the NightScript compiler that converts NightScript
 # source code to a sequence of tokens.
 
 const Token: GDScript = preload("token.gd")
@@ -233,7 +233,7 @@ func make_string(type: int, value: String) -> Token:
 	return token
 
 
-# Makes a flag token at the current position from its namespace and key:
+# Makes a flag token at the current position from its type, namespace, and key:
 func make_flag(type: int, namespace: String, key: String) -> Token:
 	var token: Token = make_token(type)
 	token.string_value = namespace
