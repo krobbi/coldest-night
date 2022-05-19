@@ -51,6 +51,15 @@ func accept(type: int) -> bool:
 	return false
 
 
+# Accepts an identifier from its name:
+func accept_identifier(name: String) -> bool:
+	if current.type == Token.IDENTIFIER and current.string_value == name:
+		advance()
+		return true
+	
+	return false
+
+
 # Advances the current position if the current token matches a token type.
 # Otherwise logs an error message:
 func expect(type: int) -> void:
@@ -118,7 +127,39 @@ func parse_program() -> ASTNode:
 	var node: ASTNode = make_node(ASTNode.BLOCK)
 	
 	while not accept(Token.END_OF_FILE):
-		node.children.push_back(parse_expr())
+		node.children.push_back(parse_stmt())
+	
+	return node
+
+
+# Parses a statement:
+func parse_stmt() -> ASTNode:
+	var node: ASTNode = make_node(ASTNode.NOP)
+	
+	if accept_identifier("exit"):
+		node = make_node(ASTNode.STMT_EXIT)
+	elif accept_identifier("dialog"):
+		if accept_identifier("show"):
+			node = make_node(ASTNode.STMT_DIALOG_SHOW)
+		elif accept_identifier("hide"):
+			node = make_node(ASTNode.STMT_DIALOG_HIDE)
+		else:
+			err("Command 'dialog' expects 'show' or 'hide'!")
+	elif accept_identifier("say"):
+		if accept(Token.LITERAL_STRING):
+			node = make_string(ASTNode.STMT_SAY, previous.string_value)
+		else:
+			err("Command 'say' expects a string!")
+	elif accept_identifier("player"):
+		if accept_identifier("freeze"):
+			node = make_node(ASTNode.STMT_PLAYER_FREEZE)
+		elif accept_identifier("unfreeze"):
+			node = make_node(ASTNode.STMT_PLAYER_UNFREEZE)
+		else:
+			err("Command 'player' expects 'freeze' or 'unfreeze'!")
+	else:
+		err("Unexpected token for statement!")
+		advance()
 	
 	return node
 

@@ -112,6 +112,18 @@ func _ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
 			output += String(node.int_value)
 		ASTNode.STRING:
 			output += _escape_string(node.string_value)
+		ASTNode.STMT_EXIT:
+			output += "exit"
+		ASTNode.STMT_DIALOG_SHOW:
+			output += "dialog show"
+		ASTNode.STMT_DIALOG_HIDE:
+			output += "dialog hide"
+		ASTNode.STMT_SAY:
+			output += "say %s" % _escape_string(node.string_value)
+		ASTNode.STMT_PLAYER_FREEZE:
+			output += "player freeze"
+		ASTNode.STMT_PLAYER_UNFREEZE:
+			output += "player unfreeze"
 		ASTNode.NEGATE, ASTNode.SUBTRACT:
 			output += "-"
 		ASTNode.ADD:

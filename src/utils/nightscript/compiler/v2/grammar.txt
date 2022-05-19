@@ -6,8 +6,14 @@
 	generator. Because of this, the grammar may not be accurate.
 *)
 
-program = { expr } END_OF_FILE ;
-expr    = expr_or ;
+program = { stmt } END_OF_FILE ;
+stmt    = "exit"
+        | "dialog" ( "show" | "hide" )
+        | "say" LITERAL_STRING
+        | "player" ( "freeze" | "unfreeze" )
+        ;
+
+expr = expr_or ;
 
 (* Expression precedence levels from low to high: *)
 expr_or         = expr_and { "or" expr_and } ;
