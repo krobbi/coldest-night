@@ -81,6 +81,13 @@ func make_int(type: int, value: int) -> ASTNode:
 	return node
 
 
+# Makes a string AST node from its type and value:
+func make_string(type: int, value: String) -> ASTNode:
+	var node: ASTNode = make_node(type)
+	node.string_value = value
+	return node
+
+
 # Makes a flag AST node from its type, namespace, and key:
 func make_flag(type: int, namespace: String, key: String) -> ASTNode:
 	var node: ASTNode = make_node(type)
@@ -108,8 +115,11 @@ func make_binary(type: int, left: ASTNode, right: ASTNode) -> ASTNode:
 
 # Parses a program:
 func parse_program() -> ASTNode:
-	var node: ASTNode = parse_expr()
-	expect(Token.END_OF_FILE)
+	var node: ASTNode = make_node(ASTNode.BLOCK)
+	
+	while not accept(Token.END_OF_FILE):
+		node.children.push_back(parse_expr())
+	
 	return node
 
 
@@ -224,12 +234,13 @@ func parse_expr_primary() -> ASTNode:
 		node = parse_expr()
 		expect(Token.CLOSE_PARENTHESIS)
 	elif accept(Token.IDENTIFIER):
-		err("Identifiers are unimplemented!")
+		node = make_string(ASTNode.IDENTIFIER, previous.string_value)
 	elif accept(Token.FLAG):
 		node = make_flag(ASTNode.FLAG, previous.string_value, previous.key_value)
 	elif accept(Token.LITERAL_INT):
 		node.int_value = previous.int_value
 	else:
 		err("Unexpected token for primary expression!")
+		advance()
 	
 	return node

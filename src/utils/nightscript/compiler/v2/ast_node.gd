@@ -6,8 +6,12 @@ extends Reference
 # unambiguous precedence. Each AST node may have values and child AST nodes.
 
 enum {
-	INT,
+	NOP,
+	BLOCK,
+	IDENTIFIER,
 	FLAG,
+	INT,
+	STRING,
 	NEGATE,
 	ADD,
 	SUBTRACT,

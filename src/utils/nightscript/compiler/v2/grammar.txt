@@ -6,7 +6,7 @@
 	generator. Because of this, the grammar may not be accurate.
 *)
 
-program = expr END_OF_FILE ;
+program = { expr } END_OF_FILE ;
 expr    = expr_or ;
 
 (* Expression precedence levels from low to high: *)

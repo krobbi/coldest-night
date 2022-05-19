@@ -100,10 +100,18 @@ func _ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
 	output += "("
 	
 	match node.type:
-		ASTNode.INT:
-			output += String(node.int_value)
+		ASTNode.NOP:
+			output += "NOP"
+		ASTNode.BLOCK:
+			output += "{}"
+		ASTNode.IDENTIFIER:
+			output += "ID: %s" % node.string_value
 		ASTNode.FLAG:
 			output += "%s:%s" % [node.string_value, node.key_value]
+		ASTNode.INT:
+			output += String(node.int_value)
+		ASTNode.STRING:
+			output += _escape_string(node.string_value)
 		ASTNode.NEGATE, ASTNode.SUBTRACT:
 			output += "-"
 		ASTNode.ADD:
@@ -128,6 +136,8 @@ func _ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
 			output += "and"
 		ASTNode.OR:
 			output += "or"
+		_:
+			output += "Unknown AST node"
 	
 	output += ")\n"
 	
