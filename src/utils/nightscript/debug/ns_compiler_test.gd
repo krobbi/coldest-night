@@ -5,12 +5,8 @@ extends Control
 # of the NightScript compiler by compiling and disassembling NightScript source
 # code.
 
-const ASTNode: GDScript = preload("../compiler/v2/ast_node.gd")
-const Lexer: GDScript = preload("../compiler/v2/lexer.gd")
 const NSMachine: GDScript = NightScript.NSMachine
 const NSOp: GDScript = NightScript.NSOp
-const Parser: GDScript = preload("../compiler/v2/parser.gd")
-const Token: GDScript = preload("../compiler/v2/token.gd")
 
 var _compiler: Reference = preload("res://utils/nightscript/compiler/ns_compiler.gd").new()
 
@@ -24,141 +20,22 @@ func _ready() -> void:
 	Global.display.set_window_scale(0)
 
 
-# Compiles NightScript source code and returns a log for each phase of the
-# compilation:
-func _compile_to_string(source: String) -> String:
-	var tokens: Array = Lexer.new().get_tokens(source)
-	var output: String = "# Token stream:\n"
+# Compiles NightScript source code or deserializes NightScript hex bytecode to a
+# NightScript machine:
+func _source_to_machine(source: String) -> NSMachine:
+	var bytecode: PoolByteArray = PoolByteArray()
 	
-	for token in tokens:
-		output += "%s\n" % _token_to_string(token)
-	
-	output += "\n# Abstract syntax tree:\n%s" % _ast_node_to_string(Parser.new().get_ast(tokens))
-	return output
-
-
-# Converts a token to a string representation:
-func _token_to_string(token: Token) -> String:
-	match token.type:
-		Token.END_OF_FILE:
-			return "End of file"
-		Token.ERROR:
-			return "Syntax error: %s" % token.string_value
-		Token.IDENTIFIER:
-			return "Identifier: %s" % token.string_value
-		Token.FLAG:
-			return "Flag: %s:%s" % [token.string_value, token.key_value]
-		Token.LITERAL_INT:
-			return "Int literal: %d" % token.int_value
-		Token.LITERAL_STRING:
-			return "String literal: %s" % _escape_string(token.string_value)
-		Token.KEYWORD_AND:
-			return "Keyword: and"
-		Token.KEYWORD_NOT:
-			return "Keyword: not"
-		Token.KEYWORD_OR:
-			return "Keyword: or"
-		Token.PLUS:
-			return "Symbol: +"
-		Token.MINUS:
-			return "Symbol: -"
-		Token.STAR:
-			return "Symbol: *"
-		Token.EQUALS_EQUALS:
-			return "Symbol: =="
-		Token.BANG_EQUALS:
-			return "Symbol: !="
-		Token.GREATER:
-			return "Symbol: >"
-		Token.GREATER_EQUALS:
-			return "Symbol: >="
-		Token.LESS:
-			return "Symbol: <"
-		Token.LESS_EQUALS:
-			return "Symbol: <="
-		Token.OPEN_PARENTHESIS:
-			return "Symbol: ("
-		Token.CLOSE_PARENTHESIS:
-			return "Symbol: )"
-		_:
-			return "Unknown token"
-
-
-# Recursively converts an AST node and its children to a string representation:
-func _ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
-	var output: String = ""
-	var depth: int = flags.size()
-	
-	for i in range(depth):
-		var flag: bool = flags[i]
+	if source.begins_with("00 ") or source.begins_with("01 "):
+		var hex: PoolStringArray = source.split(" ", false)
+		var size: int = hex.size()
+		bytecode.resize(size)
 		
-		if i == depth - 1:
-			output += "|-" if flag else "|_"
-		else:
-			output += "| " if flag else "  "
+		for i in range(size):
+			bytecode[i] = ("0x%s" % hex[i]).hex_to_int() & 0xff
+	else:
+		bytecode = _compiler.compile_source(source, true)
 	
-	output += "("
-	
-	match node.type:
-		ASTNode.NOP:
-			output += "NOP"
-		ASTNode.BLOCK:
-			output += "{}"
-		ASTNode.IDENTIFIER:
-			output += "ID: %s" % node.string_value
-		ASTNode.FLAG:
-			output += "%s:%s" % [node.string_value, node.key_value]
-		ASTNode.INT:
-			output += String(node.int_value)
-		ASTNode.STRING:
-			output += _escape_string(node.string_value)
-		ASTNode.STMT_EXIT:
-			output += "exit"
-		ASTNode.STMT_DIALOG_SHOW:
-			output += "dialog show"
-		ASTNode.STMT_DIALOG_HIDE:
-			output += "dialog hide"
-		ASTNode.STMT_SAY:
-			output += "say %s" % _escape_string(node.string_value)
-		ASTNode.STMT_PLAYER_FREEZE:
-			output += "player freeze"
-		ASTNode.STMT_PLAYER_UNFREEZE:
-			output += "player unfreeze"
-		ASTNode.NEGATE, ASTNode.SUBTRACT:
-			output += "-"
-		ASTNode.ADD:
-			output += "+"
-		ASTNode.MULTIPLY:
-			output += "*"
-		ASTNode.EQUALS:
-			output += "=="
-		ASTNode.NOT_EQUALS:
-			output += "!="
-		ASTNode.GREATER_THAN:
-			output += ">"
-		ASTNode.GREATER_EQUALS:
-			output += ">="
-		ASTNode.LESS_THAN:
-			output += "<"
-		ASTNode.LESS_EQUALS:
-			output += "<="
-		ASTNode.NOT:
-			output += "not"
-		ASTNode.AND:
-			output += "and"
-		ASTNode.OR:
-			output += "or"
-		_:
-			output += "Unknown AST node"
-	
-	output += ")\n"
-	
-	for i in range(node.children.size()):
-		flags.push_back(i < node.children.size() - 1)
-		output += _ast_node_to_string(node.children[i], flags)
-		flags.remove(depth)
-	
-	return output
+	return NSMachine.new(bytecode, false)
 
 
 # Converts a NightScript machine to an assembly-level string:
@@ -335,7 +212,7 @@ func _escape_string(string: String) -> String:
 # Signal callback for timeout on the parse timer. Runs when the parse timer
 # times out. Shows the disassembly of the NightScript source code:
 func _on_parse_timer_timeout() -> void:
-	_disassembly_edit.text = _compile_to_string(_source_edit.text)
+	_disassembly_edit.text = _machine_to_string(_source_to_machine(_source_edit.text))
 	_disassembly_edit.show()
 
 

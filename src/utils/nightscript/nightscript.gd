@@ -250,11 +250,11 @@ class NSThread extends Object:
 			NOT: # Not:
 				stack.push_back(int(stack.pop_back() == 0))
 			AND: # And:
-				stack.push_back(int(stack.pop_back() and stack.pop_back()))
+				stack.push_back(int(stack.pop_back() != 0 and stack.pop_back() != 0))
 			LOR: # Logical or:
 				var right: int = stack.pop_back()
 				var left: int = stack.pop_back()
-				stack.push_back(int(left or right))
+				stack.push_back(int(left != 0 or right != 0))
 			
 			# Dialog operations:
 			DGS: # Dialog show:
