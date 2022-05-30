@@ -99,6 +99,7 @@ func get_next_token() -> Token:
 					value += "\t"
 				elif not accept("\nabfrv"):
 					value += character
+					advance()
 			else:
 				value += character
 				advance()
