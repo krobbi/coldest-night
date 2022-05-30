@@ -5,8 +5,10 @@ extends Control
 # of the NightScript compiler by compiling and disassembling NightScript source
 # code.
 
+const Lexer: GDScript = preload("../compiler/v2/lexer.gd")
 const NSMachine: GDScript = NightScript.NSMachine
 const NSOp: GDScript = NightScript.NSOp
+const Token: GDScript = preload("../compiler/v2/token.gd")
 
 var _compiler: Reference = preload("res://utils/nightscript/compiler/ns_compiler.gd").new()
 
@@ -20,12 +22,18 @@ func _ready() -> void:
 	Global.display.set_window_scale(0)
 
 
+# Converts NightScript source code to a sequence of tokens:
+func _source_to_tokens(source: String) -> Array:
+	var lexer: Lexer = Lexer.new()
+	return lexer.get_tokens(source)
+
+
 # Compiles NightScript source code or deserializes NightScript hex bytecode to a
 # NightScript machine:
 func _source_to_machine(source: String) -> NSMachine:
 	var bytecode: PoolByteArray = PoolByteArray()
 	
-	if source.begins_with("00 ") or source.begins_with("01 "):
+	if source.begins_with("0"):
 		var hex: PoolStringArray = source.split(" ", false)
 		var size: int = hex.size()
 		bytecode.resize(size)
@@ -36,6 +44,69 @@ func _source_to_machine(source: String) -> NSMachine:
 		bytecode = _compiler.compile_source(source, true)
 	
 	return NSMachine.new(bytecode, false)
+
+
+# Compiles NightScript source code and returns a log for each phase of
+# compilation:
+func _source_to_log(source: String) -> String:
+	var output: String = "# Token stream:\n"
+	var tokens: Array = _source_to_tokens(source)
+	
+	for token in tokens:
+		output += "%s\n" % _token_to_string(token)
+	
+	return output
+
+
+# Converts a token to a string representation:
+func _token_to_string(token: Token) -> String:
+	match token.type:
+		Token.END_OF_FILE:
+			return "End of file"
+		Token.ERROR:
+			return "Syntax error: %s" % token.string_value
+		Token.IDENTIFIER:
+			return "Identifier: %s" % token.string_value
+		Token.LITERAL_INT:
+			return "Int: %d" % token.int_value
+		Token.LITERAL_STRING:
+			return "String: %s" % _escape_string(token.string_value)
+		Token.KEYWORD_AND:
+			return "Keyword: and"
+		Token.KEYWORD_FALSE:
+			return "Keyword: false"
+		Token.KEYWORD_NOT:
+			return "Keyword: not"
+		Token.KEYWORD_OR:
+			return "Keyword: or"
+		Token.KEYWORD_TRUE:
+			return "Keyword: true"
+		Token.COLON:
+			return "Symbol: :"
+		Token.PLUS:
+			return "Symbol: +"
+		Token.MINUS:
+			return "Symbol: -"
+		Token.STAR:
+			return "Symbol: *"
+		Token.EQUALS_EQUALS:
+			return "Symbol: =="
+		Token.BANG_EQUALS:
+			return "Symbol: !="
+		Token.GREATER:
+			return "Symbol: >"
+		Token.GREATER_EQUALS:
+			return "Symbol: >="
+		Token.LESS:
+			return "Symbol: <"
+		Token.LESS_EQUALS:
+			return "Symbol: <="
+		Token.OPEN_PARENTHESIS:
+			return "Symbol: ("
+		Token.CLOSE_PARENTHESIS:
+			return "Symbol: )"
+		_:
+			return "Unknown token"
 
 
 # Converts a NightScript machine to an assembly-level string:
@@ -212,7 +283,7 @@ func _escape_string(string: String) -> String:
 # Signal callback for timeout on the parse timer. Runs when the parse timer
 # times out. Shows the disassembly of the NightScript source code:
 func _on_parse_timer_timeout() -> void:
-	_disassembly_edit.text = _machine_to_string(_source_to_machine(_source_edit.text))
+	_disassembly_edit.text = _source_to_log(_source_edit.text)
 	_disassembly_edit.show()
 
 
