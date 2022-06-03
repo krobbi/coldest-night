@@ -42,10 +42,25 @@ func make_node(type: int) -> void:
 	insert_node(IRNode.new(type))
 
 
+# Makes a value IR node in the current IR block from its type and operand:
+func make_value(type: int, value: int) -> void:
+	var node: IRNode = IRNode.new(type)
+	node.int_value = value
+	insert_node(node)
+
+
 # Makes a text IR node in the current IR block from its type and operand:
 func make_text(type: int, text: String) -> void:
 	var node: IRNode = IRNode.new(type)
 	node.string_value = text
+	insert_node(node)
+
+
+# Makes a flag IR node in the current IR block from its type and operands:
+func make_flag(type: int, namespace: String, key: String) -> void:
+	var node: IRNode = IRNode.new(type)
+	node.string_value = namespace
+	node.key_value = key
 	insert_node(node)
 
 
@@ -62,6 +77,86 @@ func make_clp(text: String) -> void:
 # Makes a RUN IR node in the current IR block:
 func make_run(text: String) -> void:
 	make_text(NightScript.RUN, text)
+
+
+# Makes a SLP IR node in the current IR block:
+func make_slp() -> void:
+	make_node(NightScript.SLP)
+
+
+# Makes a PHC IR node in the current IR block:
+func make_phc(value: int) -> void:
+	make_value(NightScript.PHC, value)
+
+
+# Makes a PHF IR node in the current IR block:
+func make_phf(namespace: String, key: String) -> void:
+	make_flag(NightScript.PHF, namespace, key)
+
+
+# Makes an NEG IR node in the current IR block:
+func make_neg() -> void:
+	make_node(NightScript.NEG)
+
+
+# Makes an ADD IR node in the current IR block:
+func make_add() -> void:
+	make_node(NightScript.ADD)
+
+
+# Makes an SUB IR node in the current IR block:
+func make_sub() -> void:
+	make_node(NightScript.SUB)
+
+
+# Makes an MUL IR node in the current IR block:
+func make_mul() -> void:
+	make_node(NightScript.MUL)
+
+
+# Makes a CEQ IR node in the current IR block:
+func make_ceq() -> void:
+	make_node(NightScript.CEQ)
+
+
+# Makes a CNE IR node in the current IR block:
+func make_cne() -> void:
+	make_node(NightScript.CNE)
+
+
+# Makes a CGT IR node in the current IR block:
+func make_cgt() -> void:
+	make_node(NightScript.CGT)
+
+
+# Makes a CGE IR node in the current IR block:
+func make_cge() -> void:
+	make_node(NightScript.CGE)
+
+
+# Makes a CLT IR node in the current IR block:
+func make_clt() -> void:
+	make_node(NightScript.CLT)
+
+
+# Makes a CLE IR node in the current IR block:
+func make_cle() -> void:
+	make_node(NightScript.CLE)
+
+
+# Makes an NOT IR node in the current IR block:
+func make_not() -> void:
+	make_node(NightScript.NOT)
+
+
+# Makes an AND IR node in the current IR block:
+func make_and() -> void:
+	make_node(NightScript.AND)
+
+
+# Makes an LOR IR node in the current IR block:
+func make_lor() -> void:
+	make_node(NightScript.LOR)
 
 
 # Makes a DGS IR node in the current IR block:

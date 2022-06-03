@@ -10,6 +10,7 @@ program = { stmt } END_OF_FILE ;
 stmt    = "exit"
         | "call" LITERAL_STRING
         | "run" LITERAL_STRING
+        | "sleep" expr [ "cs" | "ds" | "s" | "m" ]
         | "dialog" ( "show" | "hide" )
         | "name" [ LITERAL_STRING ]
         | "say" LITERAL_STRING

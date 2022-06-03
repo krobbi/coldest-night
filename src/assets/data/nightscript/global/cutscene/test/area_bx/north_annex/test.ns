@@ -7,5 +7,10 @@ say "Pre-call."
 call "cutscene.test.area_bx.north_annex.callee"
 name
 say "Post-call (with no title)."
+say "Let's wait 10 seconds."
+dialog hide
+sleep 2 * 2 + 3 * 2 s
+dialog show
+say "Nice!"
 dialog hide
 player unfreeze

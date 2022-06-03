@@ -170,6 +170,21 @@ func parse_stmt() -> ASTNode:
 			return make_cmd_un(ASTNode.CMD_RUN, make_string(ASTNode.STRING, previous.string_value))
 		
 		err("Command 'run' expects a string!")
+	elif accept_identifier("sleep"):
+		var node: ASTNode = parse_expr()
+		
+		if accept_identifier("cs"):
+			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 1))
+		elif accept_identifier("ds"):
+			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 10))
+		elif accept_identifier("s"):
+			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 100))
+		elif accept_identifier("m"):
+			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 6000))
+		else:
+			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 100))
+		
+		return make_cmd_un(ASTNode.CMD_SLEEP, node)
 	elif accept_identifier("dialog"):
 		if accept_identifier("show"):
 			return make_cmd(ASTNode.CMD_DIALOG_SHOW)
