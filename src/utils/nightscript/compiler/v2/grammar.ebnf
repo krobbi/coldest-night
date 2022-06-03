@@ -11,6 +11,7 @@ stmt    = "exit"
         | "call" LITERAL_STRING
         | "run" LITERAL_STRING
         | "dialog" ( "show" | "hide" )
+        | "name" [ LITERAL_STRING ]
         | "say" LITERAL_STRING
         | "player" ( "freeze" | "unfreeze" )
         ;

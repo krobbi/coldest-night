@@ -2,8 +2,10 @@
 
 player freeze
 dialog show
+name "Title"
 say "Pre-call."
 call "cutscene.test.area_bx.north_annex.callee"
-say "Post-call."
+name
+say "Post-call (with no title)."
 dialog hide
 player unfreeze

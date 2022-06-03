@@ -177,6 +177,13 @@ func parse_stmt() -> ASTNode:
 			return make_cmd(ASTNode.CMD_DIALOG_HIDE)
 		else:
 			err("Command 'dialog' expects 'show' or 'hide'!")
+	elif accept_identifier("name"):
+		var node: ASTNode = make_string(ASTNode.STRING, "")
+		
+		if accept(Token.LITERAL_STRING):
+			node.string_value = previous.string_value
+		
+		return make_cmd_un(ASTNode.CMD_NAME, node)
 	elif accept_identifier("say"):
 		if accept(Token.LITERAL_STRING):
 			return make_cmd_un(ASTNode.CMD_SAY, make_string(ASTNode.STRING, previous.string_value))

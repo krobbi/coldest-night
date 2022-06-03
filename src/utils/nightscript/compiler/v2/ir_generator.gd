@@ -59,6 +59,16 @@ func visit_node(node: ASTNode) -> void:
 						program.make_run(node.children[0].string_value)
 					else:
 						err("Parse bug: Generated a run command without a unary string operand!")
+				ASTNode.CMD_NAME:
+					if is_unary_type(node, ASTNode.STRING):
+						var value: String = node.children[0].string_value
+						
+						if value.empty():
+							program.make_dnc()
+						else:
+							program.make_dnd(value)
+					else:
+						err("Parse bug: Generated a name command without a unary string operand!")
 				ASTNode.CMD_DIALOG_SHOW:
 					program.make_dgs()
 				ASTNode.CMD_DIALOG_HIDE:

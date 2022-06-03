@@ -74,6 +74,16 @@ func make_dgh() -> void:
 	make_node(NightScript.DGH)
 
 
+# Makes a DNC IR node in the current IR block:
+func make_dnc() -> void:
+	make_node(NightScript.DNC)
+
+
+# Makes a DND IR node in the current IR block:
+func make_dnd(text: String) -> void:
+	make_text(NightScript.DND, text)
+
+
 # Makes a DGM IR node in the current IR block:
 func make_dgm(text: String) -> void:
 	make_text(NightScript.DGM, text)
