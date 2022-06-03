@@ -5,9 +5,11 @@ extends Control
 # of the NightScript compiler by compiling and disassembling NightScript source
 # code.
 
+const ASTNode: GDScript = preload("../compiler/v2/ast_node.gd")
 const Lexer: GDScript = preload("../compiler/v2/lexer.gd")
 const NSMachine: GDScript = NightScript.NSMachine
 const NSOp: GDScript = NightScript.NSOp
+const Parser: GDScript = preload("../compiler/v2/parser.gd")
 const Token: GDScript = preload("../compiler/v2/token.gd")
 
 var _compiler: Reference = preload("res://utils/nightscript/compiler/ns_compiler.gd").new()
@@ -49,11 +51,13 @@ func _source_to_machine(source: String) -> NSMachine:
 # Compiles NightScript source code and returns a log for each phase of
 # compilation:
 func _source_to_log(source: String) -> String:
-	var output: String = "# Token stream:\n"
+	var output: String = "# Token Stream:\n"
 	var tokens: Array = _source_to_tokens(source)
 	
 	for token in tokens:
 		output += "%s\n" % _token_to_string(token)
+	
+	output += "\n\n# Abstract Syntax Tree:\n%s" % _ast_node_to_string(_tokens_to_ast(tokens))
 	
 	return output
 
@@ -62,51 +66,154 @@ func _source_to_log(source: String) -> String:
 func _token_to_string(token: Token) -> String:
 	match token.type:
 		Token.END_OF_FILE:
-			return "End of file"
+			return "[End of file]"
 		Token.ERROR:
-			return "Syntax error: %s" % token.string_value
+			return "[Error: %s]" % token.string_value
 		Token.IDENTIFIER:
-			return "Identifier: %s" % token.string_value
+			return "[Identifier: %s]" % token.string_value
 		Token.LITERAL_INT:
-			return "Int: %d" % token.int_value
+			return "[Literal int: %d]" % token.int_value
 		Token.LITERAL_STRING:
-			return "String: %s" % _escape_string(token.string_value)
+			return "[Literal string: %s)" % _escape_string(token.string_value)
 		Token.KEYWORD_AND:
-			return "Keyword: and"
+			return "[and]"
 		Token.KEYWORD_FALSE:
-			return "Keyword: false"
+			return "[false]"
 		Token.KEYWORD_NOT:
-			return "Keyword: not"
+			return "[not]"
 		Token.KEYWORD_OR:
-			return "Keyword: or"
+			return "[or]"
 		Token.KEYWORD_TRUE:
-			return "Keyword: true"
+			return "[true]"
 		Token.COLON:
-			return "Symbol: :"
+			return "[:]"
 		Token.PLUS:
-			return "Symbol: +"
+			return "[+]"
 		Token.MINUS:
-			return "Symbol: -"
+			return "[-]"
 		Token.STAR:
-			return "Symbol: *"
+			return "[*]"
 		Token.EQUALS_EQUALS:
-			return "Symbol: =="
+			return "[==]"
 		Token.BANG_EQUALS:
-			return "Symbol: !="
+			return "[!=]"
 		Token.GREATER:
-			return "Symbol: >"
+			return "[>]"
 		Token.GREATER_EQUALS:
-			return "Symbol: >="
+			return "[>=]"
 		Token.LESS:
-			return "Symbol: <"
+			return "[<]"
 		Token.LESS_EQUALS:
-			return "Symbol: <="
+			return "[<=]"
 		Token.OPEN_PARENTHESIS:
-			return "Symbol: ("
+			return "[(]"
 		Token.CLOSE_PARENTHESIS:
-			return "Symbol: )"
+			return "[)]"
 		_:
-			return "Unknown token"
+			return "[Unknown token]"
+
+
+# Converts a sequence of tokens to an abstract syntax tree:
+func _tokens_to_ast(tokens: Array) -> ASTNode:
+	var parser: Parser = Parser.new()
+	return parser.get_ast(tokens)
+
+
+# Recursively converts an AST node and its children to a string representation:
+func _ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
+	var output = ""
+	var depth: int = flags.size()
+	
+	for i in range(depth):
+		var flag: bool = flags[i]
+		
+		if i == depth - 1:
+			output += "|-" if flag else "|_"
+		else:
+			output += "| " if flag else "  "
+	
+	output += "("
+	
+	match node.type:
+		ASTNode.BLOCK:
+			output += "Block"
+		ASTNode.COMMAND:
+			output += "Command: "
+			
+			match node.int_value:
+				ASTNode.CMD_EXIT:
+					output += "exit"
+				ASTNode.CMD_DIALOG_SHOW:
+					output += "dialog show"
+				ASTNode.CMD_DIALOG_HIDE:
+					output += "dialog hide"
+				ASTNode.CMD_SAY:
+					output += "say"
+				ASTNode.CMD_PLAYER_FREEZE:
+					output += "player freeze"
+				ASTNode.CMD_PLAYER_UNFREEZE:
+					output += "player unfreeze"
+				_:
+					output += "Unknown command"
+		ASTNode.IDENTIFIER:
+			output += "Identifier: %s" % node.string_value
+		ASTNode.FLAG:
+			output += "Flag: %s:%s" % [node.string_value, node.key_value]
+		ASTNode.INT:
+			output += "Int: %d" % node.int_value
+		ASTNode.STRING:
+			output += "String: %s" % _escape_string(node.string_value)
+		ASTNode.UNARY_OPERATION:
+			output += "Unary operation: "
+			
+			match node.int_value:
+				ASTNode.UN_NEG:
+					output += "-"
+				ASTNode.UN_NOT:
+					output += "not"
+				_:
+					output += "Unknown unary operator"
+		ASTNode.BINARY_OPERATION:
+			output += "Binary operation: "
+			
+			match node.int_value:
+				ASTNode.BIN_ADD:
+					output += "+"
+				ASTNode.BIN_SUB:
+					output += "-"
+				ASTNode.BIN_MUL:
+					output += "*"
+				ASTNode.BIN_EQ:
+					output += "=="
+				ASTNode.BIN_NE:
+					output += "!="
+				ASTNode.BIN_GT:
+					output += ">"
+				ASTNode.BIN_GE:
+					output += ">="
+				ASTNode.BIN_LT:
+					output += "<"
+				ASTNode.BIN_LE:
+					output += "<="
+				ASTNode.BIN_AND:
+					output += "and"
+				ASTNode.BIN_OR:
+					output += "or"
+				_:
+					output += "Unknown binary operator"
+		_:
+			output += "Unknown AST node"
+	
+	output += ")\n"
+	
+	var child_count: int = node.children.size()
+	
+	for i in range(child_count):
+		flags.push_back(i != child_count - 1)
+		output += _ast_node_to_string(node.children[i], flags)
+		flags.remove(depth)
+	
+	return output
 
 
 # Converts a NightScript machine to an assembly-level string:
