@@ -97,3 +97,28 @@ func make_plf() -> void:
 # Makes a PLT IR node in the current IR block:
 func make_plt() -> void:
 	make_node(NightScript.PLT)
+
+
+# Makes a QTT IR node in the current IR block:
+func make_qtt() -> void:
+	make_node(NightScript.QTT)
+
+
+# Makes a PSE IR node in the current IR block:
+func make_pse() -> void:
+	make_node(NightScript.PSE)
+
+
+# Makes a UNP IR node in the current IR block:
+func make_unp() -> void:
+	make_node(NightScript.UNP)
+
+
+# Makes an SAV IR node in the current IR block:
+func make_sav() -> void:
+	make_node(NightScript.SAV)
+
+
+# Makes a CKP IR node in the current IR block:
+func make_ckp() -> void:
+	make_node(NightScript.CKP)

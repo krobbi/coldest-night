@@ -82,6 +82,16 @@ func visit_node(node: ASTNode) -> void:
 					program.make_plf()
 				ASTNode.CMD_PLAYER_UNFREEZE:
 					program.make_plt()
+				ASTNode.CMD_QUIT_TITLE:
+					program.make_qtt()
+				ASTNode.CMD_PAUSE:
+					program.make_pse()
+				ASTNode.CMD_UNPAUSE:
+					program.make_unp()
+				ASTNode.CMD_SAVE:
+					program.make_sav()
+				ASTNode.CMD_CHECKPOINT:
+					program.make_ckp()
 				_:
 					err("Codegen bug: Unimplemented command AST node '%d'!" % node.int_value)
 		_:

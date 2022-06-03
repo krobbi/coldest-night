@@ -163,20 +163,20 @@ func parse_stmt() -> ASTNode:
 	elif accept_identifier("call"):
 		if accept(Token.LITERAL_STRING):
 			return make_cmd_un(ASTNode.CMD_CALL, make_string(ASTNode.STRING, previous.string_value))
-		else:
-			err("Command 'call' expects a string!")
+		
+		err("Command 'call' expects a string!")
 	elif accept_identifier("run"):
 		if accept(Token.LITERAL_STRING):
 			return make_cmd_un(ASTNode.CMD_RUN, make_string(ASTNode.STRING, previous.string_value))
-		else:
-			err("Command 'run' expects a string!")
+		
+		err("Command 'run' expects a string!")
 	elif accept_identifier("dialog"):
 		if accept_identifier("show"):
 			return make_cmd(ASTNode.CMD_DIALOG_SHOW)
 		elif accept_identifier("hide"):
 			return make_cmd(ASTNode.CMD_DIALOG_HIDE)
-		else:
-			err("Command 'dialog' expects 'show' or 'hide'!")
+		
+		err("Command 'dialog' expects 'show' or 'hide'!")
 	elif accept_identifier("name"):
 		var node: ASTNode = make_string(ASTNode.STRING, "")
 		
@@ -187,15 +187,28 @@ func parse_stmt() -> ASTNode:
 	elif accept_identifier("say"):
 		if accept(Token.LITERAL_STRING):
 			return make_cmd_un(ASTNode.CMD_SAY, make_string(ASTNode.STRING, previous.string_value))
-		else:
-			err("Command 'say' expects a string!")
+		
+		err("Command 'say' expects a string!")
 	elif accept_identifier("player"):
 		if accept_identifier("freeze"):
 			return make_cmd(ASTNode.CMD_PLAYER_FREEZE)
 		elif accept_identifier("unfreeze"):
 			return make_cmd(ASTNode.CMD_PLAYER_UNFREEZE)
-		else:
-			err("Command 'player' expects 'freeze' or 'unfreeze'!")
+		
+		err("Command 'player' expects 'freeze' or 'unfreeze'!")
+	elif accept_identifier("quit"):
+		if accept_identifier("title"):
+			return make_cmd(ASTNode.CMD_QUIT_TITLE)
+		
+		err("Command 'quit' expects 'title'!")
+	elif accept_identifier("pause"):
+		return make_cmd(ASTNode.CMD_PAUSE)
+	elif accept_identifier("unpause"):
+		return make_cmd(ASTNode.CMD_UNPAUSE)
+	elif accept_identifier("save"):
+		return make_cmd(ASTNode.CMD_SAVE)
+	elif accept_identifier("checkpoint"):
+		return make_cmd(ASTNode.CMD_CHECKPOINT)
 	else:
 		err("Unexpected token for statement!")
 	
