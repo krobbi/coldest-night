@@ -18,6 +18,8 @@ enum {
 
 enum {
 	CMD_EXIT,
+	CMD_CALL,
+	CMD_RUN,
 	CMD_DIALOG_SHOW,
 	CMD_DIALOG_HIDE,
 	CMD_SAY,

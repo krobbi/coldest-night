@@ -54,6 +54,16 @@ func make_hlt() -> void:
 	make_node(NightScript.HLT)
 
 
+# Makes a CLP IR node in the current IR block:
+func make_clp(text: String) -> void:
+	make_text(NightScript.CLP, text)
+
+
+# Makes a RUN IR node in the current IR block:
+func make_run(text: String) -> void:
+	make_text(NightScript.RUN, text)
+
+
 # Makes a DGS IR node in the current IR block:
 func make_dgs() -> void:
 	make_node(NightScript.DGS)

@@ -160,6 +160,16 @@ func parse_program() -> ASTNode:
 func parse_stmt() -> ASTNode:
 	if accept_identifier("exit"):
 		return make_cmd(ASTNode.CMD_EXIT)
+	elif accept_identifier("call"):
+		if accept(Token.LITERAL_STRING):
+			return make_cmd_un(ASTNode.CMD_CALL, make_string(ASTNode.STRING, previous.string_value))
+		else:
+			err("Command 'call' expects a string!")
+	elif accept_identifier("run"):
+		if accept(Token.LITERAL_STRING):
+			return make_cmd_un(ASTNode.CMD_RUN, make_string(ASTNode.STRING, previous.string_value))
+		else:
+			err("Command 'run' expects a string!")
 	elif accept_identifier("dialog"):
 		if accept_identifier("show"):
 			return make_cmd(ASTNode.CMD_DIALOG_SHOW)

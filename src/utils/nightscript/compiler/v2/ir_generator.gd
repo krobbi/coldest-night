@@ -16,6 +16,11 @@ func get_program(ast: ASTNode) -> IRProgram:
 	return program
 
 
+# Gets whether an AST node is a unary operator with a given type:
+func is_unary_type(node: ASTNode, type: int) -> bool:
+	return node.children.size() == 1 and node.children[0].type == type
+
+
 # Begins the IR generator:
 func begin() -> void:
 	program = IRProgram.new()
@@ -31,10 +36,10 @@ func err(_message: String) -> void:
 func visit_node(node: ASTNode) -> void:
 	match node.type:
 		ASTNode.PROGRAM:
-			if node.children.size() >= 1 and node.children[0].type == ASTNode.BLOCK:
+			if is_unary_type(node, ASTNode.BLOCK):
 				visit_node(node.children[0])
 			else:
-				err("Parse bug: Generated program without block operand!")
+				err("Parse bug: Generated a program without a unary block operand!")
 			
 			program.make_hlt()
 		ASTNode.BLOCK:
@@ -44,16 +49,25 @@ func visit_node(node: ASTNode) -> void:
 			match node.int_value:
 				ASTNode.CMD_EXIT:
 					program.make_hlt()
+				ASTNode.CMD_CALL:
+					if is_unary_type(node, ASTNode.STRING):
+						program.make_clp(node.children[0].string_value)
+					else:
+						err("Parse bug: Generated a call command without a unary string operand!")
+				ASTNode.CMD_RUN:
+					if is_unary_type(node, ASTNode.STRING):
+						program.make_run(node.children[0].string_value)
+					else:
+						err("Parse bug: Generated a run command without a unary string operand!")
 				ASTNode.CMD_DIALOG_SHOW:
 					program.make_dgs()
 				ASTNode.CMD_DIALOG_HIDE:
 					program.make_dgh()
 				ASTNode.CMD_SAY:
-					if node.children.size() < 1 or node.children[0].type != ASTNode.STRING:
-						err("Parse bug: Generated say command without string operand!")
-						return
-					
-					program.make_dgm(node.children[0].string_value)
+					if is_unary_type(node, ASTNode.STRING):
+						program.make_dgm(node.children[0].string_value)
+					else:
+						err("Parse bug: Generated a say command without a unary string operand!")
 				ASTNode.CMD_PLAYER_FREEZE:
 					program.make_plf()
 				ASTNode.CMD_PLAYER_UNFREEZE:

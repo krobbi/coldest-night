@@ -8,6 +8,8 @@
 
 program = { stmt } END_OF_FILE ;
 stmt    = "exit"
+        | "call" LITERAL_STRING
+        | "run" LITERAL_STRING
         | "dialog" ( "show" | "hide" )
         | "say" LITERAL_STRING
         | "player" ( "freeze" | "unfreeze" )
