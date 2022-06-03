@@ -1,0 +1,7 @@
+# NightScript Version 2
+
+player freeze
+dialog show
+say "Hello, NightScript version 2!"
+dialog hide
+player unfreeze

@@ -150,7 +150,10 @@ func parse_program() -> ASTNode:
 	while not accept(Token.END_OF_FILE):
 		node.children.push_back(parse_stmt())
 	
-	return node
+	var program: ASTNode = make_node(ASTNode.PROGRAM)
+	program.children.resize(1)
+	program.children[0] = node
+	return program
 
 
 # Parses a statement:

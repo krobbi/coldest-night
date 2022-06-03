@@ -5,7 +5,8 @@ extends Reference
 # NightScript compiler. It pre-processes NightScript source code to direct it to
 # the appropriate compiler.
 
-var _v1: Reference = preload("res://utils/nightscript/compiler/v1/ns_compiler_v1.gd").new()
+var _v1: Reference = preload("v1/ns_compiler_v1.gd").new()
+var _v2: Reference = preload("v2/ns_compiler_v2.gd").new()
 
 # Compiles a NightScript source file to NightScript bytecode from its path:
 func compile_path(path: String, optimize: bool) -> PoolByteArray:
@@ -35,5 +36,7 @@ func compile_path(path: String, optimize: bool) -> PoolByteArray:
 func compile_source(source: String, optimize: bool) -> PoolByteArray:
 	if source.begins_with("# NightScript Version 1"):
 		return _v1.compile_source(source, optimize)
-	else:
-		return _v1.compile_source(source, optimize)
+	elif source.begins_with("# NightScript Version 2"):
+		return _v2.compile_source(source, optimize)
+	
+	return _v1.compile_source(source, optimize)

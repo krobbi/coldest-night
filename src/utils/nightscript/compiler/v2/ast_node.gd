@@ -5,6 +5,7 @@ extends Reference
 # node of an abstract syntax tree.
 
 enum {
+	PROGRAM,
 	BLOCK,
 	COMMAND,
 	IDENTIFIER,

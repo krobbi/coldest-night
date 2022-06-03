@@ -39,7 +39,7 @@ __meta__ = {
 
 [node name="WallW" parent="Midground/LaserWalls" index="0" instance=ExtResource( 2 )]
 position = Vector2( -336, 0 )
-appearance_condition = 6
+appearance_condition = 8
 extents = Vector2( 0, 64 )
 flag_namespace = "test"
 flag_key = "archival_unit_count"
@@ -51,7 +51,7 @@ extents = Vector2( 0, 64 )
 
 [node name="WallS" parent="Midground/LaserWalls" index="2" instance=ExtResource( 2 )]
 position = Vector2( 0, 344 )
-appearance_condition = 6
+appearance_condition = 8
 flag_namespace = "test"
 flag_key = "archival_unit_count"
 compare_value = 17
