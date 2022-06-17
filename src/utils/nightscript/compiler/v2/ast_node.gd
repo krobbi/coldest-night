@@ -5,58 +5,62 @@ extends Reference
 # node of an abstract syntax tree.
 
 enum {
-	PROGRAM,
-	BLOCK,
-	COMMAND,
-	IDENTIFIER,
-	FLAG,
-	INT,
-	STRING,
-	UNARY_OPERATION,
-	BINARY_OPERATION,
+	ERROR, # Syntax error.
+	IDENTIFIER, # User-defined name.
+	FLAG, # User-defined flag namespace and key: `x.y`
+	INT, # Integer value.
+	STRING, # String value.
+	NOP_STMT, # No operation statement: `;`
+	COMPOUND_STMT, # Compound statement: `{}`
+	IF_STMT, # If statement: `if x {y;} else {z;}`
+	LOOP_STMT, # Loop statement: `while x {y;}` or `do {y;} while x;`
+	MENU_STMT, # Menu statement: `& {x;}`
+	OPTION_STMT, # Option statement: `| "x" {y;}`
+	SCOPED_JUMP_STMT, # Scoped jump statement: `break;` or `continue;`
+	META_DECL_STMT, # Meta declaration statement: `meta x = y;`
+	EXIT_STMT, # Exit statement: `exit;`
+	CALL_STMT, # Call statement: `call "x";`
+	RUN_STMT, # Run statement: `run "x";`
+	SLEEP_STMT, # Sleep statement: `: x cs;`
+	SHOW_DIALOG_STMT, # Show dialog statement: `<!`
+	HIDE_DIALOG_STMT, # Hide dialog statement: `!>`
+	DISPLAY_DIALOG_NAME_STMT, # Display dialog name statement: `"x":`
+	DISPLAY_DIALOG_MESSAGE_STMT, # Display dialog message statement: `"x";`
+	FREEZE_PLAYER_STMT, # Freeze player statement: `<*`
+	UNFREEZE_PLAYER_STMT, # Unfreeze player statement: `*>`
+	EXPR_STMT, # Expression statement: `x;`
+	UN_EXPR, # Unary expression: `f(x)`
+	BIN_EXPR, # Binary expression: `f(x, y)`
+	ASSIGN_EXPR, # Assignment expression: `x = y`
 }
 
 enum {
-	CMD_EXIT,
-	CMD_CALL,
-	CMD_RUN,
-	CMD_SLEEP,
-	CMD_DIALOG_SHOW,
-	CMD_DIALOG_HIDE,
-	CMD_NAME,
-	CMD_SAY,
-	CMD_PLAYER_FREEZE,
-	CMD_PLAYER_UNFREEZE,
-	CMD_QUIT_TITLE,
-	CMD_PAUSE,
-	CMD_UNPAUSE,
-	CMD_SAVE,
-	CMD_CHECKPOINT,
+	LOOP_WHILE, # While loop: `while x {y;}`
+	LOOP_DO_WHILE, # Do while loop: `do {y;} while x;`
 }
 
 enum {
-	UN_NEG,
-	UN_NOT,
+	UN_NEG, # Unary negation operator: `-x`
+	UN_NOT, # Unary logical not operator: `!x`
 }
 
 enum {
-	BIN_ADD,
-	BIN_SUB,
-	BIN_MUL,
-	BIN_EQ,
-	BIN_NE,
-	BIN_GT,
-	BIN_GE,
-	BIN_LT,
-	BIN_LE,
-	BIN_AND,
-	BIN_OR,
+	BIN_ADD, # Binary addition operator: `x + y`
+	BIN_SUB, # Binary subtraction operator: `x - y`
+	BIN_MUL, # Binary multiplication operator: `x * y`
+	BIN_EQ, # Binary equality operator: `x == y`
+	BIN_NE, # Binary inequality operator: `x != y`
+	BIN_GT, # Binary greater than operator: `x > y`
+	BIN_GE, # Binary greater than or equal to operator: `x >= y`
+	BIN_LT, # Binary less than operator: `x < y`
+	BIN_LE, # Binary less than or equal to operator: `x <= y`
+	BIN_AND, # Binary logical and operator: `x && y`
+	BIN_OR, # Binary logical or operator: `x || y`
 }
 
 var type: int
 var int_value: int = 0
 var string_value: String = ""
-var key_value: String = ""
 var children: Array = []
 
 # Constructor. Sets the AST node's type:

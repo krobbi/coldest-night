@@ -5,7 +5,7 @@ extends Reference
 # entry point or jump target in a NightScript program.
 
 var label: String
-var nodes: Array = []
+var ops: Array = []
 
 # Constructor. Sets the IR block's label:
 func _init(label_val: String) -> void:

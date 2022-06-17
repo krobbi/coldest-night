@@ -5,28 +5,52 @@ extends Reference
 # syntactic element of NightScript source code.
 
 enum {
-	END_OF_FILE,
-	ERROR,
-	IDENTIFIER,
-	LITERAL_INT,
-	LITERAL_STRING,
-	KEYWORD_AND,
-	KEYWORD_FALSE,
-	KEYWORD_NOT,
-	KEYWORD_OR,
-	KEYWORD_TRUE,
-	COLON,
-	PLUS,
-	MINUS,
-	STAR,
-	EQUALS_EQUALS,
-	BANG_EQUALS,
-	GREATER,
-	GREATER_EQUALS,
-	LESS,
-	LESS_EQUALS,
-	OPEN_PARENTHESIS,
-	CLOSE_PARENTHESIS,
+	END_OF_FILE, # End of source code.
+	ERROR, # Syntax error.
+	IDENTIFIER, # User-defined name.
+	LITERAL_INT, # User-defined integer value.
+	LITERAL_STRING, # User-defined string value.
+	KEYWORD_AND, # `and`
+	KEYWORD_BREAK, # `break`
+	KEYWORD_CALL, # `call`
+	KEYWORD_CONTINUE, # `continue`
+	KEYWORD_DO, # `do`
+	KEYWORD_ELSE, # `else`
+	KEYWORD_EXIT, # `exit`
+	KEYWORD_FALSE, # `false`
+	KEYWORD_IF, # `if`
+	KEYWORD_META, # `meta`
+	KEYWORD_NOT, # `not`
+	KEYWORD_OR, # `or`
+	KEYWORD_RUN, # `run`
+	KEYWORD_TRUE, # `true`
+	KEYWORD_WHILE, # `while`
+	BANG, # `!`
+	BANG_EQUAL, # `!=`
+	BANG_GREATER, # `!>`
+	AMPERSAND, # `&`
+	AMPERSAND_AMPERSAND, # `&&`
+	PARENTHESIS_OPEN, # `(`
+	PARENTHESIS_CLOSE, # `)`
+	STAR, # `*`
+	STAR_GREATER, # `*>`
+	PLUS, # `+`
+	MINUS, # `-`
+	DOT, # `.`
+	COLON, # `:`
+	SEMICOLON, # `;`
+	LESS, # `<`
+	LESS_BANG, # '<!'
+	LESS_STAR, # `<*`
+	LESS_EQUAL, # `<=`
+	EQUAL, # `=`
+	EQUAL_EQUAL, # `==`
+	GREATER, # `>`
+	GREATER_EQUAL, # `>=`
+	BRACE_OPEN, # `{`
+	PIPE, # `|`
+	PIPE_PIPE, # `||`
+	BRACE_CLOSE, # `}`
 }
 
 var type: int

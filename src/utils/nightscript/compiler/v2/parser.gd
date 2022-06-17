@@ -1,44 +1,40 @@
 extends Reference
 
 # Parser
-# The parser is a component of the NightScript compiler that converts a sequence
-# of tokens to an abstract syntax tree.
+# The parser is a component of the NightScript compiler that converts a token
+# stream to an abstract syntax tree.
 
 const ASTNode: GDScript = preload("ast_node.gd")
 const Token: GDScript = preload("token.gd")
 
 var tokens: Array = []
-var previous: Token = Token.new(Token.END_OF_FILE)
-var current: Token = Token.new(Token.END_OF_FILE)
+var previous: Token = make_null_token()
+var current: Token = make_null_token()
 var position: int = -1
 
-# Gets an abstract syntax tree from a sequence of tokens:
-func get_ast(tokens_ref: Array) -> ASTNode:
-	begin(tokens_ref)
+# Gets an abstract syntax tree from an array of tokens:
+func get_ast(tokens_val: Array) -> ASTNode:
+	begin(tokens_val)
 	return parse_program()
 
 
-# Begins the parser from a sequence of tokens:
-func begin(tokens_ref: Array) -> void:
-	tokens = tokens_ref
-	current = Token.new(Token.END_OF_FILE)
+# Begins the parser from an array of tokens:
+func begin(tokens_val: Array) -> void:
+	tokens.clear()
+	
+	for token in tokens_val:
+		if token is Token and token.type != Token.ERROR:
+			tokens.push_back(token)
+	
+	current = make_null_token()
 	position = -1
 	advance()
 
 
-# Logs an error message:
-func err(_message: String) -> void:
-	pass
-
-
-# Advances the current position:
-func advance() -> void:
-	previous = current
-	position += 1
-	current = peek(0)
-	
-	while current.type == Token.ERROR:
-		err(current.string_value)
+# Advances the current position by an amount:
+func advance(amount: int = 1) -> void:
+	for _i in range(amount):
+		previous = current
 		position += 1
 		current = peek(0)
 
@@ -64,26 +60,37 @@ func accept_identifier(name: String) -> bool:
 
 
 # Advances the current position if the current token matches a token type.
-# Otherwise, logs an error message:
-func expect(type: int) -> void:
-	if not accept(type):
-		err("Unexpected token!")
+# Otherwise, does nothing:
+func optional(type: int) -> void:
+	if current.type == type:
+		advance()
 
 
-# Returns the token at an offset from the current position. Returns an end of
-# file token if the peeked position is out of bounds:
+# Returns the token at an offset from the current position. Returns a null token
+# if the peeked position is out of bounds:
 func peek(offset: int) -> Token:
 	var peek_position: int = position + offset
 	
 	if peek_position >= 0 and peek_position < tokens.size():
 		return tokens[peek_position]
 	else:
-		return Token.new(Token.END_OF_FILE)
+		return make_null_token()
+
+
+# Makes a null token that represents a token that was accessed from out of
+# bounds:
+func make_null_token() -> Token:
+	return Token.new(Token.END_OF_FILE)
 
 
 # Makes an AST node from its type:
 func make_node(type: int) -> ASTNode:
 	return ASTNode.new(type)
+
+
+# Makes an error AST node from its message:
+func make_error(message: String) -> ASTNode:
+	return make_string(ASTNode.ERROR, message)
 
 
 # Makes an int AST node from its type and value:
@@ -100,166 +107,224 @@ func make_string(type: int, value: String) -> ASTNode:
 	return node
 
 
-# Makes a flag AST node from its type, namespace, and key:
-func make_flag(type: int, namespace: String, key: String) -> ASTNode:
+# Makes a unary AST node from its type and child AST node:
+func make_unary(type: int, child: ASTNode) -> ASTNode:
 	var node: ASTNode = make_node(type)
-	node.string_value = namespace
-	node.key_value = key
-	return node
-
-
-# Makes a command AST node from its command:
-func make_cmd(command: int) -> ASTNode:
-	var node: ASTNode = make_node(ASTNode.COMMAND)
-	node.int_value = command
-	return node
-
-
-# Makes a unary command AST node from its command and child node:
-func make_cmd_un(command: int, child: ASTNode) -> ASTNode:
-	var node: ASTNode = make_node(ASTNode.COMMAND)
-	node.int_value = command
 	node.children.resize(1)
 	node.children[0] = child
 	return node
 
 
-# Makes a unary operation AST node from its operator and child node:
-func make_un(operator: int, child: ASTNode) -> ASTNode:
-	var node: ASTNode = make_node(ASTNode.UNARY_OPERATION)
-	node.int_value = operator
-	node.children.resize(1)
-	node.children[0] = child
-	return node
-
-
-# Makes a binary operation AST node from its operator and child nodes:
-func make_bin(operator: int, left: ASTNode, right: ASTNode) -> ASTNode:
-	var node: ASTNode = make_node(ASTNode.BINARY_OPERATION)
-	node.int_value = operator
+# Makes a binary AST node from its type and child AST nodes:
+func make_binary(type: int, left: ASTNode, right: ASTNode) -> ASTNode:
+	var node: ASTNode = make_node(type)
 	node.children.resize(2)
 	node.children[0] = left
 	node.children[1] = right
 	return node
 
 
-# Parses a program.
+# Makes an if statement AST node from its condition expression AST node:
+func make_if_stmt(expr: ASTNode) -> ASTNode:
+	var node: ASTNode = make_node(ASTNode.IF_STMT)
+	node.children.resize(3)
+	node.children[0] = expr
+	node.children[1] = make_node(ASTNode.COMPOUND_STMT)
+	node.children[2] = make_node(ASTNode.COMPOUND_STMT)
+	return node
+
+
+# Makes a loop statement AST node from its loop type and condition expression
+# AST node:
+func make_loop_stmt(loop_type: int, expr: ASTNode) -> ASTNode:
+	var node: ASTNode = make_binary(ASTNode.LOOP_STMT, expr, make_node(ASTNode.COMPOUND_STMT))
+	node.int_value = loop_type
+	return node
+
+
+# Makes a unary expression AST node from its operator and child AST node:
+func make_un_expr(operator: int, child: ASTNode) -> ASTNode:
+	var node: ASTNode = make_unary(ASTNode.UN_EXPR, child)
+	node.int_value = operator
+	return node
+
+
+# Makes a binary expression AST node from its operator and child AST nodes:
+func make_bin_expr(operator: int, left: ASTNode, right: ASTNode) -> ASTNode:
+	var node: ASTNode = make_binary(ASTNode.BIN_EXPR, left, right)
+	node.int_value = operator
+	return node
+
+
+# Parses a program:
 func parse_program() -> ASTNode:
-	var node: ASTNode = make_node(ASTNode.BLOCK)
+	var node: ASTNode = make_node(ASTNode.COMPOUND_STMT)
+	
+	while accept(Token.KEYWORD_META):
+		if not accept(Token.IDENTIFIER):
+			node.children.push_back(make_error("Missing identifier in meta declaration!"))
+			continue
+		
+		var identfier: ASTNode = make_string(ASTNode.IDENTIFIER, previous.string_value)
+		optional(Token.EQUAL)
+		node.children.push_back(make_binary(ASTNode.META_DECL_STMT, identfier, parse_expr()))
+		optional(Token.SEMICOLON)
 	
 	while not accept(Token.END_OF_FILE):
 		node.children.push_back(parse_stmt())
 	
-	var program: ASTNode = make_node(ASTNode.PROGRAM)
-	program.children.resize(1)
-	program.children[0] = node
-	return program
+	return node
 
 
 # Parses a statement:
 func parse_stmt() -> ASTNode:
-	if accept_identifier("exit"):
-		return make_cmd(ASTNode.CMD_EXIT)
-	elif accept_identifier("call"):
-		if accept(Token.LITERAL_STRING):
-			return make_cmd_un(ASTNode.CMD_CALL, make_string(ASTNode.STRING, previous.string_value))
+	if accept(Token.BRACE_OPEN):
+		var node: ASTNode = make_node(ASTNode.COMPOUND_STMT)
 		
-		err("Command 'call' expects a string!")
-	elif accept_identifier("run"):
-		if accept(Token.LITERAL_STRING):
-			return make_cmd_un(ASTNode.CMD_RUN, make_string(ASTNode.STRING, previous.string_value))
+		while not accept(Token.BRACE_CLOSE):
+			if current.type == Token.END_OF_FILE:
+				node.children.push_back(make_error("Missing closing '}' in compound statement!"))
+				break
+			
+			node.children.push_back(parse_stmt())
 		
-		err("Command 'run' expects a string!")
-	elif accept_identifier("sleep"):
+		return node
+	elif accept(Token.KEYWORD_IF):
+		var node: ASTNode = make_if_stmt(parse_expr())
+		node.children[1].children.push_back(parse_stmt())
+		
+		if accept(Token.KEYWORD_ELSE):
+			node.children[2].children.push_back(parse_stmt())
+		
+		return node
+	elif accept(Token.KEYWORD_WHILE):
+		var node: ASTNode = make_loop_stmt(ASTNode.LOOP_WHILE, parse_expr())
+		node.children[1].children.push_back(parse_stmt())
+		return node
+	elif accept(Token.KEYWORD_DO):
+		var stmt: ASTNode = parse_stmt()
+		
+		if not accept(Token.KEYWORD_WHILE):
+			return make_unary(ASTNode.COMPOUND_STMT, stmt)
+		
+		var node: ASTNode = make_loop_stmt(ASTNode.LOOP_DO_WHILE, parse_expr())
+		node.children[1].children.push_back(stmt)
+		optional(Token.SEMICOLON)
+		return node
+	elif accept(Token.AMPERSAND):
+		return make_unary(ASTNode.MENU_STMT, parse_stmt())
+	elif accept(Token.PIPE):
+		if not accept(Token.LITERAL_STRING):
+			return make_error("Missing option name in option statement!")
+		
+		return make_binary(
+				ASTNode.OPTION_STMT, make_string(ASTNode.STRING, previous.string_value), parse_stmt()
+		)
+	elif accept(Token.LITERAL_STRING):
+		var node: ASTNode = make_string(ASTNode.STRING, previous.string_value)
+		
+		if accept(Token.COLON):
+			return make_unary(ASTNode.DISPLAY_DIALOG_NAME_STMT, node)
+		
+		optional(Token.SEMICOLON)
+		return make_unary(ASTNode.DISPLAY_DIALOG_MESSAGE_STMT, node)
+	elif accept(Token.KEYWORD_BREAK):
+		optional(Token.SEMICOLON)
+		return make_unary(ASTNode.SCOPED_JUMP_STMT, make_string(ASTNode.STRING, "break"))
+	elif accept(Token.KEYWORD_CONTINUE):
+		optional(Token.SEMICOLON)
+		return make_unary(ASTNode.SCOPED_JUMP_STMT, make_string(ASTNode.STRING, "continue"))
+	elif accept(Token.KEYWORD_EXIT):
+		optional(Token.SEMICOLON)
+		return make_node(ASTNode.EXIT_STMT)
+	elif accept(Token.KEYWORD_CALL):
+		if not accept(Token.LITERAL_STRING):
+			return make_error("Missing script path in call statement!")
+		
+		var node: ASTNode = make_unary(
+				ASTNode.CALL_STMT, make_string(ASTNode.STRING, previous.string_value)
+		)
+		optional(Token.SEMICOLON)
+		return node
+	elif accept(Token.KEYWORD_RUN):
+		if not accept(Token.LITERAL_STRING):
+			return make_error("Missing script path in run statement!")
+		
+		var node: ASTNode = make_unary(
+				ASTNode.RUN_STMT, make_string(ASTNode.STRING, previous.string_value)
+		)
+		optional(Token.SEMICOLON)
+		return node
+	elif accept(Token.COLON):
 		var node: ASTNode = parse_expr()
 		
-		if accept_identifier("cs"):
-			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 1))
-		elif accept_identifier("ds"):
-			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 10))
-		elif accept_identifier("s"):
-			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 100))
-		elif accept_identifier("m"):
-			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 6000))
-		else:
-			node = make_bin(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 100))
+		if not accept_identifier("cs"):
+			if accept_identifier("ds"):
+				node = make_bin_expr(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 10))
+			elif accept_identifier("s"):
+				node = make_bin_expr(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 100))
+			elif accept_identifier("m"):
+				node = make_bin_expr(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 6000))
+			else:
+				node = make_bin_expr(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 100))
 		
-		return make_cmd_un(ASTNode.CMD_SLEEP, node)
-	elif accept_identifier("dialog"):
-		if accept_identifier("show"):
-			return make_cmd(ASTNode.CMD_DIALOG_SHOW)
-		elif accept_identifier("hide"):
-			return make_cmd(ASTNode.CMD_DIALOG_HIDE)
-		
-		err("Command 'dialog' expects 'show' or 'hide'!")
-	elif accept_identifier("name"):
-		var node: ASTNode = make_string(ASTNode.STRING, "")
-		
-		if accept(Token.LITERAL_STRING):
-			node.string_value = previous.string_value
-		
-		return make_cmd_un(ASTNode.CMD_NAME, node)
-	elif accept_identifier("say"):
-		if accept(Token.LITERAL_STRING):
-			return make_cmd_un(ASTNode.CMD_SAY, make_string(ASTNode.STRING, previous.string_value))
-		
-		err("Command 'say' expects a string!")
-	elif accept_identifier("player"):
-		if accept_identifier("freeze"):
-			return make_cmd(ASTNode.CMD_PLAYER_FREEZE)
-		elif accept_identifier("unfreeze"):
-			return make_cmd(ASTNode.CMD_PLAYER_UNFREEZE)
-		
-		err("Command 'player' expects 'freeze' or 'unfreeze'!")
-	elif accept_identifier("quit"):
-		if accept_identifier("title"):
-			return make_cmd(ASTNode.CMD_QUIT_TITLE)
-		
-		err("Command 'quit' expects 'title'!")
-	elif accept_identifier("pause"):
-		return make_cmd(ASTNode.CMD_PAUSE)
-	elif accept_identifier("unpause"):
-		return make_cmd(ASTNode.CMD_UNPAUSE)
-	elif accept_identifier("save"):
-		return make_cmd(ASTNode.CMD_SAVE)
-	elif accept_identifier("checkpoint"):
-		return make_cmd(ASTNode.CMD_CHECKPOINT)
-	else:
-		err("Unexpected token for statement!")
+		optional(Token.SEMICOLON)
+		return make_unary(ASTNode.SLEEP_STMT, node)
+	elif accept(Token.LESS_BANG):
+		return make_node(ASTNode.SHOW_DIALOG_STMT)
+	elif accept(Token.BANG_GREATER):
+		return make_node(ASTNode.HIDE_DIALOG_STMT)
+	elif accept(Token.LESS_STAR):
+		return make_node(ASTNode.FREEZE_PLAYER_STMT)
+	elif accept(Token.STAR_GREATER):
+		return make_node(ASTNode.UNFREEZE_PLAYER_STMT)
+	elif accept(Token.SEMICOLON):
+		return make_node(ASTNode.NOP_STMT)
 	
-	advance()
-	return make_node(ASTNode.BLOCK)
+	var node: ASTNode = make_unary(ASTNode.EXPR_STMT, parse_expr())
+	optional(Token.SEMICOLON)
+	return node
 
 
-# Parses an expression.
+# Parses an expression:
 func parse_expr() -> ASTNode:
-	return parse_expr_or()
+	return parse_expr_assignment()
 
 
-# Parses an or expression.
-func parse_expr_or() -> ASTNode:
-	var node: ASTNode = parse_expr_and()
+# Parses an assignment expression:
+func parse_expr_assignment() -> ASTNode:
+	var node: ASTNode = parse_expr_logical_or()
 	
-	while accept(Token.KEYWORD_OR):
-		node = make_bin(ASTNode.BIN_OR, node, parse_expr_and())
-	
-	return node
-
-
-# Parses an and expression.
-func parse_expr_and() -> ASTNode:
-	var node: ASTNode = parse_expr_not()
-	
-	while accept(Token.KEYWORD_AND):
-		node = make_bin(ASTNode.BIN_AND, node, parse_expr_not())
+	if accept(Token.EQUAL):
+		return make_binary(ASTNode.ASSIGN_EXPR, node, parse_expr_assignment())
 	
 	return node
 
 
-# Parses a not expression:
-func parse_expr_not() -> ASTNode:
-	if accept(Token.KEYWORD_NOT):
-		return make_un(ASTNode.UN_NOT, parse_expr_not())
+# Parses a logical or expression:
+func parse_expr_logical_or() -> ASTNode:
+	var node: ASTNode = parse_expr_logical_and()
+	
+	while accept(Token.KEYWORD_OR) or accept(Token.PIPE_PIPE):
+		node = make_bin_expr(ASTNode.BIN_OR, node, parse_expr_logical_and())
+	
+	return node
+
+
+# Parses a logical and expression:
+func parse_expr_logical_and() -> ASTNode:
+	var node: ASTNode = parse_expr_logical_not()
+	
+	while accept(Token.KEYWORD_AND) or accept(Token.AMPERSAND_AMPERSAND):
+		node = make_bin_expr(ASTNode.BIN_AND, node, parse_expr_logical_not())
+	
+	return node
+
+
+# Parses a logical not expression:
+func parse_expr_logical_not() -> ASTNode:
+	if accept(Token.KEYWORD_NOT) or accept(Token.BANG):
+		return make_un_expr(ASTNode.UN_NOT, parse_expr_logical_not())
 	
 	return parse_expr_equality()
 
@@ -269,10 +334,10 @@ func parse_expr_equality() -> ASTNode:
 	var node: ASTNode = parse_expr_comparison()
 	
 	while true:
-		if accept(Token.EQUALS_EQUALS):
-			node = make_bin(ASTNode.BIN_EQ, node, parse_expr_comparison())
-		elif accept(Token.BANG_EQUALS):
-			node = make_bin(ASTNode.BIN_NE, node, parse_expr_comparison())
+		if accept(Token.BANG_EQUAL):
+			node = make_bin_expr(ASTNode.BIN_NE, node, parse_expr_comparison())
+		elif accept(Token.EQUAL_EQUAL):
+			node = make_bin_expr(ASTNode.BIN_EQ, node, parse_expr_comparison())
 		else:
 			break
 	
@@ -284,14 +349,14 @@ func parse_expr_comparison() -> ASTNode:
 	var node: ASTNode = parse_expr_sum()
 	
 	while true:
-		if accept(Token.GREATER):
-			node = make_bin(ASTNode.BIN_GT, node, parse_expr_sum())
-		elif accept(Token.GREATER_EQUALS):
-			node = make_bin(ASTNode.BIN_GE, node, parse_expr_sum())
-		elif accept(Token.LESS):
-			node = make_bin(ASTNode.BIN_LT, node, parse_expr_sum())
-		elif accept(Token.LESS_EQUALS):
-			node = make_bin(ASTNode.BIN_LE, node, parse_expr_sum())
+		if accept(Token.LESS):
+			node = make_bin_expr(ASTNode.BIN_LT, node, parse_expr_sum())
+		elif accept(Token.LESS_EQUAL):
+			node = make_bin_expr(ASTNode.BIN_LE, node, parse_expr_sum())
+		elif accept(Token.GREATER):
+			node = make_bin_expr(ASTNode.BIN_GT, node, parse_expr_sum())
+		elif accept(Token.GREATER_EQUAL):
+			node = make_bin_expr(ASTNode.BIN_GE, node, parse_expr_sum())
 		else:
 			break
 	
@@ -300,65 +365,67 @@ func parse_expr_comparison() -> ASTNode:
 
 # Parses a sum expression:
 func parse_expr_sum() -> ASTNode:
-	var node: ASTNode = parse_expr_product()
+	var node: ASTNode = parse_expr_term()
 	
 	while true:
 		if accept(Token.PLUS):
-			node = make_bin(ASTNode.BIN_ADD, node, parse_expr_product())
+			node = make_bin_expr(ASTNode.BIN_ADD, node, parse_expr_term())
 		elif accept(Token.MINUS):
-			node = make_bin(ASTNode.BIN_SUB, node, parse_expr_product())
+			node = make_bin_expr(ASTNode.BIN_SUB, node, parse_expr_term())
 		else:
 			break
 	
 	return node
 
 
-# Parses a product expression:
-func parse_expr_product() -> ASTNode:
-	var node: ASTNode = parse_expr_sign()
+# Parses a term expression:
+func parse_expr_term() -> ASTNode:
+	var node: ASTNode = parse_expr_signed()
 	
 	while accept(Token.STAR):
-		node = make_bin(ASTNode.BIN_MUL, node, parse_expr_sign())
+		node = make_bin_expr(ASTNode.BIN_MUL, node, parse_expr_signed())
 	
 	return node
 
 
-# Parses a sign expression:
-func parse_expr_sign() -> ASTNode:
-	while accept(Token.PLUS):
-		pass
+# Parses a signed expression:
+func parse_expr_signed() -> ASTNode:
+	while current.type == Token.PLUS:
+		advance()
 	
 	if accept(Token.MINUS):
-		return make_un(ASTNode.UN_NEG, parse_expr_sign())
+		return make_un_expr(ASTNode.UN_NEG, parse_expr_signed())
 	
 	return parse_expr_primary()
 
 
 # Parses a primary expression:
 func parse_expr_primary() -> ASTNode:
-	if accept(Token.OPEN_PARENTHESIS):
+	if accept(Token.PARENTHESIS_OPEN):
 		var node: ASTNode = parse_expr()
-		expect(Token.CLOSE_PARENTHESIS)
+		
+		if not accept(Token.PARENTHESIS_CLOSE):
+			return make_error("Missing closing ')' in parenthesized expression!")
+		
 		return node
 	elif accept(Token.IDENTIFIER):
-		if current.type != Token.COLON:
-			return make_string(ASTNode.IDENTIFIER, previous.string_value)
+		var node: ASTNode = make_string(ASTNode.IDENTIFIER, previous.string_value)
 		
-		var flag_namespace: String = previous.string_value
-		advance()
+		if accept(Token.DOT):
+			if not accept(Token.IDENTIFIER):
+				return make_error("Missing key in flag with namespace '%s'!" % node.string_value)
+			
+			node = make_binary(
+					ASTNode.FLAG, node, make_string(ASTNode.IDENTIFIER, previous.string_value)
+			)
 		
-		if accept(Token.IDENTIFIER):
-			return make_flag(ASTNode.FLAG, flag_namespace, previous.string_value)
-		else:
-			err("Expected an identifier after ':'!")
+		return node
+	elif accept(Token.LITERAL_INT):
+		return make_int(ASTNode.INT, previous.int_value)
 	elif accept(Token.KEYWORD_FALSE):
 		return make_int(ASTNode.INT, 0)
 	elif accept(Token.KEYWORD_TRUE):
 		return make_int(ASTNode.INT, 1)
-	elif accept(Token.LITERAL_INT):
-		return make_int(ASTNode.INT, previous.int_value)
-	else:
-		err("Unexpected token for primary expression!")
 	
 	advance()
-	return make_int(ASTNode.INT, 0)
+	return make_error("Unexpected token!")

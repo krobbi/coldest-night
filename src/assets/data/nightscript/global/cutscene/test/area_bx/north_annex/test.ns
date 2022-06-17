@@ -1,16 +1,79 @@
 # NightScript Version 2
 
-player freeze
-dialog show
-name "Title"
-say "Pre-call."
+<*<!
+"Title":
+"Pre-call."
 call "cutscene.test.area_bx.north_annex.callee"
-name
-say "Post-call (with no title)."
-say "Let's wait 10 seconds."
-dialog hide
-sleep 2 * 2 + 3 * 2 s
-dialog show
-say "Nice!"
-dialog hide
-player unfreeze
+"":
+"Post-call (with no title)."
+"Let's wait 10 seconds."
+
+if !nsv2_test.seen {
+!> :2 * 2 + 3 * 2 ### Arbitrary expressions! ### <!
+} else {
+	"But you've already done that. Let's not."
+}
+
+nsv2_test.seen = true
+"Repeat 'Foo!' how many times?"
+
+&{
+	| "3" {
+		"OK, will repeat three times!"
+		nsv2_test.foo = 3
+	}
+	
+	| "5" {
+		"OK, will repeat five times!"
+		nsv2_test.foo = 0b1_01 # There's binary literals now, and separators!
+	}
+}
+
+while nsv2_test.foo > 0 {
+	nsv2_test.foo = nsv2_test.foo - 1
+	"Foo!"
+	
+	if nsv2_test.foo == 1 {
+		"There's just one more coming up!"
+	}
+}
+
+"Hopefully the menus should nest."
+
+&{
+	| "A" {
+		"First letter: A"
+		
+		&{
+			| "A" {
+				"AA"
+			}
+			
+			| "B" {
+				"AB"
+			}
+		}
+		
+		"Finished with A."
+	}
+	
+	| "B" {
+		"First letter: B"
+		
+		&{
+			| "A" {
+				"BA"
+			}
+			
+			| "B" {
+				"BB"
+			}
+		}
+		
+		"Finished with B."
+	}
+}
+
+"Finished with nested menu test."
+
+!>*>

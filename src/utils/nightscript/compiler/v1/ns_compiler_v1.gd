@@ -812,6 +812,12 @@ func _parse_set(left: ParseValue, right: ParseValue) -> void:
 	elif not right.is_error():
 		_current_block.push_value(right)
 		_current_block.make_stf(left.flag)
+		
+		# The stack is preserved after storing. This is to allow assignment
+		# expressions in NightScript version 2. Expression statements are not
+		# possible in NightScript version 1, so we must remember to pop the
+		# stack after storing:
+		_current_block.make_pop()
 
 
 # Parses a dialog command from NightScript source code to IR code:
@@ -1082,6 +1088,7 @@ func _parse_option_set(
 		_parse_option_do(menu, text)
 		_current_block.push_value(right)
 		_current_block.make_stf(left.flag)
+		_current_block.make_pop()
 		_parse_end_option()
 
 

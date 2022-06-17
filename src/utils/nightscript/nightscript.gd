@@ -211,8 +211,14 @@ class NSThread extends Object:
 				stack.push_back(op.val)
 			PHF: # Push flag:
 				stack.push_back(get_flag(op.txt, op.key))
+			DUP: # Duplicate:
+				stack.push_back(stack[-1])
+			POP: # Pop:
+				stack.remove(stack.size() - 1)
 			STF: # Store flag:
-				set_flag(op.txt, op.key, stack.pop_back())
+				set_flag(op.txt, op.key, stack[-1])
+			
+			# Stack arithmetic and logic:
 			NEG: # Negate:
 				stack.push_back(-stack.pop_back())
 			ADD: # Add:
@@ -397,45 +403,49 @@ enum {
 	# Section 1 - Stack operations:
 	PHC = 0x10, # Push constant.
 	PHF = 0x11, # Push flag.
-	STF = 0x12, # Store flag.
-	NEG = 0x13, # Negate.
-	ADD = 0x14, # Add.
-	SUB = 0x15, # Subtract.
-	MUL = 0x16, # Multiply.
-	CEQ = 0x17, # Compare equals.
-	CNE = 0x18, # Compare not equals.
-	CGT = 0x19, # Compare greater than.
-	CGE = 0x1a, # Compare greater equals.
-	CLT = 0x1b, # Compare less than.
-	CLE = 0x1c, # Compare less equals.
-	NOT = 0x1d, # Not.
-	AND = 0x1e, # And.
-	LOR = 0x1f, # Logical or.
+	DUP = 0x12, # Duplicate.
+	POP = 0x13, # Pop.
+	STF = 0x14, # Store flag.
 	
-	# Section 2 - Dialog operations:
-	DGS = 0x20, # Dialog show.
-	DGH = 0x21, # Dialog hide.
-	DNC = 0x22, # Dialog name clear.
-	DND = 0x23, # Dialog name display.
-	DGM = 0x24, # Dialog message.
-	MNO = 0x25, # Menu option.
-	MNS = 0x26, # Menu show.
+	# Section 2 - Stack arithmetic and logic:
+	NEG = 0x20, # Negate.
+	ADD = 0x21, # Add.
+	SUB = 0x22, # Subtract.
+	MUL = 0x23, # Multiply.
+	CEQ = 0x24, # Compare equals.
+	CNE = 0x25, # Compare not equals.
+	CGT = 0x26, # Compare greater than.
+	CGE = 0x27, # Compare greater equals.
+	CLT = 0x28, # Compare less than.
+	CLE = 0x29, # Compare less equals.
+	NOT = 0x2a, # Not.
+	AND = 0x2b, # And.
+	LOR = 0x2c, # Logical or.
 	
-	# Section 3 - Actor operations:
-	LAK = 0x30, # Load actor key.
-	AFD = 0x31, # Actor face direction.
-	APF = 0x32, # Actor path find.
-	APR = 0x33, # Actor path run.
-	APA = 0x34, # Actor path await.
-	PLF = 0x35, # Player freeze.
-	PLT = 0x36, # Player thaw.
+	# Section 3 - Dialog operations:
+	DGS = 0x30, # Dialog show.
+	DGH = 0x31, # Dialog hide.
+	DNC = 0x32, # Dialog name clear.
+	DND = 0x33, # Dialog name display.
+	DGM = 0x34, # Dialog message.
+	MNO = 0x35, # Menu option.
+	MNS = 0x36, # Menu show.
 	
-	# Section 4 - External operations:
-	QTT = 0x40, # Quit to title.
-	PSE = 0x41, # Pause.
-	UNP = 0x42, # Unpause.
-	SAV = 0x43, # Save.
-	CKP = 0x44, # Checkpoint.
+	# Section 4 - Actor operations:
+	LAK = 0x40, # Load actor key.
+	AFD = 0x41, # Actor face direction.
+	APF = 0x42, # Actor path find.
+	APR = 0x43, # Actor path run.
+	APA = 0x44, # Actor path await.
+	PLF = 0x45, # Player freeze.
+	PLT = 0x46, # Player thaw.
+	
+	# Section 5 - External operations:
+	QTT = 0x50, # Quit to title.
+	PSE = 0x51, # Pause.
+	UNP = 0x52, # Unpause.
+	SAV = 0x53, # Save.
+	CKP = 0x54, # Checkpoint.
 }
 
 enum {

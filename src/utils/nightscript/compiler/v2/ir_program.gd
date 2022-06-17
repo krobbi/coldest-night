@@ -1,219 +1,111 @@
 extends Reference
 
 # IR Program
-# An IR program is a structure used by the NightScript compiler that contains an
-# intermediate representation of a NightScript program.
+# An IR program is a structure used by the NightScript compiler that represents
+# a NightScript program in labeled blocks.
 
 const IRBlock: GDScript = preload("ir_block.gd")
-const IRNode: GDScript = preload("ir_node.gd")
+const IROp: GDScript = preload("ir_op.gd")
 
-const DEFAULT_METADATA: Dictionary = {"cache": 1, "pause": 1}
+const DEFAULT_METADATA: Dictionary = {"is_cacheable": 1, "is_pausable": 1}
 
 var metadata: Dictionary = {}
 var current: IRBlock = IRBlock.new("$$main")
 var blocks: Array = [current]
+var temp_block_count: int = 0
 
-# Sets a metadata value from its name if it is undefined:
-func set_metadata(name: String, value: int) -> void:
-	if not has_metadata(name):
-		metadata[name] = value
-
-
-# Gets a metadata value from its name:
-func get_metadata(name: String) -> int:
-	if has_metadata(name):
-		return metadata[name]
+# Gets a metadata value from its identifier:
+func get_metadata(identifier: String) -> int:
+	if has_metadata(identifier):
+		return metadata[identifier]
 	else:
-		return DEFAULT_METADATA.get(name, 0)
+		return DEFAULT_METADATA.get(identifier)
 
 
-# Returns whether a metadata value is defined from its name:
-func has_metadata(name: String) -> bool:
-	return metadata.has(name)
+# Sets a metadata value from its identifier if it is undeclared:
+func set_metadata(identifier: String, value: int) -> void:
+	if not has_metadata(identifier):
+		metadata[identifier] = value
 
 
-# Inserts an IR node into the current IR block:
-func insert_node(node: IRNode) -> void:
-	current.nodes.push_back(node)
+# Sets the current label:
+func set_label(value: String) -> void:
+	for block in blocks:
+		if block.label == value:
+			current = block
+			return
 
 
-# Makes an IR node in the current IR block from its type:
-func make_node(type: int) -> void:
-	insert_node(IRNode.new(type))
+# Returns whether a metadata value is declared from its identifier:
+func has_metadata(identifier: String) -> bool:
+	return metadata.has(identifier)
 
 
-# Makes a value IR node in the current IR block from its type and operand:
+# Creates a new IR block after the current IR block from its label:
+func create_block(label: String) -> void:
+	var position: int = blocks.size()
+	
+	for i in range(position):
+		if blocks[i] == current:
+			position = i + 1
+			break
+	
+	blocks.insert(position, IRBlock.new(label))
+
+
+# Creates a new temporary IR block after the current IR block from its name.
+# Returns the temporary IR block's label:
+func create_block_temp(name: String) -> String:
+	temp_block_count += 1
+	var label: String = "$temp_%d_%s" % [temp_block_count, name]
+	create_block(label)
+	return label
+
+
+# Inserts an IR operation into the current IR block:
+func insert_op(op: IROp) -> void:
+	current.ops.push_back(op)
+
+
+# Makes an IR operation the current IR block from its type:
+func make_op(type: int) -> void:
+	insert_op(IROp.new(type))
+
+
+# Makes a value IR operation in the current IR block from its type and operand:
 func make_value(type: int, value: int) -> void:
-	var node: IRNode = IRNode.new(type)
-	node.int_value = value
-	insert_node(node)
+	var op: IROp = IROp.new(type)
+	op.int_value = value
+	insert_op(op)
 
 
-# Makes a text IR node in the current IR block from its type and operand:
-func make_text(type: int, text: String) -> void:
-	var node: IRNode = IRNode.new(type)
-	node.string_value = text
-	insert_node(node)
+# Makes a pointer IR operation in the current IR block from its type and
+# operand:
+func make_pointer(type: int, label: String) -> void:
+	var op: IROp = IROp.new(type)
+	op.key_value = label
+	insert_op(op)
 
 
-# Makes a flag IR node in the current IR block from its type and operands:
+# Makes a flag IR operation in the current IR block from its type and operands:
 func make_flag(type: int, namespace: String, key: String) -> void:
-	var node: IRNode = IRNode.new(type)
-	node.string_value = namespace
-	node.key_value = key
-	insert_node(node)
+	var op: IROp = IROp.new(type)
+	op.string_value = namespace
+	op.key_value = key
+	insert_op(op)
 
 
-# Makes an HLT IR node in the current IR block:
-func make_hlt() -> void:
-	make_node(NightScript.HLT)
+# Makes a text IR operation in the current IR block from its type and operand:
+func make_text(type: int, text: String) -> void:
+	var op: IROp = IROp.new(type)
+	op.string_value = text
+	insert_op(op)
 
 
-# Makes a CLP IR node in the current IR block:
-func make_clp(text: String) -> void:
-	make_text(NightScript.CLP, text)
-
-
-# Makes a RUN IR node in the current IR block:
-func make_run(text: String) -> void:
-	make_text(NightScript.RUN, text)
-
-
-# Makes a SLP IR node in the current IR block:
-func make_slp() -> void:
-	make_node(NightScript.SLP)
-
-
-# Makes a PHC IR node in the current IR block:
-func make_phc(value: int) -> void:
-	make_value(NightScript.PHC, value)
-
-
-# Makes a PHF IR node in the current IR block:
-func make_phf(namespace: String, key: String) -> void:
-	make_flag(NightScript.PHF, namespace, key)
-
-
-# Makes an NEG IR node in the current IR block:
-func make_neg() -> void:
-	make_node(NightScript.NEG)
-
-
-# Makes an ADD IR node in the current IR block:
-func make_add() -> void:
-	make_node(NightScript.ADD)
-
-
-# Makes an SUB IR node in the current IR block:
-func make_sub() -> void:
-	make_node(NightScript.SUB)
-
-
-# Makes an MUL IR node in the current IR block:
-func make_mul() -> void:
-	make_node(NightScript.MUL)
-
-
-# Makes a CEQ IR node in the current IR block:
-func make_ceq() -> void:
-	make_node(NightScript.CEQ)
-
-
-# Makes a CNE IR node in the current IR block:
-func make_cne() -> void:
-	make_node(NightScript.CNE)
-
-
-# Makes a CGT IR node in the current IR block:
-func make_cgt() -> void:
-	make_node(NightScript.CGT)
-
-
-# Makes a CGE IR node in the current IR block:
-func make_cge() -> void:
-	make_node(NightScript.CGE)
-
-
-# Makes a CLT IR node in the current IR block:
-func make_clt() -> void:
-	make_node(NightScript.CLT)
-
-
-# Makes a CLE IR node in the current IR block:
-func make_cle() -> void:
-	make_node(NightScript.CLE)
-
-
-# Makes an NOT IR node in the current IR block:
-func make_not() -> void:
-	make_node(NightScript.NOT)
-
-
-# Makes an AND IR node in the current IR block:
-func make_and() -> void:
-	make_node(NightScript.AND)
-
-
-# Makes an LOR IR node in the current IR block:
-func make_lor() -> void:
-	make_node(NightScript.LOR)
-
-
-# Makes a DGS IR node in the current IR block:
-func make_dgs() -> void:
-	make_node(NightScript.DGS)
-
-
-# Makes a DGH IR node in the current IR block:
-func make_dgh() -> void:
-	make_node(NightScript.DGH)
-
-
-# Makes a DNC IR node in the current IR block:
-func make_dnc() -> void:
-	make_node(NightScript.DNC)
-
-
-# Makes a DND IR node in the current IR block:
-func make_dnd(text: String) -> void:
-	make_text(NightScript.DND, text)
-
-
-# Makes a DGM IR node in the current IR block:
-func make_dgm(text: String) -> void:
-	make_text(NightScript.DGM, text)
-
-
-# Makes a PLF IR node in the current IR block:
-func make_plf() -> void:
-	make_node(NightScript.PLF)
-
-
-# Makes a PLT IR node in the current IR block:
-func make_plt() -> void:
-	make_node(NightScript.PLT)
-
-
-# Makes a QTT IR node in the current IR block:
-func make_qtt() -> void:
-	make_node(NightScript.QTT)
-
-
-# Makes a PSE IR node in the current IR block:
-func make_pse() -> void:
-	make_node(NightScript.PSE)
-
-
-# Makes a UNP IR node in the current IR block:
-func make_unp() -> void:
-	make_node(NightScript.UNP)
-
-
-# Makes an SAV IR node in the current IR block:
-func make_sav() -> void:
-	make_node(NightScript.SAV)
-
-
-# Makes a CKP IR node in the current IR block:
-func make_ckp() -> void:
-	make_node(NightScript.CKP)
+# Makes a pointer and text IR operation in the current IR block from its type
+# and operands:
+func make_pointer_text(type: int, label: String, text: String) -> void:
+	var op: IROp = IROp.new(type)
+	op.key_value = label
+	op.string_value = text
+	insert_op(op)

@@ -119,8 +119,14 @@ class IRBlock extends Reference:
 				make_phc(node.val)
 			NightScript.PHF:
 				make_phf(node.flg)
+			NightScript.DUP:
+				make_dup()
+			NightScript.POP:
+				make_pop()
 			NightScript.STF:
 				make_stf(node.flg)
+			
+			# Stack arithmetic and logic:
 			NightScript.NEG:
 				make_neg()
 			NightScript.ADD:
@@ -294,6 +300,16 @@ class IRBlock extends Reference:
 	# Makes a PHF IR node at the back of the IR block:
 	func make_phf(flg: ParseFlag) -> void:
 		make_flag(NightScript.PHF, flg)
+	
+	
+	# Makes a DUP IR node at the back of the IR block:
+	func make_dup() -> void:
+		make_standalone(NightScript.DUP)
+	
+	
+	# Makes a POP IR node at the back of the IR block:
+	func make_pop() -> void:
+		make_standalone(NightScript.POP)
 	
 	
 	# Makes a STF IR node at the back of the IR block:

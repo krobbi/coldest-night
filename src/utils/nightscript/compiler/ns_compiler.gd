@@ -34,6 +34,8 @@ func compile_path(path: String, optimize: bool) -> PoolByteArray:
 
 # Compiles NightScript source code to NightScript bytecode:
 func compile_source(source: String, optimize: bool) -> PoolByteArray:
+	source = source.replace("\r\n", "\n").replace("\r", "\n").strip_edges()
+	
 	if source.begins_with("# NightScript Version 1"):
 		return _v1.compile_source(source, optimize)
 	elif source.begins_with("# NightScript Version 2"):
