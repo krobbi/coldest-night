@@ -18,6 +18,8 @@ enum {
 	OPTION_STMT, # Option statement: `| "x" {y;}`
 	SCOPED_JUMP_STMT, # Scoped jump statement: `break;` or `continue;`
 	META_DECL_STMT, # Meta declaration statement: `meta x = y;`
+	LABEL_STMT, # Label statement: `x:`
+	GOTO_STMT, # Goto statement: `goto x;`
 	OP_STMT, # Operation statement.
 	TEXT_OP_STMT, # Text operation statement.
 	SLEEP_STMT, # Sleep statement: `: x cs;`

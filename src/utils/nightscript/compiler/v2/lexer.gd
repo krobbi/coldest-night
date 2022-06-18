@@ -154,6 +154,8 @@ func get_next_token() -> Token:
 				return make_token(Token.KEYWORD_EXIT)
 			"false":
 				return make_token(Token.KEYWORD_FALSE)
+			"goto":
+				return make_token(Token.KEYWORD_GOTO)
 			"if":
 				return make_token(Token.KEYWORD_IF)
 			"meta":

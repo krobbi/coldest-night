@@ -10,11 +10,14 @@ const IRProgram: GDScript = preload("ir_program.gd")
 
 var program: IRProgram = IRProgram.new()
 var scopes: Array = []
+var declared_labels: Array = []
 
 # Gets an IR program from an abstract syntax tree:
 func get_program(ast: ASTNode) -> IRProgram:
 	begin()
-	visit_node(fold_statements(ast))
+	ast = fold_statements(ast)
+	declared_labels = discover_labels(ast)
+	visit_node(ast)
 	end()
 	return program
 
@@ -23,8 +26,8 @@ func get_program(ast: ASTNode) -> IRProgram:
 # there is no label in the current scope with the given key:
 func get_scoped_label(key: String) -> String:
 	for i in range(scopes.size() - 1, -1, -1):
-		if scopes[i].labels.has(key):
-			return scopes[i].labels[key]
+		if scopes[i].scoped_labels.has(key):
+			return scopes[i].scoped_labels[key]
 	
 	return ""
 
@@ -39,6 +42,7 @@ func begin() -> void:
 	program = IRProgram.new()
 	scopes.resize(1)
 	scopes[0] = CodegenScope.new({})
+	declared_labels.clear()
 
 
 # Ends the code generator:
@@ -46,9 +50,9 @@ func end() -> void:
 	program.make_op(NightScript.HLT)
 
 
-# Pushes a new scope to the scope stack from its overwritten labels:
-func push_scope(labels: Dictionary) -> void:
-	scopes.push_back(CodegenScope.new(labels))
+# Pushes a new scope to the scope stack from its scoped labels:
+func push_scope(scoped_labels: Dictionary) -> void:
+	scopes.push_back(CodegenScope.new(scoped_labels))
 
 
 # Pops the top scope from the scope stack if it is not the global scope:
@@ -57,6 +61,19 @@ func pop_scope() -> void:
 	
 	if top_index > 0:
 		scopes.remove(top_index)
+
+
+# Recursively discovers user-declared labels from an AST node and its children:
+func discover_labels(node: ASTNode) -> Array:
+	var discovered_labels: Array = []
+	
+	for child in node.children:
+		discovered_labels.append_array(discover_labels(child))
+	
+	if node.type == ASTNode.LABEL_STMT:
+		discovered_labels.push_back(node.children[0].string_value)
+	
+	return discovered_labels
 
 
 # Recursively eliminates erroneous and redundant statements from an AST node and
@@ -169,77 +186,73 @@ func visit_node(node: ASTNode) -> void:
 			
 			pop_scope()
 		ASTNode.IF_STMT:
+			var end_label: String = program.create_block_temp("if_end")
+			var false_label: String = program.create_block_temp("if_false")
+			var true_label: String = program.create_block_temp("if_true")
+			
 			var expr: ASTNode = fold_expression(node.children[0])
 			
 			if expr.type == ASTNode.INT:
-				push_scope({})
-				
 				if expr.int_value != 0:
-					visit_node(node.children[1])
+					program.make_pointer(NightScript.JMP, true_label)
 				else:
-					visit_node(node.children[2])
-				
-				pop_scope()
+					program.make_pointer(NightScript.JMP, false_label)
 			else:
-				var end_label: String = program.create_block_temp("if_end")
-				var false_label: String = program.create_block_temp("if_false")
-				var true_label: String = program.create_block_temp("if_true")
-				
 				visit_node(expr)
 				program.make_pointer(NightScript.BNZ, true_label)
 				program.make_pointer(NightScript.JMP, false_label)
-				
-				program.set_label(true_label)
-				push_scope({})
-				visit_node(node.children[1])
-				program.make_pointer(NightScript.JMP, end_label)
-				pop_scope()
-				
-				program.set_label(false_label)
-				push_scope({})
-				visit_node(node.children[2])
-				program.make_pointer(NightScript.JMP, end_label)
-				pop_scope()
-				
-				program.set_label(end_label)
+			
+			# Visit both branches even if one is known to be unreachable; the
+			# unreachable branch may contain a reachable label statement. Truly
+			# unreachable blocks should be eliminated during IR code
+			# optimization:
+			program.set_label(true_label)
+			push_scope({})
+			visit_node(node.children[1])
+			program.make_pointer(NightScript.JMP, end_label)
+			pop_scope()
+			
+			program.set_label(false_label)
+			push_scope({})
+			visit_node(node.children[2])
+			program.make_pointer(NightScript.JMP, end_label)
+			pop_scope()
+			
+			program.set_label(end_label)
 		ASTNode.LOOP_STMT:
+			var end_label: String = program.create_block_temp("loop_end")
+			var condition_label: String = program.create_block_temp("loop_condition")
+			var body_label: String = program.create_block_temp("loop_body")
+			
+			if node.int_value == ASTNode.LOOP_DO_WHILE:
+				program.make_pointer(NightScript.JMP, body_label)
+			else:
+				program.make_pointer(NightScript.JMP, condition_label)
+			
+			program.set_label(condition_label)
 			var expr: ASTNode = fold_expression(node.children[0])
 			
-			if expr.type != ASTNode.INT:
-				var end_label: String = program.create_block_temp("loop_end")
-				var condition_label: String = program.create_block_temp("loop_condition")
-				var body_label: String = program.create_block_temp("loop_body")
-				
-				if node.int_value == ASTNode.LOOP_DO_WHILE:
+			if expr.type == ASTNode.INT:
+				if expr.int_value != 0:
 					program.make_pointer(NightScript.JMP, body_label)
 				else:
-					program.make_pointer(NightScript.JMP, condition_label)
-				
-				program.set_label(condition_label)
+					program.make_pointer(NightScript.JMP, end_label)
+			else:
 				visit_node(expr)
 				program.make_pointer(NightScript.BNZ, body_label)
 				program.make_pointer(NightScript.JMP, end_label)
-				
-				program.set_label(body_label)
-				push_scope({"break": end_label, "continue": condition_label})
-				visit_node(node.children[1])
-				program.make_pointer(NightScript.JMP, condition_label)
-				pop_scope()
-				
-				program.set_label(end_label)
-			elif expr.int_value != 0:
-				var end_label: String = program.create_block_temp("infinite_loop_end")
-				var body_label: String = program.create_block_temp("infinite_loop_body")
-				
-				program.make_pointer(NightScript.JMP, body_label)
-				
-				program.set_label(body_label)
-				push_scope({"break": end_label, "continue": body_label})
-				visit_node(node.children[1])
-				program.make_pointer(NightScript.JMP, body_label)
-				pop_scope()
-				
-				program.set_label(end_label)
+			
+			# Visit the loop body even if it is known to be unreachable; the
+			# unreachable loop body may contain a reachable label statement.
+			# Truly unreachable blocks should be eliminated during IR code
+			# optimization:
+			program.set_label(body_label)
+			push_scope({"break": end_label, "continue": condition_label})
+			visit_node(node.children[1])
+			program.make_pointer(NightScript.JMP, condition_label)
+			pop_scope()
+			
+			program.set_label(end_label)
 		ASTNode.MENU_STMT:
 			if not get_scoped_label("menu").empty():
 				err("Menu statements cannot be directly nested!")
@@ -296,6 +309,25 @@ func visit_node(node: ASTNode) -> void:
 				err("Metadata value '%s' expects a constant expression!" % expr)
 			else:
 				program.set_metadata(identifier, expr.int_value)
+		ASTNode.LABEL_STMT:
+			var label: String = node.children[0].string_value
+			
+			if program.has_block(label):
+				err("Label '%s' is already declared!" % label)
+			else:
+				program.create_block(label)
+				
+				program.make_pointer(NightScript.JMP, label)
+				
+				program.set_label(label)
+		ASTNode.GOTO_STMT:
+			var label: String = node.children[0].string_value
+			
+			if not declared_labels.has(label):
+				err("Label '%s' is undeclared!" % label)
+				program.make_op(NightScript.HLT)
+			else:
+				program.make_pointer(NightScript.JMP, label)
 		ASTNode.OP_STMT:
 			program.make_op(node.int_value)
 		ASTNode.TEXT_OP_STMT:

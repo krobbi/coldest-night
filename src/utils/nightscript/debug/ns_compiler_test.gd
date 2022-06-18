@@ -161,6 +161,7 @@ func source_to_string(source: String) -> String:
 	ast = codegen.fold_statements(ast)
 	output += "\n\n# Statement Folded AST:\n%s" % ast_node_to_string(ast)
 	
+	codegen.declared_labels = codegen.discover_labels(ast)
 	codegen.visit_node(ast)
 	codegen.end()
 	var program: IRProgram = codegen.program
@@ -202,6 +203,8 @@ func token_to_string(token: Token) -> String:
 			output += "exit"
 		Token.KEYWORD_FALSE:
 			output += "false"
+		Token.KEYWORD_GOTO:
+			output += "goto"
 		Token.KEYWORD_IF:
 			output += "if"
 		Token.KEYWORD_META:
@@ -333,6 +336,10 @@ func ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
 			output += "ScopedJumpStmt"
 		ASTNode.META_DECL_STMT:
 			output += "MetaDeclStmt"
+		ASTNode.LABEL_STMT:
+			output += "LabelStmt"
+		ASTNode.GOTO_STMT:
+			output += "GotoStmt"
 		ASTNode.OP_STMT:
 			output += "OpStmt: %s" % get_op_name(node.int_value)
 		ASTNode.TEXT_OP_STMT:

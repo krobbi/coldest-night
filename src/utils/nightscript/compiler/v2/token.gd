@@ -19,6 +19,7 @@ enum {
 	KEYWORD_ELSE, # `else`
 	KEYWORD_EXIT, # `exit`
 	KEYWORD_FALSE, # `false`
+	KEYWORD_GOTO, # `goto`
 	KEYWORD_IF, # `if`
 	KEYWORD_META, # `meta`
 	KEYWORD_NOT, # `not`

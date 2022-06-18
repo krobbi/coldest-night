@@ -22,6 +22,8 @@ stmt    = "{" { stmt } "}"
         | LITERAL_STRING [ ":" | ";" ] (* Display dialog name or message. *)
         | "break" [ ";" ]
         | "continue" [ ";" ]
+        | IDENTIFIER ":" (* Label. *)
+        | "goto" IDENTIFIER [ ";" ]
         | "exit" [ ";" ]
         | "call" LITERAL_STRING [ ";" ]
         | "run" LITERAL_STRING [ ";" ]

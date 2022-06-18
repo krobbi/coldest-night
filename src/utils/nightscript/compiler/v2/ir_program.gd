@@ -41,6 +41,15 @@ func has_metadata(identifier: String) -> bool:
 	return metadata.has(identifier)
 
 
+# Returns whether an IR block is declared from its label:
+func has_block(label: String) -> bool:
+	for block in blocks:
+		if block.label == label:
+			return true
+	
+	return false
+
+
 # Creates a new IR block after the current IR block from its label:
 func create_block(label: String) -> void:
 	var position: int = blocks.size()

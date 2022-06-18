@@ -219,13 +219,14 @@ func parse_stmt() -> ASTNode:
 		optional(Token.SEMICOLON)
 		return node
 	elif accept(Token.AMPERSAND):
-		return make_unary(ASTNode.MENU_STMT, parse_stmt())
+		return make_unary(ASTNode.MENU_STMT, make_unary(ASTNode.COMPOUND_STMT, parse_stmt()))
 	elif accept(Token.PIPE):
 		if not accept(Token.LITERAL_STRING):
 			return make_error("Missing option name in option statement!")
 		
 		return make_binary(
-				ASTNode.OPTION_STMT, make_string(ASTNode.STRING, previous.string_value), parse_stmt()
+				ASTNode.OPTION_STMT, make_string(ASTNode.STRING, previous.string_value),
+				make_unary(ASTNode.COMPOUND_STMT, parse_stmt())
 		)
 	elif accept(Token.LITERAL_STRING):
 		var node: ASTNode = make_string(ASTNode.STRING, previous.string_value)
@@ -241,6 +242,21 @@ func parse_stmt() -> ASTNode:
 	elif accept(Token.KEYWORD_CONTINUE):
 		optional(Token.SEMICOLON)
 		return make_unary(ASTNode.SCOPED_JUMP_STMT, make_string(ASTNode.STRING, "continue"))
+	elif current.type == Token.IDENTIFIER and peek(1).type == Token.COLON:
+		var node: ASTNode = make_unary(
+				ASTNode.LABEL_STMT, make_string(ASTNode.IDENTIFIER, current.string_value)
+		)
+		advance(2)
+		return node
+	elif accept(Token.KEYWORD_GOTO):
+		if not accept(Token.IDENTIFIER):
+			return make_error("Missing label identifier in goto statement!")
+		
+		var node: ASTNode = make_unary(
+				ASTNode.GOTO_STMT, make_string(ASTNode.IDENTIFIER, previous.string_value)
+		)
+		optional(Token.SEMICOLON)
+		return node
 	elif accept(Token.KEYWORD_EXIT):
 		optional(Token.SEMICOLON)
 		return make_int(ASTNode.OP_STMT, NightScript.HLT)
