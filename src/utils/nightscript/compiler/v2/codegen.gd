@@ -160,6 +160,49 @@ func fold_expression(node: ASTNode) -> ASTNode:
 		elif is_const and node.int_value == ASTNode.BIN_OR:
 			folded = left
 			folded.int_value = int(left.int_value != 0 or right.int_value != 0)
+	elif node.type == ASTNode.BOOL_EXPR:
+		var left: ASTNode = node.children[0]
+		var right: ASTNode = node.children[1]
+		var is_left_const: bool = left.type == ASTNode.INT
+		var is_right_const: bool = right.type == ASTNode.INT
+		var is_const: bool = is_left_const and is_right_const
+		
+		if is_const and node.int_value == ASTNode.BOOL_AND:
+			folded = left
+			folded.int_value = int(left.int_value != 0 and right.int_value != 0)
+		elif is_const and node.int_value == ASTNode.BOOL_OR:
+			folded = left
+			folded.int_value = int(left.int_value != 0 or right.int_value != 0)
+		elif is_left_const and node.int_value == ASTNode.BOOL_AND:
+			if left.int_value == 0:
+				folded = left
+			else:
+				folded = node
+				folded.type = ASTNode.BIN_EXPR
+				folded.int_value = ASTNode.BIN_AND
+				folded.children[0].int_value = 1
+		elif is_left_const and node.int_value == ASTNode.BOOL_OR:
+			if left.int_value != 0:
+				folded = left
+				folded.int_value = 1
+			else:
+				folded = node
+				folded.type = ASTNode.BIN_EXPR
+				folded.int_value = ASTNode.BIN_OR
+		elif is_right_const and node.int_value == ASTNode.BOOL_AND:
+			folded = node
+			folded.type = ASTNode.BIN_EXPR
+			folded.int_value = ASTNode.BIN_AND
+			
+			if right.int_value != 0:
+				folded.children[1].int_value = 1
+		elif is_right_const and node.int_value == ASTNode.BOOL_OR:
+			folded = node
+			folded.type = ASTNode.BIN_EXPR
+			folded.int_value = ASTNode.BIN_OR
+			
+			if right.int_value != 0:
+				folded.children[1].int_value = 1
 	
 	return folded
 
@@ -391,6 +434,39 @@ func visit_node(node: ASTNode) -> void:
 				_:
 					err("Codegen bug: Unimplemented binary operator '%s'!" % node.int_value)
 					program.make_op(NightScript.ADD) # Preserve stack size.
+		ASTNode.BOOL_EXPR:
+			visit_node(node.children[0])
+			
+			if node.int_value == ASTNode.BOOL_AND:
+				var end_label: String = program.create_block_temp("bool_and_end")
+				var long_label: String = program.create_block_temp("bool_and_long")
+				
+				program.make_pointer(NightScript.BNZ, long_label)
+				program.make_value(NightScript.PHC, 0)
+				program.make_pointer(NightScript.JMP, end_label)
+				
+				program.set_label(long_label)
+				program.make_value(NightScript.PHC, 1)
+				visit_node(node.children[1])
+				program.make_op(NightScript.AND)
+				program.make_pointer(NightScript.JMP, end_label)
+				
+				program.set_label(end_label)
+			elif node.int_value == ASTNode.BOOL_OR:
+				var end_label: String = program.create_block_temp("bool_or_end")
+				var short_label: String = program.create_block_temp("bool_or_short")
+				
+				program.make_pointer(NightScript.BNZ, short_label)
+				program.make_value(NightScript.PHC, 0)
+				visit_node(node.children[1])
+				program.make_op(NightScript.LOR)
+				program.make_pointer(NightScript.JMP, end_label)
+				
+				program.set_label(short_label)
+				program.make_value(NightScript.PHC, 1)
+				program.make_pointer(NightScript.JMP, end_label)
+				
+				program.set_label(end_label)
 		ASTNode.ASSIGN_EXPR:
 			visit_node(node.children[1])
 			var target: ASTNode = node.children[0]

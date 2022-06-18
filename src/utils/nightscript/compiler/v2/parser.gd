@@ -179,6 +179,14 @@ func make_bin_expr(operator: int, left: ASTNode, right: ASTNode) -> ASTNode:
 	return node
 
 
+# Makes a short-circuit boolean expression AST node from its operator and child
+# AST nodes:
+func make_bool_expr(operator: int, left: ASTNode, right: ASTNode) -> ASTNode:
+	var node: ASTNode = make_binary(ASTNode.BOOL_EXPR, left, right)
+	node.int_value = operator
+	return node
+
+
 # Parses a program:
 func parse_program() -> ASTNode:
 	var node: ASTNode = make_node(ASTNode.COMPOUND_STMT)
@@ -408,8 +416,13 @@ func parse_expr_assignment() -> ASTNode:
 func parse_expr_logical_or() -> ASTNode:
 	var node: ASTNode = parse_expr_logical_and()
 	
-	while accept(Token.KEYWORD_OR) or accept(Token.PIPE_PIPE):
-		node = make_bin_expr(ASTNode.BIN_OR, node, parse_expr_logical_and())
+	while true:
+		if accept(Token.KEYWORD_OR):
+			node = make_bin_expr(ASTNode.BIN_OR, node, parse_expr_logical_and())
+		elif accept(Token.PIPE_PIPE):
+			node = make_bool_expr(ASTNode.BOOL_OR, node, parse_expr_logical_and())
+		else:
+			break
 	
 	return node
 
@@ -418,8 +431,13 @@ func parse_expr_logical_or() -> ASTNode:
 func parse_expr_logical_and() -> ASTNode:
 	var node: ASTNode = parse_expr_logical_not()
 	
-	while accept(Token.KEYWORD_AND) or accept(Token.AMPERSAND_AMPERSAND):
-		node = make_bin_expr(ASTNode.BIN_AND, node, parse_expr_logical_not())
+	while true:
+		if accept(Token.KEYWORD_AND):
+			node = make_bin_expr(ASTNode.BIN_AND, node, parse_expr_logical_not())
+		elif accept(Token.AMPERSAND_AMPERSAND):
+			node = make_bool_expr(ASTNode.BOOL_AND, node, parse_expr_logical_not())
+		else:
+			break
 	
 	return node
 

@@ -414,6 +414,16 @@ func ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
 					output += "Or"
 				_:
 					output += "Unknown: %d" % node.int_value
+		ASTNode.BOOL_EXPR:
+			output += "BoolExpr: "
+			
+			match node.int_value:
+				ASTNode.BOOL_AND:
+					output += "And"
+				ASTNode.BOOL_OR:
+					output += "Or"
+				_:
+					output += "Unknown: %d" % node.int_value
 		ASTNode.ASSIGN_EXPR:
 			output += "AssignExpr"
 		_:

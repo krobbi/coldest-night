@@ -203,7 +203,7 @@ class NSThread extends Object:
 			JMP: # Jump:
 				machine.pc = op.val
 			BNZ: # Branch not zero:
-				if stack.pop_back():
+				if stack.pop_back() != 0:
 					machine.pc = op.val
 			
 			# Stack operations:
