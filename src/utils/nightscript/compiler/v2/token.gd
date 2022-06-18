@@ -42,6 +42,7 @@ enum {
 	STAR_GREATER, # `*>`
 	PLUS, # `+`
 	MINUS, # `-`
+	MINUS_GREATER, # `->`
 	DOT, # `.`
 	COLON, # `:`
 	SEMICOLON, # `;`
@@ -57,6 +58,8 @@ enum {
 	PIPE, # `|`
 	PIPE_PIPE, # `||`
 	BRACE_CLOSE, # `}`
+	TILDE, # `~`
+	TILDE_GREATER, # `~>`
 }
 
 var type: int

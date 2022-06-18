@@ -223,7 +223,7 @@ func get_next_token() -> Token:
 	elif accept("+"):
 		return make_token(Token.PLUS)
 	elif accept("-"):
-		return make_token(Token.MINUS)
+		return make_digraph(">", Token.MINUS, Token.MINUS_GREATER)
 	elif accept("."):
 		return make_token(Token.DOT)
 	elif accept(":"):
@@ -247,6 +247,8 @@ func get_next_token() -> Token:
 		return make_digraph("|", Token.PIPE, Token.PIPE_PIPE)
 	elif accept("}"):
 		return make_token(Token.BRACE_CLOSE)
+	elif accept("~"):
+		return make_digraph(">", Token.TILDE, Token.TILDE_GREATER)
 	
 	if not lexeme.empty():
 		return make_error("Lexer bug: Fell through after accepting '%s'!" % lexeme)

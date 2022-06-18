@@ -87,6 +87,16 @@ func get_op_name(opcode: int) -> String:
 			return "MNO"
 		NightScript.MNS:
 			return "MNS"
+		NightScript.LAK:
+			return "LAK"
+		NightScript.AFD:
+			return "AFD"
+		NightScript.APF:
+			return "APF"
+		NightScript.APR:
+			return "APR"
+		NightScript.APA:
+			return "APA"
 		NightScript.PLF:
 			return "PLF"
 		NightScript.PLT:
@@ -249,6 +259,8 @@ func token_to_string(token: Token) -> String:
 			output += "+"
 		Token.MINUS:
 			output += "-"
+		Token.MINUS_GREATER:
+			output += "->"
 		Token.DOT:
 			output += "."
 		Token.COLON:
@@ -279,6 +291,10 @@ func token_to_string(token: Token) -> String:
 			output += "||"
 		Token.BRACE_CLOSE:
 			output += "}"
+		Token.TILDE:
+			output += "~"
+		Token.TILDE_GREATER:
+			output += "~>"
 		_:
 			output += "Unknown: %d" % token.type
 	
@@ -344,12 +360,22 @@ func ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
 			output += "OpStmt: %s" % get_op_name(node.int_value)
 		ASTNode.TEXT_OP_STMT:
 			output += "TextOpStmt: %s" % get_op_name(node.int_value)
-		ASTNode.SLEEP_STMT:
-			output += "SleepStmt"
+		ASTNode.EXPR_OP_STMT:
+			output += "ExprOpStmt: %s" % get_op_name(node.int_value)
+		ASTNode.PATH_STMT:
+			output += "PathStmt: "
+			
+			match node.int_value:
+				ASTNode.PATH_FIND:
+					output += "Find"
+				ASTNode.PATH_RUN:
+					output += "Run"
+				ASTNode.PATH_RUN_AWAIT:
+					output += "RunAwait"
+				_:
+					output += "Unknown: %d" % node.int_value
 		ASTNode.DISPLAY_DIALOG_NAME_STMT:
 			output += "DisplayDialogNameStmt"
-		ASTNode.EXPR_STMT:
-			output += "ExprStmt"
 		ASTNode.UN_EXPR:
 			output += "UnExpr: "
 			
@@ -438,7 +464,9 @@ func ir_op_to_string(op: IROp) -> String:
 	var op_name: String = get_op_name(op.type)
 	
 	match op.type:
-		NightScript.CLP, NightScript.RUN, NightScript.DND, NightScript.DGM:
+		NightScript.CLP, NightScript.RUN, NightScript.DND, NightScript.DGM, NightScript.LAK:
+			return "%s %s" % [op_name, escape_string(op.string_value)]
+		NightScript.APF:
 			return "%s %s" % [op_name, escape_string(op.string_value)]
 		NightScript.JMP, NightScript.BNZ:
 			return "%s %s" % [op_name, op.key_value]

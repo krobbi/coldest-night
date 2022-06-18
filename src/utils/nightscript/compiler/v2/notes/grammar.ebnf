@@ -19,7 +19,7 @@ stmt    = "{" { stmt } "}"
         | "&" stmt (* Menu statement. *)
         | "|" LITERAL_STRING stmt (* Option statement. *)
         | expr [ ";" ]
-        | LITERAL_STRING [ ":" | ";" ] (* Display dialog name or message. *)
+        | string_stmt
         | "break" [ ";" ]
         | "continue" [ ";" ]
         | IDENTIFIER ":" (* Label. *)
@@ -32,6 +32,9 @@ stmt    = "{" { stmt } "}"
         | "unpause" [ ";" ]
         | "save" [ ";" ]
         | "checkpoint" [ ";" ]
+        | "~>" (* Run actor paths. *)
+        | "->" (* Run actor paths and await. *)
+        | "~" (* Await actor paths. *)
         | ":" expr [ "cs" | "ds" | "s" | "m" ] [ ";" ] (* Sleep. *)
         | "<!" (* Show dialog. *)
         | "!>" (* Hide dialog.*)
@@ -39,6 +42,16 @@ stmt    = "{" { stmt } "}"
         | "*>" (* Unfreeze player. *)
         | ";" (* No operation. *)
         ;
+
+(* Statements beginning with a string literal: *)
+string_stmt = LITERAL_STRING
+            ( ":" (* Display dialog name. *)
+            | "~" LITERAL_STRING [ ";" ] (* Find actor path. *)
+            | "~>" LITERAL_STRING [ ";" ] (* Run actor paths. *)
+            | "->" LITERAL_STRING [ ";" ] (* Run actor paths and await. *)
+            | ">" [ expr | "right" | "down" | "left" | "up" ] [ ";" ]
+            | [ ";" ] (* Display dialog message *)
+            );
 
 expr = expr_assignment ;
 

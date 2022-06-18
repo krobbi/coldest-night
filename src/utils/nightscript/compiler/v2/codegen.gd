@@ -332,9 +332,18 @@ func visit_node(node: ASTNode) -> void:
 			program.make_op(node.int_value)
 		ASTNode.TEXT_OP_STMT:
 			program.make_text(node.int_value, node.children[0].string_value)
-		ASTNode.SLEEP_STMT:
+		ASTNode.EXPR_OP_STMT:
 			visit_node(fold_expression(node.children[0]))
-			program.make_op(NightScript.SLP)
+			program.make_op(node.int_value)
+		ASTNode.PATH_STMT:
+			program.make_text(NightScript.LAK, node.children[0].string_value)
+			program.make_text(NightScript.APF, node.children[1].string_value)
+			
+			if node.int_value == ASTNode.PATH_RUN or node.int_value == ASTNode.PATH_RUN_AWAIT:
+				program.make_op(NightScript.APR)
+			
+			if node.int_value == ASTNode.PATH_RUN_AWAIT:
+				program.make_op(NightScript.APA)
 		ASTNode.DISPLAY_DIALOG_NAME_STMT:
 			var text: String = node.children[0].string_value
 			
@@ -342,13 +351,6 @@ func visit_node(node: ASTNode) -> void:
 				program.make_op(NightScript.DNC)
 			else:
 				program.make_text(NightScript.DND, text)
-		ASTNode.EXPR_STMT:
-			var expr: ASTNode = fold_expression(node.children[0])
-			
-			# Eliminate standalone constant expressions:
-			if expr.type != ASTNode.INT:
-				visit_node(expr)
-				program.make_op(NightScript.POP) # Discard expression result.
 		ASTNode.UN_EXPR:
 			visit_node(node.children[0])
 			

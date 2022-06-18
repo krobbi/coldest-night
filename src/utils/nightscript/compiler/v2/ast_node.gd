@@ -22,9 +22,9 @@ enum {
 	GOTO_STMT, # Goto statement: `goto x;`
 	OP_STMT, # Operation statement.
 	TEXT_OP_STMT, # Text operation statement.
-	SLEEP_STMT, # Sleep statement: `: x cs;`
+	EXPR_OP_STMT, # Expression operation statement.
+	PATH_STMT, # Path finding statement.
 	DISPLAY_DIALOG_NAME_STMT, # Display dialog name statement: `"x":`
-	EXPR_STMT, # Expression statement: `x;`
 	UN_EXPR, # Unary expression: `f(x)`
 	BIN_EXPR, # Binary expression: `f(x, y)`
 	ASSIGN_EXPR, # Assignment expression: `x = y`
@@ -33,6 +33,12 @@ enum {
 enum {
 	LOOP_WHILE, # While loop: `while x {y;}`
 	LOOP_DO_WHILE, # Do while loop: `do {y;} while x;`
+}
+
+enum {
+	PATH_FIND, # Find path: `"x" ~ "y";`
+	PATH_RUN, # Run path: `"x" ~> "y";`
+	PATH_RUN_AWAIT, # Run path and await: `"x" -> "y";`
 }
 
 enum {

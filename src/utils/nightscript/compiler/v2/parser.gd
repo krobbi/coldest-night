@@ -149,6 +149,22 @@ func make_text_op_stmt(opcode: int, text: ASTNode) -> ASTNode:
 	return node
 
 
+# Makes an expression operation statement AST node from its opcode and
+# expression AST node:
+func make_expr_op_stmt(opcode: int, expr: ASTNode) -> ASTNode:
+	var node: ASTNode = make_unary(ASTNode.EXPR_OP_STMT, expr)
+	node.int_value = opcode
+	return node
+
+
+# Makes a path finding statement AST node from its mode and actor and point AST
+# nodes:
+func make_path_stmt(mode: int, actor: ASTNode, point: ASTNode) -> ASTNode:
+	var node: ASTNode = make_binary(ASTNode.PATH_STMT, actor, point)
+	node.int_value = mode
+	return node
+
+
 # Makes a unary expression AST node from its operator and child AST node:
 func make_un_expr(operator: int, child: ASTNode) -> ASTNode:
 	var node: ASTNode = make_unary(ASTNode.UN_EXPR, child)
@@ -233,9 +249,49 @@ func parse_stmt() -> ASTNode:
 		
 		if accept(Token.COLON):
 			return make_unary(ASTNode.DISPLAY_DIALOG_NAME_STMT, node)
+		elif accept(Token.TILDE):
+			if not accept(Token.LITERAL_STRING):
+				return make_error("Missing point in path find statement!")
+			
+			node = make_path_stmt(
+					ASTNode.PATH_FIND, node, make_string(ASTNode.STRING, previous.string_value)
+			)
+		elif accept(Token.TILDE_GREATER):
+			if not accept(Token.LITERAL_STRING):
+				return make_error("Missing point in path run statement!")
+			
+			node = make_path_stmt(
+					ASTNode.PATH_RUN, node, make_string(ASTNode.STRING, previous.string_value)
+			)
+		elif accept(Token.MINUS_GREATER):
+			if not accept(Token.LITERAL_STRING):
+				return make_error("Missing point in path run and await statement!")
+			
+			node = make_path_stmt(
+					ASTNode.PATH_RUN_AWAIT, node, make_string(ASTNode.STRING, previous.string_value)
+			)
+		elif accept(Token.GREATER):
+			var expr: ASTNode = make_int(ASTNode.INT, 0)
+			
+			if not accept_identifier("right"):
+				if accept_identifier("down"):
+					expr.int_value = 90
+				elif accept_identifier("left"):
+					expr.int_value = 180
+				elif accept_identifier("up"):
+					expr.int_value = -90
+				else:
+					expr = parse_expr()
+			
+			node = make_binary(
+					ASTNode.COMPOUND_STMT, make_text_op_stmt(NightScript.LAK, node),
+					make_expr_op_stmt(NightScript.AFD, expr)
+			)
+		else:
+			node = make_text_op_stmt(NightScript.DGM, node)
 		
 		optional(Token.SEMICOLON)
-		return make_text_op_stmt(NightScript.DGM, node)
+		return node
 	elif accept(Token.KEYWORD_BREAK):
 		optional(Token.SEMICOLON)
 		return make_unary(ASTNode.SCOPED_JUMP_STMT, make_string(ASTNode.STRING, "break"))
@@ -290,6 +346,15 @@ func parse_stmt() -> ASTNode:
 	elif accept(Token.KEYWORD_SAVE):
 		optional(Token.SEMICOLON)
 		return make_int(ASTNode.OP_STMT, NightScript.SAV)
+	elif accept(Token.TILDE_GREATER):
+		return make_int(ASTNode.OP_STMT, NightScript.APR)
+	elif accept(Token.MINUS_GREATER):
+		return make_binary(
+				ASTNode.COMPOUND_STMT, make_int(ASTNode.OP_STMT, NightScript.APR),
+				make_int(ASTNode.OP_STMT, NightScript.APA)
+		)
+	elif accept(Token.TILDE):
+		return make_int(ASTNode.OP_STMT, NightScript.APA)
 	elif accept(Token.KEYWORD_CHECKPOINT):
 		optional(Token.SEMICOLON)
 		return make_int(ASTNode.OP_STMT, NightScript.CKP)
@@ -307,7 +372,7 @@ func parse_stmt() -> ASTNode:
 				node = make_bin_expr(ASTNode.BIN_MUL, node, make_int(ASTNode.INT, 100))
 		
 		optional(Token.SEMICOLON)
-		return make_unary(ASTNode.SLEEP_STMT, node)
+		return make_expr_op_stmt(NightScript.SLP, node)
 	elif accept(Token.LESS_BANG):
 		return make_int(ASTNode.OP_STMT, NightScript.DGS)
 	elif accept(Token.BANG_GREATER):
@@ -319,7 +384,7 @@ func parse_stmt() -> ASTNode:
 	elif accept(Token.SEMICOLON):
 		return make_node(ASTNode.NOP_STMT)
 	
-	var node: ASTNode = make_unary(ASTNode.EXPR_STMT, parse_expr())
+	var node: ASTNode = make_expr_op_stmt(NightScript.POP, parse_expr())
 	optional(Token.SEMICOLON)
 	return node
 
