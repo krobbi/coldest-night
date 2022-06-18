@@ -142,6 +142,8 @@ func get_next_token() -> Token:
 				return make_token(Token.KEYWORD_BREAK)
 			"call":
 				return make_token(Token.KEYWORD_CALL)
+			"checkpoint":
+				return make_token(Token.KEYWORD_CHECKPOINT)
 			"continue":
 				return make_token(Token.KEYWORD_CONTINUE)
 			"do":
@@ -160,10 +162,18 @@ func get_next_token() -> Token:
 				return make_token(Token.KEYWORD_NOT)
 			"or":
 				return make_token(Token.KEYWORD_OR)
+			"pause":
+				return make_token(Token.KEYWORD_PAUSE)
+			"quit":
+				return make_token(Token.KEYWORD_QUIT)
 			"run":
 				return make_token(Token.KEYWORD_RUN)
+			"save":
+				return make_token(Token.KEYWORD_SAVE)
 			"true":
 				return make_token(Token.KEYWORD_TRUE)
+			"unpause":
+				return make_token(Token.KEYWORD_UNPAUSE)
 			"while":
 				return make_token(Token.KEYWORD_WHILE)
 			_:

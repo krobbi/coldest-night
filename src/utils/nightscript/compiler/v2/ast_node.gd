@@ -18,16 +18,10 @@ enum {
 	OPTION_STMT, # Option statement: `| "x" {y;}`
 	SCOPED_JUMP_STMT, # Scoped jump statement: `break;` or `continue;`
 	META_DECL_STMT, # Meta declaration statement: `meta x = y;`
-	EXIT_STMT, # Exit statement: `exit;`
-	CALL_STMT, # Call statement: `call "x";`
-	RUN_STMT, # Run statement: `run "x";`
+	OP_STMT, # Operation statement.
+	TEXT_OP_STMT, # Text operation statement.
 	SLEEP_STMT, # Sleep statement: `: x cs;`
-	SHOW_DIALOG_STMT, # Show dialog statement: `<!`
-	HIDE_DIALOG_STMT, # Hide dialog statement: `!>`
 	DISPLAY_DIALOG_NAME_STMT, # Display dialog name statement: `"x":`
-	DISPLAY_DIALOG_MESSAGE_STMT, # Display dialog message statement: `"x";`
-	FREEZE_PLAYER_STMT, # Freeze player statement: `<*`
-	UNFREEZE_PLAYER_STMT, # Unfreeze player statement: `*>`
 	EXPR_STMT, # Expression statement: `x;`
 	UN_EXPR, # Unary expression: `f(x)`
 	BIN_EXPR, # Binary expression: `f(x, y)`

@@ -13,6 +13,7 @@ enum {
 	KEYWORD_AND, # `and`
 	KEYWORD_BREAK, # `break`
 	KEYWORD_CALL, # `call`
+	KEYWORD_CHECKPOINT, # `checkpoint`
 	KEYWORD_CONTINUE, # `continue`
 	KEYWORD_DO, # `do`
 	KEYWORD_ELSE, # `else`
@@ -22,8 +23,12 @@ enum {
 	KEYWORD_META, # `meta`
 	KEYWORD_NOT, # `not`
 	KEYWORD_OR, # `or`
+	KEYWORD_PAUSE, # `pause`
+	KEYWORD_QUIT, # `quit`
 	KEYWORD_RUN, # `run`
+	KEYWORD_SAVE, # `save`
 	KEYWORD_TRUE, # `true`
+	KEYWORD_UNPAUSE, # `unpause`
 	KEYWORD_WHILE, # `while`
 	BANG, # `!`
 	BANG_EQUAL, # `!=`

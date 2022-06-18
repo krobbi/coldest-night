@@ -296,19 +296,13 @@ func visit_node(node: ASTNode) -> void:
 				err("Metadata value '%s' expects a constant expression!" % expr)
 			else:
 				program.set_metadata(identifier, expr.int_value)
-		ASTNode.EXIT_STMT:
-			program.make_op(NightScript.HLT)
-		ASTNode.CALL_STMT:
-			program.make_text(NightScript.CLP, node.children[0].string_value)
-		ASTNode.RUN_STMT:
-			program.make_text(NightScript.RUN, node.children[0].string_value)
+		ASTNode.OP_STMT:
+			program.make_op(node.int_value)
+		ASTNode.TEXT_OP_STMT:
+			program.make_text(node.int_value, node.children[0].string_value)
 		ASTNode.SLEEP_STMT:
 			visit_node(fold_expression(node.children[0]))
 			program.make_op(NightScript.SLP)
-		ASTNode.SHOW_DIALOG_STMT:
-			program.make_op(NightScript.DGS)
-		ASTNode.HIDE_DIALOG_STMT:
-			program.make_op(NightScript.DGH)
 		ASTNode.DISPLAY_DIALOG_NAME_STMT:
 			var text: String = node.children[0].string_value
 			
@@ -316,12 +310,6 @@ func visit_node(node: ASTNode) -> void:
 				program.make_op(NightScript.DNC)
 			else:
 				program.make_text(NightScript.DND, text)
-		ASTNode.DISPLAY_DIALOG_MESSAGE_STMT:
-			program.make_text(NightScript.DGM, node.children[0].string_value)
-		ASTNode.FREEZE_PLAYER_STMT:
-			program.make_op(NightScript.PLF)
-		ASTNode.UNFREEZE_PLAYER_STMT:
-			program.make_op(NightScript.PLT)
 		ASTNode.EXPR_STMT:
 			var expr: ASTNode = fold_expression(node.children[0])
 			

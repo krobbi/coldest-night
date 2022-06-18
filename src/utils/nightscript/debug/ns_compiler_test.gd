@@ -24,6 +24,87 @@ func _ready() -> void:
 	Global.display.set_window_scale(0)
 
 
+# Gets an operation's name from its opcode:
+func get_op_name(opcode: int) -> String:
+	match opcode:
+		NightScript.HLT:
+			return "HLT"
+		NightScript.CLP:
+			return "CLP"
+		NightScript.RUN:
+			return "RUN"
+		NightScript.SLP:
+			return "SLP"
+		NightScript.JMP:
+			return "JMP"
+		NightScript.BNZ:
+			return "BNZ"
+		NightScript.PHC:
+			return "PHC"
+		NightScript.PHF:
+			return "PHF"
+		NightScript.POP:
+			return "POP"
+		NightScript.STF:
+			return "STF"
+		NightScript.NEG:
+			return "NEG"
+		NightScript.ADD:
+			return "ADD"
+		NightScript.SUB:
+			return "SUB"
+		NightScript.MUL:
+			return "MUL"
+		NightScript.CEQ:
+			return "CEQ"
+		NightScript.CNE:
+			return "CNE"
+		NightScript.CGT:
+			return "CGT"
+		NightScript.CGE:
+			return "CGE"
+		NightScript.CLT:
+			return "CLT"
+		NightScript.CLE:
+			return "CLE"
+		NightScript.NOT:
+			return "NOT"
+		NightScript.AND:
+			return "AND"
+		NightScript.LOR:
+			return "LOR"
+		NightScript.DGS:
+			return "DGS"
+		NightScript.DGH:
+			return "DGH"
+		NightScript.DNC:
+			return "DNC"
+		NightScript.DND:
+			return "DND"
+		NightScript.DGM:
+			return "DGM"
+		NightScript.MNO:
+			return "MNO"
+		NightScript.MNS:
+			return "MNS"
+		NightScript.PLF:
+			return "PLF"
+		NightScript.PLT:
+			return "PLT"
+		NightScript.QTT:
+			return "QTT"
+		NightScript.PSE:
+			return "PSE"
+		NightScript.UNP:
+			return "UNP"
+		NightScript.SAV:
+			return "SAV"
+		NightScript.CKP:
+			return "CKP"
+		_:
+			return "Unknown: %d" % opcode
+
+
 # Converts NightScript source code to an array of tokens:
 func source_to_tokens(source: String) -> Array:
 	var lexer: Lexer = Lexer.new()
@@ -109,6 +190,8 @@ func token_to_string(token: Token) -> String:
 			output += "break"
 		Token.KEYWORD_CALL:
 			output += "call"
+		Token.KEYWORD_CHECKPOINT:
+			output += "checkpoint"
 		Token.KEYWORD_CONTINUE:
 			output += "continue"
 		Token.KEYWORD_DO:
@@ -127,10 +210,18 @@ func token_to_string(token: Token) -> String:
 			output += "not"
 		Token.KEYWORD_OR:
 			output += "or"
+		Token.KEYWORD_PAUSE:
+			output += "pause"
+		Token.KEYWORD_QUIT:
+			output += "quit"
 		Token.KEYWORD_RUN:
 			output += "run"
+		Token.KEYWORD_SAVE:
+			output += "save"
 		Token.KEYWORD_TRUE:
 			output += "true"
+		Token.KEYWORD_UNPAUSE:
+			output += "unpause"
 		Token.KEYWORD_WHILE:
 			output += "while"
 		Token.BANG:
@@ -242,26 +333,14 @@ func ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
 			output += "ScopedJumpStmt"
 		ASTNode.META_DECL_STMT:
 			output += "MetaDeclStmt"
-		ASTNode.EXIT_STMT:
-			output += "ExitStmt"
-		ASTNode.CALL_STMT:
-			output += "CallStmt"
-		ASTNode.RUN_STMT:
-			output += "RunStmt"
+		ASTNode.OP_STMT:
+			output += "OpStmt: %s" % get_op_name(node.int_value)
+		ASTNode.TEXT_OP_STMT:
+			output += "TextOpStmt: %s" % get_op_name(node.int_value)
 		ASTNode.SLEEP_STMT:
 			output += "SleepStmt"
-		ASTNode.SHOW_DIALOG_STMT:
-			output += "ShowDialogStmt"
-		ASTNode.HIDE_DIALOG_STMT:
-			output += "HideDialogStmt"
 		ASTNode.DISPLAY_DIALOG_NAME_STMT:
 			output += "DisplayDialogNameStmt"
-		ASTNode.DISPLAY_DIALOG_MESSAGE_STMT:
-			output += "DisplayDialogMessageStmt"
-		ASTNode.FREEZE_PLAYER_STMT:
-			output += "FreezePlayerStmt"
-		ASTNode.UNFREEZE_PLAYER_STMT:
-			output += "UnfreezePlayerStmt"
 		ASTNode.EXPR_STMT:
 			output += "ExprStmt"
 		ASTNode.UN_EXPR:
@@ -349,73 +428,21 @@ func ir_block_to_string(block: IRBlock) -> String:
 
 # Converts an IR operation to a string representation:
 func ir_op_to_string(op: IROp) -> String:
+	var op_name: String = get_op_name(op.type)
+	
 	match op.type:
-		NightScript.HLT:
-			return "HLT;"
-		NightScript.CLP:
-			return "CLP %s;" % escape_string(op.string_value)
-		NightScript.RUN:
-			return "RUN %s;" % escape_string(op.string_value)
-		NightScript.SLP:
-			return "SLP;"
-		NightScript.JMP:
-			return "JMP %s;" % op.key_value
-		NightScript.BNZ:
-			return "BNZ %s;" % op.key_value
+		NightScript.CLP, NightScript.RUN, NightScript.DND, NightScript.DGM:
+			return "%s %s" % [op_name, escape_string(op.string_value)]
+		NightScript.JMP, NightScript.BNZ:
+			return "%s %s" % [op_name, op.key_value]
 		NightScript.PHC:
-			return "PHC %d;" % op.int_value
-		NightScript.PHF:
-			return "PHF %s.%s;" % [op.string_value, op.key_value]
-		NightScript.POP:
-			return "POP;"
-		NightScript.STF:
-			return "STF %s.%s;" % [op.string_value, op.key_value]
-		NightScript.NEG:
-			return "NEG;"
-		NightScript.ADD:
-			return "ADD;"
-		NightScript.SUB:
-			return "SUB;"
-		NightScript.MUL:
-			return "MUL;"
-		NightScript.CEQ:
-			return "CEQ;"
-		NightScript.CNE:
-			return "CNE;"
-		NightScript.CGT:
-			return "CGT;"
-		NightScript.CGE:
-			return "CGE;"
-		NightScript.CLT:
-			return "CLT;"
-		NightScript.CLE:
-			return "CLE;"
-		NightScript.NOT:
-			return "NOT;"
-		NightScript.AND:
-			return "AND;"
-		NightScript.LOR:
-			return "LOR;"
-		NightScript.DGS:
-			return "DGS;"
-		NightScript.DGH:
-			return "DGH;"
-		NightScript.DNC:
-			return "DNC;"
-		NightScript.DND:
-			return "DND %s;" % escape_string(op.string_value)
-		NightScript.DGM:
-			return "DGM %s;" % escape_string(op.string_value)
+			return "%s %d" % [op_name, op.int_value]
+		NightScript.PHF, NightScript.STF:
+			return "%s %s.%s" % [op_name, op.string_value, op.key_value]
 		NightScript.MNO:
-			return "MNO %s %s;" % [op.key_value, escape_string(op.string_value)]
-		NightScript.MNS:
-			return "MNS;"
-		NightScript.PLF:
-			return "PLF;"
-		NightScript.PLT:
-			return "PLT;"
+			return "%s %s %s" % [op_name, op.key_value, escape_string(op.string_value)]
 		_:
-			return "# Unknown: %d" % op.type
+			return op_name
 
 
 # Signal callback for timeout on the parse timer. Runs when the parse timer

@@ -25,6 +25,11 @@ stmt    = "{" { stmt } "}"
         | "exit" [ ";" ]
         | "call" LITERAL_STRING [ ";" ]
         | "run" LITERAL_STRING [ ";" ]
+        | "quit" [ ";" ]
+        | "pause" [ ";" ]
+        | "unpause" [ ";" ]
+        | "save" [ ";" ]
+        | "checkpoint" [ ";" ]
         | ":" expr [ "cs" | "ds" | "s" | "m" ] [ ";" ] (* Sleep. *)
         | "<!" (* Show dialog. *)
         | "!>" (* Hide dialog.*)

@@ -142,6 +142,13 @@ func make_loop_stmt(loop_type: int, expr: ASTNode) -> ASTNode:
 	return node
 
 
+# Makes a text operation statement AST node from its opcode and text AST node:
+func make_text_op_stmt(opcode: int, text: ASTNode) -> ASTNode:
+	var node: ASTNode = make_unary(ASTNode.TEXT_OP_STMT, text)
+	node.int_value = opcode
+	return node
+
+
 # Makes a unary expression AST node from its operator and child AST node:
 func make_un_expr(operator: int, child: ASTNode) -> ASTNode:
 	var node: ASTNode = make_unary(ASTNode.UN_EXPR, child)
@@ -227,7 +234,7 @@ func parse_stmt() -> ASTNode:
 			return make_unary(ASTNode.DISPLAY_DIALOG_NAME_STMT, node)
 		
 		optional(Token.SEMICOLON)
-		return make_unary(ASTNode.DISPLAY_DIALOG_MESSAGE_STMT, node)
+		return make_text_op_stmt(NightScript.DGM, node)
 	elif accept(Token.KEYWORD_BREAK):
 		optional(Token.SEMICOLON)
 		return make_unary(ASTNode.SCOPED_JUMP_STMT, make_string(ASTNode.STRING, "break"))
@@ -236,13 +243,13 @@ func parse_stmt() -> ASTNode:
 		return make_unary(ASTNode.SCOPED_JUMP_STMT, make_string(ASTNode.STRING, "continue"))
 	elif accept(Token.KEYWORD_EXIT):
 		optional(Token.SEMICOLON)
-		return make_node(ASTNode.EXIT_STMT)
+		return make_int(ASTNode.OP_STMT, NightScript.HLT)
 	elif accept(Token.KEYWORD_CALL):
 		if not accept(Token.LITERAL_STRING):
 			return make_error("Missing script path in call statement!")
 		
-		var node: ASTNode = make_unary(
-				ASTNode.CALL_STMT, make_string(ASTNode.STRING, previous.string_value)
+		var node: ASTNode = make_text_op_stmt(
+				NightScript.CLP, make_string(ASTNode.STRING, previous.string_value)
 		)
 		optional(Token.SEMICOLON)
 		return node
@@ -250,11 +257,26 @@ func parse_stmt() -> ASTNode:
 		if not accept(Token.LITERAL_STRING):
 			return make_error("Missing script path in run statement!")
 		
-		var node: ASTNode = make_unary(
-				ASTNode.RUN_STMT, make_string(ASTNode.STRING, previous.string_value)
+		var node: ASTNode = make_text_op_stmt(
+				NightScript.RUN, make_string(ASTNode.STRING, previous.string_value)
 		)
 		optional(Token.SEMICOLON)
 		return node
+	elif accept(Token.KEYWORD_QUIT):
+		optional(Token.SEMICOLON)
+		return make_int(ASTNode.OP_STMT, NightScript.QTT)
+	elif accept(Token.KEYWORD_PAUSE):
+		optional(Token.SEMICOLON)
+		return make_int(ASTNode.OP_STMT, NightScript.PSE)
+	elif accept(Token.KEYWORD_UNPAUSE):
+		optional(Token.SEMICOLON)
+		return make_int(ASTNode.OP_STMT, NightScript.UNP)
+	elif accept(Token.KEYWORD_SAVE):
+		optional(Token.SEMICOLON)
+		return make_int(ASTNode.OP_STMT, NightScript.SAV)
+	elif accept(Token.KEYWORD_CHECKPOINT):
+		optional(Token.SEMICOLON)
+		return make_int(ASTNode.OP_STMT, NightScript.CKP)
 	elif accept(Token.COLON):
 		var node: ASTNode = parse_expr()
 		
@@ -271,13 +293,13 @@ func parse_stmt() -> ASTNode:
 		optional(Token.SEMICOLON)
 		return make_unary(ASTNode.SLEEP_STMT, node)
 	elif accept(Token.LESS_BANG):
-		return make_node(ASTNode.SHOW_DIALOG_STMT)
+		return make_int(ASTNode.OP_STMT, NightScript.DGS)
 	elif accept(Token.BANG_GREATER):
-		return make_node(ASTNode.HIDE_DIALOG_STMT)
+		return make_int(ASTNode.OP_STMT, NightScript.DGH)
 	elif accept(Token.LESS_STAR):
-		return make_node(ASTNode.FREEZE_PLAYER_STMT)
+		return make_int(ASTNode.OP_STMT, NightScript.PLF)
 	elif accept(Token.STAR_GREATER):
-		return make_node(ASTNode.UNFREEZE_PLAYER_STMT)
+		return make_int(ASTNode.OP_STMT, NightScript.PLT)
 	elif accept(Token.SEMICOLON):
 		return make_node(ASTNode.NOP_STMT)
 	
