@@ -14,7 +14,9 @@ enum {
 	KEYWORD_BREAK, # `break`
 	KEYWORD_CALL, # `call`
 	KEYWORD_CHECKPOINT, # `checkpoint`
+	KEYWORD_CONST, # `const`
 	KEYWORD_CONTINUE, # `continue`
+	KEYWORD_DEFINE, # `define`
 	KEYWORD_DO, # `do`
 	KEYWORD_ELSE, # `else`
 	KEYWORD_EXIT, # `exit`

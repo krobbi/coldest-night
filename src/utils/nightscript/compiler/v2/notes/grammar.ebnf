@@ -22,6 +22,8 @@ stmt    = "{" { stmt } "}"
         | string_stmt
         | "break" [ ";" ]
         | "continue" [ ";" ]
+        | "define" IDENTIFIER [ "=" ] expr [ ";" ]
+        | "const" IDENTIFIER [ "=" ] expr [ ";" ]
         | IDENTIFIER ":" (* Label. *)
         | "goto" IDENTIFIER [ ";" ]
         | "exit" [ ";" ]

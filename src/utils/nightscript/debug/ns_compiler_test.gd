@@ -43,6 +43,8 @@ func get_op_name(opcode: int) -> String:
 			return "PHC"
 		NightScript.PHF:
 			return "PHF"
+		NightScript.DUP:
+			return "DUP"
 		NightScript.POP:
 			return "POP"
 		NightScript.STF:
@@ -203,8 +205,12 @@ func token_to_string(token: Token) -> String:
 			output += "call"
 		Token.KEYWORD_CHECKPOINT:
 			output += "checkpoint"
+		Token.KEYWORD_CONST:
+			output += "const"
 		Token.KEYWORD_CONTINUE:
 			output += "continue"
+		Token.KEYWORD_DEFINE:
+			output += "define"
 		Token.KEYWORD_DO:
 			output += "do"
 		Token.KEYWORD_ELSE:
@@ -352,6 +358,16 @@ func ast_node_to_string(node: ASTNode, flags: Array = []) -> String:
 			output += "ScopedJumpStmt"
 		ASTNode.META_DECL_STMT:
 			output += "MetaDeclStmt"
+		ASTNode.DECL_STMT:
+			output += "DeclStmt: "
+			
+			match node.int_value:
+				ASTNode.DECL_DEFINE:
+					output += "Define"
+				ASTNode.DECL_CONST:
+					output += "Const"
+				_:
+					output += "Unknown: %d" % node.int_value
 		ASTNode.LABEL_STMT:
 			output += "LabelStmt"
 		ASTNode.GOTO_STMT:

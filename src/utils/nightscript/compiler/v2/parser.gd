@@ -142,6 +142,14 @@ func make_loop_stmt(loop_type: int, expr: ASTNode) -> ASTNode:
 	return node
 
 
+# Makes a declaration statement AST node from its declaration type and
+# identifier and expression AST nodes:
+func make_decl_stmt(decl_type: int, identifier: ASTNode, expr: ASTNode) -> ASTNode:
+	var node: ASTNode = make_binary(ASTNode.DECL_STMT, identifier, expr)
+	node.int_value = decl_type
+	return node
+
+
 # Makes a text operation statement AST node from its opcode and text AST node:
 func make_text_op_stmt(opcode: int, text: ASTNode) -> ASTNode:
 	var node: ASTNode = make_unary(ASTNode.TEXT_OP_STMT, text)
@@ -306,6 +314,24 @@ func parse_stmt() -> ASTNode:
 	elif accept(Token.KEYWORD_CONTINUE):
 		optional(Token.SEMICOLON)
 		return make_unary(ASTNode.SCOPED_JUMP_STMT, make_string(ASTNode.STRING, "continue"))
+	elif accept(Token.KEYWORD_DEFINE):
+		if not accept(Token.IDENTIFIER):
+			return make_error("Missing identifier in definition declaration!")
+		
+		var node: ASTNode = make_string(ASTNode.IDENTIFIER, previous.string_value)
+		optional(Token.EQUAL)
+		node = make_decl_stmt(ASTNode.DECL_DEFINE, node, parse_expr())
+		optional(Token.SEMICOLON)
+		return node
+	elif accept(Token.KEYWORD_CONST):
+		if not accept(Token.IDENTIFIER):
+			return make_error("Missing identifier in constant declaration!")
+		
+		var node: ASTNode = make_string(ASTNode.IDENTIFIER, previous.string_value)
+		optional(Token.EQUAL)
+		node = make_decl_stmt(ASTNode.DECL_CONST, node, parse_expr())
+		optional(Token.SEMICOLON)
+		return node
 	elif current.type == Token.IDENTIFIER and peek(1).type == Token.COLON:
 		var node: ASTNode = make_unary(
 				ASTNode.LABEL_STMT, make_string(ASTNode.IDENTIFIER, current.string_value)

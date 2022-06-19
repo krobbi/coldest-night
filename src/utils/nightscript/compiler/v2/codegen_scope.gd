@@ -5,6 +5,7 @@ extends Reference
 # represents a scope level in the code generator.
 
 var scoped_labels: Dictionary
+var symbols: Dictionary = {}
 
 # Constructor. Sets the code generator scope's scoped labels:
 func _init(scoped_labels_ref: Dictionary) -> void:

@@ -18,6 +18,7 @@ enum {
 	OPTION_STMT, # Option statement: `| "x" {y;}`
 	SCOPED_JUMP_STMT, # Scoped jump statement: `break;` or `continue;`
 	META_DECL_STMT, # Meta declaration statement: `meta x = y;`
+	DECL_STMT, # Declaration statement: `define x = y;` or `const x = y;`
 	LABEL_STMT, # Label statement: `x:`
 	GOTO_STMT, # Goto statement: `goto x;`
 	OP_STMT, # Operation statement.
@@ -34,6 +35,11 @@ enum {
 enum {
 	LOOP_WHILE, # While loop: `while x {y;}`
 	LOOP_DO_WHILE, # Do while loop: `do {y;} while x;`
+}
+
+enum {
+	DECL_DEFINE, # Definition declaraion: `define x = y;`
+	DECL_CONST, # Constant declaration: `const x = y;`
 }
 
 enum {

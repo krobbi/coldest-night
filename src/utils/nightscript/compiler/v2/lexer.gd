@@ -144,8 +144,12 @@ func get_next_token() -> Token:
 				return make_token(Token.KEYWORD_CALL)
 			"checkpoint":
 				return make_token(Token.KEYWORD_CHECKPOINT)
+			"const":
+				return make_token(Token.KEYWORD_CONST)
 			"continue":
 				return make_token(Token.KEYWORD_CONTINUE)
+			"define":
+				return make_token(Token.KEYWORD_DEFINE)
 			"do":
 				return make_token(Token.KEYWORD_DO)
 			"else":
