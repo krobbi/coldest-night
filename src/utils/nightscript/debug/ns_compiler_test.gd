@@ -11,6 +11,7 @@ const IRBlock: GDScript = preload("../compiler/v2/ir_block.gd")
 const IROp: GDScript = preload("../compiler/v2/ir_op.gd")
 const IRProgram: GDScript = preload("../compiler/v2/ir_program.gd")
 const Lexer: GDScript = preload("../compiler/v2/lexer.gd")
+const Optimizer: GDScript = preload("../compiler/v2/optimizer.gd")
 const Parser: GDScript = preload("../compiler/v2/parser.gd")
 const Token: GDScript = preload("../compiler/v2/token.gd")
 
@@ -178,6 +179,10 @@ func source_to_string(source: String) -> String:
 	codegen.end()
 	var program: IRProgram = codegen.program
 	output += "\n\n# IR Program:\n%s" % ir_program_to_string(program)
+	
+	var optimizer: Optimizer = Optimizer.new()
+	optimizer.optimize_program(program)
+	output += "\n\n# Optimized IR:\n%s" % ir_program_to_string(program)
 	
 	return output
 

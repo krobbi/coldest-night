@@ -480,7 +480,6 @@ func visit_menu_stmt(node: ASTNode) -> void:
 	
 	program.set_label(show_label)
 	program.make_op(NightScript.MNS)
-	program.make_pointer(NightScript.JMP, end_label)
 	
 	program.set_label(end_label)
 

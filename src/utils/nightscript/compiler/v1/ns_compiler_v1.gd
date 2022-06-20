@@ -1492,21 +1492,26 @@ func _optimize_eliminate_unreachable_blocks() -> bool:
 # whether any optimization was performed:
 func _optimize_eliminate_subsequent_branches() -> bool:
 	var is_optimized: bool = false
-
+	
 	for i in range(_blocks.size() - 2, -1, -1):
 		var is_block_optimized: bool = false
 		var block: IRBlock = _blocks[i]
 		var next_label: String = block.block_next.label
-
+		
 		for j in range(block.size() - 1, -1, -1):
 			var node: IRNode = block.nodes[j]
-
+			
 			if node.is_branch() and node.lbl == next_label:
-				block.nodes.remove(j)
+				if node.op == NightScript.JMP:
+					block.nodes.remove(j)
+				else:
+					# Preserve stack size on conditional branches:
+					node.op = NightScript.POP
+				
 				is_block_optimized = true
 			else:
 				break
-
+		
 		if is_block_optimized:
 			block.readopt_nodes()
 			is_optimized = true
@@ -1557,10 +1562,10 @@ func _optimize_eliminate_empty_blocks() -> bool:
 # optimization was performed:
 func _optimize_adopt_child_blocks() -> bool:
 	var is_optimized: bool = false
-
+	
 	for i in range(_blocks.size() - 1, -1, -1):
 		var child_block: IRBlock = _blocks[i]
-
+		
 		if child_block.is_important():
 			continue
 		
@@ -1574,7 +1579,7 @@ func _optimize_adopt_child_blocks() -> bool:
 				continue
 			elif parent_block.is_dead:
 				var parent_node: IRNode = parent_block.nodes[-1]
-
+				
 				if parent_node.op == NightScript.JMP and parent_node.lbl == child_block.label:
 					parent_blocks.push_back(parent_block)
 			elif parent_block.block_next == child_block:
@@ -1584,10 +1589,10 @@ func _optimize_adopt_child_blocks() -> bool:
 				break
 			
 			var body_end: int = parent_block.size()
-
+			
 			while body_end > 0:
 				var parent_node: IRNode = parent_block.nodes[body_end - 1]
-
+				
 				if parent_node.is_branch() and parent_node.lbl == child_block.label:
 					body_end -= 1
 				else:
@@ -1595,7 +1600,7 @@ func _optimize_adopt_child_blocks() -> bool:
 			
 			for j in range(body_end):
 				var parent_node: IRNode = parent_block.nodes[j]
-
+				
 				if parent_node.has_pointer() and parent_node.lbl == child_block.label:
 					is_invalid = true
 					break
@@ -1604,28 +1609,32 @@ func _optimize_adopt_child_blocks() -> bool:
 			continue
 		
 		var parent_block: IRBlock = parent_blocks[0]
-
+		
 		for j in range(parent_block.size() - 1, -1, -1):
 			var parent_node: IRNode = parent_block.nodes[j]
-
+			
 			if parent_node.is_branch() and parent_node.lbl == child_block.label:
-				parent_block.nodes.remove(j)
+				if parent_node.op == NightScript.JMP:
+					parent_block.nodes.remove(j)
+				else:
+					# Preserve stack size on conditional branches:
+					parent_node.op = NightScript.POP
 			else:
 				break
 		
 		parent_block.readopt_nodes()
 		parent_block.adopt_nodes(child_block.nodes.duplicate())
-
+		
 		if not child_block.is_dead:
 			if child_block.block_next:
 				parent_block.make_jmp(child_block.block_next.label)
 			else:
 				parent_block.make_hlt()
-
+		
 		_blocks.remove(i)
 		_link_blocks()
 		is_optimized = true
-
+	
 	return is_optimized
 
 
