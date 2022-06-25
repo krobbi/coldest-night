@@ -10,7 +10,7 @@ const IROp: GDScript = preload("ir_op.gd")
 const DEFAULT_METADATA: Dictionary = {"is_cacheable": 1, "is_pausable": 1}
 
 var metadata: Dictionary = {}
-var current: IRBlock = IRBlock.new("$$main")
+var current: IRBlock = IRBlock.new("$main")
 var blocks: Array = [current]
 var temp_block_count: int = 0
 

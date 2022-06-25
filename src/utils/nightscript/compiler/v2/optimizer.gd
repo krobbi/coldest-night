@@ -28,10 +28,14 @@ func get_next_block(program: IRProgram, block: IRBlock) -> IRBlock:
 	return null
 
 
-# Gets whether an IR block is important. Important IR blocks should never be
-# removed or adopted into another IR block:
-func is_block_important(block: IRBlock) -> bool:
-	return block.label == "main" or block.label == "repeat" or block.label.begins_with("$$")
+# Gets whether an IR block is an entry point for an IR program. Entry point
+# blocks are considered always reachable and should never be removed or adopted
+# into another IR block:
+func is_block_entry(program: IRProgram, block: IRBlock) -> bool:
+	return (
+			block.label == "main" or block.label == "repeat"
+			or not program.has_block("main") and block.label == "$main"
+	)
 
 
 # Gets whether an IR block is terminal. An IR block is terminal if any
@@ -177,18 +181,15 @@ func optimize_thread_quits(program: IRProgram) -> bool:
 	return was_optimized
 
 
-# Eliminates unimportant IR blocks that can never be reached. Returns whether
-# any optimization was performed:
+# Eliminates IR blocks that can never be reached. Returns whether any
+# optimization was performed:
 func optimize_eliminate_unreachable_blocks(program: IRProgram) -> bool:
 	var pending_blocks: Array = []
 	var reachable_blocks: Array = []
 	
-	if program.has_block("main"):
-		pending_blocks.push_back(get_block(program, "main"))
-	else:
-		pending_blocks.push_back(get_block(program, "$$main"))
-	
-	pending_blocks.push_back(get_block(program, "repeat"))
+	for block in program.blocks:
+		if is_block_entry(program, block):
+			pending_blocks.push_back(block)
 	
 	while not pending_blocks.empty():
 		var block: IRBlock = pending_blocks.pop_back()
@@ -208,15 +209,9 @@ func optimize_eliminate_unreachable_blocks(program: IRProgram) -> bool:
 	var was_optimized: bool = false
 	
 	for i in range(program.blocks.size() - 1, -1, -1):
-		var block: IRBlock = program.blocks[i]
-		
-		if not reachable_blocks.has(block):
-			if not is_block_important(block):
-				program.blocks.remove(i)
-				was_optimized = true
-			elif not block.ops.empty():
-				block.ops.clear()
-				was_optimized = true
+		if not reachable_blocks.has(program.blocks[i]):
+			program.blocks.remove(i)
+			was_optimized = true
 	
 	return was_optimized
 
