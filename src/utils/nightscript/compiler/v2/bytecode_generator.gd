@@ -52,8 +52,17 @@ func get_bytecode(program: IRProgram) -> PoolByteArray:
 	var header_stream: SerialWriteStream = SerialWriteStream.new()
 	header_stream.put_u8(program_flags)
 	var vector_main: int = pointers.get("main", pointers.get("$main", 0))
+	var vector_repeat: int = pointers.get("repeat", vector_main)
+	
+	if program.has_block("$error_main"):
+		vector_main = pointers.get("$error_main", vector_main)
+		vector_repeat = pointers.get("$error_repeat", vector_repeat)
+	elif program.has_block("$error"):
+		vector_main = pointers.get("$error", vector_main)
+		vector_repeat = pointers.get("$error", vector_repeat)
+	
 	header_stream.put_u16(vector_main)
-	header_stream.put_u16(pointers.get("repeat", vector_main))
+	header_stream.put_u16(vector_repeat)
 	header_stream.put_u16(string_table.size())
 	
 	for value in string_table:

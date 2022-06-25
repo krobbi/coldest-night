@@ -7,11 +7,18 @@ extends Reference
 const ASTNode: GDScript = preload("ast_node.gd")
 const CodegenScope: GDScript = preload("codegen_scope.gd")
 const CodegenSymbol: GDScript = preload("codegen_symbol.gd")
+const CompileErrorLog: GDScript = preload("compile_error_log.gd")
 const IRProgram: GDScript = preload("ir_program.gd")
 
+var error_log: CompileErrorLog
 var program: IRProgram = IRProgram.new()
 var scopes: Array = []
 var declared_labels: Array = []
+
+# Constructor. Passes the compile error log to the code generator:
+func _init(error_log_ref: CompileErrorLog) -> void:
+	error_log = error_log_ref
+
 
 # Gets an IR program from an abstract syntax tree:
 func get_program(ast: ASTNode) -> IRProgram:
@@ -44,8 +51,8 @@ func get_symbol(identifier: String) -> CodegenSymbol:
 
 
 # Logs an error message:
-func err(_message: String) -> void:
-	pass
+func err(message: String) -> void:
+	error_log.log_error(message)
 
 
 # Begins the code generator:
@@ -65,6 +72,52 @@ func end() -> void:
 		for op in block.ops:
 			if op.type == NightScript.JMP and not program.has_block(op.key_value):
 				op.type = NightScript.HLT
+	
+	if not error_log.has_errors():
+		return
+	
+	var is_repeatable: bool = program.has_block("repeat")
+	var is_pausable: bool = program.get_metadata("is_pausable") != 0
+	program.create_block_head("$error")
+	
+	if is_repeatable:
+		program.create_block_head("$error_repeat")
+		program.create_block_head("$error_main")
+		
+		program.set_label("$error_main")
+		program.make_value(NightScript.PHC, 0)
+		program.make_pointer(NightScript.JMP, "$error")
+		
+		program.set_label("$error_repeat")
+		program.make_value(NightScript.PHC, 1)
+		program.make_pointer(NightScript.JMP, "$error")
+	
+	program.set_label("$error")
+	program.make_op(NightScript.PLF)
+	
+	if not is_pausable:
+		program.make_op(NightScript.PSE)
+	
+	program.make_op(NightScript.DGS)
+	
+	for error in error_log.get_errors():
+		program.make_text(NightScript.DND, "Error")
+		program.make_text(NightScript.DGM, error.message)
+	
+	program.make_op(NightScript.DNC)
+	program.make_op(NightScript.DGH)
+	
+	if not is_pausable:
+		program.make_op(NightScript.UNP)
+	
+	program.make_op(NightScript.PLT)
+	program.make_value(NightScript.PHC, 0)
+	program.make_op(NightScript.SLP)
+	
+	if is_repeatable:
+		program.make_pointer(NightScript.BNZ, "repeat")
+	
+	program.make_pointer(NightScript.JMP, "main" if program.has_block("main") else "$main")
 
 
 # Pushes a new scope to the scope stack from its scoped labels:

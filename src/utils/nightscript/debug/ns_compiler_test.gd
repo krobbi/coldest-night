@@ -7,6 +7,7 @@ extends Control
 
 const ASTNode: GDScript = preload("../compiler/v2/ast_node.gd")
 const Codegen: GDScript = preload("../compiler/v2/codegen.gd")
+const CompileErrorLog: GDScript = preload("../compiler/v2/compile_error_log.gd")
 const IRBlock: GDScript = preload("../compiler/v2/ir_block.gd")
 const IROp: GDScript = preload("../compiler/v2/ir_op.gd")
 const IRProgram: GDScript = preload("../compiler/v2/ir_program.gd")
@@ -119,8 +120,8 @@ func get_op_name(opcode: int) -> String:
 
 
 # Converts NightScript source code to an array of tokens:
-func source_to_tokens(source: String) -> Array:
-	var lexer: Lexer = Lexer.new()
+func source_to_tokens(error_log: CompileErrorLog, source: String) -> Array:
+	var lexer: Lexer = Lexer.new(error_log)
 	lexer.begin(source)
 	var token: Token = lexer.get_next_token()
 	var tokens: Array = [token]
@@ -133,8 +134,8 @@ func source_to_tokens(source: String) -> Array:
 
 
 # Converts an array of tokens to an abstract syntax tree:
-func tokens_to_ast(tokens: Array) -> ASTNode:
-	var parser: Parser = Parser.new()
+func tokens_to_ast(error_log: CompileErrorLog, tokens: Array) -> ASTNode:
+	var parser: Parser = Parser.new(error_log)
 	return parser.get_ast(tokens)
 
 
@@ -161,15 +162,17 @@ func escape_string(value: String) -> String:
 # Compiles NightScript source code and returns a compilation log:
 func source_to_string(source: String) -> String:
 	var output: String = "# Token Stream:\n"
-	var tokens: Array = source_to_tokens(source)
+	var error_log: CompileErrorLog = CompileErrorLog.new()
+	error_log.clear()
+	var tokens: Array = source_to_tokens(error_log, source)
 	
 	for token in tokens:
 		output += "%s\n" % token_to_string(token)
 	
-	var ast: ASTNode = tokens_to_ast(tokens)
+	var ast: ASTNode = tokens_to_ast(error_log, tokens)
 	output += "\n\n# Abstract Syntax Tree:\n%s" % ast_node_to_string(ast)
 	
-	var codegen: Codegen = Codegen.new()
+	var codegen: Codegen = Codegen.new(error_log)
 	codegen.begin()
 	ast = codegen.fold_statements(ast)
 	output += "\n\n# Statement Folded AST:\n%s" % ast_node_to_string(ast)

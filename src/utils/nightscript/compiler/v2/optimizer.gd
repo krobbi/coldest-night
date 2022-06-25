@@ -32,10 +32,15 @@ func get_next_block(program: IRProgram, block: IRBlock) -> IRBlock:
 # blocks are considered always reachable and should never be removed or adopted
 # into another IR block:
 func is_block_entry(program: IRProgram, block: IRBlock) -> bool:
-	return (
-			block.label == "main" or block.label == "repeat"
-			or not program.has_block("main") and block.label == "$main"
-	)
+	if program.has_block("$error_main"):
+		return block.label == "$error_main" or block.label == "$error_repeat"
+	elif program.has_block("$error"):
+		return block.label == "$error"
+	else:
+		return (
+				block.label == "main" or block.label == "repeat"
+				or not program.has_block("main") and block.label == "$main"
+		)
 
 
 # Gets whether an IR block is terminal. An IR block is terminal if any

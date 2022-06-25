@@ -5,12 +5,19 @@ extends Reference
 # stream to an abstract syntax tree.
 
 const ASTNode: GDScript = preload("ast_node.gd")
+const CompileErrorLog: GDScript = preload("compile_error_log.gd")
 const Token: GDScript = preload("token.gd")
 
+var error_log: CompileErrorLog
 var tokens: Array = []
 var previous: Token = make_null_token()
 var current: Token = make_null_token()
 var position: int = -1
+
+# Constructor. Passes the compile error log to the parser:
+func _init(error_log_ref: CompileErrorLog) -> void:
+	error_log = error_log_ref
+
 
 # Gets an abstract syntax tree from an array of tokens:
 func get_ast(tokens_val: Array) -> ASTNode:
@@ -88,8 +95,9 @@ func make_node(type: int) -> ASTNode:
 	return ASTNode.new(type)
 
 
-# Makes an error AST node from its message:
+# Logs an error and makes an error AST node from its message:
 func make_error(message: String) -> ASTNode:
+	error_log.log_error("Syntax error: %s" % message)
 	return make_string(ASTNode.ERROR, message)
 
 

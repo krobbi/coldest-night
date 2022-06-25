@@ -62,6 +62,11 @@ func create_block(label: String) -> void:
 	blocks.insert(position, IRBlock.new(label))
 
 
+# Creates a new IR block at the beginning of the IR program:
+func create_block_head(label: String) -> void:
+	blocks.push_front(IRBlock.new(label))
+
+
 # Creates a new temporary IR block after the current IR block from its name.
 # Returns the temporary IR block's label:
 func create_block_temp(name: String) -> String:

@@ -4,6 +4,7 @@ extends Reference
 # The lexer is a component of the NightScript compiler that converts NightScript
 # source code to a token stream.
 
+const CompileErrorLog: GDScript = preload("compile_error_log.gd")
 const Token: GDScript = preload("token.gd")
 
 const DIGIT_CHARS: String = "0123456789"
@@ -13,10 +14,16 @@ const HEXADECIMAL_CHARS: String = "0123456789ABCDEFabcdef"
 const IDENTIFIER_CHARS: String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 const LINE_BREAK_CHARS: String = "\n\r"
 
+var error_log: CompileErrorLog
 var source: String = ""
 var lexeme: String = ""
 var character: String = ""
 var position: int = -1
+
+# Constructor. Passes the compile error log to the lexer:
+func _init(error_log_ref: CompileErrorLog) -> void:
+	error_log = error_log_ref
+
 
 # Gets an array of non-error tokens from NightScript source code:
 func get_valid_tokens(source_val: String) -> Array:
@@ -331,8 +338,9 @@ func make_token(type: int) -> Token:
 	return Token.new(type)
 
 
-# Makes an error token from its message:
+# Logs an error and makes an error token from its message:
 func make_error(message: String) -> Token:
+	error_log.log_error("Syntax error: %s" % message)
 	return make_string(Token.ERROR, message)
 
 
