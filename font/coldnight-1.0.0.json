@@ -1,0 +1,43 @@
+{
+	"$baseURI": "https://yal.cc/r/20/pixelfont/",
+	"$version": "1.0",
+	"in-glyphs": [
+		" !\"#$%&'()*+,-./",
+		"0123456789:;<=>?",
+		"@ABCDEFGHIJKLMNO",
+		"PQRSTUVWXYZ[\\]^_",
+		"`abcdefghijklmno",
+		"pqrstuvwxyz{|}~∎"
+	],
+	"glyph-color": "black",
+	"in-kerning": [
+		"/ / -6",
+		"\\ \\ -6"
+	],
+	"glyph-width": 16,
+	"glyph-height": 18,
+	"glyph-ofs-x": 2,
+	"glyph-ofs-y": 2,
+	"glyph-sep-x": 2,
+	"glyph-sep-y": 2,
+	"glyph-base-x": 2,
+	"glyph-baseline": 14,
+	"glyph-spacing": 2,
+	"font-is-mono": false,
+	"font-em-square": 1024,
+	"font-line-gap": 128,
+	"font-ascend": 896,
+	"font-descend": -256,
+	"font-px-size": 64,
+	"font-name": "Coldnight",
+	"font-author": "Krobbizoid",
+	"font-copy": "(c) 2021 Chris Roberts (Krobbizoid)",
+	"font-version": "1.0.0",
+	"font-desc": "Custom font for Coldest Night.",
+	"font-license": "CC0 1.0",
+	"font-license-url": "https://creativecommons.org/publicdomain/zero/1.0",
+	"font-sample-text": "The quick brown fox jumps over the lazy dog.",
+	"font-preview-text": [
+		"The quick brown fox jumps over the lazy dog."
+	]
+}

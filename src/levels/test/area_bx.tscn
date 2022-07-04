@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://levels/level.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/tilesets/test/blockout.tres" type="TileSet" id=2]
+
+[node name="AreaBX" instance=ExtResource( 1 )]
+area_name = "AREA.TEST.AREA_BX"
+music = "sneaking"
+
+[node name="TileMap" type="TileMap" parent="Background" index="0"]
+tile_set = ExtResource( 2 )
+cell_size = Vector2( 32, 32 )
+collision_layer = 0
+collision_mask = 0
+format = 1
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TileMap" type="TileMap" parent="Midground" index="0"]
+tile_set = ExtResource( 2 )
+cell_size = Vector2( 32, 32 )
+cell_tile_origin = 2
+cell_y_sort = true
+collision_layer = 0
+collision_mask = 0
+format = 1
+__meta__ = {
+"_edit_lock_": true
+}

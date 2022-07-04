@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog_option.gd" type="Script" id=1]
+[ext_resource path="res://assets/themes/dialogs/plain_dialog.tres" type="Theme" id=2]
+
+[node name="PlainDialogOption" type="Button"]
+anchor_right = 1.0
+margin_right = -448.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 256, 32 )
+size_flags_vertical = 0
+theme = ExtResource( 2 )
+text = "Option"
+align = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="SelectRect" type="ColorRect" parent="."]
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 8.0
+margin_bottom = -8.0
+rect_min_size = Vector2( 0, 16 )
+mouse_filter = 1
+size_flags_horizontal = 0
+size_flags_vertical = 0
+color = Color( 1, 0.596078, 0.054902, 1 )
+__meta__ = {
+"_edit_lock_": true
+}

@@ -1,0 +1,26 @@
+# NightScript Version 1
+# Laser Terminal
+# Common cutscene for laser terminal in test.area_bx.west.
+
+define state test:west_laser_state
+
+player freeze
+dialog show
+say "DIALOG.TEST.LASER_TERMINAL.PROMPT"
+
+menu
+	option "DIALOG.TEST.LASER_TERMINAL.OPTION.REDIRECT" do
+		if state
+			set state false
+		else
+			set state true
+		end
+
+		say "DIALOG.TEST.LASER_TERMINAL.REDIRECTED"
+	end
+
+	option "DIALOG.TEST.LASER_TERMINAL.OPTION.CANCEL" none
+end
+
+dialog hide
+player unfreeze
