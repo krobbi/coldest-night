@@ -4,17 +4,17 @@ desktop.ini
 Thumbs.db
 
 # IDE:
-.idea/
-.vscode/
+.idea/*
+.vscode/*
 *.code-workspace
 *.sublime-project
 *.sublime-workspace
 *.suo
 
 # Godot Engine:
-.import/
-.mono/
-data_*/
+.import/*
+.mono/*
+data_*/*
 *.TMP
 *.translation
 
@@ -25,17 +25,22 @@ data_*/
 *.wav.import
 
 # Godot Engine Exports:
-dist/linux-demo/
-dist/mac-demo/
-dist/win-demo/
+builds/linux-demo/*
+builds/mac-demo/*
+builds/win-demo/*
+builds/godot_path.txt
+!builds/linux-demo/.empty
+!builds/mac-demo/.empty
+!builds/win-demo/.empty
 
 # Python Scripts:
-__pycache__/
+__pycache__/*
 *$py.class
-*.py
 *.pyc
 *.pyd
 *.pyo
 
 # Ignore:
-ignore/
+ignore/*
+!ignore/.gdignore
+!ignore/readme.md

@@ -1,0 +1,89 @@
+# NightScript Version 2.
+# New Game Dialog
+# Runs when a new game is started.
+
+meta is_cacheable = false
+meta is_pausable = false
+
+define pester_count = test.pester_count
+
+<!
+"Ryan":
+"Yes,{p=0.25} I know it's risky,{p=0.25} but we're all out of options here."
+"After that stunt you pulled you'd better go along with them before things get much worse for all of us!"
+
+"":
+"{s=0.1}..."
+
+"Ryan":
+"You got us into this mess!{p=0.5} It's only fair,{p=0.25} plus you were pretty good at this sneaking stuff a few days ago."
+"At least up until this happened."
+
+"":
+"{s=0.1}..."
+
+"Ryan":
+"Not unless you want Koby to hand over his project.{p=0.5} That's the only other choice."
+"But he's spent a very long time on it and doesn't want it falling into the wrong hands."
+
+&{
+	| "I understand." {
+		"Exactly.{p=0.5} I think you can see how we're stuck here."
+	}
+	
+	| "Just hand it over." {
+		"That would be the easiest option,{p=0.25} but it's not that simple."
+		"I've already asked him and he's not having it,{p=0.25} so I don't think you could convince him either."
+		pester_count = pester_count + 1
+		"Says he doesn't like the implications of something so powerful.{p=0.5} Between you and me,{p=0.25} I think he wishes he never made it in the first place."
+		"But he doesn't want to destroy it.{p=0.5} It's hard to throw away so much work just like that."
+		"So really,{p=0.25} this seems like the only way out."
+	}
+}
+
+"":
+"{s=0.1}..."
+
+"Ryan":
+"Well first of all,{p=0.25} they've seen your skills first-hand.{p=0.5} They've also seen his prototype."
+"They must think we're equipped for this,{p=0.25} or else we wouldn't be having it this easy."
+"If you were just a little more careful then I think you'd really have this down."
+
+&{
+	| "For sure!" {
+		"Absolutely.{p=0.5} But please,{p=0.25} be careful.{p=0.5} You can't keep getting us into situations like this!"
+	}
+	
+	| "You're flattering me." {
+		if pester_count >= 1 {
+			"I'm not flattering you!{p=0.5} Just because I-"
+			pester_count = pester_count + 1
+			"But really,{p=0.25} you've almost done this before,{p=0.25} and now you've got the support."
+		} else {
+			"No,{p=0.25} I'm not.{p=0.5} I think if you were just a little more patient we wouldn't be here right now."
+			"You've got the potential."
+		}
+	}
+}
+
+"":
+"{s=0.1}..."
+
+"Ryan":
+"It's a remote base near the edge of the system.{p=0.5} They won't tell me who it is or what it's for."
+"You'll need to collect data dumps from some archival units,{p=0.25} these cube-y things."
+"They won't tell me what's on those either."
+
+"":
+"{s=0.1}..."
+
+"Ryan":
+"Yeah,{p=0.25} I get that feeling too.{p=0.5} I'm really dreading what might come of this."
+"But hey,{p=0.25} this should pay out nicely."
+"We'll get the signal to get started in a few hours."
+
+if pester_count >= 2 {
+	"I'll be with Koby until then."
+}
+
+!>

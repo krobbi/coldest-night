@@ -1,0 +1,69 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://entities/test/archival_unit/archival_unit.gd" type="Script" id=1]
+[ext_resource path="res://resources/textures/entities/actors/shadow.png" type="Texture" id=2]
+[ext_resource path="res://resources/textures/entities/test/archival_unit.png" type="Texture" id=3]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 16.0
+
+[sub_resource type="AtlasTexture" id=2]
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 16, 28 )
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 3 )
+region = Rect2( 16, 0, 16, 28 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 3 )
+region = Rect2( 32, 0, 16, 28 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 3 )
+region = Rect2( 48, 0, 16, 28 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 3 )
+region = Rect2( 64, 0, 16, 28 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 3 )
+region = Rect2( 80, 0, 16, 28 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 3 )
+region = Rect2( 96, 0, 16, 28 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 3 )
+region = Rect2( 112, 0, 16, 28 )
+
+[sub_resource type="SpriteFrames" id=10]
+animations = [ {
+"frames": [ SubResource( 2 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ) ],
+"loop": true,
+"name": "default",
+"speed": 8.0
+} ]
+
+[node name="ArchivalUnit" type="Area2D"]
+collision_layer = 0
+collision_mask = 32
+monitorable = false
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="TriggerShape" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Shadow" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 10 )
+offset = Vector2( 0, -8 )
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered" flags=3]

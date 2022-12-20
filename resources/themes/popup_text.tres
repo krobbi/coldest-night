@@ -1,0 +1,10 @@
+[gd_resource type="Theme" load_steps=2 format=2]
+
+[ext_resource path="res://resources/fonts/coldnight.tres" type="DynamicFont" id=1]
+
+[resource]
+default_font = ExtResource( 1 )
+Label/colors/font_color = Color( 0.945098, 0.94902, 0.945098, 1 )
+Label/colors/font_color_shadow = Color( 0.239216, 0.0196078, 0.0941176, 1 )
+Label/constants/shadow_offset_x = 0
+Label/constants/shadow_offset_y = 2

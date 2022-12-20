@@ -1,0 +1,75 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://entities/actors/actor.gd" type="Script" id=1]
+[ext_resource path="res://components/smooth_pivot/smooth_pivot.tscn" type="PackedScene" id=2]
+[ext_resource path="res://components/repulsive_area/repulsive_area.tscn" type="PackedScene" id=3]
+[ext_resource path="res://components/states/state_machine.gd" type="Script" id=4]
+[ext_resource path="res://resources/textures/entities/actors/shadow.png" type="Texture" id=5]
+[ext_resource path="res://entities/actors/scripted_actor_state.gd" type="Script" id=6]
+[ext_resource path="res://components/test/state_label/state_label.tscn" type="PackedScene" id=7]
+[ext_resource path="res://resources/textures/entities/actors/test/actor.png" type="Texture" id=8]
+[ext_resource path="res://resources/animations/entities/actors/idle_right.tres" type="Animation" id=9]
+[ext_resource path="res://resources/animations/entities/actors/idle_down.tres" type="Animation" id=10]
+[ext_resource path="res://resources/animations/entities/actors/idle_left.tres" type="Animation" id=11]
+[ext_resource path="res://resources/animations/entities/actors/idle_up.tres" type="Animation" id=12]
+[ext_resource path="res://resources/animations/entities/actors/run_down.tres" type="Animation" id=13]
+[ext_resource path="res://resources/animations/entities/actors/run_up.tres" type="Animation" id=14]
+[ext_resource path="res://resources/animations/entities/actors/run_left.tres" type="Animation" id=15]
+[ext_resource path="res://resources/animations/entities/actors/run_right.tres" type="Animation" id=16]
+
+[sub_resource type="CircleShape2D" id=1]
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 12.0
+
+[node name="Actor" type="KinematicBody2D" groups=["actors"]]
+collision_layer = 0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource( 4 )
+_initial_state = "Scripted"
+
+[node name="Scripted" type="Node" parent="StateMachine"]
+script = ExtResource( 6 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "idle_down"
+anims/idle_down = ExtResource( 10 )
+anims/idle_left = ExtResource( 11 )
+anims/idle_right = ExtResource( 9 )
+anims/idle_up = ExtResource( 12 )
+anims/run_down = ExtResource( 13 )
+anims/run_left = ExtResource( 15 )
+anims/run_right = ExtResource( 16 )
+anims/run_up = ExtResource( 14 )
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="RepulsiveArea" parent="." instance=ExtResource( 3 )]
+
+[node name="RepulsiveShape" type="CollisionShape2D" parent="RepulsiveArea"]
+shape = SubResource( 2 )
+
+[node name="Shadow" type="Sprite" parent="."]
+texture = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 8 )
+offset = Vector2( 0, -32 )
+hframes = 6
+vframes = 4
+frame = 6
+
+[node name="SmoothPivot" parent="." instance=ExtResource( 2 )]
+
+[node name="CameraAnchor" type="Position2D" parent="SmoothPivot"]
+position = Vector2( 32, 0 )
+
+[node name="StateLabel" parent="." instance=ExtResource( 7 )]
+visible = true
+_state_machine_path = NodePath("../StateMachine")

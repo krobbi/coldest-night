@@ -1,0 +1,27 @@
+# NightScript Version 2.
+# Unlock Terminal
+# Common cutscene for unlock terminal in test.area_bx.west.
+
+define is_unlocked = test.west_unlocked
+
+<*<!
+
+&{
+	if is_unlocked {
+		"DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_LOCK"
+		| "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.LOCK" {
+			is_unlocked = false
+			"DIALOG.TEST.UNLOCK_TERMINAL.LOCKED"
+		}
+	} else {
+		"DIALOG.TEST.UNLOCK_TERMINAL.PROMPT_UNLOCK"
+		| "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.UNLOCK" {
+			is_unlocked = true
+			"DIALOG.TEST.UNLOCK_TERMINAL.UNLOCKED"
+		}
+	}
+	
+	| "DIALOG.TEST.UNLOCK_TERMINAL.OPTION.CANCEL" {}
+}
+
+!>*>

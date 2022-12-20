@@ -1,0 +1,32 @@
+# NightScript Version 3.
+# Dialog Test
+# Display a dialog message.
+
+freezePlayer();
+showDialog();
+displayDialogMessage("Hello, NightScript version 3!");
+
+if(isRepeat()){
+	displayDialogMessage("You have seen this dialog before.");
+} else {
+	displayDialogMessage("You have not seen this dialog before.");
+}
+
+displayDialogMessage("Choose a message to display.");
+
+menu {
+	option("Message A"){
+		displayDialogMessage("Hello, world!");
+	}
+	
+	option("Message B"){
+		displayDialogMessage("Foo, bar, baz!");
+	}
+	
+	option("Message C"){
+		displayDialogMessage("Lorem ipsum!");
+	}
+}
+
+hideDialog();
+thawPlayer();

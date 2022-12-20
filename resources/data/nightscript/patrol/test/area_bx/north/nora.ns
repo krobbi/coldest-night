@@ -1,0 +1,37 @@
+# NightScript Version 2.
+# Patrol Route
+# Patrol route for 'nora' in test.area_bx.north
+
+while true {
+	:5
+	"nora" -> "PNoB"
+	"nora" > right
+	:2
+	"nora" > up
+	:2
+	"nora" > left
+	:3
+	"nora" -> "PNoC"
+	"nora" > left
+	:4
+	"nora" -> "PNoG"
+	"nora" > left
+	:2
+	"nora" -> "PNoD"
+	"nora" > left
+	:2
+	"nora" > down
+	:5
+	"nora" > right
+	"nora" -> "PNoE"
+	"nora" -> "PNoF"
+	"nora" > right
+	:2
+	"nora" -> "PNoG"
+	"nora" > up
+	:2
+	"nora" > down
+	:2
+	"nora" -> "PNoA"
+	"nora" > right
+}

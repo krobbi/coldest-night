@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/main/main.gd" type="Script" id=1]
+[ext_resource path="res://resources/animations/scenes/main/display_slide.tres" type="Animation" id=2]
+
+[node name="Main" type="Control"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 360 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/display_slide = ExtResource( 2 )
+
+[node name="SlideRect" type="TextureRect" parent="."]
+modulate = Color( 0.678431, 0.0941176, 0.0941176, 0 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 360 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}

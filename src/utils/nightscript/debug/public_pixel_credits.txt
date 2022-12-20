@@ -1,5 +1,0 @@
-Public Pixel Font
-Public domain monospace pixel font.
-https://ggbot.itch.io/public-pixel-font
-
-Designed by GGBotNet - https://www.ggbot.net/fonts

@@ -1,0 +1,33 @@
+# NightScript Version 2.
+# Devlog
+# Devlog for Coldest Night.
+
+meta is_cacheable = false
+meta is_pausable = false
+
+<!
+"It's getting dark.{p=0.5} Do you want to leave?"
+
+&{
+	| "Yes" {
+		"It's getting cold too.{p=0.5} You best be going."
+		!>
+		exit
+	}
+	| "No" {}
+}
+
+"You relax,{p=0.25} but suddenly a figure appears,{p=0.25} half-materialized."
+"Although this seems very unusual,{p=0.25} it doesn't shock you."
+
+"???":
+"Hey.{p=0.5} I'm back again."
+"I know you're not here for my ramblings, So I'll just get on with it."
+
+"I haven't written a devlog yet.{p=0.5} You'll need to wait for the update to release."
+"I'm aiming to tidy up my code and scale back my premature optimization,{p=0.25} particularly in the build process."
+"I can give you more details soon."
+
+"That's all for now.{p=0.5} I hope to see you again soon."
+"Goodbye,{p=0.25} and thanks for playing!"
+!>
