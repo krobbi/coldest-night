@@ -91,6 +91,18 @@ func compile_ast(root: RootASTNode) -> void:
 	visit_node(root)
 
 
+# Compile the actor find path intrinsic.
+func intrinsic_actor_find_path() -> void:
+	code.make_actor_find_path()
+	code.make_push_int(0)
+
+
+# Compile the await actor paths intrinsic.
+func intrinsic_await_actor_paths() -> void:
+	code.make_await_actor_paths()
+	code.make_push_int(0)
+
+
 # Compile the call program intrinsic.
 func intrinsic_call_program() -> void:
 	code.make_call_program()
@@ -153,6 +165,12 @@ func intrinsic_pause_game() -> void:
 # Compile the quit to title intrinsic.
 func intrinsic_quit_to_title() -> void:
 	code.make_quit_to_title()
+	code.make_push_int(0)
+
+
+# Compile the run actor paths intrinsic.
+func intrinsic_run_actor_paths() -> void:
+	code.make_run_actor_paths()
 	code.make_push_int(0)
 
 
@@ -233,6 +251,8 @@ func visit_node(node: ASTNode) -> void:
 # Visit a root AST node.
 func visit_root(root: RootASTNode) -> void:
 	push_scope()
+	define_info("intrinsics:actorFindPath", "intrinsic_actor_find_path:2")
+	define_info("intrinsics:awaitActorPaths", "intrinsic_await_actor_paths:0")
 	define_info("intrinsics:callProgram", "intrinsic_call_program:1")
 	define_info("intrinsics:clearDialogName", "intrinsic_clear_dialog_name:0")
 	define_info("intrinsics:displayDialogMessage", "intrinsic_display_dialog_message:1")
@@ -244,6 +264,7 @@ func visit_root(root: RootASTNode) -> void:
 	define_info("intrinsics:isRepeat", "intrinsic_is_repeat:0")
 	define_info("intrinsics:pauseGame", "intrinsic_pause_game:0")
 	define_info("intrinsics:quitToTitle", "intrinsic_quit_to_title:0")
+	define_info("intrinsics:runActorPaths", "intrinsic_run_actor_paths:0")
 	define_info("intrinsics:runProgram", "intrinsic_run_program:1")
 	define_info("intrinsics:saveCheckpoint", "intrinsic_save_checkpoint:0")
 	define_info("intrinsics:saveGame", "intrinsic_save_game:0")
