@@ -10,6 +10,7 @@ enum {
 	EOF, # End of file.
 	ERROR, # Syntax error. (Skipped by parser.)
 	WHITESPACE, # Whitespace or comment. (Skipped by parser.)
+	LITERAL_INT, # Integer value.
 	LITERAL_STR, # String value.
 	IDENTIFIER, # Identifier.
 	KEYWORD_BREAK, # `break`.
@@ -31,6 +32,7 @@ enum {
 
 var type: int
 var span: Span
+var int_value: int = 0
 var str_value: String = ""
 
 # Set the token's type and span.
@@ -50,6 +52,8 @@ func _to_string() -> String:
 			result = "Syntax error: %s" % str_value
 		WHITESPACE:
 			result = "Whitespace or comment"
+		LITERAL_INT:
+			result = "%d" % int_value
 		LITERAL_STR:
 			result = '"%s"' % str_value.c_escape()
 		IDENTIFIER:

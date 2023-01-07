@@ -23,7 +23,10 @@ expr_paren = "(", expr, ")" ;
 expr = expr_call ;
 
 expr_call = expr_primary, { "(", [ expr, { ",", expr } ], ")" } ;
-expr_primary = expr_paren | expr_primary_str | expr_primary_identifier ;
+expr_primary = (
+	expr_paren | expr_primary_int | expr_primary_str | expr_primary_identifier
+) ;
 
+expr_primary_int = LITERAL_INT ;
 expr_primary_str = LITERAL_STR ;
 expr_primary_identifier = IDENTIFIER ;

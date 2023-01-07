@@ -8,6 +8,10 @@ const Span: GDScript = preload("../logger/span.gd")
 const Token: GDScript = preload("token.gd")
 
 const TAB_SIZE: int = 4
+const BIN_DIGITS: String = "01"
+const OCT_DIGITS: String = "01234567"
+const DEC_DIGITS: String = "0123456789"
+const HEX_DIGITS: String = "0123456789ABCDEFabcdef"
 const IDENTIFIER_CHARS: String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 const KEYWORDS: Dictionary = {
 	"break": Token.KEYWORD_BREAK,
@@ -65,6 +69,57 @@ func get_next_token() -> Token:
 			return create_error_token("Unterminated block comment!")
 		
 		return create_token(Token.WHITESPACE)
+	elif consume(DEC_DIGITS):
+		var base: int = 10
+		var digits: String = DEC_DIGITS
+		var number: String = lexeme
+		
+		if number == "0":
+			number = ""
+			
+			if accept("Bb"):
+				base = 2
+				digits = BIN_DIGITS
+			elif accept("Oo"):
+				base = 8
+				digits = OCT_DIGITS
+			elif accept("Xx"):
+				base = 16
+				digits = HEX_DIGITS
+			else:
+				number = "0"
+		
+		while not is_eof():
+			if peek(0) in digits:
+				number += peek(0)
+				advance(1)
+			elif not consume("_"):
+				break
+		
+		if number.empty():
+			return create_error_token("No digits in integer!")
+		elif lexeme.ends_with("__"):
+			return create_error_token("Multiple trailing `_`s in integer!")
+		elif lexeme.ends_with("_"):
+			return create_error_token("Trailing `_` in integer!")
+		elif "__" in lexeme:
+			return create_error_token("Multiple adjacent `_`s in integer!")
+		elif base == 10 and number.begins_with("0") and number != "0".repeat(number.length()):
+			if number.begins_with("00"):
+				return create_error_token("Multiple leading `0`s in decimal integer!")
+			else:
+				return create_error_token("Leading `0` in decimal integer!")
+		elif not is_eof() and peek(0) in DEC_DIGITS:
+			return create_error_token("Trailing integer after integer!")
+		elif not is_eof() and peek(0) in IDENTIFIER_CHARS:
+			return create_error_token("Trailing identifier or keyword after integer!")
+		
+		var value: int = 0
+		
+		for digit in number:
+			value = value * base + ("0x%s" % digit).hex_to_int()
+		
+		return create_int_token(Token.LITERAL_INT, value)
 	elif accept('"'):
 		var has_seen_terminator: bool = false
 		var value: String = ""
@@ -141,6 +196,13 @@ func begin(name: String, source_val: String) -> void:
 # Create a new token from its type.
 func create_token(type: int) -> Token:
 	return Token.new(type, span.duplicate())
+
+
+# Create a new integer token from its type and value.
+func create_int_token(type: int, value: int) -> Token:
+	var token: Token = create_token(type)
+	token.int_value = value
+	return token
 
 
 # Create a new string token from its type and value.

@@ -15,6 +15,7 @@ const ExprStmtASTNode: GDScript = preload("../ast/expr_stmt_ast_node.gd")
 const IdentifierExprASTNode: GDScript = preload("../ast/identifier_expr_ast_node.gd")
 const IfStmtASTNode: GDScript = preload("../ast/if_stmt_ast_node.gd")
 const IfElseStmtASTNode: GDScript = preload("../ast/if_else_stmt_ast_node.gd")
+const IntExprASTNode: GDScript = preload("../ast/int_expr_ast_node.gd")
 const IRCode: GDScript = preload("../../backend/ir_code.gd")
 const Logger: GDScript = preload("../logger/logger.gd")
 const MenuStmtASTNode: GDScript = preload("../ast/menu_stmt_ast_node.gd")
@@ -238,6 +239,8 @@ func visit_node(node: ASTNode) -> void:
 		visit_expr_stmt(node)
 	elif node is CallExprASTNode:
 		visit_call_expr(node)
+	elif node is IntExprASTNode:
+		visit_int_expr(node)
 	elif node is StrExprASTNode:
 		visit_str_expr(node)
 	else:
@@ -478,6 +481,11 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 		return
 	
 	call(intrinsic_func_name)
+
+
+# Visit an integer expression AST node.
+func visit_int_expr(int_expr: IntExprASTNode) -> void:
+	code.make_push_int(int_expr.value)
 
 
 # Visit a string expression AST node.

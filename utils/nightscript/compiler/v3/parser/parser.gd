@@ -17,6 +17,7 @@ const IdentifierExprASTNode: GDScript = preload("../ast/identifier_expr_ast_node
 const IfStmtASTNode: GDScript = preload("../ast/if_stmt_ast_node.gd")
 const IfElseStmtASTNode: GDScript = preload("../ast/if_else_stmt_ast_node.gd")
 const IncludeASTNode: GDScript = preload("../ast/include_ast_node.gd")
+const IntExprASTNode: GDScript = preload("../ast/int_expr_ast_node.gd")
 const Lexer: GDScript = preload("../lexer/lexer.gd")
 const Logger: GDScript = preload("../logger/logger.gd")
 const MenuStmtASTNode: GDScript = preload("../ast/menu_stmt_ast_node.gd")
@@ -439,12 +440,24 @@ func parse_expr_primary() -> ASTNode:
 	
 	if next.type == Token.PARENTHESIS_OPEN:
 		return abort_span(parse_expr_paren())
+	elif next.type == Token.LITERAL_INT:
+		return end_span(parse_expr_primary_int())
 	elif next.type == Token.LITERAL_STR:
 		return end_span(parse_expr_primary_str())
 	elif next.type == Token.IDENTIFIER:
 		return end_span(parse_expr_primary_identifier())
 	
 	return create_error("Expected an expression!")
+
+
+# Parse a primary integer expression.
+func parse_expr_primary_int() -> ASTNode:
+	begin_span()
+	
+	if not accept(Token.LITERAL_INT):
+		return create_error("Expected an integer!")
+	
+	return end_span(IntExprASTNode.new(current.int_value))
 
 
 # Parse a primary string expression.
