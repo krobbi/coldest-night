@@ -2,6 +2,10 @@
 # Dialog Test
 # Display a dialog message.
 
+# Calling pauseGame without this would cause a softlock unless another source
+# unpauses us.
+doNotPause();
+
 freezePlayer();
 showDialog();
 
@@ -18,6 +22,10 @@ runProgram("v3_test/callee");
 displayDialogName("runProgram");
 displayDialogMessage("The called program runs in parallel and control flow continues.");
 clearDialogName();
+
+pauseGame();
+displayDialogMessage("We can even pause the game while this happens.");
+unpauseGame();
 
 hideDialog();
 thawPlayer();
