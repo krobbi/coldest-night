@@ -94,137 +94,6 @@ func compile_ast(root: RootASTNode) -> void:
 	visit_node(root)
 
 
-# Compile the actor face direction intrinsic.
-func intrinsic_actor_face_direction() -> void:
-	code.make_actor_face_direction()
-	code.make_push_int(0)
-
-
-# Compile the actor find path intrinsic.
-func intrinsic_actor_find_path() -> void:
-	code.make_actor_find_path()
-	code.make_push_int(0)
-
-
-# Compile the await actor paths intrinsic.
-func intrinsic_await_actor_paths() -> void:
-	code.make_await_actor_paths()
-	code.make_push_int(0)
-
-
-# Compile the call program intrinsic.
-func intrinsic_call_program() -> void:
-	code.make_call_program()
-	code.make_push_int(0)
-
-
-# Compile the clear dialog name intrinsic.
-func intrinsic_clear_dialog_name() -> void:
-	code.make_clear_dialog_name()
-	code.make_push_int(0)
-
-
-# Compile the display dialog message intrinsic.
-func intrinsic_display_dialog_message() -> void:
-	code.make_display_dialog_message()
-	code.make_push_int(0)
-
-
-# Compile the display dialog name intrinsic.
-func intrinsic_display_dialog_name() -> void:
-	code.make_display_dialog_name()
-	code.make_push_int(0)
-
-
-# Compile the do not pause intrinsic.
-func intrinsic_do_not_pause() -> void:
-	code.is_pausable = false
-	code.make_push_int(0)
-
-
-# Compile the exit intrinsic.
-func intrinsic_exit() -> void:
-	code.make_halt()
-	code.make_push_int(0)
-
-
-# Compile the freeze player intrinsic.
-func intrinsic_freeze_player() -> void:
-	code.make_freeze_player()
-	code.make_push_int(0)
-
-
-# Compile the hide dialog intrinsic.
-func intrinsic_hide_dialog() -> void:
-	code.make_hide_dialog()
-	code.make_push_int(0)
-
-
-# Compile the is repeat intrinsic.
-func intrinsic_is_repeat() -> void:
-	code.make_push_is_repeat()
-
-
-# Compile the pause game intrinsic.
-func intrinsic_pause_game() -> void:
-	code.make_pause_game()
-	code.make_push_int(0)
-
-
-# Compile the quit to title intrinsic.
-func intrinsic_quit_to_title() -> void:
-	code.make_quit_to_title()
-	code.make_push_int(0)
-
-
-# Compile the run actor paths intrinsic.
-func intrinsic_run_actor_paths() -> void:
-	code.make_run_actor_paths()
-	code.make_push_int(0)
-
-
-# Compile the run program intrinsic.
-func intrinsic_run_program() -> void:
-	code.make_run_program()
-	code.make_push_int(0)
-
-
-# Compile the save checkpoint intrinsic.
-func intrinsic_save_checkpoint() -> void:
-	code.make_save_checkpoint()
-	code.make_push_int(0)
-
-
-# Compile the save game intrinsic.
-func intrinsic_save_game() -> void:
-	code.make_save_game()
-	code.make_push_int(0)
-
-
-# Compile the show dialog intrinsic.
-func intrinsic_show_dialog() -> void:
-	code.make_show_dialog()
-	code.make_push_int(0)
-
-
-# Compile the sleep intrinsic.
-func intrinsic_sleep() -> void:
-	code.make_sleep()
-	code.make_push_int(0)
-
-
-# Compile the thaw player intrinsic.
-func intrinsic_thaw_player() -> void:
-	code.make_thaw_player()
-	code.make_push_int(0)
-
-
-# Compile the unpause game intrinsic.
-func intrinsic_unpause_game() -> void:
-	code.make_unpause_game()
-	code.make_push_int(0)
-
-
 # Visit an AST node.
 func visit_node(node: ASTNode) -> void:
 	if node is RootASTNode:
@@ -270,28 +139,28 @@ func visit_node(node: ASTNode) -> void:
 # Visit a root AST node.
 func visit_root(root: RootASTNode) -> void:
 	push_scope()
-	define_info("intrinsics:actorFaceDirection", "intrinsic_actor_face_direction:2")
-	define_info("intrinsics:actorFindPath", "intrinsic_actor_find_path:2")
-	define_info("intrinsics:awaitActorPaths", "intrinsic_await_actor_paths:0")
-	define_info("intrinsics:callProgram", "intrinsic_call_program:1")
-	define_info("intrinsics:clearDialogName", "intrinsic_clear_dialog_name:0")
-	define_info("intrinsics:displayDialogMessage", "intrinsic_display_dialog_message:1")
-	define_info("intrinsics:displayDialogName", "intrinsic_display_dialog_name:1")
-	define_info("intrinsics:doNotPause", "intrinsic_do_not_pause:0")
-	define_info("intrinsics:exit", "intrinsic_exit:0")
-	define_info("intrinsics:freezePlayer", "intrinsic_freeze_player:0")
-	define_info("intrinsics:hideDialog", "intrinsic_hide_dialog:0")
-	define_info("intrinsics:isRepeat", "intrinsic_is_repeat:0")
-	define_info("intrinsics:pauseGame", "intrinsic_pause_game:0")
-	define_info("intrinsics:quitToTitle", "intrinsic_quit_to_title:0")
-	define_info("intrinsics:runActorPaths", "intrinsic_run_actor_paths:0")
-	define_info("intrinsics:runProgram", "intrinsic_run_program:1")
-	define_info("intrinsics:saveCheckpoint", "intrinsic_save_checkpoint:0")
-	define_info("intrinsics:saveGame", "intrinsic_save_game:0")
-	define_info("intrinsics:showDialog", "intrinsic_show_dialog:0")
-	define_info("intrinsics:sleep", "intrinsic_sleep:1")
-	define_info("intrinsics:thawPlayer", "intrinsic_thaw_player:0")
-	define_info("intrinsics:unpauseGame", "intrinsic_unpause_game:0")
+	define_info("inline:actorFaceDirection", "make_actor_face_direction:2")
+	define_info("inline:actorFindPath", "make_actor_find_path:2")
+	define_info("inline:awaitActorPaths", "make_await_actor_paths:0")
+	define_info("inline:callProgram", "make_call_program:1")
+	define_info("inline:clearDialogName", "make_clear_dialog_name:0")
+	define_info("inline:displayDialogMessage", "make_display_dialog_message:1")
+	define_info("inline:displayDialogName", "make_display_dialog_name:1")
+	define_info("inline:doNotPause", "define_not_pausable:0")
+	define_info("inline:exit", "make_halt:0")
+	define_info("inline:freezePlayer", "make_freeze_player:0")
+	define_info("inline:hideDialog", "make_hide_dialog:0")
+	define_info("inline:isRepeat", "=make_push_is_repeat:0")
+	define_info("inline:pauseGame", "make_pause_game:0")
+	define_info("inline:quitToTitle", "make_quit_to_title:0")
+	define_info("inline:runActorPaths", "make_run_actor_paths:0")
+	define_info("inline:runProgram", "make_run_program:1")
+	define_info("inline:saveCheckpoint", "make_save_checkpoint:0")
+	define_info("inline:saveGame", "make_save_game:0")
+	define_info("inline:showDialog", "make_show_dialog:0")
+	define_info("inline:sleep", "make_sleep:1")
+	define_info("inline:thawPlayer", "make_thaw_player:0")
+	define_info("inline:unpauseGame", "make_unpause_game:0")
 	
 	for module in root.modules:
 		visit_node(module)
@@ -483,15 +352,20 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 	for expr in call_expr.exprs:
 		visit_node(expr)
 	
-	var intrinsic_func_name: String = ""
+	var is_inline_void: bool = true
+	var inline_func_name: String = ""
 	var expected_argument_count: int = -1
 	var argument_count: int = call_expr.exprs.size()
 	
 	if call_expr.expr is IdentifierExprASTNode:
-		if has_info("intrinsics:%s" % call_expr.expr.name):
-			var info: String = get_info("intrinsics:%s" % call_expr.expr.name)
-			intrinsic_func_name = info.split(":")[0]
-			expected_argument_count = int(info.split(":")[1])
+		if has_info("inline:%s" % call_expr.expr.name):
+			var parts: PoolStringArray = get_info("inline:%s" % call_expr.expr.name).split(":")
+			inline_func_name = parts[0]
+			expected_argument_count = int(parts[1])
+			
+			if inline_func_name.begins_with("="):
+				is_inline_void = false
+				inline_func_name = inline_func_name.substr(1)
 		else:
 			logger.log_error(
 					"Identifier `%s` is not callable!" % call_expr.expr.name, call_expr.expr.span)
@@ -514,7 +388,10 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 		
 		return
 	
-	call(intrinsic_func_name)
+	code.call(inline_func_name)
+	
+	if is_inline_void:
+		code.make_push_int(0)
 
 
 # Visit an integer expression AST node.

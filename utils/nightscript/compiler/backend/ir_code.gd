@@ -90,6 +90,11 @@ func insert_unique_label(name: String) -> String:
 	return label
 
 
+# Define the IR code as not pausable.
+func define_not_pausable() -> void:
+	is_pausable = false
+
+
 # Make an IR operation in the current label.
 func make_op(type: int) -> void:
 	current.ops.push_back(IROp.new(type))
