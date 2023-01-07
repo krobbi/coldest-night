@@ -8,7 +8,19 @@ actorFindPath("dave", "DaB");
 runActorPaths();
 awaitActorPaths();
 
+sleep(1000);
+
+actorFaceDirection("carol", 270);
+actorFaceDirection("dave", 270);
+
+sleep(1000);
+
 actorFindPath("carol", "CaA");
 actorFindPath("dave", "DaA");
 runActorPaths();
 awaitActorPaths();
+
+sleep(1000);
+
+actorFaceDirection("carol", 90);
+actorFaceDirection("dave", 90);

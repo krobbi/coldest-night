@@ -92,6 +92,12 @@ func compile_ast(root: RootASTNode) -> void:
 	visit_node(root)
 
 
+# Compile the actor face direction intrinsic.
+func intrinsic_actor_face_direction() -> void:
+	code.make_actor_face_direction()
+	code.make_push_int(0)
+
+
 # Compile the actor find path intrinsic.
 func intrinsic_actor_find_path() -> void:
 	code.make_actor_find_path()
@@ -199,6 +205,12 @@ func intrinsic_show_dialog() -> void:
 	code.make_push_int(0)
 
 
+# Compile the sleep intrinsic.
+func intrinsic_sleep() -> void:
+	code.make_sleep()
+	code.make_push_int(0)
+
+
 # Compile the thaw player intrinsic.
 func intrinsic_thaw_player() -> void:
 	code.make_thaw_player()
@@ -254,6 +266,7 @@ func visit_node(node: ASTNode) -> void:
 # Visit a root AST node.
 func visit_root(root: RootASTNode) -> void:
 	push_scope()
+	define_info("intrinsics:actorFaceDirection", "intrinsic_actor_face_direction:2")
 	define_info("intrinsics:actorFindPath", "intrinsic_actor_find_path:2")
 	define_info("intrinsics:awaitActorPaths", "intrinsic_await_actor_paths:0")
 	define_info("intrinsics:callProgram", "intrinsic_call_program:1")
@@ -272,6 +285,7 @@ func visit_root(root: RootASTNode) -> void:
 	define_info("intrinsics:saveCheckpoint", "intrinsic_save_checkpoint:0")
 	define_info("intrinsics:saveGame", "intrinsic_save_game:0")
 	define_info("intrinsics:showDialog", "intrinsic_show_dialog:0")
+	define_info("intrinsics:sleep", "intrinsic_sleep:1")
 	define_info("intrinsics:thawPlayer", "intrinsic_thaw_player:0")
 	define_info("intrinsics:unpauseGame", "intrinsic_unpause_game:0")
 	
