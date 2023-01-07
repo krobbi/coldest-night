@@ -97,9 +97,21 @@ func intrinsic_call_program() -> void:
 	code.make_push_int(0)
 
 
+# Compile the clear dialog name intrinsic.
+func intrinsic_clear_dialog_name() -> void:
+	code.make_clear_dialog_name()
+	code.make_push_int(0)
+
+
 # Compile the display dialog message intrinsic.
 func intrinsic_display_dialog_message() -> void:
 	code.make_display_dialog_message()
+	code.make_push_int(0)
+
+
+# Compile the display dialog name intrinsic.
+func intrinsic_display_dialog_name() -> void:
+	code.make_display_dialog_name()
 	code.make_push_int(0)
 
 
@@ -222,7 +234,9 @@ func visit_node(node: ASTNode) -> void:
 func visit_root(root: RootASTNode) -> void:
 	push_scope()
 	define_info("intrinsics:callProgram", "intrinsic_call_program:1")
+	define_info("intrinsics:clearDialogName", "intrinsic_clear_dialog_name:0")
 	define_info("intrinsics:displayDialogMessage", "intrinsic_display_dialog_message:1")
+	define_info("intrinsics:displayDialogName", "intrinsic_display_dialog_name:1")
 	define_info("intrinsics:doNotPause", "intrinsic_do_not_pause:0")
 	define_info("intrinsics:exit", "intrinsic_exit:0")
 	define_info("intrinsics:freezePlayer", "intrinsic_freeze_player:0")

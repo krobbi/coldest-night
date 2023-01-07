@@ -7,11 +7,17 @@ showDialog();
 
 displayDialogMessage("Calling a program...");
 callProgram("v3_test/callee");
+
+displayDialogName("callProgram");
 displayDialogMessage("Control flow stops until the called program finishes.");
+clearDialogName();
 
 displayDialogMessage("Running a program...");
 runProgram("v3_test/callee");
+
+displayDialogName("runProgram");
 displayDialogMessage("The called program runs in parallel and control flow continues.");
+clearDialogName();
 
 hideDialog();
 thawPlayer();
