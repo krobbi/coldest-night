@@ -91,6 +91,12 @@ func compile_ast(root: RootASTNode) -> void:
 	visit_node(root)
 
 
+# Compile the call program intrinsic.
+func intrinsic_call_program() -> void:
+	code.make_call_program()
+	code.make_push_int(0)
+
+
 # Compile the display dialog message intrinsic.
 func intrinsic_display_dialog_message() -> void:
 	code.make_display_dialog_message()
@@ -135,6 +141,12 @@ func intrinsic_pause_game() -> void:
 # Compile the quit to title intrinsic.
 func intrinsic_quit_to_title() -> void:
 	code.make_quit_to_title()
+	code.make_push_int(0)
+
+
+# Compile the run program intrinsic.
+func intrinsic_run_program() -> void:
+	code.make_run_program()
 	code.make_push_int(0)
 
 
@@ -209,6 +221,7 @@ func visit_node(node: ASTNode) -> void:
 # Visit a root AST node.
 func visit_root(root: RootASTNode) -> void:
 	push_scope()
+	define_info("intrinsics:callProgram", "intrinsic_call_program:1")
 	define_info("intrinsics:displayDialogMessage", "intrinsic_display_dialog_message:1")
 	define_info("intrinsics:doNotPause", "intrinsic_do_not_pause:0")
 	define_info("intrinsics:exit", "intrinsic_exit:0")
@@ -217,6 +230,7 @@ func visit_root(root: RootASTNode) -> void:
 	define_info("intrinsics:isRepeat", "intrinsic_is_repeat:0")
 	define_info("intrinsics:pauseGame", "intrinsic_pause_game:0")
 	define_info("intrinsics:quitToTitle", "intrinsic_quit_to_title:0")
+	define_info("intrinsics:runProgram", "intrinsic_run_program:1")
 	define_info("intrinsics:saveCheckpoint", "intrinsic_save_checkpoint:0")
 	define_info("intrinsics:saveGame", "intrinsic_save_game:0")
 	define_info("intrinsics:showDialog", "intrinsic_show_dialog:0")

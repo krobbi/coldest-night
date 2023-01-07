@@ -4,29 +4,14 @@
 
 freezePlayer();
 showDialog();
-displayDialogMessage("Hello, NightScript version 3!");
 
-if(isRepeat()){
-	displayDialogMessage("You have seen this dialog before.");
-} else {
-	displayDialogMessage("You have not seen this dialog before.");
-}
+displayDialogMessage("Calling a program...");
+callProgram("v3_test/callee");
+displayDialogMessage("Control flow stops until the called program finishes.");
 
-displayDialogMessage("Choose a message to display.");
-
-menu {
-	option("Message A"){
-		displayDialogMessage("Hello, world!");
-	}
-	
-	option("Message B"){
-		displayDialogMessage("Foo, bar, baz!");
-	}
-	
-	option("Message C"){
-		displayDialogMessage("Lorem ipsum!");
-	}
-}
+displayDialogMessage("Running a program...");
+runProgram("v3_test/callee");
+displayDialogMessage("The called program runs in parallel and control flow continues.");
 
 hideDialog();
 thawPlayer();

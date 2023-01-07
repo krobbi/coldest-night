@@ -1,0 +1,16 @@
+# NightScript Version 2.
+# Version 3 Call Test
+# Called by the NightScript version 3 test dialog to demonstrate the difference
+# between calling and running.
+
+"carol" ~> "CaB"
+"dave" -> "DaB"
+:1
+"carol" > up
+"dave" > up
+:1
+"carol" ~> "CaA"
+"dave" -> "DaA"
+:1
+"carol" > down
+"dave" > down
