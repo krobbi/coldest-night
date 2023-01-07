@@ -22,9 +22,12 @@ enum {
 	KEYWORD_MENU, # `menu`.
 	KEYWORD_OPTION, # `option`.
 	KEYWORD_WHILE, # `while`.
+	BANG, # `!`.
 	PARENTHESIS_OPEN, # `(`.
 	PARENTHESIS_CLOSE, # `)`.
+	PLUS, # `+`.
 	COMMA, # `,`.
+	MINUS, # `-`.
 	SEMICOLON, # `;`.
 	BRACE_OPEN, # `{`.
 	BRACE_CLOSE, # `}`.
@@ -76,12 +79,18 @@ func _to_string() -> String:
 			result = "option"
 		KEYWORD_WHILE:
 			result = "while"
+		BANG:
+			result = "!"
 		PARENTHESIS_OPEN:
 			result = "("
 		PARENTHESIS_CLOSE:
 			result = ")"
+		PLUS:
+			result = "+"
 		COMMA:
 			result = ","
+		MINUS:
+			result = "-"
 		SEMICOLON:
 			result = ";"
 		BRACE_OPEN:

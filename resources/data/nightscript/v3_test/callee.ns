@@ -10,8 +10,8 @@ awaitActorPaths();
 
 sleep(1000);
 
-actorFaceDirection("carol", 270);
-actorFaceDirection("dave", 270);
+actorFaceDirection("carol", -90);
+actorFaceDirection("dave", -90);
 
 sleep(1000);
 

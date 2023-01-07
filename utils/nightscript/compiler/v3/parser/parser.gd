@@ -27,6 +27,7 @@ const Span: GDScript = preload("../logger/span.gd")
 const StmtASTNode: GDScript = preload("../ast/stmt_ast_node.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
 const Token: GDScript = preload("../lexer/token.gd")
+const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
 var logger: Logger
@@ -393,7 +394,39 @@ func parse_expr_paren() -> ASTNode:
 
 # Parse an expression.
 func parse_expr() -> ASTNode:
-	return parse_expr_call()
+	return parse_expr_not()
+
+
+# Parse a not expression.
+func parse_expr_not() -> ASTNode:
+	begin_span()
+	
+	if accept(Token.BANG):
+		var expr: ASTNode = parse_expr_not()
+		
+		if not expr is ExprASTNode:
+			return abort_span(expr)
+		
+		return end_span(UnExprASTNode.new(Token.BANG, expr))
+	
+	return abort_span(parse_expr_sign())
+
+
+# Parse a sign expression.
+func parse_expr_sign() -> ASTNode:
+	begin_span()
+	
+	if next.type == Token.PLUS or next.type == Token.MINUS:
+		advance()
+		var operator: int = current.type
+		var expr: ASTNode = parse_expr_sign()
+		
+		if not expr is ExprASTNode:
+			return abort_span(expr)
+		
+		return end_span(UnExprASTNode.new(operator, expr))
+	
+	return abort_span(parse_expr_call())
 
 
 # Parse a call expression.

@@ -24,6 +24,8 @@ const OptionStmtASTNode: GDScript = preload("../ast/option_stmt_ast_node.gd")
 const RootASTNode: GDScript = preload("../ast/root_ast_node.gd")
 const Scope: GDScript = preload("scope.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
+const Token: GDScript = preload("../lexer/token.gd")
+const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
 const INFO_BREAK_LABEL: String = "break_label"
@@ -249,6 +251,8 @@ func visit_node(node: ASTNode) -> void:
 		visit_continue_stmt(node)
 	elif node is ExprStmtASTNode:
 		visit_expr_stmt(node)
+	elif node is UnExprASTNode:
+		visit_un_expr(node)
 	elif node is CallExprASTNode:
 		visit_call_expr(node)
 	elif node is IntExprASTNode:
@@ -456,6 +460,22 @@ func visit_continue_stmt(continue_stmt: ContinueStmtASTNode) -> void:
 func visit_expr_stmt(expr_stmt: ExprStmtASTNode) -> void:
 	visit_node(expr_stmt.expr)
 	code.make_drop()
+
+
+# Visit a unary expression AST node.
+func visit_un_expr(un_expr: UnExprASTNode) -> void:
+	visit_node(un_expr.expr)
+	
+	match un_expr.operator:
+		Token.PLUS:
+			pass
+		Token.MINUS:
+			code.make_unary_negate()
+		Token.BANG:
+			code.make_unary_not()
+		_:
+			logger.log_error(
+					"Bug: No unary operation for token %d!" % un_expr.operator, un_expr.span)
 
 
 # Visit a call expression AST node.
