@@ -139,28 +139,28 @@ func visit_node(node: ASTNode) -> void:
 # Visit a root AST node.
 func visit_root(root: RootASTNode) -> void:
 	push_scope()
-	define_info("inline:actorFaceDirection", "make_actor_face_direction:2")
-	define_info("inline:actorFindPath", "make_actor_find_path:2")
-	define_info("inline:awaitActorPaths", "make_await_actor_paths:0")
-	define_info("inline:callProgram", "make_call_program:1")
-	define_info("inline:clearDialogName", "make_clear_dialog_name:0")
-	define_info("inline:displayDialogMessage", "make_display_dialog_message:1")
-	define_info("inline:displayDialogName", "make_display_dialog_name:1")
-	define_info("inline:doNotPause", "define_not_pausable:0")
-	define_info("inline:exit", "make_halt:0")
-	define_info("inline:freezePlayer", "make_freeze_player:0")
-	define_info("inline:hideDialog", "make_hide_dialog:0")
-	define_info("inline:isRepeat", "=make_push_is_repeat:0")
-	define_info("inline:pauseGame", "make_pause_game:0")
-	define_info("inline:quitToTitle", "make_quit_to_title:0")
-	define_info("inline:runActorPaths", "make_run_actor_paths:0")
-	define_info("inline:runProgram", "make_run_program:1")
-	define_info("inline:saveCheckpoint", "make_save_checkpoint:0")
-	define_info("inline:saveGame", "make_save_game:0")
-	define_info("inline:showDialog", "make_show_dialog:0")
-	define_info("inline:sleep", "make_sleep:1")
-	define_info("inline:thawPlayer", "make_thaw_player:0")
-	define_info("inline:unpauseGame", "make_unpause_game:0")
+	define_info("intrinsic:awaitPaths", "make_await_actor_paths:0")
+	define_info("intrinsic:call", "make_call_program:1")
+	define_info("intrinsic:checkpoint", "make_save_checkpoint:0")
+	define_info("intrinsic:clearName", "make_clear_dialog_name:0")
+	define_info("intrinsic:doNotPause", "define_not_pausable:0")
+	define_info("intrinsic:exit", "make_halt:0")
+	define_info("intrinsic:face", "make_actor_face_direction:2")
+	define_info("intrinsic:freeze", "make_freeze_player:0")
+	define_info("intrinsic:hide", "make_hide_dialog:0")
+	define_info("intrinsic:isRepeat", "=make_push_is_repeat:0")
+	define_info("intrinsic:name", "make_display_dialog_name:1")
+	define_info("intrinsic:path", "make_actor_find_path:2")
+	define_info("intrinsic:pause", "make_pause_game:0")
+	define_info("intrinsic:quit", "make_quit_to_title:0")
+	define_info("intrinsic:run", "make_run_program:1")
+	define_info("intrinsic:runPaths", "make_run_actor_paths:0")
+	define_info("intrinsic:save", "make_save_game:0")
+	define_info("intrinsic:say", "make_display_dialog_message:1")
+	define_info("intrinsic:show", "make_show_dialog:0")
+	define_info("intrinsic:sleep", "make_sleep:1")
+	define_info("intrinsic:thaw", "make_thaw_player:0")
+	define_info("intrinsic:unpause", "make_unpause_game:0")
 	
 	for module in root.modules:
 		visit_node(module)
@@ -352,20 +352,22 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 	for expr in call_expr.exprs:
 		visit_node(expr)
 	
-	var is_inline_void: bool = true
-	var inline_func_name: String = ""
-	var expected_argument_count: int = -1
 	var argument_count: int = call_expr.exprs.size()
+	var expected_argument_count: int = -1
+	var is_intrinsic_void: bool = true
+	var intrinsic_func_name: String = ""
 	
 	if call_expr.expr is IdentifierExprASTNode:
-		if has_info("inline:%s" % call_expr.expr.name):
-			var parts: PoolStringArray = get_info("inline:%s" % call_expr.expr.name).split(":")
-			inline_func_name = parts[0]
+		var key: String = "intrinsic:%s" % call_expr.expr.name
+		
+		if has_info(key):
+			var parts: PoolStringArray = get_info(key).split(":")
+			intrinsic_func_name = parts[0]
 			expected_argument_count = int(parts[1])
 			
-			if inline_func_name.begins_with("="):
-				is_inline_void = false
-				inline_func_name = inline_func_name.substr(1)
+			if intrinsic_func_name.begins_with("="):
+				is_intrinsic_void = false
+				intrinsic_func_name = intrinsic_func_name.substr(1)
 		else:
 			logger.log_error(
 					"Identifier `%s` is not callable!" % call_expr.expr.name, call_expr.expr.span)
@@ -388,9 +390,9 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 		
 		return
 	
-	code.call(inline_func_name)
+	code.call(intrinsic_func_name)
 	
-	if is_inline_void:
+	if is_intrinsic_void:
 		code.make_push_int(0)
 
 

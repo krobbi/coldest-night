@@ -3,24 +3,24 @@
 # Called by the NightScript version 3 test dialog to demonstrate the difference
 # between calling and running.
 
-actorFindPath("carol", "CaB");
-actorFindPath("dave", "DaB");
-runActorPaths();
-awaitActorPaths();
+path("carol", "CaB");
+path("dave", "DaB");
+runPaths();
+awaitPaths();
 
 sleep(1000);
 
-actorFaceDirection("carol", -90);
-actorFaceDirection("dave", -90);
+face("carol", -90);
+face("dave", -90);
 
 sleep(1000);
 
-actorFindPath("carol", "CaA");
-actorFindPath("dave", "DaA");
-runActorPaths();
-awaitActorPaths();
+path("carol", "CaA");
+path("dave", "DaA");
+runPaths();
+awaitPaths();
 
 sleep(1000);
 
-actorFaceDirection("carol", 90);
-actorFaceDirection("dave", 90);
+face("carol", 90);
+face("dave", 90);

@@ -2,30 +2,33 @@
 # Dialog Test
 # Display a dialog message.
 
-# Calling pauseGame without this would cause a softlock unless another source
+# Calling pause without this would cause a softlock unless another source
 # unpauses us.
 doNotPause();
 
-freezePlayer();
-showDialog();
+freeze();
+show();
 
-displayDialogMessage("Calling a program...");
-callProgram("v3_test/callee");
+# The call and run functions take an absolute key and not an include path.
+# Putting this string in an include would try to load a program from
+# "v3_test/v3_test/callee".
+say("Calling a program...");
+call("v3_test/callee");
 
-displayDialogName("callProgram");
-displayDialogMessage("Control flow stops until the called program finishes.");
-clearDialogName();
+name("When using call...");
+say("Control flow stops until the called program finishes.");
+clearName();
 
-displayDialogMessage("Running a program...");
-runProgram("v3_test/callee");
+say("Running a program...");
+run("v3_test/callee");
 
-displayDialogName("runProgram");
-displayDialogMessage("The called program runs in parallel and control flow continues.");
-clearDialogName();
+name("When using run...");
+say("The called program runs in parallel and control flow continues.");
+clearName();
 
-pauseGame();
-displayDialogMessage("We can even pause the game while this happens.");
-unpauseGame();
+pause();
+say("We can even pause the game while this happens.");
+unpause();
 
-hideDialog();
-thawPlayer();
+hide();
+thaw();
