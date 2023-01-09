@@ -395,7 +395,7 @@ func parse_expr_paren() -> ASTNode:
 
 # Parse an expression.
 func parse_expr() -> ASTNode:
-	return parse_expr_eager_or()
+	return parse_expr_logical_or()
 
 
 # Parse a generic binary expression.
@@ -425,6 +425,16 @@ func parse_expr_bin(child_parser: String, operators: Array) -> ASTNode:
 		apply_span(expr)
 	
 	return abort_span(expr)
+
+
+# Parse a logical or expression.
+func parse_expr_logical_or() -> ASTNode:
+	return parse_expr_bin("parse_expr_logical_and", [Token.PIPE_PIPE])
+
+
+# Parse a logical and expression.
+func parse_expr_logical_and() -> ASTNode:
+	return parse_expr_bin("parse_expr_eager_or", [Token.AMPERSAND_AMPERSAND])
 
 
 # Parse an eager or expression.

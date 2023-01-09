@@ -26,6 +26,7 @@ const KEYWORDS: Dictionary = {
 	"!": Token.BANG,
 	"!=": Token.BANG_EQUALS,
 	"&": Token.AMPERSAND,
+	"&&": Token.AMPERSAND_AMPERSAND,
 	"(": Token.PARENTHESIS_OPEN,
 	")": Token.PARENTHESIS_CLOSE,
 	"*": Token.STAR,
@@ -40,6 +41,7 @@ const KEYWORDS: Dictionary = {
 	">=": Token.GREATER_EQUALS,
 	"{": Token.BRACE_OPEN,
 	"|": Token.PIPE,
+	"||": Token.PIPE_PIPE,
 	"}": Token.BRACE_CLOSE,
 }
 

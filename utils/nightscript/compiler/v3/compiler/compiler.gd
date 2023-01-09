@@ -354,32 +354,51 @@ func visit_un_expr(un_expr: UnExprASTNode) -> void:
 # Visit a binary expression AST node.
 func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 	visit_node(bin_expr.lhs_expr)
-	visit_node(bin_expr.rhs_expr)
 	
-	match bin_expr.operator:
-		Token.BANG_EQUALS:
+	if bin_expr.operator == Token.AMPERSAND_AMPERSAND:
+		var end_label: String = code.insert_unique_label("and_end")
+		
+		code.make_duplicate()
+		code.make_jump_zero_label(end_label)
+		code.make_drop()
+		visit_node(bin_expr.rhs_expr)
+		
+		code.set_label(end_label)
+	elif bin_expr.operator == Token.PIPE_PIPE:
+		var end_label: String = code.insert_unique_label("or_end")
+		
+		code.make_duplicate()
+		code.make_jump_not_zero_label(end_label)
+		code.make_drop()
+		visit_node(bin_expr.rhs_expr)
+		
+		code.set_label(end_label)
+	else:
+		visit_node(bin_expr.rhs_expr)
+		
+		if bin_expr.operator == Token.BANG_EQUALS:
 			code.make_binary_not_equals()
-		Token.AMPERSAND:
+		elif bin_expr.operator == Token.AMPERSAND:
 			code.make_binary_and()
-		Token.STAR:
+		elif bin_expr.operator == Token.STAR:
 			code.make_binary_multiply()
-		Token.PLUS:
+		elif bin_expr.operator == Token.PLUS:
 			code.make_binary_add()
-		Token.MINUS:
+		elif bin_expr.operator == Token.MINUS:
 			code.make_binary_subtract()
-		Token.LESS:
+		elif bin_expr.operator == Token.LESS:
 			code.make_binary_less()
-		Token.LESS_EQUALS:
+		elif bin_expr.operator == Token.LESS_EQUALS:
 			code.make_binary_less_equals()
-		Token.EQUALS_EQUALS:
+		elif bin_expr.operator == Token.EQUALS_EQUALS:
 			code.make_binary_equals()
-		Token.GREATER:
+		elif bin_expr.operator == Token.GREATER:
 			code.make_binary_greater()
-		Token.GREATER_EQUALS:
+		elif bin_expr.operator == Token.GREATER_EQUALS:
 			code.make_binary_greater_equals()
-		Token.PIPE:
+		elif bin_expr.operator == Token.PIPE:
 			code.make_binary_or()
-		_:
+		else:
 			logger.log_error(
 					"Bug: No binary operation for token %s!" % Token.get_name(bin_expr.operator),
 					bin_expr.span)

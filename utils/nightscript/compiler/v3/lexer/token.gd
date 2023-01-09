@@ -25,6 +25,7 @@ enum {
 	BANG, # `!`.
 	BANG_EQUALS, # `!=`.
 	AMPERSAND, # `&`.
+	AMPERSAND_AMPERSAND, # `&&`.
 	PARENTHESIS_OPEN, # `(`.
 	PARENTHESIS_CLOSE, # `)`.
 	STAR, # `*`.
@@ -39,6 +40,7 @@ enum {
 	GREATER_EQUALS, # `>=`.
 	BRACE_OPEN, # `{`.
 	PIPE, # `|`.
+	PIPE_PIPE, # `||`.
 	BRACE_CLOSE, # `}`.
 }
 
@@ -107,6 +109,8 @@ static func get_name(token_type: int) -> String:
 			return "`!=`"
 		AMPERSAND:
 			return "`&`"
+		AMPERSAND_AMPERSAND:
+			return "`&&`"
 		PARENTHESIS_OPEN:
 			return "`(`"
 		PARENTHESIS_CLOSE:
@@ -135,6 +139,8 @@ static func get_name(token_type: int) -> String:
 			return "`{`"
 		PIPE:
 			return "`|`"
+		PIPE_PIPE:
+			return "`||`"
 		BRACE_CLOSE:
 			return "`}`"
 	
