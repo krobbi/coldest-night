@@ -353,20 +353,31 @@ func visit_un_expr(un_expr: UnExprASTNode) -> void:
 
 # Visit a binary expression AST node.
 func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
-	visit_node(bin_expr.lhs_expr)
-	
 	if bin_expr.operator == Token.AMPERSAND_AMPERSAND:
 		var end_label: String = code.insert_unique_label("and_end")
 		
+		visit_node(bin_expr.lhs_expr)
 		code.make_duplicate()
 		code.make_jump_zero_label(end_label)
 		code.make_drop()
 		visit_node(bin_expr.rhs_expr)
 		
 		code.set_label(end_label)
+	elif bin_expr.operator == Token.DOT:
+		if(
+				not bin_expr.lhs_expr is IdentifierExprASTNode
+				or not bin_expr.rhs_expr is IdentifierExprASTNode):
+			logger.log_error("Access expressions may only contain two identifiers!", bin_expr.span)
+			visit_node(bin_expr.lhs_expr)
+			visit_node(bin_expr.rhs_expr)
+			code.make_drop()
+			return
+		
+		code.make_load_flag_namespace_key(bin_expr.lhs_expr.name, bin_expr.rhs_expr.name)
 	elif bin_expr.operator == Token.PIPE_PIPE:
 		var end_label: String = code.insert_unique_label("or_end")
 		
+		visit_node(bin_expr.lhs_expr)
 		code.make_duplicate()
 		code.make_jump_not_zero_label(end_label)
 		code.make_drop()
@@ -374,6 +385,7 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 		
 		code.set_label(end_label)
 	else:
+		visit_node(bin_expr.lhs_expr)
 		visit_node(bin_expr.rhs_expr)
 		
 		if bin_expr.operator == Token.BANG_EQUALS:

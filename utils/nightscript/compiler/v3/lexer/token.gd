@@ -32,6 +32,7 @@ enum {
 	PLUS, # `+`.
 	COMMA, # `,`.
 	MINUS, # `-`.
+	DOT, # `.`.
 	SEMICOLON, # `;`.
 	LESS, # `<`.
 	LESS_EQUALS, # `<=`.
@@ -123,6 +124,8 @@ static func get_name(token_type: int) -> String:
 			return "`,`"
 		MINUS:
 			return "`-`"
+		DOT:
+			return "`.`"
 		SEMICOLON:
 			return "`;`"
 		LESS:

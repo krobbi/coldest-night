@@ -33,6 +33,7 @@ const KEYWORDS: Dictionary = {
 	"+": Token.PLUS,
 	",": Token.COMMA,
 	"-": Token.MINUS,
+	".": Token.DOT,
 	";": Token.SEMICOLON,
 	"<": Token.LESS,
 	"<=": Token.LESS_EQUALS,

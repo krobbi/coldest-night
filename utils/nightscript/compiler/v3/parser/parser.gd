@@ -503,7 +503,7 @@ func parse_expr_sign() -> ASTNode:
 # Parse a call expression.
 func parse_expr_call() -> ASTNode:
 	begin_span()
-	var expr: ASTNode = parse_expr_primary()
+	var expr: ASTNode = parse_expr_access()
 	
 	if not expr is ExprASTNode:
 		return abort_span(expr)
@@ -536,6 +536,11 @@ func parse_expr_call() -> ASTNode:
 		apply_span(expr)
 	
 	return abort_span(expr)
+
+
+# Parse an access expression.
+func parse_expr_access() -> ASTNode:
+	return parse_expr_bin("parse_expr_primary", [Token.DOT])
 
 
 # Parse a primary expression.
