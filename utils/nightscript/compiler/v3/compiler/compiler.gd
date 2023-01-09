@@ -442,12 +442,11 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 					"Expected %d arguments, got %d!"
 					% [expected_argument_count, argument_count], call_expr.span)
 		
-		if argument_count == 0:
-			code.make_push_int(0)
-		elif argument_count > 1:
-			for _i in range(argument_count - 1):
+		if argument_count > 0:
+			for _i in range(argument_count):
 				code.make_drop()
 		
+		visit_node(call_expr.expr)
 		return
 	
 	code.call(intrinsic_func_name)
