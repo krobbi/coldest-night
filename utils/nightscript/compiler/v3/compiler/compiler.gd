@@ -5,6 +5,7 @@ extends Reference
 # syntax trees to IR code.
 
 const ASTNode: GDScript = preload("../ast/ast_node.gd")
+const BinExprASTNode: GDScript = preload("../ast/bin_expr_ast_node.gd")
 const BlockStmtASTNode: GDScript = preload("../ast/block_stmt_ast_node.gd")
 const BreakStmtASTNode: GDScript = preload("../ast/break_stmt_ast_node.gd")
 const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
@@ -122,6 +123,8 @@ func visit_node(node: ASTNode) -> void:
 		visit_expr_stmt(node)
 	elif node is UnExprASTNode:
 		visit_un_expr(node)
+	elif node is BinExprASTNode:
+		visit_bin_expr(node)
 	elif node is CallExprASTNode:
 		visit_call_expr(node)
 	elif node is IntExprASTNode:
@@ -344,7 +347,45 @@ func visit_un_expr(un_expr: UnExprASTNode) -> void:
 			code.make_unary_not()
 		_:
 			logger.log_error(
-					"Bug: No unary operation for token %d!" % un_expr.operator, un_expr.span)
+					"Bug: No unary operation for token %s!" % Token.get_name(un_expr.operator),
+					un_expr.span)
+
+
+# Visit a binary expression AST node.
+func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
+	visit_node(bin_expr.lhs_expr)
+	visit_node(bin_expr.rhs_expr)
+	
+	match bin_expr.operator:
+		Token.BANG_EQUALS:
+			code.make_binary_not_equals()
+		Token.AMPERSAND:
+			code.make_binary_and()
+		Token.STAR:
+			code.make_binary_multiply()
+		Token.PLUS:
+			code.make_binary_add()
+		Token.MINUS:
+			code.make_binary_subtract()
+		Token.LESS:
+			code.make_binary_less()
+		Token.LESS_EQUALS:
+			code.make_binary_less_equals()
+		Token.EQUALS_EQUALS:
+			code.make_binary_equals()
+		Token.GREATER:
+			code.make_binary_greater()
+		Token.GREATER_EQUALS:
+			code.make_binary_greater_equals()
+		Token.PIPE:
+			code.make_binary_or()
+		_:
+			logger.log_error(
+					"Bug: No binary operation for token %s!" % Token.get_name(bin_expr.operator),
+					bin_expr.span)
+			
+			# Binary expressions must only push a single value to the stack.
+			code.make_drop()
 
 
 # Visit a call expression AST node.

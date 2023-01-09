@@ -20,9 +20,15 @@ stmt_continue = "continue", ";" ;
 stmt_expr = expr, ";" ;
 
 expr_paren = "(", expr, ")" ;
-expr = expr_not ;
+expr = expr_eager_or ;
 
-expr_not = "!", expr_not | expr_sign ;
+expr_eager_or = expr_eager_and, { "|", expr_eager_and } ;
+expr_eager_and = expr_not, { "&", expr_not } ;
+expr_not = "!", expr_not | expr_equality ;
+expr_equality = expr_comparison, { ( "!=" | "==" ), expr_comparison } ;
+expr_comparison = expr_sum, { ( "<" | "<=" | ">" | ">=" ), expr_sum } ;
+expr_sum = expr_term, { ( "+" | "-" ), expr_term } ;
+expr_term = expr_sign, { "*", expr_sign } ;
 expr_sign = ( "+" | "-" ), expr_sign | expr_call ;
 expr_call = expr_primary, { "(", [ expr, { ",", expr } ], ")" } ;
 expr_primary = (

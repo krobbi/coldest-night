@@ -5,6 +5,7 @@ extends Reference
 # abstract syntax trees from NightScript source code.
 
 const ASTNode: GDScript = preload("../ast/ast_node.gd")
+const BinExprASTNode: GDScript = preload("../ast/bin_expr_ast_node.gd")
 const BlockStmtASTNode: GDScript = preload("../ast/block_stmt_ast_node.gd")
 const BreakStmtASTNode: GDScript = preload("../ast/break_stmt_ast_node.gd")
 const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
@@ -394,7 +395,46 @@ func parse_expr_paren() -> ASTNode:
 
 # Parse an expression.
 func parse_expr() -> ASTNode:
-	return parse_expr_not()
+	return parse_expr_eager_or()
+
+
+# Parse a generic binary expression.
+func parse_expr_bin(child_parser: String, operators: Array) -> ASTNode:
+	begin_span()
+	
+	if not has_method(child_parser):
+		return create_error("Bug: Parser method `%s` does not exist!" % child_parser)
+	
+	var expr = call(child_parser)
+	
+	if not expr is ASTNode:
+		return create_error("Bug: Parser method `%s` does not return an AST node!" % child_parser)
+	
+	if not expr is ExprASTNode:
+		return abort_span(expr)
+	
+	while next.type in operators:
+		advance()
+		var operator: int = current.type
+		var rhs_expr: ASTNode = call(child_parser)
+		
+		if not rhs_expr is ExprASTNode:
+			return abort_span(rhs_expr)
+		
+		expr = BinExprASTNode.new(expr, operator, rhs_expr)
+		apply_span(expr)
+	
+	return abort_span(expr)
+
+
+# Parse an eager or expression.
+func parse_expr_eager_or() -> ASTNode:
+	return parse_expr_bin("parse_expr_eager_and", [Token.PIPE])
+
+
+# Parse an eager and expression.
+func parse_expr_eager_and() -> ASTNode:
+	return parse_expr_bin("parse_expr_not", [Token.AMPERSAND])
 
 
 # Parse a not expression.
@@ -409,7 +449,28 @@ func parse_expr_not() -> ASTNode:
 		
 		return end_span(UnExprASTNode.new(Token.BANG, expr))
 	
-	return abort_span(parse_expr_sign())
+	return abort_span(parse_expr_equality())
+
+
+# Parse an equality expression.
+func parse_expr_equality() -> ASTNode:
+	return parse_expr_bin("parse_expr_comparison", [Token.BANG_EQUALS, Token.EQUALS_EQUALS])
+
+
+# Parse a comparison expression.
+func parse_expr_comparison() -> ASTNode:
+	return parse_expr_bin("parse_expr_sum", [
+			Token.LESS, Token.LESS_EQUALS, Token.GREATER, Token.GREATER_EQUALS])
+
+
+# Parse a sum expression.
+func parse_expr_sum() -> ASTNode:
+	return parse_expr_bin("parse_expr_term", [Token.PLUS, Token.MINUS])
+
+
+# Parse a term expression.
+func parse_expr_term() -> ASTNode:
+	return parse_expr_bin("parse_expr_sign", [Token.STAR])
 
 
 # Parse a sign expression.

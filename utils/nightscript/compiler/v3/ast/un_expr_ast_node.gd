@@ -5,6 +5,7 @@ extends "expr_ast_node.gd"
 # that represents a unary expression node of an abstract syntax tree.
 
 const ExprASTNode: GDScript = preload("expr_ast_node.gd")
+const Token: GDScript = preload("../lexer/token.gd")
 
 var operator: int
 var expr: ExprASTNode
@@ -22,4 +23,4 @@ func get_children() -> Array:
 
 # Get information about the unary expression as a string.
 func get_info() -> String:
-	return "%d" % operator
+	return Token.get_name(operator)
