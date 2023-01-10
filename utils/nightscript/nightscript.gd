@@ -4,7 +4,7 @@ extends Node
 # NightScript Component
 # A NightScript component is a component that handles NightScript functionality.
 
-class NSOp extends Object:
+class NSOp extends Reference:
 	
 	# NightScript Operation
 	# A NightScript operation is a helper structure used by a NightScript
@@ -19,7 +19,7 @@ class NSOp extends Object:
 		opcode = opcode_val
 
 
-class NSMachine extends Object:
+class NSMachine extends Reference:
 	
 	# NightScript Machine
 	# A NightScript machine is a helper structure used by a NightScript
@@ -62,15 +62,9 @@ class NSMachine extends Object:
 				op.operand = stream.get_s32()
 			
 			ops[i] = op
-	
-	
-	# Destructor. Frees the NightScript machine's NightScript operations:
-	func destruct() -> void:
-		for op in ops:
-			op.free()
 
 
-class NSThread extends Object:
+class NSThread extends Reference:
 	
 	# NightScript Thread
 	# A NightScript thread is a helper structure used by a NightScript component
@@ -115,8 +109,6 @@ class NSThread extends Object:
 		if not machine:
 			return
 		
-		machine.destruct()
-		machine.free()
 		machine_stack.remove(machine_stack.size() - 1)
 		
 		if machine_stack.empty():
@@ -345,14 +337,6 @@ class NSThread extends Object:
 		machine.option_pointers.clear()
 		machine.option_texts.clear()
 		state = State.RUNNING
-	
-	
-	# Destructor. Destructs and frees the NightScript thread's NightScript
-	# machines:
-	func destruct() -> void:
-		for stack_machine in machine_stack:
-			stack_machine.destruct()
-			stack_machine.free()
 
 enum {
 	HALT = 0x00,
@@ -461,8 +445,6 @@ func _physics_process(delta: float) -> void:
 			if thread.is_connected("call_program_request", self, "_call_program"):
 				thread.disconnect("call_program_request", self, "_call_program")
 			
-			thread.destruct()
-			thread.free()
 			_threads.remove(i)
 			
 			if _threads.empty():
@@ -507,8 +489,6 @@ func run_program(program_key: String) -> void:
 		if thread.is_connected("call_program_request", self, "_call_program"):
 			thread.disconnect("call_program_request", self, "_call_program")
 		
-		thread.destruct()
-		thread.free()
 		Global.events.emit_signal("nightscript_thread_finished")
 	else:
 		_threads.push_back(thread)
@@ -522,9 +502,6 @@ func stop_programs() -> void:
 	for thread in _threads:
 		if thread.is_connected("call_program_request", self, "_call_program"):
 			thread.disconnect("call_program_request", self, "_call_program")
-		
-		thread.destruct()
-		thread.free()
 	
 	_threads.clear()
 
