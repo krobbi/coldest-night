@@ -95,7 +95,7 @@ See [docs/eula.md](./docs/eula.md) for the end-user license agreement and
 third-party license texts.
 
 # License
-Coldest Night is released under the Krobbizoid Game License (KGL):
+Coldest Night is released under the Krobbizoid Game License (KGL):  
 https://krobbi.github.io/license/2021/2023/kgl.txt
 
 See [license.txt](./license.txt) for a full copy of the license text.
