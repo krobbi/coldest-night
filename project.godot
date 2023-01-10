@@ -329,12 +329,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://entities/triggers/run_ns_trigger/run_ns_trigger.gd"
 }, {
-"base": "Object",
+"base": "Reference",
 "class": "SaveData",
 "language": "GDScript",
 "path": "res://utils/save/save_data.gd"
 }, {
-"base": "Object",
+"base": "Reference",
 "class": "SaveManager",
 "language": "GDScript",
 "path": "res://global/save_manager.gd"
@@ -369,7 +369,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://components/states/state_machine.gd"
 }, {
-"base": "Object",
+"base": "Reference",
 "class": "StatsSaveData",
 "language": "GDScript",
 "path": "res://utils/save/stats_save_data.gd"

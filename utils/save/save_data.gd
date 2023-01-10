@@ -1,5 +1,5 @@
 class_name SaveData
-extends Object
+extends Reference
 
 # Save Data
 # Save data are structures that represent the data that is stored in a save
@@ -57,8 +57,8 @@ func serialize() -> Dictionary:
 		"state": serialize_state(),
 		"level": level,
 		"point": point,
-		"offsetX": offset.x,
-		"offsetY": offset.y,
+		"offset_x": offset.x,
+		"offset_y": offset.y,
 		"angle": angle,
 		"stats": stats.serialize(),
 		"flags": flags.duplicate(true),
@@ -81,9 +81,9 @@ func deserialize(data: Dictionary) -> void:
 	deserialize_state(String(data.get("state", "NORMAL")))
 	level = String(data.get("level", "test.area_bx.hub"))
 	point = String(data.get("point", "Terminal"))
-	offset = Vector2(float(data.get("offsetX", 0.0)), float(data.get("offsetY", 0.0)))
+	offset = Vector2(float(data.get("offset_x", 0.0)), float(data.get("offset_y", 0.0)))
 	angle = float(data.get("angle", PI * 0.5))
-	stats.deserialize(data.stats)
+	stats.deserialize(data.get("stats", {}).duplicate(true))
 	flags = data.get("flags", {}).duplicate(true)
 
 
@@ -96,8 +96,3 @@ func deserialize_state(data: String) -> void:
 			state = State.COMPLETED
 		"NORMAL", _:
 			state = State.NORMAL
-
-
-# Destructor. Frees the save data's statisics save data:
-func destruct() -> void:
-	stats.free()

@@ -1,5 +1,5 @@
 class_name StatsSaveData
-extends Object
+extends Reference
 
 # Statistics Save Data
 # Statistics save data are structures that represent persistent statistics that
@@ -48,18 +48,18 @@ func accumulate_alert_count() -> void:
 # Serialize the stats save data to a JSON object.
 func serialize() -> Dictionary:
 	return {
-		"timeHours": time_hours,
-		"timeMinutes": time_minutes,
-		"timeSeconds": time_seconds,
-		"timeFraction": time_fraction,
-		"alertCount": alert_count,
+		"time_hours": time_hours,
+		"time_minutes": time_minutes,
+		"time_seconds": time_seconds,
+		"time_fraction": time_fraction,
+		"alert_count": alert_count,
 	}
 
 
 # Deserialize the stats save data from a JSON object.
 func deserialize(data: Dictionary) -> void:
-	self.time_hours = int(data.get("timeHours", 0.0))
-	self.time_minutes = int(data.get("timeMinutes", 0.0))
-	self.time_seconds = int(data.get("timeSeconds", 0.0))
-	self.time_fraction = float(data.get("timeFraction", 0.0))
-	self.alert_count = int(data.get("alertCount", 0))
+	self.time_hours = int(data.get("time_hours", 0.0))
+	self.time_minutes = int(data.get("time_minutes", 0.0))
+	self.time_seconds = int(data.get("time_seconds", 0.0))
+	self.time_fraction = float(data.get("time_fraction", 0.0))
+	self.alert_count = int(data.get("alert_count", 0.0))

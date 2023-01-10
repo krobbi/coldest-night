@@ -1,5 +1,5 @@
 class_name SaveManager
-extends Object
+extends Reference
 
 # Save Manager
 # The save manager is a global utility that handles loading, storing,
@@ -88,19 +88,6 @@ func save_new_game() -> void:
 	_copy_save_data(_working_data, _checkpoint_data, true)
 	_copy_save_data(_working_data, _slots[_selected_slot], true)
 	_save_file(_slots[_selected_slot], _selected_slot)
-
-
-# Destructor. Destructs and frees the save manager's slots, checkpoint, and
-# current working save data:
-func destruct() -> void:
-	for slot in _slots:
-		slot.destruct()
-		slot.free()
-	
-	_checkpoint_data.destruct()
-	_checkpoint_data.free()
-	_working_data.destruct()
-	_working_data.free()
 
 
 # Gets a slot's path from its slot index:

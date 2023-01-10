@@ -33,8 +33,6 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	display.destruct()
 	display.free()
-	save.destruct()
-	save.free()
 	lang.destruct()
 	lang.free()
 	controls.destruct()
