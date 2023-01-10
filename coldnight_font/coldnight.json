@@ -13,6 +13,9 @@
 	"glyph-color": "black",
 	"in-kerning": [
 		"/ / -6",
+		". 1 -2",
+		". 9 -2",
+		"7 . -2",
 		"\\ \\ -6"
 	],
 	"glyph-width": 16,
@@ -33,7 +36,7 @@
 	"font-name": "Coldnight",
 	"font-author": "Krobbizoid",
 	"font-copy": "Public domain",
-	"font-version": "1.1.0",
+	"font-version": "1.1.1",
 	"font-desc": "Custom font for Coldest Night.",
 	"font-license": "CC0 1.0",
 	"font-license-url": "https://creativecommons.org/publicdomain/zero/1.0",
