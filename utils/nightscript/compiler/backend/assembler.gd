@@ -22,26 +22,26 @@ func get_string_id(value: String) -> int:
 	return size
 
 
-# Put a NightScript opcode to a serial write stream.
-func put_op(stream: SerialWriteStream, opcode: int) -> void:
-	stream.put_u8(opcode)
+# Put a NightScript opcode to a buffer.
+func put_op(buffer: StreamPeerBuffer, opcode: int) -> void:
+	buffer.put_u8(opcode)
 
 
-# Put an integer parameter to a serial write stream.
-func put_int(stream: SerialWriteStream, value: int) -> void:
-	put_op(stream, NightScript.PUSH_INT)
-	stream.put_s32(value)
+# Put an integer parameter to a buffer.
+func put_int(buffer: StreamPeerBuffer, value: int) -> void:
+	put_op(buffer, NightScript.PUSH_INT)
+	buffer.put_32(value)
 
 
-# Put a string parameter to a serial write stream.
-func put_string(stream: SerialWriteStream, value: String) -> void:
-	put_op(stream, NightScript.PUSH_STRING)
-	stream.put_s32(get_string_id(value))
+# Put a string parameter to a buffer.
+func put_string(buffer: StreamPeerBuffer, value: String) -> void:
+	put_op(buffer, NightScript.PUSH_STRING)
+	buffer.put_32(get_string_id(value))
 
 
-# Put a label parameter to a serial write stream.
-func put_label(stream: SerialWriteStream, table: Dictionary, name: String) -> void:
-	put_int(stream, table.get(name, 0))
+# Put a label parameter to a buffer.
+func put_label(buffer: StreamPeerBuffer, table: Dictionary, name: String) -> void:
+	put_int(buffer, table.get(name, 0))
 
 
 # Assemble IR code to NightScript bytecode.
@@ -57,139 +57,140 @@ func assemble_code(code: IRCode) -> PoolByteArray:
 		for op in block.ops:
 			op_count += op.get_size()
 	
-	var stream: SerialWriteStream = SerialWriteStream.new()
+	var buffer: StreamPeerBuffer = StreamPeerBuffer.new()
 	
 	for block in code.blocks:
 		for op in block.ops:
 			match op.type:
 				IROp.HALT:
-					put_op(stream, NightScript.HALT)
+					put_op(buffer, NightScript.HALT)
 				IROp.RUN_PROGRAM:
-					put_op(stream, NightScript.RUN_PROGRAM)
+					put_op(buffer, NightScript.RUN_PROGRAM)
 				IROp.RUN_PROGRAM_KEY:
-					put_string(stream, op.str_value_a)
-					put_op(stream, NightScript.RUN_PROGRAM)
+					put_string(buffer, op.str_value_a)
+					put_op(buffer, NightScript.RUN_PROGRAM)
 				IROp.CALL_PROGRAM:
-					put_op(stream, NightScript.CALL_PROGRAM)
+					put_op(buffer, NightScript.CALL_PROGRAM)
 				IROp.CALL_PROGRAM_KEY:
-					put_string(stream, op.str_value_a)
-					put_op(stream, NightScript.CALL_PROGRAM)
+					put_string(buffer, op.str_value_a)
+					put_op(buffer, NightScript.CALL_PROGRAM)
 				IROp.SLEEP:
-					put_op(stream, NightScript.SLEEP)
+					put_op(buffer, NightScript.SLEEP)
 				IROp.JUMP_LABEL:
-					put_label(stream, pointers, op.str_value_a)
-					put_op(stream, NightScript.JUMP)
+					put_label(buffer, pointers, op.str_value_a)
+					put_op(buffer, NightScript.JUMP)
 				IROp.JUMP_ZERO_LABEL:
-					put_label(stream, pointers, op.str_value_a)
-					put_op(stream, NightScript.JUMP_ZERO)
+					put_label(buffer, pointers, op.str_value_a)
+					put_op(buffer, NightScript.JUMP_ZERO)
 				IROp.JUMP_NOT_ZERO_LABEL:
-					put_label(stream, pointers, op.str_value_a)
-					put_op(stream, NightScript.JUMP_NOT_ZERO)
+					put_label(buffer, pointers, op.str_value_a)
+					put_op(buffer, NightScript.JUMP_NOT_ZERO)
 				IROp.DROP:
-					put_op(stream, NightScript.DROP)
+					put_op(buffer, NightScript.DROP)
 				IROp.DUPLICATE:
-					put_op(stream, NightScript.DUPLICATE)
+					put_op(buffer, NightScript.DUPLICATE)
 				IROp.PUSH_IS_REPEAT:
-					put_op(stream, NightScript.PUSH_IS_REPEAT)
+					put_op(buffer, NightScript.PUSH_IS_REPEAT)
 				IROp.PUSH_INT:
-					put_int(stream, op.int_value_a)
+					put_int(buffer, op.int_value_a)
 				IROp.PUSH_STRING:
-					put_string(stream, op.str_value_a)
+					put_string(buffer, op.str_value_a)
 				IROp.LOAD_FLAG_NAMESPACE_KEY:
-					put_string(stream, op.str_value_a)
-					put_string(stream, op.str_value_b)
-					put_op(stream, NightScript.LOAD_FLAG)
+					put_string(buffer, op.str_value_a)
+					put_string(buffer, op.str_value_b)
+					put_op(buffer, NightScript.LOAD_FLAG)
 				IROp.STORE_FLAG_NAMESPACE_KEY:
-					put_string(stream, op.str_value_a)
-					put_string(stream, op.str_value_b)
-					put_op(stream, NightScript.STORE_FLAG)
+					put_string(buffer, op.str_value_a)
+					put_string(buffer, op.str_value_b)
+					put_op(buffer, NightScript.STORE_FLAG)
 				IROp.UNARY_NEGATE:
-					put_op(stream, NightScript.UNARY_NEGATE)
+					put_op(buffer, NightScript.UNARY_NEGATE)
 				IROp.UNARY_NOT:
-					put_op(stream, NightScript.UNARY_NOT)
+					put_op(buffer, NightScript.UNARY_NOT)
 				IROp.BINARY_ADD:
-					put_op(stream, NightScript.BINARY_ADD)
+					put_op(buffer, NightScript.BINARY_ADD)
 				IROp.BINARY_SUBTRACT:
-					put_op(stream, NightScript.BINARY_SUBTRACT)
+					put_op(buffer, NightScript.BINARY_SUBTRACT)
 				IROp.BINARY_MULTIPLY:
-					put_op(stream, NightScript.BINARY_MULTIPLY)
+					put_op(buffer, NightScript.BINARY_MULTIPLY)
 				IROp.BINARY_EQUALS:
-					put_op(stream, NightScript.BINARY_EQUALS)
+					put_op(buffer, NightScript.BINARY_EQUALS)
 				IROp.BINARY_NOT_EQUALS:
-					put_op(stream, NightScript.BINARY_NOT_EQUALS)
+					put_op(buffer, NightScript.BINARY_NOT_EQUALS)
 				IROp.BINARY_GREATER:
-					put_op(stream, NightScript.BINARY_GREATER)
+					put_op(buffer, NightScript.BINARY_GREATER)
 				IROp.BINARY_GREATER_EQUALS:
-					put_op(stream, NightScript.BINARY_GREATER_EQUALS)
+					put_op(buffer, NightScript.BINARY_GREATER_EQUALS)
 				IROp.BINARY_LESS:
-					put_op(stream, NightScript.BINARY_LESS)
+					put_op(buffer, NightScript.BINARY_LESS)
 				IROp.BINARY_LESS_EQUALS:
-					put_op(stream, NightScript.BINARY_LESS_EQUALS)
+					put_op(buffer, NightScript.BINARY_LESS_EQUALS)
 				IROp.BINARY_AND:
-					put_op(stream, NightScript.BINARY_AND)
+					put_op(buffer, NightScript.BINARY_AND)
 				IROp.BINARY_OR:
-					put_op(stream, NightScript.BINARY_OR)
+					put_op(buffer, NightScript.BINARY_OR)
 				IROp.SHOW_DIALOG:
-					put_op(stream, NightScript.SHOW_DIALOG)
+					put_op(buffer, NightScript.SHOW_DIALOG)
 				IROp.HIDE_DIALOG:
-					put_op(stream, NightScript.HIDE_DIALOG)
+					put_op(buffer, NightScript.HIDE_DIALOG)
 				IROp.CLEAR_DIALOG_NAME:
-					put_op(stream, NightScript.CLEAR_DIALOG_NAME)
+					put_op(buffer, NightScript.CLEAR_DIALOG_NAME)
 				IROp.DISPLAY_DIALOG_NAME:
-					put_op(stream, NightScript.DISPLAY_DIALOG_NAME)
+					put_op(buffer, NightScript.DISPLAY_DIALOG_NAME)
 				IROp.DISPLAY_DIALOG_NAME_TEXT:
-					put_string(stream, op.str_value_a)
-					put_op(stream, NightScript.DISPLAY_DIALOG_NAME)
+					put_string(buffer, op.str_value_a)
+					put_op(buffer, NightScript.DISPLAY_DIALOG_NAME)
 				IROp.DISPLAY_DIALOG_MESSAGE:
-					put_op(stream, NightScript.DISPLAY_DIALOG_MESSAGE)
+					put_op(buffer, NightScript.DISPLAY_DIALOG_MESSAGE)
 				IROp.DISPLAY_DIALOG_MESSAGE_TEXT:
-					put_string(stream, op.str_value_a)
-					put_op(stream, NightScript.DISPLAY_DIALOG_MESSAGE)
+					put_string(buffer, op.str_value_a)
+					put_op(buffer, NightScript.DISPLAY_DIALOG_MESSAGE)
 				IROp.STORE_DIALOG_MENU_OPTION_LABEL:
-					put_label(stream, pointers, op.str_value_a)
-					put_op(stream, NightScript.STORE_DIALOG_MENU_OPTION)
+					put_label(buffer, pointers, op.str_value_a)
+					put_op(buffer, NightScript.STORE_DIALOG_MENU_OPTION)
 				IROp.STORE_DIALOG_MENU_OPTION_TEXT_LABEL:
-					put_string(stream, op.str_value_a)
-					put_label(stream, pointers, op.str_value_b)
-					put_op(stream, NightScript.STORE_DIALOG_MENU_OPTION)
+					put_string(buffer, op.str_value_a)
+					put_label(buffer, pointers, op.str_value_b)
+					put_op(buffer, NightScript.STORE_DIALOG_MENU_OPTION)
 				IROp.SHOW_DIALOG_MENU:
-					put_op(stream, NightScript.SHOW_DIALOG_MENU)
+					put_op(buffer, NightScript.SHOW_DIALOG_MENU)
 				IROp.ACTOR_FACE_DIRECTION:
-					put_op(stream, NightScript.ACTOR_FACE_DIRECTION)
+					put_op(buffer, NightScript.ACTOR_FACE_DIRECTION)
 				IROp.ACTOR_FIND_PATH:
-					put_op(stream, NightScript.ACTOR_FIND_PATH)
+					put_op(buffer, NightScript.ACTOR_FIND_PATH)
 				IROp.ACTOR_FIND_PATH_KEY_POINT:
-					put_string(stream, op.str_value_a)
-					put_string(stream, op.str_value_b)
-					put_op(stream, NightScript.ACTOR_FIND_PATH)
+					put_string(buffer, op.str_value_a)
+					put_string(buffer, op.str_value_b)
+					put_op(buffer, NightScript.ACTOR_FIND_PATH)
 				IROp.RUN_ACTOR_PATHS:
-					put_op(stream, NightScript.RUN_ACTOR_PATHS)
+					put_op(buffer, NightScript.RUN_ACTOR_PATHS)
 				IROp.AWAIT_ACTOR_PATHS:
-					put_op(stream, NightScript.AWAIT_ACTOR_PATHS)
+					put_op(buffer, NightScript.AWAIT_ACTOR_PATHS)
 				IROp.FREEZE_PLAYER:
-					put_op(stream, NightScript.FREEZE_PLAYER)
+					put_op(buffer, NightScript.FREEZE_PLAYER)
 				IROp.THAW_PLAYER:
-					put_op(stream, NightScript.THAW_PLAYER)
+					put_op(buffer, NightScript.THAW_PLAYER)
 				IROp.QUIT_TO_TITLE:
-					put_op(stream, NightScript.QUIT_TO_TITLE)
+					put_op(buffer, NightScript.QUIT_TO_TITLE)
 				IROp.PAUSE_GAME:
-					put_op(stream, NightScript.PAUSE_GAME)
+					put_op(buffer, NightScript.PAUSE_GAME)
 				IROp.UNPAUSE_GAME:
-					put_op(stream, NightScript.UNPAUSE_GAME)
+					put_op(buffer, NightScript.UNPAUSE_GAME)
 				IROp.SAVE_GAME:
-					put_op(stream, NightScript.SAVE_GAME)
+					put_op(buffer, NightScript.SAVE_GAME)
 				IROp.SAVE_CHECKPOINT:
-					put_op(stream, NightScript.SAVE_CHECKPOINT)
+					put_op(buffer, NightScript.SAVE_CHECKPOINT)
 	
-	var header_stream: SerialWriteStream = SerialWriteStream.new()
-	header_stream.put_u8(NightScript.BYTECODE_MAGIC)
-	header_stream.put_u8(int(code.is_pausable))
-	
-	header_stream.put_u32(string_table.size())
+	var bytecode_body: PoolByteArray = buffer.data_array
+	buffer.clear()
+	buffer.put_u8(NightScript.BYTECODE_MAGIC)
+	buffer.put_u8(int(code.is_pausable))
+	buffer.put_u32(string_table.size())
 	
 	for value in string_table:
-		header_stream.put_utf8_u32(value)
+		var value_bytes: PoolByteArray = value.to_utf8()
+		buffer.put_u32(value_bytes.size())
+		buffer.put_data(value_bytes) # warning-ignore: RETURN_VALUE_DISCARDED
 	
-	header_stream.put_u32(op_count)
-	header_stream.put_data(stream.get_buffer())
-	return header_stream.get_buffer()
+	buffer.put_u32(op_count)
+	return buffer.data_array + bytecode_body

@@ -41,25 +41,26 @@ class NSMachine extends Reference:
 	func _init(bytecode: PoolByteArray, is_seen_val: bool) -> void:
 		is_seen = is_seen_val
 		
-		var stream: SerialReadStream = SerialReadStream.new(bytecode)
-		stream.jump(1) # Skip magic number.
+		var buffer: StreamPeerBuffer = StreamPeerBuffer.new()
+		buffer.put_data(bytecode) # warning-ignore: RETURN_VALUE_DISCARDED
+		buffer.seek(1) # Skip magic number.
 		
-		is_pausable = bool(stream.get_u8())
+		is_pausable = bool(buffer.get_u8())
 		
-		var string_count: int = stream.get_u32()
+		var string_count: int = buffer.get_u32()
 		string_table.resize(string_count)
 		
 		for i in range(string_count):
-			string_table[i] = stream.get_utf8_u32()
+			string_table[i] = buffer.get_data(buffer.get_u32())[1].get_string_from_utf8()
 		
-		var op_count: int = stream.get_u32()
+		var op_count: int = buffer.get_u32()
 		ops.resize(op_count)
 		
 		for i in range(op_count):
-			var op: NSOp = NSOp.new(stream.get_u8())
+			var op: NSOp = NSOp.new(buffer.get_u8())
 			
 			if op.opcode == PUSH_INT or op.opcode == PUSH_STRING:
-				op.operand = stream.get_s32()
+				op.operand = buffer.get_32()
 			
 			ops[i] = op
 
