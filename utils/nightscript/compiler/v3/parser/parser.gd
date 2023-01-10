@@ -395,7 +395,7 @@ func parse_expr_paren() -> ASTNode:
 
 # Parse an expression.
 func parse_expr() -> ASTNode:
-	return parse_expr_logical_or()
+	return parse_expr_assignment()
 
 
 # Parse a generic binary expression.
@@ -417,6 +417,27 @@ func parse_expr_bin(child_parser: String, operators: Array) -> ASTNode:
 		advance()
 		var operator: int = current.type
 		var rhs_expr: ASTNode = call(child_parser)
+		
+		if not rhs_expr is ExprASTNode:
+			return abort_span(rhs_expr)
+		
+		expr = BinExprASTNode.new(expr, operator, rhs_expr)
+		apply_span(expr)
+	
+	return abort_span(expr)
+
+
+# Parse an assignment expression.
+func parse_expr_assignment() -> ASTNode:
+	begin_span()
+	var expr: ASTNode = parse_expr_logical_or()
+	
+	if not expr is ExprASTNode:
+		return abort_span(expr)
+	
+	if accept(Token.EQUALS):
+		var operator: int = current.type
+		var rhs_expr: ASTNode = parse_expr_assignment()
 		
 		if not rhs_expr is ExprASTNode:
 			return abort_span(rhs_expr)

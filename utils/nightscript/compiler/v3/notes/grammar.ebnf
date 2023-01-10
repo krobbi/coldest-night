@@ -20,8 +20,9 @@ stmt_continue = "continue", ";" ;
 stmt_expr = expr, ";" ;
 
 expr_paren = "(", expr, ")" ;
-expr = expr_logical_or ;
+expr = expr_assignment ;
 
+expr_assignment = expr_logical_or, [ "=", expr_assignment ] ;
 expr_logical_or = expr_logical_and, { "||", expr_logical_and } ;
 expr_logical_and = expr_eager_or, { "&&", expr_eager_or } ;
 expr_eager_or = expr_eager_and, { "|", expr_eager_and } ;

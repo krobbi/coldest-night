@@ -1,0 +1,31 @@
+# NightScript Version 3.
+# FizzBuzz Test
+# Run a primitive version of FizzBuzz.
+
+freeze();
+show();
+
+v3_test.next_fizz = 3;
+v3_test.next_buzz = 5;
+v3_test.i = 0;
+
+while(v3_test.i < 20){
+	v3_test.i = v3_test.i + 1;
+	
+	if(v3_test.i == v3_test.next_fizz && v3_test.i == v3_test.next_buzz){
+		say("FizzBuzz!");
+		v3_test.next_fizz = v3_test.next_fizz + 3;
+		v3_test.next_buzz = v3_test.next_buzz + 5;
+	} else if(v3_test.i == v3_test.next_fizz){
+		say("Fizz!");
+		v3_test.next_fizz = v3_test.next_fizz + 3;
+	} else if(v3_test.i == v3_test.next_buzz){
+		say("Buzz!");
+		v3_test.next_buzz = v3_test.next_buzz + 5;
+	} else {
+		say("No string formatting yet, sorry :(");
+	}
+}
+
+hide();
+thaw();

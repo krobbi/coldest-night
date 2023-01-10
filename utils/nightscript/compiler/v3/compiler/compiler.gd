@@ -374,6 +374,20 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 			return
 		
 		code.make_load_flag_namespace_key(bin_expr.lhs_expr.name, bin_expr.rhs_expr.name)
+	elif bin_expr.operator == Token.EQUALS:
+		visit_node(bin_expr.rhs_expr)
+		
+		if(
+				bin_expr.lhs_expr is BinExprASTNode
+				and bin_expr.lhs_expr.operator == Token.DOT
+				and bin_expr.lhs_expr.lhs_expr is IdentifierExprASTNode
+				and bin_expr.lhs_expr.rhs_expr is IdentifierExprASTNode):
+			code.make_store_flag_namespace_key(
+					bin_expr.lhs_expr.lhs_expr.name, bin_expr.lhs_expr.rhs_expr.name)
+		else:
+			logger.log_error("Can only assign to a flag!", bin_expr.lhs_expr.span)
+			visit_node(bin_expr.lhs_expr)
+			code.make_drop()
 	elif bin_expr.operator == Token.PIPE_PIPE:
 		var end_label: String = code.insert_unique_label("or_end")
 		

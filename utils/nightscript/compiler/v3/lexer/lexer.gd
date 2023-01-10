@@ -37,6 +37,7 @@ const KEYWORDS: Dictionary = {
 	";": Token.SEMICOLON,
 	"<": Token.LESS,
 	"<=": Token.LESS_EQUALS,
+	"=": Token.EQUALS,
 	"==": Token.EQUALS_EQUALS,
 	">": Token.GREATER,
 	">=": Token.GREATER_EQUALS,

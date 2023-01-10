@@ -36,6 +36,7 @@ enum {
 	SEMICOLON, # `;`.
 	LESS, # `<`.
 	LESS_EQUALS, # `<=`.
+	EQUALS, # `=`.
 	EQUALS_EQUALS, # `==`.
 	GREATER, # `>`.
 	GREATER_EQUALS, # `>=`.
@@ -132,6 +133,8 @@ static func get_name(token_type: int) -> String:
 			return "`<`"
 		LESS_EQUALS:
 			return "`<=`"
+		EQUALS:
+			return "`=`"
 		EQUALS_EQUALS:
 			return "`==`"
 		GREATER:
