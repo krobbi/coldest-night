@@ -7,6 +7,63 @@ extends Reference
 const IRCode: GDScript = preload("ir_code.gd")
 const IROp: GDScript = preload("ir_op.gd")
 
+enum {OP, INT_A, STR_A, STR_B, LBL_A, LBL_B}
+
+const STRATEGIES: Dictionary = {
+	IROp.HALT: [OP, NightScript.HALT],
+	IROp.RUN_PROGRAM: [OP, NightScript.RUN_PROGRAM],
+	IROp.RUN_PROGRAM_KEY: [STR_A, OP, NightScript.RUN_PROGRAM],
+	IROp.CALL_PROGRAM: [OP, NightScript.CALL_PROGRAM],
+	IROp.CALL_PROGRAM_KEY: [STR_A, OP, NightScript.CALL_PROGRAM],
+	IROp.SLEEP: [OP, NightScript.SLEEP],
+	IROp.JUMP_LABEL: [LBL_A, OP, NightScript.JUMP],
+	IROp.JUMP_ZERO_LABEL: [LBL_A, OP, NightScript.JUMP_ZERO],
+	IROp.JUMP_NOT_ZERO_LABEL: [LBL_A, OP, NightScript.JUMP_NOT_ZERO],
+	IROp.DROP: [OP, NightScript.DROP],
+	IROp.DUPLICATE: [OP, NightScript.DUPLICATE],
+	IROp.PUSH_IS_REPEAT: [OP, NightScript.PUSH_IS_REPEAT],
+	IROp.PUSH_INT: [INT_A],
+	IROp.PUSH_STRING: [STR_A],
+	IROp.LOAD_FLAG_NAMESPACE_KEY: [STR_A, STR_B, OP, NightScript.LOAD_FLAG],
+	IROp.STORE_FLAG_NAMESPACE_KEY: [STR_A, STR_B, OP, NightScript.STORE_FLAG],
+	IROp.UNARY_NEGATE: [OP, NightScript.UNARY_NEGATE],
+	IROp.UNARY_NOT: [OP, NightScript.UNARY_NOT],
+	IROp.BINARY_ADD: [OP, NightScript.BINARY_ADD],
+	IROp.BINARY_SUBTRACT: [OP, NightScript.BINARY_SUBTRACT],
+	IROp.BINARY_MULTIPLY: [OP, NightScript.BINARY_MULTIPLY],
+	IROp.BINARY_EQUALS: [OP, NightScript.BINARY_EQUALS],
+	IROp.BINARY_NOT_EQUALS: [OP, NightScript.BINARY_NOT_EQUALS],
+	IROp.BINARY_GREATER: [OP, NightScript.BINARY_GREATER],
+	IROp.BINARY_GREATER_EQUALS: [OP, NightScript.BINARY_GREATER_EQUALS],
+	IROp.BINARY_LESS: [OP, NightScript.BINARY_LESS],
+	IROp.BINARY_LESS_EQUALS: [OP, NightScript.BINARY_LESS_EQUALS],
+	IROp.BINARY_AND: [OP, NightScript.BINARY_AND],
+	IROp.BINARY_OR: [OP, NightScript.BINARY_OR],
+	IROp.SHOW_DIALOG: [OP, NightScript.SHOW_DIALOG],
+	IROp.HIDE_DIALOG: [OP, NightScript.HIDE_DIALOG],
+	IROp.CLEAR_DIALOG_NAME: [OP, NightScript.CLEAR_DIALOG_NAME],
+	IROp.DISPLAY_DIALOG_NAME: [OP, NightScript.DISPLAY_DIALOG_NAME],
+	IROp.DISPLAY_DIALOG_NAME_TEXT: [STR_A, OP, NightScript.DISPLAY_DIALOG_NAME],
+	IROp.DISPLAY_DIALOG_MESSAGE: [OP, NightScript.DISPLAY_DIALOG_MESSAGE],
+	IROp.DISPLAY_DIALOG_MESSAGE_TEXT: [STR_A, OP, NightScript.DISPLAY_DIALOG_MESSAGE],
+	IROp.STORE_DIALOG_MENU_OPTION_LABEL: [LBL_A, OP, NightScript.STORE_DIALOG_MENU_OPTION],
+	IROp.STORE_DIALOG_MENU_OPTION_TEXT_LABEL: [
+			STR_A, LBL_B, OP, NightScript.STORE_DIALOG_MENU_OPTION],
+	IROp.SHOW_DIALOG_MENU: [OP, NightScript.SHOW_DIALOG_MENU],
+	IROp.ACTOR_FACE_DIRECTION: [OP, NightScript.ACTOR_FACE_DIRECTION],
+	IROp.ACTOR_FIND_PATH: [OP, NightScript.ACTOR_FIND_PATH],
+	IROp.ACTOR_FIND_PATH_KEY_POINT: [STR_A, STR_B, OP, NightScript.ACTOR_FIND_PATH],
+	IROp.RUN_ACTOR_PATHS: [OP, NightScript.RUN_ACTOR_PATHS],
+	IROp.AWAIT_ACTOR_PATHS: [OP, NightScript.AWAIT_ACTOR_PATHS],
+	IROp.FREEZE_PLAYER: [OP, NightScript.FREEZE_PLAYER],
+	IROp.THAW_PLAYER: [OP, NightScript.THAW_PLAYER],
+	IROp.QUIT_TO_TITLE: [OP, NightScript.QUIT_TO_TITLE],
+	IROp.PAUSE_GAME: [OP, NightScript.PAUSE_GAME],
+	IROp.UNPAUSE_GAME: [OP, NightScript.UNPAUSE_GAME],
+	IROp.SAVE_GAME: [OP, NightScript.SAVE_GAME],
+	IROp.SAVE_CHECKPOINT: [OP, NightScript.SAVE_CHECKPOINT],
+}
+
 var string_table: PoolStringArray = PoolStringArray()
 
 # Get the ID of a string from the string table. Register the string to the
@@ -22,26 +79,25 @@ func get_string_id(value: String) -> int:
 	return size
 
 
-# Put a NightScript opcode to a buffer.
-func put_op(buffer: StreamPeerBuffer, opcode: int) -> void:
-	buffer.put_u8(opcode)
-
-
-# Put an integer parameter to a buffer.
-func put_int(buffer: StreamPeerBuffer, value: int) -> void:
-	put_op(buffer, NightScript.PUSH_INT)
-	buffer.put_32(value)
-
-
-# Put a string parameter to a buffer.
-func put_string(buffer: StreamPeerBuffer, value: String) -> void:
-	put_op(buffer, NightScript.PUSH_STRING)
-	buffer.put_32(get_string_id(value))
-
-
-# Put a label parameter to a buffer.
-func put_label(buffer: StreamPeerBuffer, table: Dictionary, name: String) -> void:
-	put_int(buffer, table.get(name, 0))
+# Get the size of an IR operation in native NightScript operations.
+func get_op_size(op: IROp) -> int:
+	if not STRATEGIES.has(op.type):
+		return 0
+	
+	var size: int = 0
+	var index: int = 0
+	
+	while index < STRATEGIES[op.type].size():
+		var strategy: int = STRATEGIES[op.type][index]
+		index += 1
+		
+		size += 1 # All current strategies add one operation.
+		
+		# Skip NightScript operation parameter.
+		if strategy == OP:
+			index += 1
+	
+	return size
 
 
 # Assemble IR code to NightScript bytecode.
@@ -55,131 +111,40 @@ func assemble_code(code: IRCode) -> PoolByteArray:
 		pointers[block.label] = op_count
 		
 		for op in block.ops:
-			op_count += op.get_size()
+			op_count += get_op_size(op)
 	
 	var buffer: StreamPeerBuffer = StreamPeerBuffer.new()
 	
 	for block in code.blocks:
 		for op in block.ops:
-			match op.type:
-				IROp.HALT:
-					put_op(buffer, NightScript.HALT)
-				IROp.RUN_PROGRAM:
-					put_op(buffer, NightScript.RUN_PROGRAM)
-				IROp.RUN_PROGRAM_KEY:
-					put_string(buffer, op.str_value_a)
-					put_op(buffer, NightScript.RUN_PROGRAM)
-				IROp.CALL_PROGRAM:
-					put_op(buffer, NightScript.CALL_PROGRAM)
-				IROp.CALL_PROGRAM_KEY:
-					put_string(buffer, op.str_value_a)
-					put_op(buffer, NightScript.CALL_PROGRAM)
-				IROp.SLEEP:
-					put_op(buffer, NightScript.SLEEP)
-				IROp.JUMP_LABEL:
-					put_label(buffer, pointers, op.str_value_a)
-					put_op(buffer, NightScript.JUMP)
-				IROp.JUMP_ZERO_LABEL:
-					put_label(buffer, pointers, op.str_value_a)
-					put_op(buffer, NightScript.JUMP_ZERO)
-				IROp.JUMP_NOT_ZERO_LABEL:
-					put_label(buffer, pointers, op.str_value_a)
-					put_op(buffer, NightScript.JUMP_NOT_ZERO)
-				IROp.DROP:
-					put_op(buffer, NightScript.DROP)
-				IROp.DUPLICATE:
-					put_op(buffer, NightScript.DUPLICATE)
-				IROp.PUSH_IS_REPEAT:
-					put_op(buffer, NightScript.PUSH_IS_REPEAT)
-				IROp.PUSH_INT:
-					put_int(buffer, op.int_value_a)
-				IROp.PUSH_STRING:
-					put_string(buffer, op.str_value_a)
-				IROp.LOAD_FLAG_NAMESPACE_KEY:
-					put_string(buffer, op.str_value_a)
-					put_string(buffer, op.str_value_b)
-					put_op(buffer, NightScript.LOAD_FLAG)
-				IROp.STORE_FLAG_NAMESPACE_KEY:
-					put_string(buffer, op.str_value_a)
-					put_string(buffer, op.str_value_b)
-					put_op(buffer, NightScript.STORE_FLAG)
-				IROp.UNARY_NEGATE:
-					put_op(buffer, NightScript.UNARY_NEGATE)
-				IROp.UNARY_NOT:
-					put_op(buffer, NightScript.UNARY_NOT)
-				IROp.BINARY_ADD:
-					put_op(buffer, NightScript.BINARY_ADD)
-				IROp.BINARY_SUBTRACT:
-					put_op(buffer, NightScript.BINARY_SUBTRACT)
-				IROp.BINARY_MULTIPLY:
-					put_op(buffer, NightScript.BINARY_MULTIPLY)
-				IROp.BINARY_EQUALS:
-					put_op(buffer, NightScript.BINARY_EQUALS)
-				IROp.BINARY_NOT_EQUALS:
-					put_op(buffer, NightScript.BINARY_NOT_EQUALS)
-				IROp.BINARY_GREATER:
-					put_op(buffer, NightScript.BINARY_GREATER)
-				IROp.BINARY_GREATER_EQUALS:
-					put_op(buffer, NightScript.BINARY_GREATER_EQUALS)
-				IROp.BINARY_LESS:
-					put_op(buffer, NightScript.BINARY_LESS)
-				IROp.BINARY_LESS_EQUALS:
-					put_op(buffer, NightScript.BINARY_LESS_EQUALS)
-				IROp.BINARY_AND:
-					put_op(buffer, NightScript.BINARY_AND)
-				IROp.BINARY_OR:
-					put_op(buffer, NightScript.BINARY_OR)
-				IROp.SHOW_DIALOG:
-					put_op(buffer, NightScript.SHOW_DIALOG)
-				IROp.HIDE_DIALOG:
-					put_op(buffer, NightScript.HIDE_DIALOG)
-				IROp.CLEAR_DIALOG_NAME:
-					put_op(buffer, NightScript.CLEAR_DIALOG_NAME)
-				IROp.DISPLAY_DIALOG_NAME:
-					put_op(buffer, NightScript.DISPLAY_DIALOG_NAME)
-				IROp.DISPLAY_DIALOG_NAME_TEXT:
-					put_string(buffer, op.str_value_a)
-					put_op(buffer, NightScript.DISPLAY_DIALOG_NAME)
-				IROp.DISPLAY_DIALOG_MESSAGE:
-					put_op(buffer, NightScript.DISPLAY_DIALOG_MESSAGE)
-				IROp.DISPLAY_DIALOG_MESSAGE_TEXT:
-					put_string(buffer, op.str_value_a)
-					put_op(buffer, NightScript.DISPLAY_DIALOG_MESSAGE)
-				IROp.STORE_DIALOG_MENU_OPTION_LABEL:
-					put_label(buffer, pointers, op.str_value_a)
-					put_op(buffer, NightScript.STORE_DIALOG_MENU_OPTION)
-				IROp.STORE_DIALOG_MENU_OPTION_TEXT_LABEL:
-					put_string(buffer, op.str_value_a)
-					put_label(buffer, pointers, op.str_value_b)
-					put_op(buffer, NightScript.STORE_DIALOG_MENU_OPTION)
-				IROp.SHOW_DIALOG_MENU:
-					put_op(buffer, NightScript.SHOW_DIALOG_MENU)
-				IROp.ACTOR_FACE_DIRECTION:
-					put_op(buffer, NightScript.ACTOR_FACE_DIRECTION)
-				IROp.ACTOR_FIND_PATH:
-					put_op(buffer, NightScript.ACTOR_FIND_PATH)
-				IROp.ACTOR_FIND_PATH_KEY_POINT:
-					put_string(buffer, op.str_value_a)
-					put_string(buffer, op.str_value_b)
-					put_op(buffer, NightScript.ACTOR_FIND_PATH)
-				IROp.RUN_ACTOR_PATHS:
-					put_op(buffer, NightScript.RUN_ACTOR_PATHS)
-				IROp.AWAIT_ACTOR_PATHS:
-					put_op(buffer, NightScript.AWAIT_ACTOR_PATHS)
-				IROp.FREEZE_PLAYER:
-					put_op(buffer, NightScript.FREEZE_PLAYER)
-				IROp.THAW_PLAYER:
-					put_op(buffer, NightScript.THAW_PLAYER)
-				IROp.QUIT_TO_TITLE:
-					put_op(buffer, NightScript.QUIT_TO_TITLE)
-				IROp.PAUSE_GAME:
-					put_op(buffer, NightScript.PAUSE_GAME)
-				IROp.UNPAUSE_GAME:
-					put_op(buffer, NightScript.UNPAUSE_GAME)
-				IROp.SAVE_GAME:
-					put_op(buffer, NightScript.SAVE_GAME)
-				IROp.SAVE_CHECKPOINT:
-					put_op(buffer, NightScript.SAVE_CHECKPOINT)
+			if not STRATEGIES.has(op.type):
+				continue
+			
+			var index: int = 0
+			
+			while index < STRATEGIES[op.type].size():
+				var strategy: int = STRATEGIES[op.type][index]
+				index += 1
+				
+				match strategy:
+					OP:
+						buffer.put_u8(STRATEGIES[op.type][index])
+						index += 1
+					INT_A:
+						buffer.put_u8(NightScript.PUSH_INT)
+						buffer.put_32(op.int_value_a)
+					STR_A:
+						buffer.put_u8(NightScript.PUSH_STRING)
+						buffer.put_32(get_string_id(op.str_value_a))
+					STR_B:
+						buffer.put_u8(NightScript.PUSH_STRING)
+						buffer.put_32(get_string_id(op.str_value_b))
+					LBL_A:
+						buffer.put_u8(NightScript.PUSH_INT)
+						buffer.put_32(pointers.get(op.str_value_a, 0))
+					LBL_B:
+						buffer.put_u8(NightScript.PUSH_INT)
+						buffer.put_32(pointers.get(op.str_value_b, 0))
 	
 	var bytecode_body: PoolByteArray = buffer.data_array
 	buffer.clear()

@@ -175,17 +175,3 @@ func _to_string() -> String:
 			return "save_checkpoint;"
 	
 	return "// UNKNOWN: %d" % type
-
-
-# Get the IR operation's size in native NightScript operations.
-func get_size() -> int:
-	if type in [
-			RUN_PROGRAM_KEY, CALL_PROGRAM_KEY, JUMP_LABEL, JUMP_ZERO_LABEL, JUMP_NOT_ZERO_LABEL,
-			DISPLAY_DIALOG_NAME_TEXT, DISPLAY_DIALOG_MESSAGE_TEXT, STORE_DIALOG_MENU_OPTION_LABEL]:
-		return 2
-	elif type in [
-			LOAD_FLAG_NAMESPACE_KEY, STORE_FLAG_NAMESPACE_KEY,
-			STORE_DIALOG_MENU_OPTION_TEXT_LABEL, ACTOR_FIND_PATH_KEY_POINT]:
-		return 3
-	
-	return 1
