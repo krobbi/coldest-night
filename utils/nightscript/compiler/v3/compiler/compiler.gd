@@ -146,8 +146,38 @@ func undefine_info(key: String) -> void:
 # Compile an abstract synax tree to IR code.
 func compile_ast(root: RootASTNode) -> void:
 	code.reset()
+	
+	var main_label: String = code.get_label()
+	var entry_label: String = code.append_unique_label("entry")
+	
+	code.set_label(entry_label)
 	scopes = [Scope.new()]
 	visit_node(root)
+	
+	if not logger.has_records():
+		return
+	
+	code.set_label(main_label)
+	code.make_freeze_player()
+	
+	if not code.is_pausable:
+		code.make_pause_game()
+	
+	code.make_show_dialog()
+	code.make_display_dialog_name_text("Error")
+	
+	for record in logger.get_records():
+		code.make_display_dialog_message_text("%s:\n%s" % [record.span, record.message])
+	
+	code.make_clear_dialog_name()
+	code.make_hide_dialog()
+	
+	if not code.is_pausable:
+		code.make_unpause_game()
+	
+	code.make_thaw_player()
+	code.make_push_int(1)
+	code.make_sleep()
 
 
 # Visit an AST node.

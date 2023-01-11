@@ -82,7 +82,7 @@ func generate_code(ast: ASTNode) -> void:
 		code.make_unpause_game()
 	
 	code.make_thaw_player()
-	code.make_push_int(0)
+	code.make_push_int(1)
 	code.make_sleep()
 
 
