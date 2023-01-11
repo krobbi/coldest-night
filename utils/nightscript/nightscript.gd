@@ -4,42 +4,30 @@ extends Node
 # NightScript Component
 # A NightScript component is a component that handles NightScript functionality.
 
-class NSOp extends Reference:
+class NightScriptVirtualMachine extends Reference:
 	
-	# NightScript Operation
-	# A NightScript operation is a helper structure used by a NightScript
-	# component that represents an operation that can be performed by a
-	# NightScript component.
+	# NightScript Virtual Machine
+	# A NightScript virtual machine is a structure used by a NightScript
+	# component that contains a NightScript program's state.
 	
-	var opcode: int
-	var operand: int = 0
+	signal push_machine(program_key)
+	signal pop_machine
 	
-	# Sets the NightScript operation's opcode.
-	func _init(opcode_val: int) -> void:
-		opcode = opcode_val
-
-
-class NSMachine extends Reference:
-	
-	# NightScript Machine
-	# A NightScript machine is a helper structure used by a NightScript
-	# component that contains a NightScript program's properties, operations,
-	# and registers.
-	
-	var is_seen: bool
+	var is_repeat: bool
 	var is_pausable: bool
+	var is_awaiting: bool = false
 	var string_table: PoolStringArray = PoolStringArray()
-	var ops: Array = []
-	var pc: int
+	var memory: StreamPeerBuffer = StreamPeerBuffer.new()
+	var stack: Array = []
 	var option_pointers: Array = []
 	var option_texts: Array = []
 	var pathing_actors: Array = []
+	var sleep_timer: float = 0.0
 	
-	# Constructor. Deserializes the NightScript machine from a NightScript
-	# program's bytecode and whether the NightScript program has already been
-	# run:
-	func _init(bytecode: PoolByteArray, is_seen_val: bool) -> void:
-		is_seen = is_seen_val
+	# Deserialize the NightScript virtual machine from its thread ID, whether
+	# the NightScript program is a repeat, and NightScript bytecode.
+	func _init(is_repeat_val: bool, bytecode: PoolByteArray) -> void:
+		is_repeat = is_repeat_val
 		
 		var buffer: StreamPeerBuffer = StreamPeerBuffer.new()
 		buffer.put_data(bytecode) # warning-ignore: RETURN_VALUE_DISCARDED
@@ -53,134 +41,64 @@ class NSMachine extends Reference:
 		for i in range(string_count):
 			string_table[i] = buffer.get_data(buffer.get_u32())[1].get_string_from_utf8()
 		
-		var op_count: int = buffer.get_u32()
-		ops.resize(op_count)
+		# warning-ignore: RETURN_VALUE_DISCARDED
+		memory.put_data(buffer.get_data(buffer.get_u32())[1])
+		memory.seek(0)
+	
+	
+	# Get an actor in the scripted state from its key.
+	func get_scripted_actor(actor_key: String) -> Actor:
+		for actor in Global.tree.get_nodes_in_group("actors"):
+			if actor.actor_key == actor_key and actor.state_machine.get_key() == "Scripted":
+				return actor
 		
-		for i in range(op_count):
-			var op: NSOp = NSOp.new(buffer.get_u8())
-			
-			if op.opcode == PUSH_INT or op.opcode == PUSH_STRING:
-				op.operand = buffer.get_32()
-			
-			ops[i] = op
-
-
-class NSThread extends Reference:
-	
-	# NightScript Thread
-	# A NightScript thread is a helper structure used by a NightScript component
-	# that represents a thread of NightScript execution and contains a stack of
-	# NightScript machines.
-	
-	signal call_program_request(program_key)
-	
-	enum State {STOPPED, RUNNING, AWAITING, SLEEPING}
-	
-	const MACHINE_STACK_LIMIT: int = 16
-	
-	var state: int = State.RUNNING
-	var sleep_timer: float = 0.0
-	var machine_stack: Array = []
-	var machine: NSMachine = null
-	var stack: Array = []
-	
-	# Sets a flag from its namespace and key:
-	func set_flag(namespace: String, key: String, value: int) -> void:
-		Global.save.get_working_data().set_flag(namespace, key, value)
+		return null
 	
 	
-	# Gets a flag from its namespace and key:
-	func get_flag(namespace: String, key: String) -> int:
-		return Global.save.get_working_data().get_flag(namespace, key)
-	
-	
-	# Pushes a new current NightScript machine to the NightScript thread from a
-	# NightScript program's bytecode and whether the NightScript program has
-	# already been run:
-	func push_machine(bytecode: PoolByteArray, is_seen: bool) -> void:
-		if machine_stack.size() >= MACHINE_STACK_LIMIT:
-			return
-		
-		machine = NSMachine.new(bytecode, is_seen)
-		machine_stack.push_back(machine)
-	
-	
-	# Pops the current NightScript machine from the NightScript thread:
-	func pop_machine() -> void:
-		if not machine:
-			return
-		
-		machine_stack.remove(machine_stack.size() - 1)
-		
-		if machine_stack.empty():
-			machine = null
-			state = State.STOPPED
-		else:
-			machine = machine_stack[-1]
-	
-	
-	# Pauses the NightScript thread until a signal is emitted from a source
-	# object:
-	func await(source: Object, signal_name: String) -> void:
-		if state != State.RUNNING:
-			return
-		
-		var error: int = source.connect(
-				signal_name, self, "_on_await_finished", [], CONNECT_ONESHOT
-		)
-		
-		if not error:
-			state = State.AWAITING
-		elif source.is_connected(signal_name, self, "_on_await_finished"):
-			source.disconnect(signal_name, self, "_on_await_finished")
-	
-	
-	# Steps the NightScript thread:
+	# Step the NightScript virtual machine.
 	func step() -> void:
-		var op: NSOp = machine.ops[machine.pc]
-		machine.pc += 1
-		
-		match op.opcode:
+		match memory.get_u8():
 			HALT:
-				pop_machine()
+				is_awaiting = true
+				emit_signal("pop_machine")
 			RUN_PROGRAM:
 				Global.events.emit_signal("nightscript_run_program_request", stack.pop_back())
 			CALL_PROGRAM:
-				emit_signal("call_program_request", stack.pop_back())
+				is_awaiting = true
+				emit_signal("push_machine", stack.pop_back())
 			SLEEP:
 				sleep_timer = float(stack.pop_back()) * 0.001
-				state = State.SLEEPING
 			JUMP:
-				machine.pc = stack.pop_back()
+				memory.seek(stack.pop_back())
 			JUMP_ZERO:
 				var jump_address: int = stack.pop_back()
 				
 				if stack.pop_back() == 0:
-					machine.pc = jump_address
+					memory.seek(jump_address)
 			JUMP_NOT_ZERO:
 				var jump_address: int = stack.pop_back()
 				
 				if stack.pop_back() != 0:
-					machine.pc = jump_address
+					memory.seek(jump_address)
 			DROP:
 				stack.remove(stack.size() - 1)
 			DUPLICATE:
 				stack.push_back(stack[-1])
 			PUSH_IS_REPEAT:
-				stack.push_back(int(machine.is_seen))
+				stack.push_back(int(is_repeat))
 			PUSH_INT:
-				stack.push_back(op.operand)
+				stack.push_back(memory.get_32())
 			PUSH_STRING:
-				stack.push_back(machine.string_table[op.operand])
+				stack.push_back(string_table[memory.get_32()])
 			LOAD_FLAG:
 				var key: String = stack.pop_back()
 				var namespace: String = stack.pop_back()
-				stack.push_back(get_flag(namespace, key))
+				stack.push_back(Global.save.get_working_data().get_flag(namespace, key))
 			STORE_FLAG:
 				var key: String = stack.pop_back()
 				var namespace: String = stack.pop_back()
-				set_flag(namespace, key, stack[-1])
-			UNARY_NEGATE: # Negate:
+				Global.save.get_working_data().set_flag(namespace, key, stack[-1])
+			UNARY_NEGATE:
 				stack.push_back(-stack.pop_back())
 			UNARY_NOT:
 				stack.push_back(int(stack.pop_back() == 0))
@@ -231,72 +149,72 @@ class NSThread extends Reference:
 			DISPLAY_DIALOG_NAME:
 				Global.events.emit_signal("dialog_display_name_request", stack.pop_back())
 			DISPLAY_DIALOG_MESSAGE:
-				await(Global.events, "dialog_message_finished")
+				is_awaiting = true
 				Global.events.emit_signal("dialog_display_message_request", stack.pop_back())
+				
+				if Global.events.connect(
+						"dialog_message_finished", self, "end_await", [], CONNECT_ONESHOT) != OK:
+					if Global.events.is_connected("dialog_message_finished", self, "end_await"):
+						Global.events.disconnect("dialog_message_finished", self, "end_await")
+					
+					is_awaiting = true
+					emit_signal("pop_machine")
 			STORE_DIALOG_MENU_OPTION:
 				var pointer: int = stack.pop_back()
 				var text: String = stack.pop_back()
-				machine.option_pointers.push_back(pointer)
-				machine.option_texts.push_back(text)
+				option_pointers.push_back(pointer)
+				option_texts.push_back(text)
 			SHOW_DIALOG_MENU:
-				if machine.option_pointers.empty():
-					pop_machine()
+				if option_pointers.empty():
+					is_awaiting = true
+					emit_signal("pop_machine")
 					return
 				
-				var error: int = Global.events.connect(
-						"dialog_option_pressed", self,
-						"_on_dialog_option_pressed", [], CONNECT_ONESHOT
-				)
-				
-				if error:
-					if Global.events.is_connected(
-							"dialog_option_pressed", self, "_on_dialog_option_pressed"
-					):
-						Global.events.disconnect(
-								"dialog_option_pressed", self, "_on_dialog_option_pressed"
-						)
+				if Global.events.connect("dialog_option_pressed", self, "select_option", [], CONNECT_ONESHOT) != OK:
+					if Global.events.is_connected("dialog_option_pressed", self, "select_option"):
+						Global.events.disconnect("dialog_option_pressed", self, "select_option")
 					
-					pop_machine()
+					is_awaiting = true
+					emit_signal("pop_machine")
 					return
 				
-				state = State.AWAITING
+				is_awaiting = true
 				Global.events.emit_signal(
-						"dialog_display_options_request", PoolStringArray(machine.option_texts)
-				)
+						"dialog_display_options_request", PoolStringArray(option_texts))
 			ACTOR_FACE_DIRECTION:
 				var degrees: int = stack.pop_back()
 				var key: String = stack.pop_back()
-				var actor: Actor = _get_scripted_actor(key)
+				var actor: Actor = get_scripted_actor(key)
 				
 				if actor:
 					actor.smooth_pivot.pivot_to(deg2rad(float(degrees)))
 			ACTOR_FIND_PATH:
 				var point: String = stack.pop_back()
 				var key: String = stack.pop_back()
-				var actor: Actor = _get_scripted_actor(key)
+				var actor: Actor = get_scripted_actor(key)
 				
 				if actor:
 					actor.find_nav_path_point(point)
-					machine.pathing_actors.push_back(actor)
+					pathing_actors.push_back(actor)
 			RUN_ACTOR_PATHS:
-				for actor in machine.pathing_actors:
+				for actor in pathing_actors:
 					if actor:
 						actor.run_nav_path()
 			AWAIT_ACTOR_PATHS:
-				for i in range(machine.pathing_actors.size() - 1, - 1, -1):
-					var actor: Actor = machine.pathing_actors[i]
+				for i in range(pathing_actors.size() - 1, - 1, -1):
+					var actor: Actor = pathing_actors[i]
 					
 					if not actor or not actor.is_pathing():
-						machine.pathing_actors.remove(i)
+						pathing_actors.remove(i)
 				
-				if not machine.pathing_actors.empty():
-					machine.pc -= 1
+				if not pathing_actors.empty():
+					memory.seek(memory.get_position() - 1)
 			FREEZE_PLAYER:
 				Global.events.emit_signal("player_freeze_request")
 			THAW_PLAYER:
 				Global.events.emit_signal("player_thaw_request")
 			QUIT_TO_TITLE:
-				state = State.STOPPED
+				is_awaiting = true
 				Global.change_scene("menu")
 			PAUSE_GAME:
 				Global.tree.paused = true
@@ -308,36 +226,25 @@ class NSThread extends Reference:
 				Global.save.save_checkpoint()
 	
 	
-	# Gets a scripted actor from its actor key. Returns null if the scripted
-	# actor is unavailable:
-	func _get_scripted_actor(actor_key: String) -> Actor:
-		for actor in Global.tree.get_nodes_in_group("actors"):
-			if actor.actor_key == actor_key and actor.state_machine.get_key() == "Scripted":
-				return actor
-		
-		return null
+	# End the awaiting state.
+	func end_await() -> void:
+		is_awaiting = false
 	
 	
-	# Signal callback for an awaited signal. Runs when the awaited signal is
-	# emitted. Resumes the NightScript thread:
-	func _on_await_finished() -> void:
-		if state == State.AWAITING:
-			state = State.RUNNING
-	
-	
-	# Callback for pressing an option on the dialog display. Branches and
-	# resumes the NightScript thread if it is awaiting a menu option:
-	func _on_dialog_option_pressed(index: int) -> void:
-		if state != State.AWAITING:
+	# Select a dialog option.
+	func select_option(index: int) -> void:
+		if not is_awaiting or option_pointers.empty():
+			emit_signal("pop_machine")
 			return
 		
-		if index < 0 or index >= machine.option_pointers.size():
-			index = machine.option_pointers.size() - 1
+		if index < 0 or index >= option_pointers.size():
+			index = 0
 		
-		machine.pc = machine.option_pointers[index]
-		machine.option_pointers.clear()
-		machine.option_texts.clear()
-		state = State.RUNNING
+		memory.seek(option_pointers[index])
+		option_pointers.clear()
+		option_texts.clear()
+		is_awaiting = false
+
 
 enum {
 	HALT = 0x00,
@@ -388,13 +295,13 @@ enum {
 }
 
 const THREAD_LIMIT: int = 16
-const RUN_STEP_LIMIT: int = 32
+const RUN_STEP_LIMIT: int = 16
 const BYTECODE_MAGIC: int = 0xfe
 const EMPTY_BYTECODE: PoolByteArray = PoolByteArray([
 	BYTECODE_MAGIC, # 0xfe - Illegal UTF-8 byte, file is not text.
 	0x00, # Don't stop on pause.
 	0x00, 0x00, 0x00, 0x00, # 0 strings.
-	0x01, 0x00, 0x00, 0x00, # 1 operation.
+	0x01, 0x00, 0x00, 0x00, # 1 byte.
 	HALT, # Halt.
 ])
 
@@ -402,9 +309,8 @@ var _is_caching: bool = true
 var _program_cache: Dictionary = {}
 var _threads: Array = []
 
-# Virtual _ready method. Runs when the NightScript component enters the scene
-# tree. Disables the NightScript component's physics process and connects the
-# NightScript component to the event bus and language manager:
+# Run when the NightScript component enters the scene tree. Disable the physics
+# process and connect to the event bus and language manager.
 func _ready() -> void:
 	set_physics_process(false)
 	Global.events.safe_connect("nightscript_run_program_request", self, "run_program")
@@ -412,54 +318,45 @@ func _ready() -> void:
 	Global.events.safe_connect("nightscript_cache_program_request", self, "cache_program")
 	Global.events.safe_connect("nightscript_flush_cache_request", self, "flush_cache")
 	
-	var error: int = Global.lang.connect("locale_changed", self, "_on_lang_locale_changed")
+	var error: int = Global.lang.connect("locale_changed", self, "flush_cache")
 	
 	if error:
-		if Global.lang.is_connected("locale_changed", self, "_on_lang_locale_changed"):
-			Global.lang.disconnect("locale_changed", self, "_on_lang_locale_changed")
+		if Global.lang.is_connected("locale_changed", self, "flush_cache"):
+			Global.lang.disconnect("locale_changed", self, "flush_cache")
 		
 		_is_caching = false
 
 
-# Virtual _physics process. Runs on every physics frame. Steps the NightScript
-# component:
+# Run on every physics frame. Step the NightScript component.
 func _physics_process(delta: float) -> void:
-	for i in range(_threads.size() - 1, -1, -1):
-		var thread: NSThread = _threads[i]
-		
-		if thread.machine.is_pausable and Global.tree.paused:
+	for thread in _threads:
+		if thread.empty():
 			continue
 		
-		if thread.state == NSThread.State.SLEEPING:
-			thread.sleep_timer -= delta
-			
-			if thread.sleep_timer <= 0.0:
-				thread.state = NSThread.State.RUNNING
+		var vm: NightScriptVirtualMachine = thread[-1]
+		
+		if vm.is_awaiting or vm.is_pausable and Global.tree.paused:
+			continue
+		
+		if vm.sleep_timer > 0.0:
+			vm.sleep_timer -= delta
+			continue
 		
 		var steps: int = RUN_STEP_LIMIT
 		
-		while thread.state == NSThread.State.RUNNING and steps:
-			thread.step()
+		while steps > 0:
+			if vm.is_awaiting or vm.sleep_timer > 0.0 or vm.is_pausable and Global.tree.paused:
+				break
+			
 			steps -= 1
-		
-		if thread.state == NSThread.State.STOPPED:
-			if thread.is_connected("call_program_request", self, "_call_program"):
-				thread.disconnect("call_program_request", self, "_call_program")
-			
-			_threads.remove(i)
-			
-			if _threads.empty():
-				set_physics_process(false)
-			
-			Global.events.emit_signal("nightscript_thread_finished")
+			vm.step()
 
 
-# Virtual _exit_tree method. Runs when the NightScript component exits the scene
-# tree. Disconnects the NightScript component from the event bus and language
-# manager:
+# Run when the NightScript component exits the scene tree. Disconnect the
+# NightScript component from the event bus and language manager.
 func _exit_tree() -> void:
-	if Global.lang.is_connected("locale_changed", self, "_on_lang_locale_changed"):
-		Global.lang.disconnect("locale_changed", self, "_on_lang_locale_changed")
+	if Global.lang.is_connected("locale_changed", self, "flush_cache"):
+		Global.lang.disconnect("locale_changed", self, "flush_cache")
 	
 	Global.events.safe_disconnect("nightscript_flush_cache_request", self, "flush_cache")
 	Global.events.safe_disconnect("nightscript_cache_program_request", self, "cache_program")
@@ -468,46 +365,38 @@ func _exit_tree() -> void:
 	stop_programs()
 
 
-# Runs a NightScript program in a new NightScript thread:
+# Run a NightScript program in an available NightScript thread.
 func run_program(program_key: String) -> void:
+	var thread_index: int = _threads.size()
+	
+	if thread_index < THREAD_LIMIT:
+		_threads.push_back([])
+	else:
+		for i in range(THREAD_LIMIT):
+			if _threads[i].empty():
+				thread_index = i
+				break
+		
+		if thread_index >= THREAD_LIMIT:
+			return # All threads are busy.
+	
 	if _threads.size() >= THREAD_LIMIT:
 		return
 	
-	var thread: NSThread = NSThread.new()
-	var error: int = thread.connect("call_program_request", self, "_call_program", [thread])
-	
-	if error and thread.is_connected("call_program_request", self, "_call_program"):
-		thread.disconnect("call_program_request", self, "_call_program")
-	
-	_call_program(program_key, thread)
-	var steps: int = RUN_STEP_LIMIT
-	
-	while thread.state == NSThread.State.RUNNING and steps:
-		thread.step()
-		steps -= 1
-	
-	if thread.state == NSThread.State.STOPPED:
-		if thread.is_connected("call_program_request", self, "_call_program"):
-			thread.disconnect("call_program_request", self, "_call_program")
-		
-		Global.events.emit_signal("nightscript_thread_finished")
-	else:
-		_threads.push_back(thread)
-		set_physics_process(true)
+	_push_thread(program_key, thread_index)
 
 
-# Forcibly stops all NightScript programs:
+# Forcibly stop all NightScript programs.
 func stop_programs() -> void:
-	set_physics_process(false)
-	
-	for thread in _threads:
-		if thread.is_connected("call_program_request", self, "_call_program"):
-			thread.disconnect("call_program_request", self, "_call_program")
-	
-	_threads.clear()
+	while not _threads.empty():
+		for thread_index in range(_threads.size()):
+			_pop_thread(thread_index)
+		
+		while not _threads.empty() and _threads[-1].empty():
+			_threads.pop_back()
 
 
-# Caches a NightScript program from its program key if it is cacheable:
+# Cache a NightScript program from its program key.
 func cache_program(program_key: String) -> void:
 	if not _is_caching or _program_cache.has(program_key):
 		return
@@ -515,12 +404,12 @@ func cache_program(program_key: String) -> void:
 	_program_cache[program_key] = _get_bytecode(program_key)
 
 
-# Flushes the NightScript program cache:
+# Flush the NightScript program cache.
 func flush_cache() -> void:
 	_program_cache.clear()
 
 
-# Gets a NightScript program's bytecode from its program key:
+# Get a NightScript program's bytecode from its program key.
 func _get_bytecode(program_key: String) -> PoolByteArray:
 	if _program_cache.has(program_key):
 		return _program_cache[program_key]
@@ -559,18 +448,49 @@ func _get_bytecode(program_key: String) -> PoolByteArray:
 	return EMPTY_BYTECODE
 
 
-# Calls a NightScript program on top of an existing NightScript thread:
-func _call_program(program_key: String, thread: NSThread) -> void:
+# Push a thread thread from its index.
+func _push_thread(program_key: String, thread_index: int) -> void:
 	var bytecode: PoolByteArray = _get_bytecode(program_key)
 	
 	if _is_caching and not _program_cache.has(program_key):
 		_program_cache[program_key] = bytecode
 	
-	thread.push_machine(bytecode, bool(thread.get_flag("nightscript_seen", program_key)))
-	thread.set_flag("nightscript_seen", program_key, 1)
+	var vm: NightScriptVirtualMachine = NightScriptVirtualMachine.new(
+			Global.save.get_working_data().get_flag("ns_repeat", program_key) != 0, bytecode)
+	Global.save.get_working_data().set_flag("ns_repeat", program_key, 1)
+	
+	if vm.connect("push_machine", self, "_push_thread", [thread_index]) != OK:
+		if vm.is_connected("push_machine", self, "_push_thread"):
+			vm.disconnect("push_machine", self, "_push_thread")
+	
+	if vm.connect("pop_machine", self, "_pop_thread", [thread_index]) != OK:
+		if vm.is_connected("pop_machine", self, "_pop_thread"):
+			vm.disconnect("pop_machine", self, "_pop_thread")
+	
+	_threads[thread_index].push_back(vm)
+	set_physics_process(true)
 
 
-# Signal callback for locale_changed on the language manager. Runs when the
-# locale changes. Flushes the NightScript program cache:
-func _on_lang_locale_changed(_locale: String) -> void:
-	flush_cache()
+# Pop a thread from its index.
+func _pop_thread(thread_index: int) -> void:
+	if thread_index < 0 or thread_index >= _threads.size() or _threads[thread_index].empty():
+		return
+	
+	var vm: NightScriptVirtualMachine = _threads[thread_index].pop_back()
+	
+	if vm.is_connected("push_machine", self, "_call_program"):
+		vm.disconnect("push_machine", self, "_call_program")
+	
+	if vm.is_connected("pop_machine", self, "_pop_thread"):
+		vm.disconnect("pop_machine", self, "_pop_thread")
+	
+	if _threads[thread_index].empty():
+		Global.events.emit_signal("nightscript_thread_finished")
+	else:
+		_threads[thread_index][-1].end_await()
+	
+	while not _threads.empty() and _threads[-1].empty():
+		_threads.pop_back()
+	
+	if _threads.empty():
+		set_physics_process(false)

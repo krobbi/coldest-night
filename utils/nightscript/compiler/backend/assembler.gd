@@ -79,7 +79,7 @@ func get_string_id(value: String) -> int:
 	return size
 
 
-# Get the size of an IR operation in native NightScript operations.
+# Get the size of an IR operation in bytecode bytes.
 func get_op_size(op: IROp) -> int:
 	if not STRATEGIES.has(op.type):
 		return 0
@@ -91,11 +91,11 @@ func get_op_size(op: IROp) -> int:
 		var strategy: int = STRATEGIES[op.type][index]
 		index += 1
 		
-		size += 1 # All current strategies add one operation.
-		
-		# Skip NightScript operation parameter.
 		if strategy == OP:
-			index += 1
+			index += 1 # Skip operation parameter.
+			size += 1 # 1-byte opcode.
+		else:
+			size += 5 # 1-byte opcode and 4-byte operand.
 	
 	return size
 
@@ -104,14 +104,14 @@ func get_op_size(op: IROp) -> int:
 func assemble_code(code: IRCode) -> PoolByteArray:
 	string_table.resize(0)
 	
-	var op_count: int = 0
+	var byte_count: int = 0
 	var pointers: Dictionary = {}
 	
 	for block in code.blocks:
-		pointers[block.label] = op_count
+		pointers[block.label] = byte_count
 		
 		for op in block.ops:
-			op_count += get_op_size(op)
+			byte_count += get_op_size(op)
 	
 	var buffer: StreamPeerBuffer = StreamPeerBuffer.new()
 	
@@ -157,5 +157,5 @@ func assemble_code(code: IRCode) -> PoolByteArray:
 		buffer.put_u32(value_bytes.size())
 		buffer.put_data(value_bytes) # warning-ignore: RETURN_VALUE_DISCARDED
 	
-	buffer.put_u32(op_count)
+	buffer.put_u32(byte_count)
 	return buffer.data_array + bytecode_body
