@@ -23,6 +23,9 @@ const KEYWORDS: Dictionary = {
 	"menu": Token.KEYWORD_MENU,
 	"option": Token.KEYWORD_OPTION,
 	"while": Token.KEYWORD_WHILE,
+}
+
+const OPERATORS: Dictionary = {
 	"!": Token.BANG,
 	"!=": Token.BANG_EQUALS,
 	"&": Token.AMPERSAND,
@@ -163,26 +166,26 @@ func get_next_token() -> Token:
 		
 		return create_str_token(Token.LITERAL_STR, value)
 	elif consume(IDENTIFIER_CHARS):
-		if lexeme in KEYWORDS:
+		if KEYWORDS.has(lexeme):
 			return create_token(KEYWORDS[lexeme])
 		
 		return create_str_token(Token.IDENTIFIER, lexeme)
 	else:
 		var max_length: int = 0
 		
-		for keyword in KEYWORDS:
-			if keyword.length() > max_length:
-				max_length = keyword.length()
+		for operator in OPERATORS:
+			if operator.length() > max_length:
+				max_length = operator.length()
 		
 		if source.length() - span.end_offset < max_length:
 			max_length = source.length() - span.end_offset
 		
 		for length in range(max_length, 0, -1):
-			var keyword: String = source.substr(span.end_offset, length)
+			var operator: String = source.substr(span.end_offset, length)
 			
-			if keyword in KEYWORDS:
+			if OPERATORS.has(operator):
 				advance(length)
-				return create_token(KEYWORDS[keyword])
+				return create_token(OPERATORS[operator])
 	
 	if not lexeme.empty():
 		return create_error_token(
