@@ -257,8 +257,8 @@ func visit_root(root: RootASTNode) -> void:
 	for module in root.modules:
 		visit_node(module)
 	
-	code.make_halt()
 	pop_scope()
+	code.make_halt()
 
 
 # Visit a module AST node.
@@ -301,8 +301,8 @@ func visit_if_else_stmt(if_else_stmt: IfElseStmtASTNode) -> void:
 	
 	push_scope()
 	visit_node(if_else_stmt.then_stmt)
-	code.make_jump_label(end_label)
 	pop_scope()
+	code.make_jump_label(end_label)
 	
 	push_scope()
 	code.set_label(else_label)
@@ -325,8 +325,8 @@ func visit_while_stmt(while_stmt: WhileStmtASTNode) -> void:
 	define_info(INFO_BREAK_LABEL, end_label)
 	define_info(INFO_CONTINUE_LABEL, condition_label)
 	visit_node(while_stmt.stmt)
-	code.make_jump_label(condition_label)
 	pop_scope()
+	code.make_jump_label(condition_label)
 	
 	code.set_label(end_label)
 
@@ -358,16 +358,13 @@ func visit_menu_stmt(menu_stmt: MenuStmtASTNode) -> void:
 		return
 	
 	var end_label: String = code.insert_unique_label("menu_end")
-	var show_label: String = code.insert_unique_label("menu_show")
 	
 	push_scope()
-	define_info(INFO_BREAK_LABEL, show_label)
 	define_info(INFO_MENU_END_LABEL, end_label)
+	undefine_info(INFO_BREAK_LABEL)
 	undefine_info(INFO_CONTINUE_LABEL)
 	visit_node(menu_stmt.stmt)
 	pop_scope()
-	
-	code.set_label(show_label)
 	code.make_show_dialog_menu()
 	
 	code.set_label(end_label)
@@ -379,24 +376,22 @@ func visit_option_stmt(option_stmt: OptionStmtASTNode) -> void:
 		logger.log_error("Used `option` outside of a menu statement!", option_stmt.span)
 		return
 	
-	var end_label: String = code.insert_unique_label("option_end")
-	var body_label: String = code.insert_unique_label("option_body")
+	var parent_label: String = code.get_label()
+	var option_label: String = code.append_unique_label("option")
 	
 	visit_node(option_stmt.expr)
-	code.make_store_dialog_menu_option_label(body_label)
-	code.make_jump_label(end_label)
+	code.make_store_dialog_menu_option_label(option_label)
 	
 	push_scope()
-	define_info(INFO_BREAK_LABEL, get_info(INFO_MENU_END_LABEL))
+	undefine_info(INFO_BREAK_LABEL)
 	undefine_info(INFO_CONTINUE_LABEL)
 	undefine_info(INFO_MENU_END_LABEL)
-	code.set_label(body_label)
+	code.set_label(option_label)
 	visit_node(option_stmt.stmt)
 	pop_scope()
-	
 	code.make_jump_label(get_info(INFO_MENU_END_LABEL))
 	
-	code.set_label(end_label)
+	code.set_label(parent_label)
 
 
 # Visit a break statement AST node.
