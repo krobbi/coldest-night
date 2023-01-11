@@ -34,9 +34,9 @@ func is_logged_after(other: Reference) -> bool:
 	elif span.start_offset < other.span.start_offset:
 		return false
 	
-	if span.end_offset < other.span.end_offset:
+	if span.end_offset > other.span.end_offset:
 		return true
-	elif span.end_offset > other.span.end_offset:
+	elif span.end_offset < other.span.end_offset:
 		return false
 	
 	return true

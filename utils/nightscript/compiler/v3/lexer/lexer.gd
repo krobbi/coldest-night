@@ -4,6 +4,7 @@ extends Reference
 # A lexer is a structure used by the NightScript compiler that creates a stream
 # of tokens from NightScript source code.
 
+const Logger: GDScript = preload("../logger/logger.gd")
 const Span: GDScript = preload("../logger/span.gd")
 const Token: GDScript = preload("token.gd")
 
@@ -51,9 +52,15 @@ const OPERATORS: Dictionary = {
 	"}": Token.BRACE_CLOSE,
 }
 
+var logger: Logger
 var span: Span = Span.new()
 var source: String = ""
 var lexeme: String = ""
+
+# Set the lexer's logger.
+func _init(logger_ref: Logger) -> void:
+	logger = logger_ref
+
 
 # Get the next token from the token stream.
 func get_next_token() -> Token:
@@ -86,7 +93,7 @@ func get_next_token() -> Token:
 			advance(1)
 		
 		if not has_seen_terminator:
-			return create_error_token("Unterminated block comment!")
+			logger.log_error("Unterminated block comment!", span)
 		
 		return create_token(Token.WHITESPACE)
 	elif consume(DEC_DIGITS):
@@ -109,30 +116,60 @@ func get_next_token() -> Token:
 			else:
 				number = "0"
 		
+		var separator_span: Span = span.duplicate()
+		separator_span.shrink_to_end()
+		
 		while not is_eof():
 			if peek(0) in digits:
 				number += peek(0)
 				advance(1)
-			elif not consume("_"):
+			elif peek(0) == "_":
+				separator_span.copy(span)
+				separator_span.shrink_to_end()
+				advance(1)
+				separator_span.expand_by_character("_", TAB_SIZE)
+				var is_adjacent: bool = false
+				
+				while accept("_"):
+					is_adjacent = true
+					separator_span.expand_by_character("_", TAB_SIZE)
+				
+				if is_adjacent and peek(0) in digits:
+					logger.log_error("Adjacent separators in integer!", separator_span)
+			else:
 				break
 		
-		if number.empty():
-			return create_error_token("No digits in integer!")
-		elif lexeme.ends_with("__"):
-			return create_error_token("Multiple trailing `_`s in integer!")
-		elif lexeme.ends_with("_"):
-			return create_error_token("Trailing `_` in integer!")
-		elif "__" in lexeme:
-			return create_error_token("Multiple adjacent `_`s in integer!")
-		elif base == 10 and number.begins_with("0") and number != "0".repeat(number.length()):
+		if base == 10 and number.begins_with("0") and number != "0".repeat(number.length()):
+			var leading_span: Span = span.duplicate()
+			leading_span.shrink_to_start()
+			
+			for character in lexeme:
+				if not character in "0_":
+					break
+				
+				leading_span.expand_by_character(character, TAB_SIZE)
+			
 			if number.begins_with("00"):
-				return create_error_token("Multiple leading `0`s in decimal integer!")
+				logger.log_error("Leading zeroes in decimal integer!", leading_span)
 			else:
-				return create_error_token("Leading `0` in decimal integer!")
-		elif not is_eof() and peek(0) in DEC_DIGITS:
-			return create_error_token("Trailing integer after integer!")
-		elif not is_eof() and peek(0) in IDENTIFIER_CHARS:
-			return create_error_token("Trailing identifier or keyword after integer!")
+				logger.log_error("Leading zero in decimal integer!", leading_span)
+		
+		if number.empty():
+			logger.log_error("No digits in integer!", separator_span)
+		elif lexeme.ends_with("_"):
+			if lexeme.ends_with("__"):
+				logger.log_error("Trailing separators in integer!", separator_span)
+			else:
+				logger.log_error("Trailing separator in integer!", separator_span)
+		
+		if not is_eof() and peek(0) in IDENTIFIER_CHARS:
+			separator_span.copy(span)
+			separator_span.shrink_to_end()
+			
+			if peek(0) in DEC_DIGITS:
+				logger.log_error("Trailing integer after integer!", separator_span)
+			else:
+				logger.log_error("Trailing identifier or keyword after integer!", separator_span)
 		
 		var value: int = 0
 		
@@ -148,7 +185,7 @@ func get_next_token() -> Token:
 			if accept('"'):
 				has_seen_terminator = true
 				break
-			elif accept("\n"):
+			elif peek(0) == "\n":
 				break
 			elif accept("\\"):
 				if accept("n"):
@@ -163,7 +200,7 @@ func get_next_token() -> Token:
 				advance(1)
 		
 		if not has_seen_terminator:
-			return create_error_token("Unterminated string!")
+			logger.log_error("Unterminated string!", span)
 		
 		return create_str_token(Token.LITERAL_STR, value)
 	elif consume(IDENTIFIER_CHARS):

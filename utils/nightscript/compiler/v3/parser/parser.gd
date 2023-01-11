@@ -33,15 +33,16 @@ const VarStmtASTNode: GDScript = preload("../ast/var_stmt_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
 var logger: Logger
-var lexer: Lexer = Lexer.new()
+var lexer: Lexer
 var current: Token = Token.new(Token.EOF, Span.new())
 var next: Token = Token.new(Token.EOF, Span.new())
 var span_stack: Array = []
 var advance_stack: Array = []
 
-# Set the parser's logger.
+# Set the parser's logger and lexer.
 func _init(logger_ref: Logger) -> void:
 	logger = logger_ref
+	lexer = Lexer.new(logger)
 
 
 # Abort the current span and create a new error AST node at the end of the
@@ -74,6 +75,18 @@ func accept(type: int) -> bool:
 	
 	advance()
 	return true
+
+
+# Advance to the next valid token if its type matches a type. Otherwise, log an
+# error message.
+func expect(type: int) -> void:
+	if not accept(type):
+		var error_span: Span = current.span.duplicate()
+		error_span.shrink_to_end()
+		
+		logger.log_error(
+				"Expected %s, got %s!" % [Token.get_name(type), Token.get_name(next.type)],
+				error_span)
 
 
 # Mark the current token as a token that must be advanced from.
@@ -154,18 +167,13 @@ func parse_module(name: String, source: String) -> ModuleASTNode:
 # Parse an include.
 func parse_include() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.KEYWORD_INCLUDE):
-		return create_error("Expected `include`!")
-	
+	expect(Token.KEYWORD_INCLUDE)
 	var expr: ASTNode = parse_expr_primary_str()
 	
 	if not expr is StrExprASTNode:
 		return abort_span(expr)
 	
-	if not accept(Token.SEMICOLON):
-		return create_error("Expected `;`!")
-	
+	expect(Token.SEMICOLON)
 	return end_span(IncludeASTNode.new(expr))
 
 
@@ -203,15 +211,15 @@ func parse_stmt() -> ASTNode:
 # Parse a block statement.
 func parse_stmt_block() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.BRACE_OPEN):
-		return create_error("Expected `{`!")
-	
+	expect(Token.BRACE_OPEN)
+	var start_span: Span = current.span.duplicate()
+	start_span.shrink_to_start()
 	var block_stmt: BlockStmtASTNode = BlockStmtASTNode.new()
 	
 	while not accept(Token.BRACE_CLOSE):
 		if next.type == Token.EOF:
-			return create_error("Unterminated block statement!")
+			logger.log_error("Unterminated block statement!", start_span)
+			return end_span(block_stmt)
 		
 		begin_advance()
 		var stmt: ASTNode = parse_stmt()
@@ -231,10 +239,7 @@ func parse_stmt_block() -> ASTNode:
 # Parse an if statement.
 func parse_stmt_if() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.KEYWORD_IF):
-		return create_error("Expected `if`!")
-	
+	expect(Token.KEYWORD_IF)
 	var expr: ASTNode = parse_expr_paren()
 	
 	if not expr is ExprASTNode:
@@ -259,10 +264,7 @@ func parse_stmt_if() -> ASTNode:
 # Parse a while statement.
 func parse_stmt_while() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.KEYWORD_WHILE):
-		return create_error("Expected `while`!")
-	
+	expect(Token.KEYWORD_WHILE)
 	var expr: ASTNode = parse_expr_paren()
 	
 	if not expr is ExprASTNode:
@@ -279,36 +281,26 @@ func parse_stmt_while() -> ASTNode:
 # Parse a do statement.
 func parse_stmt_do() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.KEYWORD_DO):
-		return create_error("Expected `do`!")
-	
+	expect(Token.KEYWORD_DO)
 	var stmt: ASTNode = parse_stmt()
 	
 	if not stmt is StmtASTNode:
 		return abort_span(stmt)
 	
-	if not accept(Token.KEYWORD_WHILE):
-		return create_error("Expected `while`!")
-	
+	expect(Token.KEYWORD_WHILE)
 	var expr: ASTNode = parse_expr_paren()
 	
 	if not expr is ExprASTNode:
 		return abort_span(expr)
 	
-	if not accept(Token.SEMICOLON):
-		return create_error("Expected `;`!")
-	
+	expect(Token.SEMICOLON)
 	return end_span(DoStmtASTNode.new(stmt, expr))
 
 
 # Parse a menu statement.
 func parse_stmt_menu() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.KEYWORD_MENU):
-		return create_error("Expected `menu`!")
-	
+	expect(Token.KEYWORD_MENU)
 	var stmt: ASTNode = parse_stmt()
 	
 	if not stmt is StmtASTNode:
@@ -320,10 +312,7 @@ func parse_stmt_menu() -> ASTNode:
 # Parse an option statement.
 func parse_stmt_option() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.KEYWORD_OPTION):
-		return create_error("Expected `option`!")
-	
+	expect(Token.KEYWORD_OPTION)
 	var expr: ASTNode = parse_expr_paren()
 	
 	if not expr is ExprASTNode:
@@ -340,52 +329,35 @@ func parse_stmt_option() -> ASTNode:
 # Parse a break statement.
 func parse_stmt_break() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.KEYWORD_BREAK):
-		return create_error("Expected `break`!")
-	
-	if not accept(Token.SEMICOLON):
-		return create_error("Expected `;`!")
-	
+	expect(Token.KEYWORD_BREAK)
+	expect(Token.SEMICOLON)
 	return end_span(BreakStmtASTNode.new())
 
 
 # Parse a continue statement.
 func parse_stmt_continue() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.KEYWORD_CONTINUE):
-		return create_error("Expected `continue`!")
-	
-	if not accept(Token.SEMICOLON):
-		return create_error("Expected `;`!")
-	
+	expect(Token.KEYWORD_CONTINUE)
+	expect(Token.SEMICOLON)
 	return end_span(ContinueStmtASTNode.new())
 
 
 # Parse a variable statement.
 func parse_stmt_var() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.KEYWORD_VAR):
-		return create_error("Expected `var`!")
-	
+	expect(Token.KEYWORD_VAR)
 	var identifier_expr: ASTNode = parse_expr_primary_identifier()
 	
 	if not identifier_expr is IdentifierExprASTNode:
 		return abort_span(identifier_expr)
 	
-	if not accept(Token.EQUALS):
-		return create_error("Expected `=`!")
-	
+	expect(Token.EQUALS)
 	var value_expr: ASTNode = parse_expr()
 	
 	if not value_expr is ExprASTNode:
 		return abort_span(value_expr)
 	
-	if not accept(Token.SEMICOLON):
-		return create_error("Expected `;`!")
-	
+	expect(Token.SEMICOLON)
 	return end_span(VarStmtASTNode.new(identifier_expr, value_expr))
 
 
@@ -398,27 +370,20 @@ func parse_stmt_expr() -> ASTNode:
 	if not expr is ExprASTNode:
 		return abort_span(expr)
 	
-	if not accept(Token.SEMICOLON):
-		return create_error("Expected `;`!")
-	
+	expect(Token.SEMICOLON)
 	return end_span(ExprStmtASTNode.new(expr))
 
 
 # Parse a parenthesized expression.
 func parse_expr_paren() -> ASTNode:
 	begin_span()
-	
-	if not accept(Token.PARENTHESIS_OPEN):
-		return create_error("Expected `(`!")
-	
+	expect(Token.PARENTHESIS_OPEN)
 	var expr: ASTNode = parse_expr()
 	
 	if not expr is ExprASTNode:
 		return abort_span(expr)
 	
-	if not accept(Token.PARENTHESIS_CLOSE):
-		return create_error("Expected `)`!")
-	
+	expect(Token.PARENTHESIS_CLOSE)
 	return abort_span(expr)
 
 
@@ -580,9 +545,7 @@ func parse_expr_call() -> ASTNode:
 			
 			expr.exprs.push_back(argument)
 		
-		if not accept(Token.PARENTHESIS_CLOSE):
-			return create_error("Expected `)`!")
-		
+		expect(Token.PARENTHESIS_CLOSE)
 		apply_span(expr)
 	
 	return abort_span(expr)
