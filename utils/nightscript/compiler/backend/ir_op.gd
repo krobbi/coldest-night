@@ -19,6 +19,8 @@ enum {
 	PUSH_IS_REPEAT,
 	PUSH_INT,
 	PUSH_STRING,
+	LOAD_LOCAL_OFFSET,
+	STORE_LOCAL_OFFSET,
 	LOAD_FLAG_NAMESPACE_KEY,
 	STORE_FLAG_NAMESPACE_KEY,
 	UNARY_NEGATE,
@@ -99,6 +101,10 @@ func _to_string() -> String:
 			return "push_int %d;" % int_value_a
 		PUSH_STRING:
 			return 'push_string "%s";' % str_value_a.c_escape()
+		LOAD_LOCAL_OFFSET:
+			return "load_local %d;" % int_value_a
+		STORE_LOCAL_OFFSET:
+			return "store_local %d;" % int_value_a
 		LOAD_FLAG_NAMESPACE_KEY:
 			return "load_flag %s.%s;" % [str_value_a, str_value_b]
 		STORE_FLAG_NAMESPACE_KEY:
