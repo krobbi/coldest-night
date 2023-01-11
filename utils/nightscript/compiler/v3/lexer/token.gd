@@ -21,6 +21,7 @@ enum {
 	KEYWORD_INCLUDE, # `include`.
 	KEYWORD_MENU, # `menu`.
 	KEYWORD_OPTION, # `option`.
+	KEYWORD_VAR, # `var`.
 	KEYWORD_WHILE, # `while`.
 	BANG, # `!`.
 	BANG_EQUALS, # `!=`.
@@ -103,6 +104,8 @@ static func get_name(token_type: int) -> String:
 			return "`menu`"
 		KEYWORD_OPTION:
 			return "`option`"
+		KEYWORD_VAR:
+			return "`var`"
 		KEYWORD_WHILE:
 			return "`while`"
 		BANG:

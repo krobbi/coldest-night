@@ -6,7 +6,7 @@ include = "include", expr_primary_str, ";" ;
 
 stmt = (
 	stmt_block | stmt_if | stmt_while | stmt_do | stmt_menu | stmt_option |
-	stmt_break | stmt_continue | stmt_expr
+	stmt_break | stmt_continue | stmt_var | stmt_expr
 ) ;
 
 stmt_block = "{", { stmt }, "}" ;
@@ -17,6 +17,7 @@ stmt_menu = "menu", stmt ;
 stmt_option = "option", expr_paren, stmt ;
 stmt_break = "break", ";" ;
 stmt_continue = "continue", ";" ;
+stmt_var = "var", expr_primary_identifier, "=", expr, ";" ;
 stmt_expr = expr, ";" ;
 
 expr_paren = "(", expr, ")" ;

@@ -22,6 +22,7 @@ const KEYWORDS: Dictionary = {
 	"include": Token.KEYWORD_INCLUDE,
 	"menu": Token.KEYWORD_MENU,
 	"option": Token.KEYWORD_OPTION,
+	"var": Token.KEYWORD_VAR,
 	"while": Token.KEYWORD_WHILE,
 }
 

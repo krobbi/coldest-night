@@ -5,23 +5,27 @@
 freeze();
 show();
 
-v3_test.next_fizz = 3;
-v3_test.next_buzz = 5;
-v3_test.i = 0;
+var FIZZ = 3;
+var BUZZ = 5;
 
-while(v3_test.i < 20){
-	v3_test.i = v3_test.i + 1;
+var nextFizz = FIZZ;
+var nextBuzz = BUZZ;
+
+var i = 0;
+
+while(i < 20){
+	i = i + 1;
 	
-	if(v3_test.i == v3_test.next_fizz && v3_test.i == v3_test.next_buzz){
+	if(i == nextFizz && i == nextBuzz){
 		say("FizzBuzz!");
-		v3_test.next_fizz = v3_test.next_fizz + 3;
-		v3_test.next_buzz = v3_test.next_buzz + 5;
-	} else if(v3_test.i == v3_test.next_fizz){
+		nextFizz = nextFizz + FIZZ;
+		nextBuzz = nextBuzz + BUZZ;
+	} else if(i == nextFizz){
 		say("Fizz!");
-		v3_test.next_fizz = v3_test.next_fizz + 3;
-	} else if(v3_test.i == v3_test.next_buzz){
+		nextFizz = nextFizz + FIZZ;
+	} else if(i == nextBuzz){
 		say("Buzz!");
-		v3_test.next_buzz = v3_test.next_buzz + 5;
+		nextBuzz = nextBuzz + BUZZ;
 	} else {
 		say("No string formatting yet, sorry :(");
 	}

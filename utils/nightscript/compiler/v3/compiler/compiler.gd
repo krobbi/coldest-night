@@ -28,6 +28,7 @@ const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
 const Symbol: GDScript = preload("symbol.gd")
 const Token: GDScript = preload("../lexer/token.gd")
 const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
+const VarStmtASTNode: GDScript = preload("../ast/var_stmt_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
 const INFO_BREAK_LABEL: String = "break_label"
@@ -66,6 +67,21 @@ func get_info(key: String) -> String:
 	return ""
 
 
+# Get the number of locals that have been defined since a piece of scoped info
+# was defined from its key.
+func get_locals_since_info(key: String) -> int:
+	var local_count: int = 0
+	
+	for i in range(scopes.size() -1, -1, -1):
+		var scope: Scope = scopes[i]
+		local_count += scope.scope_local_count
+		
+		if scope.info.has(key):
+			return local_count
+	
+	return 0
+
+
 # Return whether scoped info is defined from its key.
 func has_info(key: String) -> bool:
 	for i in range(scopes.size() - 1, -1, -1):
@@ -79,15 +95,25 @@ func has_info(key: String) -> bool:
 
 # Push a new scope to the top of the scope stack.
 func push_scope() -> void:
-	scopes.push_back(Scope.new())
+	var parent_local_count: int = 0
+	
+	if not scopes.empty():
+		parent_local_count = scopes[-1].local_count
+	
+	var scope: Scope = Scope.new()
+	scope.local_count = parent_local_count
+	scopes.push_back(scope)
 
 
 # Pop a scope from the top of the scope stack if it is not the global scope.
 func pop_scope() -> void:
-	var top_index: int = scopes.size() - 1
+	if scopes.empty():
+		return
 	
-	if top_index > 0:
-		scopes.remove(top_index)
+	var scope: Scope = scopes.pop_back()
+	
+	for _i in range(scope.scope_local_count):
+		code.make_drop()
 
 
 # Define an intrinsic from its identifier, method, and argument count.
@@ -96,6 +122,15 @@ func define_intrinsic(identifier: String, method: String, argument_count: int) -
 	symbol.str_value = method
 	symbol.int_value = argument_count
 	scopes[-1].symbols[identifier] = symbol
+
+
+# Define a local from its identifier.
+func define_local(identifier: String) -> void:
+	var symbol: Symbol = Symbol.new(identifier, Symbol.LOCAL)
+	symbol.int_value = scopes[-1].local_count
+	scopes[-1].symbols[identifier] = symbol
+	scopes[-1].local_count += 1
+	scopes[-1].scope_local_count += 1
 
 
 # Define scoped info from its key and value.
@@ -139,6 +174,8 @@ func visit_node(node: ASTNode) -> void:
 		visit_break_stmt(node)
 	elif node is ContinueStmtASTNode:
 		visit_continue_stmt(node)
+	elif node is VarStmtASTNode:
+		visit_var_stmt(node)
 	elif node is ExprStmtASTNode:
 		visit_expr_stmt(node)
 	elif node is UnExprASTNode:
@@ -151,6 +188,8 @@ func visit_node(node: ASTNode) -> void:
 		visit_int_expr(node)
 	elif node is StrExprASTNode:
 		visit_str_expr(node)
+	elif node is IdentifierExprASTNode:
+		visit_identifier_expr(node)
 	else:
 		logger.log_error("Bug: No visitor for node type `%s`!" % node.node_name, node.span)
 		
@@ -336,6 +375,9 @@ func visit_break_stmt(break_stmt: BreakStmtASTNode) -> void:
 		logger.log_error("Used `break` outside of a breakable statement!", break_stmt.span)
 		return
 	
+	for _i in range(get_locals_since_info(INFO_BREAK_LABEL)):
+		code.make_drop()
+	
 	code.make_jump_label(get_info(INFO_BREAK_LABEL))
 
 
@@ -345,7 +387,26 @@ func visit_continue_stmt(continue_stmt: ContinueStmtASTNode) -> void:
 		logger.log_error("Used `continue` outside of a continuable statement!", continue_stmt.span)
 		return
 	
+	for _i in range(get_locals_since_info(INFO_CONTINUE_LABEL)):
+		code.make_drop()
+	
 	code.make_jump_label(get_info(INFO_CONTINUE_LABEL))
+
+
+# Visit a variable statement AST node.
+func visit_var_stmt(var_stmt: VarStmtASTNode) -> void:
+	visit_node(var_stmt.value_expr)
+	
+	var symbol: Symbol = get_symbol(var_stmt.identifier_expr.name)
+	
+	if symbol.access != Symbol.UNDEFINED:
+		logger.log_error(
+				"Identifier `%s` is already defined in the current scope!" % symbol.identifier,
+				var_stmt.identifier_expr.span)
+		code.make_drop()
+		return
+	
+	define_local(symbol.identifier)
 
 
 # Visit an expression statement AST node.
@@ -404,8 +465,25 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 				and bin_expr.lhs_expr.rhs_expr is IdentifierExprASTNode):
 			code.make_store_flag_namespace_key(
 					bin_expr.lhs_expr.lhs_expr.name, bin_expr.lhs_expr.rhs_expr.name)
+		elif bin_expr.lhs_expr is IdentifierExprASTNode:
+			var symbol: Symbol = get_symbol(bin_expr.lhs_expr.name)
+			
+			if symbol.access == Symbol.UNDEFINED:
+				logger.log_error(
+						"Identifier `%s` is undefined in the current scope!" % symbol.identifier,
+						bin_expr.lhs_expr.span)
+			elif symbol.access == Symbol.INTRINSIC:
+				logger.log_error(
+						"Cannot assign to intrinsic function `%s`!" % symbol.identifier,
+						bin_expr.lhs_expr.span)
+			elif symbol.access == Symbol.LOCAL:
+				code.make_store_local_offset(symbol.int_value)
+			else:
+				logger.log_error(
+						"Bug: No assignment for symbol access type `%d`" % symbol.access,
+						bin_expr.lhs_expr.span)
 		else:
-			logger.log_error("Can only assign to a flag!", bin_expr.lhs_expr.span)
+			logger.log_error("Can only assign to a flag or identifier!", bin_expr.lhs_expr.span)
 			visit_node(bin_expr.lhs_expr)
 			code.make_drop()
 	elif bin_expr.operator == Token.PIPE_PIPE:
@@ -466,20 +544,19 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 	if call_expr.expr is IdentifierExprASTNode:
 		var symbol: Symbol = get_symbol(call_expr.expr.name)
 		
-		if symbol.access == Symbol.UNDEFINED:
-			logger.log_error(
-					"Identifier `%s` is undefined in the current scope!" % symbol.identifier,
-					call_expr.expr.span)
-		elif symbol.access == Symbol.INTRINSIC:
+		if symbol.access == Symbol.INTRINSIC:
 			intrinsic_func_name = symbol.str_value
 			expected_argument_count = symbol.int_value
 			
 			if intrinsic_func_name.begins_with("="):
 				is_intrinsic_void = false
 				intrinsic_func_name = intrinsic_func_name.substr(1)
-		else:
+		elif symbol.access == Symbol.LOCAL:
+			logger.log_error("Cannot call variable `%s`!" % symbol.identifier, call_expr.expr.span)
+		elif symbol.access != Symbol.UNDEFINED:
 			logger.log_error(
-					"Identifier `%s` is not callable!" % symbol.identifier, call_expr.expr.span)
+					"Bug: No call for symbol access type `%d`!" % symbol.access,
+					call_expr.expr.span)
 	else:
 		logger.log_error("Only identifiers may be called!", call_expr.expr.span)
 	
@@ -512,3 +589,26 @@ func visit_int_expr(int_expr: IntExprASTNode) -> void:
 # Visit a string expression AST node.
 func visit_str_expr(str_expr: StrExprASTNode) -> void:
 	code.make_push_string(str_expr.value)
+
+
+# Visit an identifier expression AST node.
+func visit_identifier_expr(identifier_expr: IdentifierExprASTNode) -> void:
+	var symbol: Symbol = get_symbol(identifier_expr.name)
+	
+	if symbol.access == Symbol.UNDEFINED:
+		logger.log_error(
+				"Identifier `%s` is undefined in the current scope!" % symbol.identifier,
+				identifier_expr.span)
+		code.make_push_int(0)
+	elif symbol.access == Symbol.INTRINSIC:
+		logger.log_error(
+				"Cannot evaluate intrinsic function name `%s`!" % symbol.identifier,
+				identifier_expr.span)
+		code.make_push_int(0)
+	elif symbol.access == Symbol.LOCAL:
+		code.make_load_local_offset(symbol.int_value)
+	else:
+		logger.log_error(
+				"Bug: No evaluation for symbol access type `%d`!" % symbol.access,
+				identifier_expr.span)
+		code.make_push_int(0)

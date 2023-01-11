@@ -29,6 +29,7 @@ const StmtASTNode: GDScript = preload("../ast/stmt_ast_node.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
 const Token: GDScript = preload("../lexer/token.gd")
 const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
+const VarStmtASTNode: GDScript = preload("../ast/var_stmt_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
 var logger: Logger
@@ -188,6 +189,8 @@ func parse_stmt() -> ASTNode:
 		return abort_span(parse_stmt_break())
 	elif next.type == Token.KEYWORD_CONTINUE:
 		return abort_span(parse_stmt_continue())
+	elif next.type == Token.KEYWORD_VAR:
+		return abort_span(parse_stmt_var())
 	
 	var expr_stmt: ASTNode = parse_stmt_expr()
 	
@@ -358,6 +361,32 @@ func parse_stmt_continue() -> ASTNode:
 		return create_error("Expected `;`!")
 	
 	return end_span(ContinueStmtASTNode.new())
+
+
+# Parse a variable statement.
+func parse_stmt_var() -> ASTNode:
+	begin_span()
+	
+	if not accept(Token.KEYWORD_VAR):
+		return create_error("Expected `var`!")
+	
+	var identifier_expr: ASTNode = parse_expr_primary_identifier()
+	
+	if not identifier_expr is IdentifierExprASTNode:
+		return abort_span(identifier_expr)
+	
+	if not accept(Token.EQUALS):
+		return create_error("Expected `=`!")
+	
+	var value_expr: ASTNode = parse_expr()
+	
+	if not value_expr is ExprASTNode:
+		return abort_span(value_expr)
+	
+	if not accept(Token.SEMICOLON):
+		return create_error("Expected `;`!")
+	
+	return end_span(VarStmtASTNode.new(identifier_expr, value_expr))
 
 
 # Parse an expression statement.
