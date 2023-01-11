@@ -35,7 +35,7 @@ stmt    = "{" { stmt } "}"
         | "~>" (* Run actor paths. *)
         | "->" (* Run actor paths and await. *)
         | "~" (* Await actor paths. *)
-        | ":" expr [ "cs" | "ds" | "s" | "m" ] [ ";" ] (* Sleep. *)
+        | ":" expr [ "ms" | "cs" | "ds" | "s" | "m" ] [ ";" ] (* Sleep. *)
         | "<!" (* Show dialog. *)
         | "!>" (* Hide dialog.*)
         | "<*" (* Freeze player. *)
