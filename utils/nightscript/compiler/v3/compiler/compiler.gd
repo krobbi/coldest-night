@@ -25,6 +25,7 @@ const OptionStmtASTNode: GDScript = preload("../ast/option_stmt_ast_node.gd")
 const RootASTNode: GDScript = preload("../ast/root_ast_node.gd")
 const Scope: GDScript = preload("scope.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
+const Symbol: GDScript = preload("symbol.gd")
 const Token: GDScript = preload("../lexer/token.gd")
 const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
@@ -41,6 +42,17 @@ var scopes: Array = [Scope.new()]
 func _init(code_ref: IRCode, logger_ref: Logger) -> void:
 	code = code_ref
 	logger = logger_ref
+
+
+# Get a symbol from its identifier.
+func get_symbol(identifier: String) -> Symbol:
+	for i in range(scopes.size() - 1, -1, -1):
+		var scope: Scope = scopes[i]
+		
+		if scope.symbols.has(identifier):
+			return scope.symbols[identifier]
+	
+	return Symbol.new(identifier, Symbol.UNDEFINED)
 
 
 # Get scoped info from its key.
@@ -76,6 +88,14 @@ func pop_scope() -> void:
 	
 	if top_index > 0:
 		scopes.remove(top_index)
+
+
+# Define an intrinsic from its identifier, method, and argument count.
+func define_intrinsic(identifier: String, method: String, argument_count: int) -> void:
+	var symbol: Symbol = Symbol.new(identifier, Symbol.INTRINSIC)
+	symbol.str_value = method
+	symbol.int_value = argument_count
+	scopes[-1].symbols[identifier] = symbol
 
 
 # Define scoped info from its key and value.
@@ -142,28 +162,28 @@ func visit_node(node: ASTNode) -> void:
 # Visit a root AST node.
 func visit_root(root: RootASTNode) -> void:
 	push_scope()
-	define_info("intrinsic:awaitPaths", "make_await_actor_paths:0")
-	define_info("intrinsic:call", "make_call_program:1")
-	define_info("intrinsic:checkpoint", "make_save_checkpoint:0")
-	define_info("intrinsic:clearName", "make_clear_dialog_name:0")
-	define_info("intrinsic:doNotPause", "define_not_pausable:0")
-	define_info("intrinsic:exit", "make_halt:0")
-	define_info("intrinsic:face", "make_actor_face_direction:2")
-	define_info("intrinsic:freeze", "make_freeze_player:0")
-	define_info("intrinsic:hide", "make_hide_dialog:0")
-	define_info("intrinsic:isRepeat", "=make_push_is_repeat:0")
-	define_info("intrinsic:name", "make_display_dialog_name:1")
-	define_info("intrinsic:path", "make_actor_find_path:2")
-	define_info("intrinsic:pause", "make_pause_game:0")
-	define_info("intrinsic:quit", "make_quit_to_title:0")
-	define_info("intrinsic:run", "make_run_program:1")
-	define_info("intrinsic:runPaths", "make_run_actor_paths:0")
-	define_info("intrinsic:save", "make_save_game:0")
-	define_info("intrinsic:say", "make_display_dialog_message:1")
-	define_info("intrinsic:show", "make_show_dialog:0")
-	define_info("intrinsic:sleep", "make_sleep:1")
-	define_info("intrinsic:thaw", "make_thaw_player:0")
-	define_info("intrinsic:unpause", "make_unpause_game:0")
+	define_intrinsic("awaitPaths", "make_await_actor_paths", 0)
+	define_intrinsic("call", "make_call_program", 1)
+	define_intrinsic("checkpoint", "make_save_checkpoint", 0)
+	define_intrinsic("clearName", "make_clear_dialog_name", 0)
+	define_intrinsic("doNotPause", "define_not_pausable", 0)
+	define_intrinsic("exit", "make_halt", 0)
+	define_intrinsic("face", "make_actor_face_direction", 2)
+	define_intrinsic("freeze", "make_freeze_player", 0)
+	define_intrinsic("hide", "make_hide_dialog", 0)
+	define_intrinsic("isRepeat", "=make_push_is_repeat", 0)
+	define_intrinsic("name", "make_display_dialog_name", 1)
+	define_intrinsic("path", "make_actor_find_path", 2)
+	define_intrinsic("pause", "make_pause_game", 0)
+	define_intrinsic("quit", "make_quit_to_title", 0)
+	define_intrinsic("run", "make_run_program", 1)
+	define_intrinsic("runPaths", "make_run_actor_paths", 0)
+	define_intrinsic("save", "make_save_game", 0)
+	define_intrinsic("say", "make_display_dialog_message", 1)
+	define_intrinsic("show", "make_show_dialog", 0)
+	define_intrinsic("sleep", "make_sleep", 1)
+	define_intrinsic("thaw", "make_thaw_player", 0)
+	define_intrinsic("unpause", "make_unpause_game", 0)
 	
 	for module in root.modules:
 		visit_node(module)
@@ -444,19 +464,22 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 	var intrinsic_func_name: String = ""
 	
 	if call_expr.expr is IdentifierExprASTNode:
-		var key: String = "intrinsic:%s" % call_expr.expr.name
+		var symbol: Symbol = get_symbol(call_expr.expr.name)
 		
-		if has_info(key):
-			var parts: PoolStringArray = get_info(key).split(":")
-			intrinsic_func_name = parts[0]
-			expected_argument_count = int(parts[1])
+		if symbol.access == Symbol.UNDEFINED:
+			logger.log_error(
+					"Identifier `%s` is undefined in the current scope!" % symbol.identifier,
+					call_expr.expr.span)
+		elif symbol.access == Symbol.INTRINSIC:
+			intrinsic_func_name = symbol.str_value
+			expected_argument_count = symbol.int_value
 			
 			if intrinsic_func_name.begins_with("="):
 				is_intrinsic_void = false
 				intrinsic_func_name = intrinsic_func_name.substr(1)
 		else:
 			logger.log_error(
-					"Identifier `%s` is not callable!" % call_expr.expr.name, call_expr.expr.span)
+					"Identifier `%s` is not callable!" % symbol.identifier, call_expr.expr.span)
 	else:
 		logger.log_error("Only identifiers may be called!", call_expr.expr.span)
 	
