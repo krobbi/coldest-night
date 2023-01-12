@@ -1,9 +1,25 @@
 # NightScript Version 3.
 # FizzBuzz Test
-# Run a primitive version of FizzBuzz.
+# Run FizzBuzz up to a given number.
 
 freeze();
 show();
+
+var OPTION_A = 20;
+var OPTION_B = 50;
+var OPTION_C = 100;
+
+var max = OPTION_A;
+
+say("Run FizzBuzz up to...");
+
+menu {
+	option(format(OPTION_A)) max = OPTION_A;
+	option(format(OPTION_B)) max = OPTION_B;
+	option(format(OPTION_C)) max = OPTION_C;
+}
+
+say(format("Will run FizzBuzz up to {0}!", max));
 
 var FIZZ = 3;
 var BUZZ = 5;
@@ -11,25 +27,37 @@ var BUZZ = 5;
 var nextFizz = FIZZ;
 var nextBuzz = BUZZ;
 
-var i = 0;
+var value = 0;
 
-while(i < 20){
-	i = i + 1;
+while(value < max){
+	value = value + 1;
 	
-	if(i == nextFizz && i == nextBuzz){
-		say("FizzBuzz!");
+	var hasFactors = 0;
+	var message = "";
+	
+	if(value == nextFizz){
+		hasFactors = 1;
 		nextFizz = nextFizz + FIZZ;
+		message = format("{0}Fizz", message);
+	}
+	
+	if(value == nextBuzz){
+		hasFactors = 1;
 		nextBuzz = nextBuzz + BUZZ;
-	} else if(i == nextFizz){
-		say("Fizz!");
-		nextFizz = nextFizz + FIZZ;
-	} else if(i == nextBuzz){
-		say("Buzz!");
-		nextBuzz = nextBuzz + BUZZ;
+		message = format("{0}Buzz", message);
+	}
+	
+	name(format("{0}/{1}", value, max));
+	
+	if(hasFactors){
+		say(format("{0}!", message));
 	} else {
-		say("No string formatting yet, sorry :(");
+		say(format(value));
 	}
 }
+
+clearName();
+say("Done!");
 
 hide();
 thaw();

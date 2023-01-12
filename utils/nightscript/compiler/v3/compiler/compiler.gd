@@ -238,6 +238,7 @@ func visit_root(root: RootASTNode) -> void:
 	define_intrinsic("doNotPause", "define_not_pausable", 0)
 	define_intrinsic("exit", "make_halt", 0)
 	define_intrinsic("face", "make_actor_face_direction", 2)
+	define_intrinsic("format", "*visit_format_call_expr", -1)
 	define_intrinsic("freeze", "make_freeze_player", 0)
 	define_intrinsic("hide", "make_hide_dialog", 0)
 	define_intrinsic("isRepeat", "=make_push_is_repeat", 0)
@@ -558,10 +559,6 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 
 # Visit a call expression AST node.
 func visit_call_expr(call_expr: CallExprASTNode) -> void:
-	for expr in call_expr.exprs:
-		visit_node(expr)
-	
-	var argument_count: int = call_expr.exprs.size()
 	var expected_argument_count: int = -1
 	var is_intrinsic_void: bool = true
 	var intrinsic_func_name: String = ""
@@ -573,7 +570,10 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 			intrinsic_func_name = symbol.str_value
 			expected_argument_count = symbol.int_value
 			
-			if intrinsic_func_name.begins_with("="):
+			if intrinsic_func_name.begins_with("*"):
+				call(intrinsic_func_name.substr(1), call_expr)
+				return
+			elif intrinsic_func_name.begins_with("="):
 				is_intrinsic_void = false
 				intrinsic_func_name = intrinsic_func_name.substr(1)
 		elif symbol.access == Symbol.LOCAL:
@@ -584,6 +584,11 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 					call_expr.expr.span)
 	else:
 		logger.log_error("Only identifiers may be called!", call_expr.expr.span)
+	
+	for expr in call_expr.exprs:
+		visit_node(expr)
+	
+	var argument_count: int = call_expr.exprs.size()
 	
 	if argument_count != expected_argument_count:
 		if expected_argument_count == 1:
@@ -604,6 +609,28 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 	
 	if is_intrinsic_void:
 		code.make_push_int(0)
+
+
+# Visit a call expression AST node with the format intrinsic.
+func visit_format_call_expr(call_expr: CallExprASTNode) -> void:
+	if call_expr.exprs.empty():
+		logger.log_error("Intrinsic `format` expects at least 1 argument!", call_expr.span)
+		code.make_push_string("")
+		return
+	elif call_expr.exprs.size() == 1:
+		if call_expr.exprs[0] is StrExprASTNode:
+			visit_node(call_expr.exprs[0])
+		else:
+			code.make_push_string("{0}")
+			visit_node(call_expr.exprs[0])
+			code.make_format_string_count(1)
+		
+		return
+	
+	for expr in call_expr.exprs:
+		visit_node(expr)
+	
+	code.make_format_string_count(call_expr.exprs.size() - 1)
 
 
 # Visit an integer expression AST node.
