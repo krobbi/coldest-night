@@ -5,9 +5,9 @@
 freeze();
 show();
 
-var OPTION_A = 20;
-var OPTION_B = 50;
-var OPTION_C = 100;
+const OPTION_A = 20;
+const OPTION_B = 50;
+const OPTION_C = 100;
 
 var max = OPTION_A;
 
@@ -21,8 +21,8 @@ menu {
 
 say(format("Will run FizzBuzz up to {0}!", max));
 
-var FIZZ = 3;
-var BUZZ = 5;
+const FIZZ = 3;
+const BUZZ = 5;
 
 var nextFizz = FIZZ;
 var nextBuzz = BUZZ;

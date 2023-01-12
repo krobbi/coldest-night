@@ -5,10 +5,10 @@
 freeze();
 show();
 
-var value = getFlag("v3_test", "counter") + 1;
-setFlag("v3_test", "counter", value);
+const VALUE = getFlag("v3_test", "counter") + 1;
+setFlag("v3_test", "counter", VALUE);
 
-say(format("Counter: {0}", value));
+say(format("Counter: {0}", VALUE));
 
 hide();
 thaw();

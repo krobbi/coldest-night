@@ -197,6 +197,8 @@ func parse_stmt() -> ASTNode:
 		return abort_span(parse_stmt_break())
 	elif next.type == Token.KEYWORD_CONTINUE:
 		return abort_span(parse_stmt_continue())
+	elif next.type == Token.KEYWORD_CONST:
+		return abort_span(parse_stmt_const())
 	elif next.type == Token.KEYWORD_VAR:
 		return abort_span(parse_stmt_var())
 	
@@ -342,10 +344,10 @@ func parse_stmt_continue() -> ASTNode:
 	return end_span(ContinueStmtASTNode.new())
 
 
-# Parse a variable statement.
-func parse_stmt_var() -> ASTNode:
+# Parse a generic declaration statement.
+func parse_decl_stmt(operator: int) -> ASTNode:
 	begin_span()
-	expect(Token.KEYWORD_VAR)
+	expect(operator)
 	var identifier_expr: ASTNode = parse_expr_primary_identifier()
 	
 	if not identifier_expr is IdentifierExprASTNode:
@@ -358,7 +360,17 @@ func parse_stmt_var() -> ASTNode:
 		return abort_span(value_expr)
 	
 	expect(Token.SEMICOLON)
-	return end_span(DeclStmtASTNode.new(Token.KEYWORD_VAR, identifier_expr, value_expr))
+	return end_span(DeclStmtASTNode.new(operator, identifier_expr, value_expr))
+
+
+# Parse a constant statement.
+func parse_stmt_const() -> ASTNode:
+	return parse_decl_stmt(Token.KEYWORD_CONST)
+
+
+# Parse a variable statement.
+func parse_stmt_var() -> ASTNode:
+	return parse_decl_stmt(Token.KEYWORD_VAR)
 
 
 # Parse an expression statement.

@@ -8,6 +8,9 @@ enum {UNDEFINED, INTRINSIC, LOCAL}
 
 var identifier: String
 var access: int
+var is_callable: bool = false
+var is_evaluable: bool = false
+var is_mutable: bool = false
 var int_value: int = 0
 var str_value: String = ""
 

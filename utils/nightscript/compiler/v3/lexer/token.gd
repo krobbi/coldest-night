@@ -14,6 +14,7 @@ enum {
 	LITERAL_STR, # String value.
 	IDENTIFIER, # Identifier.
 	KEYWORD_BREAK, # `break`.
+	KEYWORD_CONST, # `const`.
 	KEYWORD_CONTINUE, # `continue`.
 	KEYWORD_DO, # `do`.
 	KEYWORD_ELSE, # `else`.
@@ -89,6 +90,8 @@ static func get_name(token_type: int) -> String:
 			return "identifier"
 		KEYWORD_BREAK:
 			return "`break`"
+		KEYWORD_CONST:
+			return "`const`"
 		KEYWORD_CONTINUE:
 			return "`continue`"
 		KEYWORD_DO:

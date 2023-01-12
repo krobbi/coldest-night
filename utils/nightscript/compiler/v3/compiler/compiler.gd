@@ -119,14 +119,17 @@ func pop_scope() -> void:
 # Define an intrinsic from its identifier, method, and argument count.
 func define_intrinsic(identifier: String, method: String, argument_count: int) -> void:
 	var symbol: Symbol = Symbol.new(identifier, Symbol.INTRINSIC)
+	symbol.is_callable = true
 	symbol.str_value = method
 	symbol.int_value = argument_count
 	scopes[-1].symbols[identifier] = symbol
 
 
-# Define a local from its identifier.
-func define_local(identifier: String) -> void:
+# Define a local from its identifier and mutability.
+func define_local(identifier: String, is_mutable: bool) -> void:
 	var symbol: Symbol = Symbol.new(identifier, Symbol.LOCAL)
+	symbol.is_evaluable = true
+	symbol.is_mutable = is_mutable
 	symbol.int_value = scopes[-1].local_count
 	scopes[-1].symbols[identifier] = symbol
 	scopes[-1].local_count += 1
@@ -238,7 +241,7 @@ func visit_root(root: RootASTNode) -> void:
 	define_intrinsic("doNotPause", "define_not_pausable", 0)
 	define_intrinsic("exit", "make_halt", 0)
 	define_intrinsic("face", "make_actor_face_direction", 2)
-	define_intrinsic("format", "*visit_format_call_expr", -1)
+	define_intrinsic("format", "*visit_format_intrinsic_call_expr", -1)
 	define_intrinsic("freeze", "make_freeze_player", 0)
 	define_intrinsic("getFlag", "=make_load_flag", 2)
 	define_intrinsic("hide", "make_hide_dialog", 0)
@@ -251,7 +254,7 @@ func visit_root(root: RootASTNode) -> void:
 	define_intrinsic("runPaths", "make_run_actor_paths", 0)
 	define_intrinsic("save", "make_save_game", 0)
 	define_intrinsic("say", "make_display_dialog_message", 1)
-	define_intrinsic("setFlag", "*visit_set_flag_call_expr", 3)
+	define_intrinsic("setFlag", "*visit_set_flag_intrinsic_call_expr", 3)
 	define_intrinsic("show", "make_show_dialog", 0)
 	define_intrinsic("sleep", "make_sleep", 1)
 	define_intrinsic("thaw", "make_thaw_player", 0)
@@ -423,18 +426,28 @@ func visit_continue_stmt(continue_stmt: ContinueStmtASTNode) -> void:
 
 # Visit a declaration statement AST node.
 func visit_decl_stmt(decl_stmt: DeclStmtASTNode) -> void:
-	visit_node(decl_stmt.value_expr)
-	
 	var symbol: Symbol = get_symbol(decl_stmt.identifier_expr.name)
 	
 	if symbol.access != Symbol.UNDEFINED:
 		logger.log_error(
 				"`%s` is already defined in the current scope!" % symbol.identifier,
 				decl_stmt.identifier_expr.span)
+		visit_node(decl_stmt.value_expr)
 		code.make_drop()
 		return
 	
-	define_local(symbol.identifier)
+	if decl_stmt.operator == Token.KEYWORD_CONST:
+		visit_node(decl_stmt.value_expr)
+		define_local(symbol.identifier, false)
+	elif decl_stmt.operator == Token.KEYWORD_VAR:
+		visit_node(decl_stmt.value_expr)
+		define_local(symbol.identifier, true)
+	else:
+		logger.log_error(
+				"Bug: No declaration for operator %s!" % Token.get_name(decl_stmt.operator),
+				decl_stmt.span)
+		visit_node(decl_stmt.value_expr)
+		code.make_drop()
 
 
 # Visit an expression statement AST node.
@@ -447,17 +460,16 @@ func visit_expr_stmt(expr_stmt: ExprStmtASTNode) -> void:
 func visit_un_expr(un_expr: UnExprASTNode) -> void:
 	visit_node(un_expr.expr)
 	
-	match un_expr.operator:
-		Token.PLUS:
-			pass
-		Token.MINUS:
-			code.make_unary_negate()
-		Token.BANG:
-			code.make_unary_not()
-		_:
-			logger.log_error(
-					"Bug: No unary operation for token %s!" % Token.get_name(un_expr.operator),
-					un_expr.span)
+	if un_expr.operator == Token.BANG:
+		code.make_unary_not()
+	elif un_expr.operator == Token.PLUS:
+		pass # Unary plus intentionally does nothing, this is not a bug.
+	elif un_expr.operator == Token.MINUS:
+		code.make_unary_negate()
+	else:
+		logger.log_error(
+				"Bug: No unary operation for operator %s!" % Token.get_name(un_expr.operator),
+				un_expr.span)
 
 
 # Visit a binary expression AST node.
@@ -483,15 +495,21 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 		
 		var symbol: Symbol = get_symbol(bin_expr.lhs_expr.name)
 		
-		if symbol.access == Symbol.LOCAL:
-			code.make_store_local_offset(symbol.int_value)
-		elif symbol.access == Symbol.UNDEFINED:
+		if symbol.access == Symbol.UNDEFINED:
 			visit_node(bin_expr.lhs_expr)
 			code.make_drop()
-		else:
+			return
+		elif not symbol.is_mutable:
 			logger.log_error(
 					"Cannot assign to non-variable `%s`!" % symbol.identifier,
 					bin_expr.lhs_expr.span)
+			return
+		
+		if symbol.access == Symbol.LOCAL:
+			code.make_store_local_offset(symbol.int_value)
+		else:
+			logger.log_error(
+					"Bug: No mutator for access type %d!" % symbol.access, bin_expr.lhs_expr.span)
 	elif bin_expr.operator == Token.PIPE_PIPE:
 		var end_label: String = code.insert_unique_label("or_end")
 		
@@ -530,7 +548,7 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 			code.make_binary_or()
 		else:
 			logger.log_error(
-					"Bug: No binary operation for token %s!" % Token.get_name(bin_expr.operator),
+					"Bug: No binary operation for operator %s!" % Token.get_name(bin_expr.operator),
 					bin_expr.span)
 			
 			# Binary expressions must only push a single value to the stack.
@@ -541,29 +559,38 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 func visit_call_expr(call_expr: CallExprASTNode) -> void:
 	if not call_expr.expr is IdentifierExprASTNode:
 		logger.log_error("Can only call a function!", call_expr.expr.span)
-		visit_node(call_expr.expr)
-		
-		for expr in call_expr.exprs:
-			visit_node(expr)
-			code.make_drop()
-		
+		visit_invalid_call_expr(call_expr)
 		return
 	
 	var symbol: Symbol = get_symbol(call_expr.expr.name)
 	
-	if symbol.access != Symbol.INTRINSIC:
-		if symbol.access != Symbol.UNDEFINED:
-			logger.log_error(
-					"Cannot call non-function `%s`!" % symbol.identifier, call_expr.expr.span)
-		
-		visit_node(call_expr.expr)
-		
-		for expr in call_expr.exprs:
-			visit_node(expr)
-			code.make_drop()
-		
+	if symbol.access == Symbol.UNDEFINED:
+		visit_invalid_call_expr(call_expr)
+		return
+	elif not symbol.is_callable:
+		logger.log_error("Cannot call non-function `%s`!" % symbol.identifier, call_expr.expr.span)
+		visit_invalid_call_expr(call_expr)
 		return
 	
+	if symbol.access == Symbol.INTRINSIC:
+		visit_intrinsic_call_expr(call_expr)
+	else:
+		logger.log_error("Bug: No caller for access type `%d`!" % symbol.access, call_expr.span)
+		visit_invalid_call_expr(call_expr)
+
+
+# Visit a call expression AST node that has been invalidated.
+func visit_invalid_call_expr(call_expr: CallExprASTNode) -> void:
+	visit_node(call_expr.expr)
+	
+	for expr in call_expr.exprs:
+		visit_node(expr)
+		code.make_drop()
+
+
+# Visit an intrinsic call expression AST node.
+func visit_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
+	var symbol: Symbol = get_symbol(call_expr.expr.name)
 	var intrinsic_func_name: String = symbol.str_value
 	
 	# Handle special case intrinsics.
@@ -604,7 +631,7 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 
 
 # Visit a call expression AST node with the format intrinsic.
-func visit_format_call_expr(call_expr: CallExprASTNode) -> void:
+func visit_format_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 	if call_expr.exprs.empty():
 		logger.log_error(
 				"`%s` expects at least 1 argument, got 0!" % call_expr.expr.name, call_expr.span)
@@ -623,7 +650,7 @@ func visit_format_call_expr(call_expr: CallExprASTNode) -> void:
 
 
 # Visit a call expression AST node with the set flag intrinsic.
-func visit_set_flag_call_expr(call_expr: CallExprASTNode) -> void:
+func visit_set_flag_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 	if call_expr.exprs.size() != 3:
 		logger.log_error(
 				"`%s` expects 3 arguments, got %d!" % [call_expr.expr.name, call_expr.exprs.size()],
@@ -660,9 +687,16 @@ func visit_identifier_expr(identifier_expr: IdentifierExprASTNode) -> void:
 		logger.log_error(
 				"`%s` is undefined in the current scope!" % symbol.identifier, identifier_expr.span)
 		code.make_push_int(0)
-	elif symbol.access == Symbol.LOCAL:
+		return
+	elif not symbol.is_evaluable:
+		logger.log_error(
+				"Cannot evaluate non-value `%s`!" % symbol.identifier, identifier_expr.span)
+		code.make_push_int(0)
+		return
+	
+	if symbol.access == Symbol.LOCAL:
 		code.make_load_local_offset(symbol.int_value)
 	else:
 		logger.log_error(
-				"Cannot evaluate non-value `%s`!" % symbol.identifier, identifier_expr.span)
+				"Bug: No evaluator for access type %d!" % symbol.access, identifier_expr.span)
 		code.make_push_int(0)

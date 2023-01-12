@@ -16,6 +16,7 @@ const HEX_DIGITS: String = "0123456789ABCDEFabcdef"
 const IDENTIFIER_CHARS: String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 const KEYWORDS: Dictionary = {
 	"break": Token.KEYWORD_BREAK,
+	"const": Token.KEYWORD_CONST,
 	"continue": Token.KEYWORD_CONTINUE,
 	"do": Token.KEYWORD_DO,
 	"else": Token.KEYWORD_ELSE,
