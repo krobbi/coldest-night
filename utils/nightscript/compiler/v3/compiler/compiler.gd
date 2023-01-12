@@ -125,6 +125,22 @@ func define_intrinsic(identifier: String, method: String, argument_count: int) -
 	scopes[-1].symbols[identifier] = symbol
 
 
+# Define a literal integer from its identifier and value.
+func define_literal_int(identifier: String, value: int) -> void:
+	var symbol: Symbol = Symbol.new(identifier, Symbol.LITERAL_INT)
+	symbol.is_evaluable = true
+	symbol.int_value = value
+	scopes[-1].symbols[identifier] = symbol
+
+
+# Define a literal string from its identifier and value.
+func define_literal_str(identifier: String, value: String) -> void:
+	var symbol: Symbol = Symbol.new(identifier, Symbol.LITERAL_STR)
+	symbol.is_evaluable = true
+	symbol.str_value = value
+	scopes[-1].symbols[identifier] = symbol
+
+
 # Define a local from its identifier and mutability.
 func define_local(identifier: String, is_mutable: bool) -> void:
 	var symbol: Symbol = Symbol.new(identifier, Symbol.LOCAL)
@@ -437,6 +453,23 @@ func visit_decl_stmt(decl_stmt: DeclStmtASTNode) -> void:
 		return
 	
 	if decl_stmt.operator == Token.KEYWORD_CONST:
+		if decl_stmt.value_expr is IntExprASTNode:
+			define_literal_int(symbol.identifier, decl_stmt.value_expr.value)
+			return
+		elif decl_stmt.value_expr is StrExprASTNode:
+			define_literal_str(symbol.identifier, decl_stmt.value_expr.value)
+			return
+		
+		if decl_stmt.value_expr is IdentifierExprASTNode:
+			var value_symbol: Symbol = get_symbol(decl_stmt.value_expr.name)
+			
+			if value_symbol.access == Symbol.LITERAL_INT:
+				define_literal_int(symbol.identifier, value_symbol.int_value)
+				return
+			elif value_symbol.access == Symbol.LITERAL_STR:
+				define_literal_str(symbol.identifier, value_symbol.str_value)
+				return
+		
 		visit_node(decl_stmt.value_expr)
 		define_local(symbol.identifier, false)
 	elif decl_stmt.operator == Token.KEYWORD_VAR:
@@ -694,7 +727,11 @@ func visit_identifier_expr(identifier_expr: IdentifierExprASTNode) -> void:
 		code.make_push_int(0)
 		return
 	
-	if symbol.access == Symbol.LOCAL:
+	if symbol.access == Symbol.LITERAL_INT:
+		code.make_push_int(symbol.int_value)
+	elif symbol.access == Symbol.LITERAL_STR:
+		code.make_push_string(symbol.str_value)
+	elif symbol.access == Symbol.LOCAL:
 		code.make_load_local_offset(symbol.int_value)
 	else:
 		logger.log_error(

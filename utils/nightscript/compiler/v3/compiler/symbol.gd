@@ -4,7 +4,7 @@ extends Reference
 # A symbol is a structure used by the NightScript compiler that represents the
 # use of an identifier in a scope.
 
-enum {UNDEFINED, INTRINSIC, LOCAL}
+enum {UNDEFINED, INTRINSIC, LITERAL_INT, LITERAL_STR, LOCAL}
 
 var identifier: String
 var access: int
