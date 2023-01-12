@@ -277,6 +277,11 @@ func make_binary_or() -> void:
 	make_op(IROp.BINARY_OR)
 
 
+# Make a format string count IR operation in the current label.
+func make_format_string_count(count: int) -> void:
+	make_op_int(IROp.FORMAT_STRING_COUNT, count)
+
+
 # Make a show dialog IR operation in the current label.
 func make_show_dialog() -> void:
 	make_op(IROp.SHOW_DIALOG)

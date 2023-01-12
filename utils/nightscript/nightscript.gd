@@ -146,6 +146,15 @@ class NightScriptVirtualMachine extends Reference:
 				var right: int = stack.pop_back()
 				var left: int = stack.pop_back()
 				stack.push_back(int(left != 0 or right != 0))
+			FORMAT_STRING:
+				var value_count: int = stack.pop_back()
+				var values: Array = []
+				
+				for _i in range(value_count):
+					values.push_front(stack.pop_back())
+				
+				var format_string: String = stack.pop_back()
+				stack.push_back(format_string.format(values))
 			SHOW_DIALOG:
 				Global.events.emit_signal("dialog_show_dialog_request")
 			HIDE_DIALOG:
@@ -282,24 +291,25 @@ enum {
 	BINARY_LESS_EQUALS = 0x1a,
 	BINARY_AND = 0x1b,
 	BINARY_OR = 0x1c,
-	SHOW_DIALOG = 0x1d,
-	HIDE_DIALOG = 0x1e,
-	CLEAR_DIALOG_NAME = 0x1f,
-	DISPLAY_DIALOG_NAME = 0x20,
-	DISPLAY_DIALOG_MESSAGE = 0x21,
-	STORE_DIALOG_MENU_OPTION = 0x22,
-	SHOW_DIALOG_MENU = 0x23,
-	ACTOR_FACE_DIRECTION = 0x24,
-	ACTOR_FIND_PATH = 0x25,
-	RUN_ACTOR_PATHS = 0x26,
-	AWAIT_ACTOR_PATHS = 0x27,
-	FREEZE_PLAYER = 0x28,
-	THAW_PLAYER = 0x29,
-	QUIT_TO_TITLE = 0x2a,
-	PAUSE_GAME = 0x2b,
-	UNPAUSE_GAME = 0x2c,
-	SAVE_GAME = 0x2d,
-	SAVE_CHECKPOINT = 0x2e,
+	FORMAT_STRING = 0x1d,
+	SHOW_DIALOG = 0x1e,
+	HIDE_DIALOG = 0x1f,
+	CLEAR_DIALOG_NAME = 0x20,
+	DISPLAY_DIALOG_NAME = 0x21,
+	DISPLAY_DIALOG_MESSAGE = 0x22,
+	STORE_DIALOG_MENU_OPTION = 0x23,
+	SHOW_DIALOG_MENU = 0x24,
+	ACTOR_FACE_DIRECTION = 0x25,
+	ACTOR_FIND_PATH = 0x26,
+	RUN_ACTOR_PATHS = 0x27,
+	AWAIT_ACTOR_PATHS = 0x28,
+	FREEZE_PLAYER = 0x29,
+	THAW_PLAYER = 0x2a,
+	QUIT_TO_TITLE = 0x2b,
+	PAUSE_GAME = 0x2c,
+	UNPAUSE_GAME = 0x2d,
+	SAVE_GAME = 0x2e,
+	SAVE_CHECKPOINT = 0x2f,
 }
 
 const THREAD_LIMIT: int = 16
