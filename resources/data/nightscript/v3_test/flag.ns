@@ -1,0 +1,14 @@
+# NightScript Version 3.
+# Flag Test
+# Test for setting and getting flags.
+
+freeze();
+show();
+
+var value = getFlag("v3_test", "counter") + 1;
+setFlag("v3_test", "counter", value);
+
+say(format("Counter: {0}", value));
+
+hide();
+thaw();

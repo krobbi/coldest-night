@@ -202,9 +202,19 @@ func make_store_local_offset(offset: int) -> void:
 	make_op_int(IROp.STORE_LOCAL_OFFSET, offset)
 
 
+# Make a load flag IR operation in the current label.
+func make_load_flag() -> void:
+	make_op(IROp.LOAD_FLAG)
+
+
 # Make a load flag namespace key IR operation in the current label.
 func make_load_flag_namespace_key(namespace: String, key: String) -> void:
 	make_op_str_str(IROp.LOAD_FLAG_NAMESPACE_KEY, namespace, key)
+
+
+# Make a store flag IR operation in the current label.
+func make_store_flag() -> void:
+	make_op(IROp.STORE_FLAG)
 
 
 # Make a store flag namespace key IR operation in the current label.

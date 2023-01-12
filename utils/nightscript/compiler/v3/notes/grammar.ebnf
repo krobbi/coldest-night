@@ -34,8 +34,7 @@ expr_comparison = expr_sum, { ( "<" | "<=" | ">" | ">=" ), expr_sum } ;
 expr_sum = expr_term, { ( "+" | "-" ), expr_term } ;
 expr_term = expr_sign, { "*", expr_sign } ;
 expr_sign = ( "+" | "-" ), expr_sign | expr_call ;
-expr_call = expr_access, { "(", [ expr, { ",", expr } ], ")" } ;
-expr_access = expr_primary, { ".", expr_primary } ;
+expr_call = expr_primary, { "(", [ expr, { ",", expr } ], ")" } ;
 expr_primary = (
 	expr_paren | expr_primary_int | expr_primary_str | expr_primary_identifier
 ) ;

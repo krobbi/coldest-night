@@ -240,6 +240,7 @@ func visit_root(root: RootASTNode) -> void:
 	define_intrinsic("face", "make_actor_face_direction", 2)
 	define_intrinsic("format", "*visit_format_call_expr", -1)
 	define_intrinsic("freeze", "make_freeze_player", 0)
+	define_intrinsic("getFlag", "=make_load_flag", 2)
 	define_intrinsic("hide", "make_hide_dialog", 0)
 	define_intrinsic("isRepeat", "=make_push_is_repeat", 0)
 	define_intrinsic("name", "make_display_dialog_name", 1)
@@ -250,6 +251,7 @@ func visit_root(root: RootASTNode) -> void:
 	define_intrinsic("runPaths", "make_run_actor_paths", 0)
 	define_intrinsic("save", "make_save_game", 0)
 	define_intrinsic("say", "make_display_dialog_message", 1)
+	define_intrinsic("setFlag", "*visit_set_flag_call_expr", 3)
 	define_intrinsic("show", "make_show_dialog", 0)
 	define_intrinsic("sleep", "make_sleep", 1)
 	define_intrinsic("thaw", "make_thaw_player", 0)
@@ -427,7 +429,7 @@ func visit_var_stmt(var_stmt: VarStmtASTNode) -> void:
 	
 	if symbol.access != Symbol.UNDEFINED:
 		logger.log_error(
-				"Identifier `%s` is already defined in the current scope!" % symbol.identifier,
+				"`%s` is already defined in the current scope!" % symbol.identifier,
 				var_stmt.identifier_expr.span)
 		code.make_drop()
 		return
@@ -470,48 +472,26 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 		visit_node(bin_expr.rhs_expr)
 		
 		code.set_label(end_label)
-	elif bin_expr.operator == Token.DOT:
-		if(
-				not bin_expr.lhs_expr is IdentifierExprASTNode
-				or not bin_expr.rhs_expr is IdentifierExprASTNode):
-			logger.log_error("Access expressions may only contain two identifiers!", bin_expr.span)
-			visit_node(bin_expr.lhs_expr)
-			visit_node(bin_expr.rhs_expr)
-			code.make_drop()
-			return
-		
-		code.make_load_flag_namespace_key(bin_expr.lhs_expr.name, bin_expr.rhs_expr.name)
 	elif bin_expr.operator == Token.EQUALS:
 		visit_node(bin_expr.rhs_expr)
 		
-		if(
-				bin_expr.lhs_expr is BinExprASTNode
-				and bin_expr.lhs_expr.operator == Token.DOT
-				and bin_expr.lhs_expr.lhs_expr is IdentifierExprASTNode
-				and bin_expr.lhs_expr.rhs_expr is IdentifierExprASTNode):
-			code.make_store_flag_namespace_key(
-					bin_expr.lhs_expr.lhs_expr.name, bin_expr.lhs_expr.rhs_expr.name)
-		elif bin_expr.lhs_expr is IdentifierExprASTNode:
-			var symbol: Symbol = get_symbol(bin_expr.lhs_expr.name)
-			
-			if symbol.access == Symbol.UNDEFINED:
-				logger.log_error(
-						"Identifier `%s` is undefined in the current scope!" % symbol.identifier,
-						bin_expr.lhs_expr.span)
-			elif symbol.access == Symbol.INTRINSIC:
-				logger.log_error(
-						"Cannot assign to intrinsic function `%s`!" % symbol.identifier,
-						bin_expr.lhs_expr.span)
-			elif symbol.access == Symbol.LOCAL:
-				code.make_store_local_offset(symbol.int_value)
-			else:
-				logger.log_error(
-						"Bug: No assignment for symbol access type `%d`" % symbol.access,
-						bin_expr.lhs_expr.span)
-		else:
-			logger.log_error("Can only assign to a flag or identifier!", bin_expr.lhs_expr.span)
+		if not bin_expr.lhs_expr is IdentifierExprASTNode:
+			logger.log_error("Can only assign to a variable!", bin_expr.lhs_expr.span)
 			visit_node(bin_expr.lhs_expr)
 			code.make_drop()
+			return
+		
+		var symbol: Symbol = get_symbol(bin_expr.lhs_expr.name)
+		
+		if symbol.access == Symbol.LOCAL:
+			code.make_store_local_offset(symbol.int_value)
+		elif symbol.access == Symbol.UNDEFINED:
+			visit_node(bin_expr.lhs_expr)
+			code.make_drop()
+		else:
+			logger.log_error(
+					"Cannot assign to non-variable `%s`!" % symbol.identifier,
+					bin_expr.lhs_expr.span)
 	elif bin_expr.operator == Token.PIPE_PIPE:
 		var end_label: String = code.insert_unique_label("or_end")
 		
@@ -559,50 +539,62 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 
 # Visit a call expression AST node.
 func visit_call_expr(call_expr: CallExprASTNode) -> void:
-	var expected_argument_count: int = -1
-	var is_intrinsic_void: bool = true
-	var intrinsic_func_name: String = ""
-	
-	if call_expr.expr is IdentifierExprASTNode:
-		var symbol: Symbol = get_symbol(call_expr.expr.name)
+	if not call_expr.expr is IdentifierExprASTNode:
+		logger.log_error("Can only call a function!", call_expr.expr.span)
+		visit_node(call_expr.expr)
 		
-		if symbol.access == Symbol.INTRINSIC:
-			intrinsic_func_name = symbol.str_value
-			expected_argument_count = symbol.int_value
-			
-			if intrinsic_func_name.begins_with("*"):
-				call(intrinsic_func_name.substr(1), call_expr)
-				return
-			elif intrinsic_func_name.begins_with("="):
-				is_intrinsic_void = false
-				intrinsic_func_name = intrinsic_func_name.substr(1)
-		elif symbol.access == Symbol.LOCAL:
-			logger.log_error("Cannot call variable `%s`!" % symbol.identifier, call_expr.expr.span)
-		elif symbol.access != Symbol.UNDEFINED:
+		for expr in call_expr.exprs:
+			visit_node(expr)
+			code.make_drop()
+		
+		return
+	
+	var symbol: Symbol = get_symbol(call_expr.expr.name)
+	
+	if symbol.access != Symbol.INTRINSIC:
+		if symbol.access != Symbol.UNDEFINED:
 			logger.log_error(
-					"Bug: No call for symbol access type `%d`!" % symbol.access,
-					call_expr.expr.span)
-	else:
-		logger.log_error("Only identifiers may be called!", call_expr.expr.span)
+					"Cannot call non-function `%s`!" % symbol.identifier, call_expr.expr.span)
+		
+		visit_node(call_expr.expr)
+		
+		for expr in call_expr.exprs:
+			visit_node(expr)
+			code.make_drop()
+		
+		return
+	
+	var intrinsic_func_name: String = symbol.str_value
+	
+	# Handle special case intrinsics.
+	if intrinsic_func_name.begins_with("*"):
+		call(intrinsic_func_name.substr(1), call_expr)
+		return
+	
+	var is_intrinsic_void: bool = true
+	
+	# Handle non-void intrinsics.
+	if intrinsic_func_name.begins_with("="):
+		is_intrinsic_void = false
+		intrinsic_func_name = intrinsic_func_name.substr(1)
 	
 	for expr in call_expr.exprs:
 		visit_node(expr)
 	
-	var argument_count: int = call_expr.exprs.size()
-	
-	if argument_count != expected_argument_count:
-		if expected_argument_count == 1:
-			logger.log_error("Expected 1 argument, got %d!" % argument_count, call_expr.span)
-		elif expected_argument_count >= 0:
+	if call_expr.exprs.size() != symbol.int_value:
+		if symbol.int_value == 1:
 			logger.log_error(
-					"Expected %d arguments, got %d!"
-					% [expected_argument_count, argument_count], call_expr.span)
+					"`%s` expects 1 argument, got %d!"
+					% [symbol.identifier, call_expr.exprs.size()], call_expr.span)
+		else:
+			logger.log_error(
+					"`%s` expects %d arguments, got %d!"
+					% [symbol.identifier, symbol.int_value, call_expr.exprs.size()], call_expr.span)
 		
-		if argument_count > 0:
-			for _i in range(argument_count):
-				code.make_drop()
+		for _i in range(call_expr.exprs.size()):
+			code.make_drop()
 		
-		visit_node(call_expr.expr)
+		code.make_push_int(0)
 		return
 	
 	code.call(intrinsic_func_name)
@@ -614,23 +606,40 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 # Visit a call expression AST node with the format intrinsic.
 func visit_format_call_expr(call_expr: CallExprASTNode) -> void:
 	if call_expr.exprs.empty():
-		logger.log_error("Intrinsic `format` expects at least 1 argument!", call_expr.span)
+		logger.log_error(
+				"`%s` expects at least 1 argument, got 0!" % call_expr.expr.name, call_expr.span)
 		code.make_push_string("")
 		return
 	elif call_expr.exprs.size() == 1:
-		if call_expr.exprs[0] is StrExprASTNode:
-			visit_node(call_expr.exprs[0])
-		else:
-			code.make_push_string("{0}")
-			visit_node(call_expr.exprs[0])
-			code.make_format_string_count(1)
-		
+		code.make_push_string("{0}")
+		visit_node(call_expr.exprs[0])
+		code.make_format_string_count(1)
 		return
 	
 	for expr in call_expr.exprs:
 		visit_node(expr)
 	
 	code.make_format_string_count(call_expr.exprs.size() - 1)
+
+
+# Visit a call expression AST node with the set flag intrinsic.
+func visit_set_flag_call_expr(call_expr: CallExprASTNode) -> void:
+	if call_expr.exprs.size() != 3:
+		logger.log_error(
+				"`%s` expects 3 arguments, got %d!" % [call_expr.expr.name, call_expr.exprs.size()],
+				call_expr.span)
+		
+		for expr in call_expr.exprs:
+			visit_node(expr)
+			code.make_drop()
+		
+		code.make_push_int(0)
+		return
+	
+	visit_node(call_expr.exprs[2])
+	visit_node(call_expr.exprs[0])
+	visit_node(call_expr.exprs[1])
+	code.make_store_flag()
 
 
 # Visit an integer expression AST node.
@@ -649,18 +658,11 @@ func visit_identifier_expr(identifier_expr: IdentifierExprASTNode) -> void:
 	
 	if symbol.access == Symbol.UNDEFINED:
 		logger.log_error(
-				"Identifier `%s` is undefined in the current scope!" % symbol.identifier,
-				identifier_expr.span)
-		code.make_push_int(0)
-	elif symbol.access == Symbol.INTRINSIC:
-		logger.log_error(
-				"Cannot evaluate intrinsic function name `%s`!" % symbol.identifier,
-				identifier_expr.span)
+				"`%s` is undefined in the current scope!" % symbol.identifier, identifier_expr.span)
 		code.make_push_int(0)
 	elif symbol.access == Symbol.LOCAL:
 		code.make_load_local_offset(symbol.int_value)
 	else:
 		logger.log_error(
-				"Bug: No evaluation for symbol access type `%d`!" % symbol.access,
-				identifier_expr.span)
+				"Cannot evaluate non-value `%s`!" % symbol.identifier, identifier_expr.span)
 		code.make_push_int(0)
