@@ -10,6 +10,7 @@ const BlockStmtASTNode: GDScript = preload("../ast/block_stmt_ast_node.gd")
 const BreakStmtASTNode: GDScript = preload("../ast/break_stmt_ast_node.gd")
 const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
 const ContinueStmtASTNode: GDScript = preload("../ast/continue_stmt_ast_node.gd")
+const DeclStmtASTNode: GDScript = preload("../ast/decl_stmt_ast_node.gd")
 const DoStmtASTNode: GDScript = preload("../ast/do_stmt_ast_node.gd")
 const ErrorASTNode: GDScript = preload("../ast/error_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
@@ -29,7 +30,6 @@ const StmtASTNode: GDScript = preload("../ast/stmt_ast_node.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
 const Token: GDScript = preload("../lexer/token.gd")
 const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
-const VarStmtASTNode: GDScript = preload("../ast/var_stmt_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
 var logger: Logger
@@ -358,7 +358,7 @@ func parse_stmt_var() -> ASTNode:
 		return abort_span(value_expr)
 	
 	expect(Token.SEMICOLON)
-	return end_span(VarStmtASTNode.new(identifier_expr, value_expr))
+	return end_span(DeclStmtASTNode.new(Token.KEYWORD_VAR, identifier_expr, value_expr))
 
 
 # Parse an expression statement.

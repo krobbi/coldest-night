@@ -10,6 +10,7 @@ const BlockStmtASTNode: GDScript = preload("../ast/block_stmt_ast_node.gd")
 const BreakStmtASTNode: GDScript = preload("../ast/break_stmt_ast_node.gd")
 const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
 const ContinueStmtASTNode: GDScript = preload("../ast/continue_stmt_ast_node.gd")
+const DeclStmtASTNode: GDScript = preload("../ast/decl_stmt_ast_node.gd")
 const DoStmtASTNode: GDScript = preload("../ast/do_stmt_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const ExprStmtASTNode: GDScript = preload("../ast/expr_stmt_ast_node.gd")
@@ -28,7 +29,6 @@ const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
 const Symbol: GDScript = preload("symbol.gd")
 const Token: GDScript = preload("../lexer/token.gd")
 const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
-const VarStmtASTNode: GDScript = preload("../ast/var_stmt_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
 const INFO_BREAK_LABEL: String = "break_label"
@@ -204,8 +204,8 @@ func visit_node(node: ASTNode) -> void:
 		visit_break_stmt(node)
 	elif node is ContinueStmtASTNode:
 		visit_continue_stmt(node)
-	elif node is VarStmtASTNode:
-		visit_var_stmt(node)
+	elif node is DeclStmtASTNode:
+		visit_decl_stmt(node)
 	elif node is ExprStmtASTNode:
 		visit_expr_stmt(node)
 	elif node is UnExprASTNode:
@@ -421,16 +421,16 @@ func visit_continue_stmt(continue_stmt: ContinueStmtASTNode) -> void:
 	code.make_jump_label(get_info(INFO_CONTINUE_LABEL))
 
 
-# Visit a variable statement AST node.
-func visit_var_stmt(var_stmt: VarStmtASTNode) -> void:
-	visit_node(var_stmt.value_expr)
+# Visit a declaration statement AST node.
+func visit_decl_stmt(decl_stmt: DeclStmtASTNode) -> void:
+	visit_node(decl_stmt.value_expr)
 	
-	var symbol: Symbol = get_symbol(var_stmt.identifier_expr.name)
+	var symbol: Symbol = get_symbol(decl_stmt.identifier_expr.name)
 	
 	if symbol.access != Symbol.UNDEFINED:
 		logger.log_error(
 				"`%s` is already defined in the current scope!" % symbol.identifier,
-				var_stmt.identifier_expr.span)
+				decl_stmt.identifier_expr.span)
 		code.make_drop()
 		return
 	
