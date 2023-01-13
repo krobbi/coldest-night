@@ -5,6 +5,7 @@ extends Reference
 # nodes to simpler forms.
 
 const BinExprASTNode: GDScript = preload("../ast/bin_expr_ast_node.gd")
+const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const IdentifierExprASTNode: GDScript = preload("../ast/identifier_expr_ast_node.gd")
 const IntExprASTNode: GDScript = preload("../ast/int_expr_ast_node.gd")
@@ -34,6 +35,8 @@ func fold_expr(expr: ExprASTNode) -> ExprASTNode:
 		return fold_un_expr(expr)
 	elif expr is BinExprASTNode:
 		return fold_bin_expr(expr)
+	elif expr is CallExprASTNode:
+		return fold_call_expr(expr)
 	elif expr is IdentifierExprASTNode:
 		return fold_identifier_expr(expr)
 	
@@ -101,6 +104,16 @@ func fold_bin_expr(bin_expr: BinExprASTNode) -> ExprASTNode:
 		return copy_span(bin_expr, lhs_expr if lhs_expr.value != 0 else rhs_expr)
 	
 	return copy_span(bin_expr, BinExprASTNode.new(lhs_expr, bin_expr.operator, rhs_expr))
+
+
+# Fold a call expression AST node.
+func fold_call_expr(call_expr: CallExprASTNode) -> ExprASTNode:
+	var folded: CallExprASTNode = copy_span(call_expr, CallExprASTNode.new(call_expr.expr))
+	
+	for expr in call_expr.exprs:
+		folded.exprs.push_back(fold_expr(expr))
+	
+	return folded
 
 
 # Fold an identifier expression AST node.
