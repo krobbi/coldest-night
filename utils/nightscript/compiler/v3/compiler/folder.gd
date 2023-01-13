@@ -4,6 +4,7 @@ extends Reference
 # A folder is a component of the NightScript compiler that folds expression AST
 # nodes to simpler forms.
 
+const BinExprASTNode: GDScript = preload("../ast/bin_expr_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const IdentifierExprASTNode: GDScript = preload("../ast/identifier_expr_ast_node.gd")
 const IntExprASTNode: GDScript = preload("../ast/int_expr_ast_node.gd")
@@ -31,6 +32,8 @@ func copy_span(from: ExprASTNode, to: ExprASTNode) -> ExprASTNode:
 func fold_expr(expr: ExprASTNode) -> ExprASTNode:
 	if expr is UnExprASTNode:
 		return fold_un_expr(expr)
+	elif expr is BinExprASTNode:
+		return fold_bin_expr(expr)
 	elif expr is IdentifierExprASTNode:
 		return fold_identifier_expr(expr)
 	
@@ -52,6 +55,52 @@ func fold_un_expr(un_expr: UnExprASTNode) -> ExprASTNode:
 		return copy_span(un_expr, IntExprASTNode.new(-child_expr.value))
 	
 	return copy_span(un_expr, UnExprASTNode.new(un_expr.operator, child_expr))
+
+
+# Fold a binary expression AST node.
+func fold_bin_expr(bin_expr: BinExprASTNode) -> ExprASTNode:
+	var rhs_expr: ExprASTNode = fold_expr(bin_expr.rhs_expr)
+	
+	# Never fold the left hand side of assignments.
+	if bin_expr.operator == Token.EQUALS:
+		return copy_span(
+				bin_expr, BinExprASTNode.new(bin_expr.lhs_expr, bin_expr.operator, rhs_expr))
+	
+	var lhs_expr: ExprASTNode = fold_expr(bin_expr.lhs_expr)
+	
+	if not lhs_expr is IntExprASTNode or not rhs_expr is IntExprASTNode:
+		return copy_span(bin_expr, BinExprASTNode.new(lhs_expr, bin_expr.operator, rhs_expr))
+	
+	if bin_expr.operator == Token.BANG_EQUALS:
+		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value != rhs_expr.value)))
+	elif bin_expr.operator == Token.AMPERSAND:
+		return copy_span(
+				bin_expr, IntExprASTNode.new(int(lhs_expr.value != 0 and rhs_expr.value != 0)))
+	elif bin_expr.operator == Token.AMPERSAND_AMPERSAND:
+		return copy_span(bin_expr, rhs_expr if lhs_expr.value != 0 else lhs_expr)
+	elif bin_expr.operator == Token.STAR:
+		return copy_span(bin_expr, IntExprASTNode.new(lhs_expr.value * rhs_expr.value))
+	elif bin_expr.operator == Token.PLUS:
+		return copy_span(bin_expr, IntExprASTNode.new(lhs_expr.value + rhs_expr.value))
+	elif bin_expr.operator == Token.MINUS:
+		return copy_span(bin_expr, IntExprASTNode.new(lhs_expr.value - rhs_expr.value))
+	elif bin_expr.operator == Token.LESS:
+		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value < rhs_expr.value)))
+	elif bin_expr.operator == Token.LESS_EQUALS:
+		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value <= rhs_expr.value)))
+	elif bin_expr.operator == Token.EQUALS_EQUALS:
+		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value == rhs_expr.value)))
+	elif bin_expr.operator == Token.GREATER:
+		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value > rhs_expr.value)))
+	elif bin_expr.operator == Token.GREATER_EQUALS:
+		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value >= rhs_expr.value)))
+	elif bin_expr.operator == Token.PIPE:
+		return copy_span(
+				bin_expr, IntExprASTNode.new(int(lhs_expr.value != 0 or rhs_expr.value != 0)))
+	elif bin_expr.operator == Token.PIPE_PIPE:
+		return copy_span(bin_expr, lhs_expr if lhs_expr.value != 0 else rhs_expr)
+	
+	return copy_span(bin_expr, BinExprASTNode.new(lhs_expr, bin_expr.operator, rhs_expr))
 
 
 # Fold an identifier expression AST node.
