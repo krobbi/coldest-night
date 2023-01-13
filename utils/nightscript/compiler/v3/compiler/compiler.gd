@@ -555,9 +555,17 @@ func visit_format_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 		code.make_push_string("")
 		return
 	elif call_expr.argument_exprs.size() == 1:
-		code.make_push_string("{0}")
-		visit_node(call_expr.argument_exprs[0])
-		code.make_format_string_count(1)
+		var argument_expr: ExprASTNode = call_expr.argument_exprs[0]
+		
+		if argument_expr is IntExprASTNode:
+			code.make_push_string(String(argument_expr.value))
+		elif argument_expr is StrExprASTNode:
+			code.make_push_string(argument_expr.value)
+		else:
+			code.make_push_string("{0}")
+			visit_node(call_expr.argument_exprs[0])
+			code.make_format_string_count(1)
+		
 		return
 	
 	for argument_expr in call_expr.argument_exprs:
