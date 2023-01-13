@@ -14,6 +14,7 @@ const DeclStmtASTNode: GDScript = preload("../ast/decl_stmt_ast_node.gd")
 const DoStmtASTNode: GDScript = preload("../ast/do_stmt_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const ExprStmtASTNode: GDScript = preload("../ast/expr_stmt_ast_node.gd")
+const Folder: GDScript = preload("folder.gd")
 const IdentifierExprASTNode: GDScript = preload("../ast/identifier_expr_ast_node.gd")
 const IfStmtASTNode: GDScript = preload("../ast/if_stmt_ast_node.gd")
 const IfElseStmtASTNode: GDScript = preload("../ast/if_else_stmt_ast_node.gd")
@@ -34,12 +35,14 @@ const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 var code: IRCode
 var logger: Logger
 var scope_stack: ScopeStack
+var folder: Folder
 
-# Set the compiler's IR code, logger, and scope stack.
+# Set the compiler's IR code, logger, scope stack, and folder.
 func _init(code_ref: IRCode, logger_ref: Logger) -> void:
 	code = code_ref
 	logger = logger_ref
 	scope_stack = ScopeStack.new(code)
+	folder = Folder.new(scope_stack)
 
 
 # Compile an abstract synax tree to IR code.
@@ -183,7 +186,7 @@ func visit_block_stmt(block_stmt: BlockStmtASTNode) -> void:
 func visit_if_stmt(if_stmt: IfStmtASTNode) -> void:
 	var end_label: String = code.insert_unique_label("if_end")
 	
-	visit_node(if_stmt.expr)
+	visit_node(folder.fold_expr(if_stmt.expr))
 	code.make_jump_zero_label(end_label)
 	
 	scope_stack.push()
@@ -198,7 +201,7 @@ func visit_if_else_stmt(if_else_stmt: IfElseStmtASTNode) -> void:
 	var end_label: String = code.insert_unique_label("if_else_end")
 	var else_label: String = code.insert_unique_label("if_else_else")
 	
-	visit_node(if_else_stmt.expr)
+	visit_node(folder.fold_expr(if_else_stmt.expr))
 	code.make_jump_zero_label(else_label)
 	
 	scope_stack.push()
@@ -220,7 +223,7 @@ func visit_while_stmt(while_stmt: WhileStmtASTNode) -> void:
 	var condition_label: String = code.insert_unique_label("while_condition")
 	
 	code.set_label(condition_label)
-	visit_node(while_stmt.expr)
+	visit_node(folder.fold_expr(while_stmt.expr))
 	code.make_jump_zero_label(end_label)
 	
 	scope_stack.push()
@@ -247,7 +250,7 @@ func visit_do_stmt(do_stmt: DoStmtASTNode) -> void:
 	scope_stack.pop()
 	
 	code.set_label(condition_label)
-	visit_node(do_stmt.expr)
+	visit_node(folder.fold_expr(do_stmt.expr))
 	code.make_jump_not_zero_label(body_label)
 	
 	code.set_label(end_label)
@@ -281,7 +284,7 @@ func visit_option_stmt(option_stmt: OptionStmtASTNode) -> void:
 	var parent_label: String = code.get_label()
 	var option_label: String = code.append_unique_label("option")
 	
-	visit_node(option_stmt.expr)
+	visit_node(folder.fold_expr(option_stmt.expr))
 	code.make_store_dialog_menu_option_label(option_label)
 	
 	scope_stack.push() # Buffer scope to prevent dropping parent locals.
@@ -330,49 +333,40 @@ func visit_decl_stmt(decl_stmt: DeclStmtASTNode) -> void:
 		return
 	
 	var symbol: Symbol = scope_stack.get_symbol(decl_stmt.identifier_expr.name)
+	var value_expr: ExprASTNode = folder.fold_expr(decl_stmt.value_expr)
 	
 	if symbol.access != Symbol.UNDEFINED:
 		logger.log_error(
 				"`%s` is already defined in the current scope!" % symbol.identifier,
 				decl_stmt.identifier_expr.span)
-		visit_node(decl_stmt.value_expr)
+		visit_node(value_expr)
 		code.make_drop()
 		return
 	
 	if decl_stmt.operator == Token.KEYWORD_CONST:
-		if decl_stmt.value_expr is IntExprASTNode:
-			scope_stack.define_literal_int(symbol.identifier, decl_stmt.value_expr.value)
+		if value_expr is IntExprASTNode:
+			scope_stack.define_literal_int(symbol.identifier, value_expr.value)
 			return
-		elif decl_stmt.value_expr is StrExprASTNode:
-			scope_stack.define_literal_str(symbol.identifier, decl_stmt.value_expr.value)
+		elif value_expr is StrExprASTNode:
+			scope_stack.define_literal_str(symbol.identifier, value_expr.value)
 			return
 		
-		if decl_stmt.value_expr is IdentifierExprASTNode:
-			var value_symbol: Symbol = scope_stack.get_symbol(decl_stmt.value_expr.name)
-			
-			if value_symbol.access == Symbol.LITERAL_INT:
-				scope_stack.define_literal_int(symbol.identifier, value_symbol.int_value)
-				return
-			elif value_symbol.access == Symbol.LITERAL_STR:
-				scope_stack.define_literal_str(symbol.identifier, value_symbol.str_value)
-				return
-		
-		visit_node(decl_stmt.value_expr)
+		visit_node(value_expr)
 		scope_stack.define_local(symbol.identifier, false)
 	elif decl_stmt.operator == Token.KEYWORD_VAR:
-		visit_node(decl_stmt.value_expr)
+		visit_node(value_expr)
 		scope_stack.define_local(symbol.identifier, true)
 	else:
 		logger.log_error(
 				"Bug: No declaration for operator %s!" % Token.get_name(decl_stmt.operator),
 				decl_stmt.span)
-		visit_node(decl_stmt.value_expr)
+		visit_node(value_expr)
 		code.make_drop()
 
 
 # Visit an expression statement AST node.
 func visit_expr_stmt(expr_stmt: ExprStmtASTNode) -> void:
-	visit_node(expr_stmt.expr)
+	visit_node(folder.fold_expr(expr_stmt.expr))
 	code.make_drop()
 
 
