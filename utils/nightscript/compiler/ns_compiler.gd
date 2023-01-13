@@ -8,6 +8,7 @@ extends Reference
 const Assembler: GDScript = preload("backend/assembler.gd")
 const Frontend: GDScript = preload("frontend.gd")
 const IRCode: GDScript = preload("backend/ir_code.gd")
+const Optimizer: GDScript = preload("backend/optimizer.gd")
 
 # Create a new NightScript compiler frontend from NightScript source code.
 func create_frontend(source: String) -> Frontend:
@@ -20,7 +21,11 @@ func create_frontend(source: String) -> Frontend:
 
 
 # Assemble IR code to NightScript bytecode.
-func assemble_code(code: IRCode, _optimize: bool) -> PoolByteArray:
+func assemble_code(code: IRCode, optimize: bool) -> PoolByteArray:
+	if optimize:
+		var optimizer: Optimizer = Optimizer.new()
+		optimizer.optimize_code(code)
+	
 	var assembler: Assembler = Assembler.new()
 	return assembler.assemble_code(code)
 

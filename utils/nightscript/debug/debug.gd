@@ -8,12 +8,14 @@ const ASTNode: GDScript = preload("../compiler/v3/ast/ast_node.gd")
 const Compiler: GDScript = preload("../compiler/v3/compiler/compiler.gd")
 const IRCode: GDScript = preload("../compiler/backend/ir_code.gd")
 const Logger: GDScript = preload("../compiler/v3/logger/logger.gd")
+const Optimizer: GDScript = preload("../compiler/backend/optimizer.gd")
 const Resolver: GDScript = preload("../compiler/v3/parser/resolver.gd")
 
 var _code: IRCode = IRCode.new()
 var _logger: Logger = Logger.new()
 var _resolver: Resolver = Resolver.new(_logger)
 var _compiler: Compiler = Compiler.new(_code, _logger)
+var _optimizer: Optimizer = Optimizer.new()
 
 onready var _parse_timer: Timer = $ParseTimer
 onready var _input_edit: TextEdit = $InputEdit
@@ -46,25 +48,29 @@ func _get_ast_string(node: ASTNode, flags: Array) -> String:
 	return result
 
 
-# Get output text from input text.
-func _get_output_text(input: String) -> String:
-	var ast: ASTNode = _resolver.resolve_source(Global.lang.get_locale(), input)
-	var result: String = "# Abstract Syntax Tree\n%s" % _get_ast_string(ast, [])
+# Get IR code's string representation.
+func _get_code_string(code: IRCode) -> String:
+	var result: String = ""
 	
-	_compiler.compile_ast(ast)
-	result = "%s\n# Intermediate Representation Code\n" % result
-	
-	for block in _code.blocks:
+	for block in code.blocks:
 		result = "%s%s:\n" % [result, block.label]
 		
 		for op in block.ops:
 			result = "%s  %s\n" % [result, op]
 	
-	if _logger.has_records():
-		result = "%s\n# Error Log\n" % result
-		
-		for record in _logger.get_records():
-			result = "%s%s\n" % [result, record]
+	return result
+
+
+# Get output text from input text.
+func _get_output_text(input: String) -> String:
+	var ast: ASTNode = _resolver.resolve_source(Global.lang.get_locale(), input)
+	var result: String = "# AST\n%s" % _get_ast_string(ast, [])
+	
+	_compiler.compile_ast(ast)
+	result = "%s\n# IR Code\n%s" % [result, _get_code_string(_code)]
+	
+	_optimizer.optimize_code(_code)
+	result = "%s\n# Optimized IR Code\n%s" % [result, _get_code_string(_code)]
 	
 	return result
 
