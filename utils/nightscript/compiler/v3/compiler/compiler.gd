@@ -24,142 +24,22 @@ const MenuStmtASTNode: GDScript = preload("../ast/menu_stmt_ast_node.gd")
 const ModuleASTNode: GDScript = preload("../ast/module_ast_node.gd")
 const OptionStmtASTNode: GDScript = preload("../ast/option_stmt_ast_node.gd")
 const RootASTNode: GDScript = preload("../ast/root_ast_node.gd")
-const Scope: GDScript = preload("scope.gd")
+const ScopeStack: GDScript = preload("scope_stack.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
 const Symbol: GDScript = preload("symbol.gd")
 const Token: GDScript = preload("../lexer/token.gd")
 const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
-const INFO_BREAK_LABEL: String = "break_label"
-const INFO_CONTINUE_LABEL: String = "continue_label"
-const INFO_MENU_END_LABEL: String = "menu_end_label"
-
 var code: IRCode
 var logger: Logger
-var scopes: Array = [Scope.new()]
+var scope_stack: ScopeStack
 
-# Set the compiler's IR code and logger.
+# Set the compiler's IR code, logger, and scope stack.
 func _init(code_ref: IRCode, logger_ref: Logger) -> void:
 	code = code_ref
 	logger = logger_ref
-
-
-# Get a symbol from its identifier.
-func get_symbol(identifier: String) -> Symbol:
-	for i in range(scopes.size() - 1, -1, -1):
-		var scope: Scope = scopes[i]
-		
-		if scope.symbols.has(identifier):
-			return scope.symbols[identifier]
-	
-	return Symbol.new(identifier, Symbol.UNDEFINED)
-
-
-# Get scoped info from its key.
-func get_info(key: String) -> String:
-	for i in range(scopes.size() - 1, -1, -1):
-		var scope: Scope = scopes[i]
-		
-		if scope.info.has(key):
-			return scope.info[key]
-	
-	return ""
-
-
-# Get the number of locals that have been defined since a piece of scoped info
-# was defined from its key.
-func get_locals_since_info(key: String) -> int:
-	var local_count: int = 0
-	
-	for i in range(scopes.size() -1, -1, -1):
-		var scope: Scope = scopes[i]
-		local_count += scope.scope_local_count
-		
-		if scope.info.has(key):
-			return local_count
-	
-	return 0
-
-
-# Return whether scoped info is defined from its key.
-func has_info(key: String) -> bool:
-	for i in range(scopes.size() - 1, -1, -1):
-		var scope: Scope = scopes[i]
-		
-		if scope.info.has(key):
-			return not scope.info[key].empty()
-	
-	return false
-
-
-# Push a new scope to the top of the scope stack.
-func push_scope() -> void:
-	var parent_local_count: int = 0
-	
-	if not scopes.empty():
-		parent_local_count = scopes[-1].local_count
-	
-	var scope: Scope = Scope.new()
-	scope.local_count = parent_local_count
-	scopes.push_back(scope)
-
-
-# Pop a scope from the top of the scope stack if it is not the global scope.
-func pop_scope() -> void:
-	if scopes.empty():
-		return
-	
-	var scope: Scope = scopes.pop_back()
-	
-	for _i in range(scope.scope_local_count):
-		code.make_drop()
-
-
-# Define an intrinsic from its identifier, method, and argument count.
-func define_intrinsic(identifier: String, method: String, argument_count: int) -> void:
-	var symbol: Symbol = Symbol.new(identifier, Symbol.INTRINSIC)
-	symbol.is_callable = true
-	symbol.str_value = method
-	symbol.int_value = argument_count
-	scopes[-1].symbols[identifier] = symbol
-
-
-# Define a literal integer from its identifier and value.
-func define_literal_int(identifier: String, value: int) -> void:
-	var symbol: Symbol = Symbol.new(identifier, Symbol.LITERAL_INT)
-	symbol.is_evaluable = true
-	symbol.int_value = value
-	scopes[-1].symbols[identifier] = symbol
-
-
-# Define a literal string from its identifier and value.
-func define_literal_str(identifier: String, value: String) -> void:
-	var symbol: Symbol = Symbol.new(identifier, Symbol.LITERAL_STR)
-	symbol.is_evaluable = true
-	symbol.str_value = value
-	scopes[-1].symbols[identifier] = symbol
-
-
-# Define a local from its identifier and mutability.
-func define_local(identifier: String, is_mutable: bool) -> void:
-	var symbol: Symbol = Symbol.new(identifier, Symbol.LOCAL)
-	symbol.is_evaluable = true
-	symbol.is_mutable = is_mutable
-	symbol.int_value = scopes[-1].local_count
-	scopes[-1].symbols[identifier] = symbol
-	scopes[-1].local_count += 1
-	scopes[-1].scope_local_count += 1
-
-
-# Define scoped info from its key and value.
-func define_info(key: String, value: String) -> void:
-	scopes[-1].info[key] = value
-
-
-# Undefine scoped info from its key.
-func undefine_info(key: String) -> void:
-	scopes[-1].info[key] = ""
+	scope_stack = ScopeStack.new(code)
 
 
 # Compile an abstract synax tree to IR code.
@@ -170,7 +50,7 @@ func compile_ast(root: RootASTNode) -> void:
 	var entry_label: String = code.append_unique_label("entry")
 	
 	code.set_label(entry_label)
-	scopes = [Scope.new()]
+	scope_stack.reset()
 	visit_node(root)
 	
 	if not logger.has_records():
@@ -249,37 +129,37 @@ func visit_node(node: ASTNode) -> void:
 
 # Visit a root AST node.
 func visit_root(root: RootASTNode) -> void:
-	push_scope()
-	define_intrinsic("awaitPaths", "make_await_actor_paths", 0)
-	define_intrinsic("call", "make_call_program", 1)
-	define_intrinsic("checkpoint", "make_save_checkpoint", 0)
-	define_intrinsic("clearName", "make_clear_dialog_name", 0)
-	define_intrinsic("doNotPause", "define_not_pausable", 0)
-	define_intrinsic("exit", "make_halt", 0)
-	define_intrinsic("face", "make_actor_face_direction", 2)
-	define_intrinsic("format", "*visit_format_intrinsic_call_expr", -1)
-	define_intrinsic("freeze", "make_freeze_player", 0)
-	define_intrinsic("getFlag", "=make_load_flag", 2)
-	define_intrinsic("hide", "make_hide_dialog", 0)
-	define_intrinsic("isRepeat", "=make_push_is_repeat", 0)
-	define_intrinsic("name", "make_display_dialog_name", 1)
-	define_intrinsic("path", "make_actor_find_path", 2)
-	define_intrinsic("pause", "make_pause_game", 0)
-	define_intrinsic("quit", "make_quit_to_title", 0)
-	define_intrinsic("run", "make_run_program", 1)
-	define_intrinsic("runPaths", "make_run_actor_paths", 0)
-	define_intrinsic("save", "make_save_game", 0)
-	define_intrinsic("say", "make_display_dialog_message", 1)
-	define_intrinsic("setFlag", "*visit_set_flag_intrinsic_call_expr", 3)
-	define_intrinsic("show", "make_show_dialog", 0)
-	define_intrinsic("sleep", "make_sleep", 1)
-	define_intrinsic("thaw", "make_thaw_player", 0)
-	define_intrinsic("unpause", "make_unpause_game", 0)
+	scope_stack.push()
+	scope_stack.define_intrinsic("awaitPaths", "make_await_actor_paths", 0)
+	scope_stack.define_intrinsic("call", "make_call_program", 1)
+	scope_stack.define_intrinsic("checkpoint", "make_save_checkpoint", 0)
+	scope_stack.define_intrinsic("clearName", "make_clear_dialog_name", 0)
+	scope_stack.define_intrinsic("doNotPause", "define_not_pausable", 0)
+	scope_stack.define_intrinsic("exit", "make_halt", 0)
+	scope_stack.define_intrinsic("face", "make_actor_face_direction", 2)
+	scope_stack.define_intrinsic("format", "*visit_format_intrinsic_call_expr", -1)
+	scope_stack.define_intrinsic("freeze", "make_freeze_player", 0)
+	scope_stack.define_intrinsic("getFlag", "=make_load_flag", 2)
+	scope_stack.define_intrinsic("hide", "make_hide_dialog", 0)
+	scope_stack.define_intrinsic("isRepeat", "=make_push_is_repeat", 0)
+	scope_stack.define_intrinsic("name", "make_display_dialog_name", 1)
+	scope_stack.define_intrinsic("path", "make_actor_find_path", 2)
+	scope_stack.define_intrinsic("pause", "make_pause_game", 0)
+	scope_stack.define_intrinsic("quit", "make_quit_to_title", 0)
+	scope_stack.define_intrinsic("run", "make_run_program", 1)
+	scope_stack.define_intrinsic("runPaths", "make_run_actor_paths", 0)
+	scope_stack.define_intrinsic("save", "make_save_game", 0)
+	scope_stack.define_intrinsic("say", "make_display_dialog_message", 1)
+	scope_stack.define_intrinsic("setFlag", "*visit_set_flag_intrinsic_call_expr", 3)
+	scope_stack.define_intrinsic("show", "make_show_dialog", 0)
+	scope_stack.define_intrinsic("sleep", "make_sleep", 1)
+	scope_stack.define_intrinsic("thaw", "make_thaw_player", 0)
+	scope_stack.define_intrinsic("unpause", "make_unpause_game", 0)
 	
 	for module in root.modules:
 		visit_node(module)
 	
-	pop_scope()
+	scope_stack.pop()
 	code.make_halt()
 
 
@@ -291,12 +171,12 @@ func visit_module(module: ModuleASTNode) -> void:
 
 # Visit a block statement AST node.
 func visit_block_stmt(block_stmt: BlockStmtASTNode) -> void:
-	push_scope()
+	scope_stack.push()
 	
 	for stmt in block_stmt.stmts:
 		visit_node(stmt)
 	
-	pop_scope()
+	scope_stack.pop()
 
 
 # Visit an if statement AST node.
@@ -306,9 +186,9 @@ func visit_if_stmt(if_stmt: IfStmtASTNode) -> void:
 	visit_node(if_stmt.expr)
 	code.make_jump_zero_label(end_label)
 	
-	push_scope()
+	scope_stack.push()
 	visit_node(if_stmt.stmt)
-	pop_scope()
+	scope_stack.pop()
 	
 	code.set_label(end_label)
 
@@ -321,15 +201,15 @@ func visit_if_else_stmt(if_else_stmt: IfElseStmtASTNode) -> void:
 	visit_node(if_else_stmt.expr)
 	code.make_jump_zero_label(else_label)
 	
-	push_scope()
+	scope_stack.push()
 	visit_node(if_else_stmt.then_stmt)
-	pop_scope()
+	scope_stack.pop()
 	code.make_jump_label(end_label)
 	
-	push_scope()
+	scope_stack.push()
 	code.set_label(else_label)
 	visit_node(if_else_stmt.else_stmt)
-	pop_scope()
+	scope_stack.pop()
 	
 	code.set_label(end_label)
 
@@ -343,11 +223,11 @@ func visit_while_stmt(while_stmt: WhileStmtASTNode) -> void:
 	visit_node(while_stmt.expr)
 	code.make_jump_zero_label(end_label)
 	
-	push_scope()
-	define_info(INFO_BREAK_LABEL, end_label)
-	define_info(INFO_CONTINUE_LABEL, condition_label)
+	scope_stack.push()
+	scope_stack.define_label("break", end_label)
+	scope_stack.define_label("continue", condition_label)
 	visit_node(while_stmt.stmt)
-	pop_scope()
+	scope_stack.pop()
 	code.make_jump_label(condition_label)
 	
 	code.set_label(end_label)
@@ -359,12 +239,12 @@ func visit_do_stmt(do_stmt: DoStmtASTNode) -> void:
 	var condition_label: String = code.insert_unique_label("do_condition")
 	var body_label: String = code.insert_unique_label("do_body")
 	
-	push_scope()
-	define_info(INFO_BREAK_LABEL, end_label)
-	define_info(INFO_CONTINUE_LABEL, condition_label)
+	scope_stack.push()
+	scope_stack.define_label("break", end_label)
+	scope_stack.define_label("continue", condition_label)
 	code.set_label(body_label)
 	visit_node(do_stmt.stmt)
-	pop_scope()
+	scope_stack.pop()
 	
 	code.set_label(condition_label)
 	visit_node(do_stmt.expr)
@@ -375,18 +255,18 @@ func visit_do_stmt(do_stmt: DoStmtASTNode) -> void:
 
 # Visit a menu statement AST node.
 func visit_menu_stmt(menu_stmt: MenuStmtASTNode) -> void:
-	if has_info(INFO_MENU_END_LABEL):
-		logger.log_error("Used `menu` directly inside of a menu statement!", menu_stmt.span)
+	if scope_stack.has_label("menu"):
+		logger.log_error("Cannot use `menu` directly inside of a menu!", menu_stmt.span)
 		return
 	
 	var end_label: String = code.insert_unique_label("menu_end")
 	
-	push_scope()
-	define_info(INFO_MENU_END_LABEL, end_label)
-	undefine_info(INFO_BREAK_LABEL)
-	undefine_info(INFO_CONTINUE_LABEL)
+	scope_stack.push()
+	scope_stack.define_label("menu", end_label)
+	scope_stack.undefine_label("break")
+	scope_stack.undefine_label("continue")
 	visit_node(menu_stmt.stmt)
-	pop_scope()
+	scope_stack.pop()
 	code.make_show_dialog_menu()
 	
 	code.set_label(end_label)
@@ -394,8 +274,8 @@ func visit_menu_stmt(menu_stmt: MenuStmtASTNode) -> void:
 
 # Visit an option statement AST node.
 func visit_option_stmt(option_stmt: OptionStmtASTNode) -> void:
-	if not has_info(INFO_MENU_END_LABEL):
-		logger.log_error("Used `option` outside of a menu statement!", option_stmt.span)
+	if not scope_stack.has_label("menu"):
+		logger.log_error("Cannot use `option` outside of a menu!", option_stmt.span)
 		return
 	
 	var parent_label: String = code.get_label()
@@ -404,45 +284,52 @@ func visit_option_stmt(option_stmt: OptionStmtASTNode) -> void:
 	visit_node(option_stmt.expr)
 	code.make_store_dialog_menu_option_label(option_label)
 	
-	push_scope()
-	undefine_info(INFO_BREAK_LABEL)
-	undefine_info(INFO_CONTINUE_LABEL)
-	undefine_info(INFO_MENU_END_LABEL)
+	scope_stack.push() # Buffer scope to prevent dropping parent locals.
+	scope_stack.define_label("menu", scope_stack.get_label("menu"))
+	
+	scope_stack.push() # Option body scope.
+	scope_stack.undefine_label("break")
+	scope_stack.undefine_label("continue")
+	scope_stack.undefine_label("menu")
 	code.set_label(option_label)
 	visit_node(option_stmt.stmt)
-	pop_scope()
-	code.make_jump_label(get_info(INFO_MENU_END_LABEL))
+	scope_stack.pop() # End option body scope.
+	
+	scope_stack.jump_to_label("menu")
+	scope_stack.pop() # End buffer scope.
 	
 	code.set_label(parent_label)
 
 
 # Visit a break statement AST node.
 func visit_break_stmt(break_stmt: BreakStmtASTNode) -> void:
-	if not has_info(INFO_BREAK_LABEL):
+	if scope_stack.has_label("break"):
+		scope_stack.jump_to_label("break")
+	else:
 		logger.log_error("Used `break` outside of a breakable statement!", break_stmt.span)
-		return
-	
-	for _i in range(get_locals_since_info(INFO_BREAK_LABEL)):
-		code.make_drop()
-	
-	code.make_jump_label(get_info(INFO_BREAK_LABEL))
 
 
 # Visit a continue statement AST node.
 func visit_continue_stmt(continue_stmt: ContinueStmtASTNode) -> void:
-	if not has_info(INFO_CONTINUE_LABEL):
+	if scope_stack.has_label("continue"):
+		scope_stack.jump_to_label("continue")
+	else:
 		logger.log_error("Used `continue` outside of a continuable statement!", continue_stmt.span)
-		return
-	
-	for _i in range(get_locals_since_info(INFO_CONTINUE_LABEL)):
-		code.make_drop()
-	
-	code.make_jump_label(get_info(INFO_CONTINUE_LABEL))
 
 
 # Visit a declaration statement AST node.
 func visit_decl_stmt(decl_stmt: DeclStmtASTNode) -> void:
-	var symbol: Symbol = get_symbol(decl_stmt.identifier_expr.name)
+	if scope_stack.has_label("menu"):
+		# A local declared between a menu statement and its option statements
+		# would be freed before an option is called, causing wildly buggy
+		# behavior, at least with this stack-based single-pass compiler. In some
+		# cases it may be possible to make some adjustments to allow this, but
+		# the most robust and consistent option is to just disable all
+		# declarations within this scope.
+		logger.log_error("Cannot declare a value directly inside of a menu!", decl_stmt.span)
+		return
+	
+	var symbol: Symbol = scope_stack.get_symbol(decl_stmt.identifier_expr.name)
 	
 	if symbol.access != Symbol.UNDEFINED:
 		logger.log_error(
@@ -454,27 +341,27 @@ func visit_decl_stmt(decl_stmt: DeclStmtASTNode) -> void:
 	
 	if decl_stmt.operator == Token.KEYWORD_CONST:
 		if decl_stmt.value_expr is IntExprASTNode:
-			define_literal_int(symbol.identifier, decl_stmt.value_expr.value)
+			scope_stack.define_literal_int(symbol.identifier, decl_stmt.value_expr.value)
 			return
 		elif decl_stmt.value_expr is StrExprASTNode:
-			define_literal_str(symbol.identifier, decl_stmt.value_expr.value)
+			scope_stack.define_literal_str(symbol.identifier, decl_stmt.value_expr.value)
 			return
 		
 		if decl_stmt.value_expr is IdentifierExprASTNode:
-			var value_symbol: Symbol = get_symbol(decl_stmt.value_expr.name)
+			var value_symbol: Symbol = scope_stack.get_symbol(decl_stmt.value_expr.name)
 			
 			if value_symbol.access == Symbol.LITERAL_INT:
-				define_literal_int(symbol.identifier, value_symbol.int_value)
+				scope_stack.define_literal_int(symbol.identifier, value_symbol.int_value)
 				return
 			elif value_symbol.access == Symbol.LITERAL_STR:
-				define_literal_str(symbol.identifier, value_symbol.str_value)
+				scope_stack.define_literal_str(symbol.identifier, value_symbol.str_value)
 				return
 		
 		visit_node(decl_stmt.value_expr)
-		define_local(symbol.identifier, false)
+		scope_stack.define_local(symbol.identifier, false)
 	elif decl_stmt.operator == Token.KEYWORD_VAR:
 		visit_node(decl_stmt.value_expr)
-		define_local(symbol.identifier, true)
+		scope_stack.define_local(symbol.identifier, true)
 	else:
 		logger.log_error(
 				"Bug: No declaration for operator %s!" % Token.get_name(decl_stmt.operator),
@@ -526,7 +413,7 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 			code.make_drop()
 			return
 		
-		var symbol: Symbol = get_symbol(bin_expr.lhs_expr.name)
+		var symbol: Symbol = scope_stack.get_symbol(bin_expr.lhs_expr.name)
 		
 		if symbol.access == Symbol.UNDEFINED:
 			visit_node(bin_expr.lhs_expr)
@@ -595,7 +482,7 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 		visit_invalid_call_expr(call_expr)
 		return
 	
-	var symbol: Symbol = get_symbol(call_expr.expr.name)
+	var symbol: Symbol = scope_stack.get_symbol(call_expr.expr.name)
 	
 	if symbol.access == Symbol.UNDEFINED:
 		visit_invalid_call_expr(call_expr)
@@ -623,7 +510,7 @@ func visit_invalid_call_expr(call_expr: CallExprASTNode) -> void:
 
 # Visit an intrinsic call expression AST node.
 func visit_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
-	var symbol: Symbol = get_symbol(call_expr.expr.name)
+	var symbol: Symbol = scope_stack.get_symbol(call_expr.expr.name)
 	var intrinsic_func_name: String = symbol.str_value
 	
 	# Handle special case intrinsics.
@@ -714,7 +601,7 @@ func visit_str_expr(str_expr: StrExprASTNode) -> void:
 
 # Visit an identifier expression AST node.
 func visit_identifier_expr(identifier_expr: IdentifierExprASTNode) -> void:
-	var symbol: Symbol = get_symbol(identifier_expr.name)
+	var symbol: Symbol = scope_stack.get_symbol(identifier_expr.name)
 	
 	if symbol.access == Symbol.UNDEFINED:
 		logger.log_error(
