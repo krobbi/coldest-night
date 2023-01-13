@@ -136,7 +136,6 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("awaitPaths", "make_await_actor_paths", 0)
 	scope_stack.define_intrinsic("call", "make_call_program", 1)
 	scope_stack.define_intrinsic("checkpoint", "make_save_checkpoint", 0)
-	scope_stack.define_intrinsic("clearName", "make_clear_dialog_name", 0)
 	scope_stack.define_intrinsic("doNotPause", "define_not_pausable", 0)
 	scope_stack.define_intrinsic("exit", "make_halt", 0)
 	scope_stack.define_intrinsic("face", "make_actor_face_direction", 2)
@@ -145,7 +144,7 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("getFlag", "=make_load_flag", 2)
 	scope_stack.define_intrinsic("hide", "make_hide_dialog", 0)
 	scope_stack.define_intrinsic("isRepeat", "=make_push_is_repeat", 0)
-	scope_stack.define_intrinsic("name", "make_display_dialog_name", 1)
+	scope_stack.define_intrinsic("name", "*visit_name_intrinsic_call_expr", -1)
 	scope_stack.define_intrinsic("path", "make_actor_find_path", 2)
 	scope_stack.define_intrinsic("pause", "make_pause_game", 0)
 	scope_stack.define_intrinsic("quit", "make_quit_to_title", 0)
@@ -563,7 +562,7 @@ func visit_format_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 			code.make_push_string(argument_expr.value)
 		else:
 			code.make_push_string("{0}")
-			visit_node(call_expr.argument_exprs[0])
+			visit_node(argument_expr)
 			code.make_format_string_count(1)
 		
 		return
@@ -572,6 +571,25 @@ func visit_format_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 		visit_node(argument_expr)
 	
 	code.make_format_string_count(call_expr.argument_exprs.size() - 1)
+
+
+# Visit a call expression AST node with the name intrinsic.
+func visit_name_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
+	if call_expr.argument_exprs.empty():
+		code.make_clear_dialog_name()
+	elif call_expr.argument_exprs.size() == 1:
+		visit_node(call_expr.argument_exprs[0])
+		code.make_display_dialog_name()
+	else:
+		logger.log_error(
+				"`%s` expects 0 or 1 arguments, got %d!"
+				% [call_expr.callee_expr.name, call_expr.argument_exprs.size()], call_expr.span)
+		
+		for argument_expr in call_expr.argument_exprs:
+			visit_node(argument_expr)
+			code.make_drop()
+	
+	code.make_push_int(0)
 
 
 # Visit a call expression AST node with the set flag intrinsic.

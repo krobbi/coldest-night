@@ -17,14 +17,14 @@ call("v3_test/callee");
 
 name("When using call...");
 say("Control flow stops until the called program finishes.");
-clearName();
+name();
 
 say("Running a program...");
 run("v3_test/callee");
 
 name("When using run...");
 say("The called program runs in parallel and control flow continues.");
-clearName();
+name();
 
 pause();
 say("We can even pause the game while this happens.");

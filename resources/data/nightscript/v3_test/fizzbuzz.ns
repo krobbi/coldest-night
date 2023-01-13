@@ -56,7 +56,7 @@ while(value < max){
 	}
 }
 
-clearName();
+name();
 say("Done!");
 
 hide();
