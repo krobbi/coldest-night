@@ -183,9 +183,30 @@ func visit_block_stmt(block_stmt: BlockStmtASTNode) -> void:
 
 # Visit an if statement AST node.
 func visit_if_stmt(if_stmt: IfStmtASTNode) -> void:
+	var expr: ExprASTNode = folder.fold_expr(if_stmt.expr)
+	
+	if expr is IntExprASTNode:
+		if expr.value != 0:
+			scope_stack.push()
+			visit_node(if_stmt.stmt)
+			scope_stack.pop()
+		else:
+			var parent_label: String = code.get_label()
+			var body_label: String = code.append_unique_label("if_unreachable")
+			
+			scope_stack.push()
+			code.set_label(body_label)
+			visit_node(if_stmt.stmt)
+			scope_stack.pop()
+			code.make_halt()
+			
+			code.set_label(parent_label)
+		
+		return
+	
 	var end_label: String = code.insert_unique_label("if_end")
 	
-	visit_node(folder.fold_expr(if_stmt.expr))
+	visit_node(expr)
 	code.make_jump_zero_label(end_label)
 	
 	scope_stack.push()
@@ -197,10 +218,46 @@ func visit_if_stmt(if_stmt: IfStmtASTNode) -> void:
 
 # Visit an if-else statement AST node.
 func visit_if_else_stmt(if_else_stmt: IfElseStmtASTNode) -> void:
+	var expr: ExprASTNode = folder.fold_expr(if_else_stmt.expr)
+	
+	if expr is IntExprASTNode:
+		if expr.value != 0:
+			scope_stack.push()
+			visit_node(if_else_stmt.then_stmt)
+			scope_stack.pop()
+			
+			var parent_label: String = code.get_label()
+			var body_label: String = code.append_unique_label("if_else_unreachable_else")
+			
+			scope_stack.push()
+			code.set_label(body_label)
+			visit_node(if_else_stmt.else_stmt)
+			scope_stack.pop()
+			code.make_halt()
+			
+			code.set_label(parent_label)
+		else:
+			var parent_label: String = code.get_label()
+			var body_label: String = code.append_unique_label("if_else_unreachable_then")
+			
+			scope_stack.push()
+			code.set_label(body_label)
+			visit_node(if_else_stmt.then_stmt)
+			scope_stack.pop()
+			code.make_halt()
+			
+			code.set_label(parent_label)
+			
+			scope_stack.push()
+			visit_node(if_else_stmt.else_stmt)
+			scope_stack.pop()
+		
+		return
+	
 	var end_label: String = code.insert_unique_label("if_else_end")
 	var else_label: String = code.insert_unique_label("if_else_else")
 	
-	visit_node(folder.fold_expr(if_else_stmt.expr))
+	visit_node(expr)
 	code.make_jump_zero_label(else_label)
 	
 	scope_stack.push()
@@ -218,11 +275,46 @@ func visit_if_else_stmt(if_else_stmt: IfElseStmtASTNode) -> void:
 
 # Visit a while statement AST node.
 func visit_while_stmt(while_stmt: WhileStmtASTNode) -> void:
+	var expr: ExprASTNode = folder.fold_expr(while_stmt.expr)
+	
+	if expr is IntExprASTNode:
+		if expr.value != 0:
+			var end_label: String = code.insert_unique_label("while_forever_end")
+			var body_label: String = code.insert_unique_label("while_forever")
+			
+			scope_stack.push()
+			code.set_label(body_label)
+			scope_stack.define_label("break", end_label)
+			scope_stack.define_label("continue", body_label)
+			visit_node(while_stmt.stmt)
+			scope_stack.pop()
+			code.make_jump_label(body_label)
+			
+			code.set_label(end_label)
+		else:
+			var parent_label: String = code.get_label()
+			var body_label: String = code.append_unique_label("while_unreachable")
+			
+			scope_stack.push()
+			code.set_label(body_label)
+			var end_label: String = code.insert_unique_label("while_unreachable_end")
+			scope_stack.define_label("break", end_label)
+			scope_stack.define_label("continue", end_label)
+			visit_node(while_stmt.stmt)
+			scope_stack.pop()
+			code.make_jump_label(end_label)
+			code.set_label(end_label)
+			code.make_halt()
+			
+			code.set_label(parent_label)
+		
+		return
+	
 	var end_label: String = code.insert_unique_label("while_end")
 	var condition_label: String = code.insert_unique_label("while_condition")
 	
 	code.set_label(condition_label)
-	visit_node(folder.fold_expr(while_stmt.expr))
+	visit_node(expr)
 	code.make_jump_zero_label(end_label)
 	
 	scope_stack.push()
@@ -237,6 +329,35 @@ func visit_while_stmt(while_stmt: WhileStmtASTNode) -> void:
 
 # Visit a do statement AST node.
 func visit_do_stmt(do_stmt: DoStmtASTNode) -> void:
+	var expr: ExprASTNode = folder.fold_expr(do_stmt.expr)
+	
+	if expr is IntExprASTNode:
+		if expr.value != 0:
+			var end_label: String = code.insert_unique_label("do_forever_end")
+			var body_label: String = code.insert_unique_label("do_forever")
+			
+			scope_stack.push()
+			code.set_label(body_label)
+			scope_stack.define_label("break", end_label)
+			scope_stack.define_label("continue", body_label)
+			visit_node(do_stmt.stmt)
+			scope_stack.pop()
+			code.make_jump_label(body_label)
+			
+			code.set_label(end_label)
+		else:
+			var end_label: String = code.insert_unique_label("do_once_end")
+			
+			scope_stack.push()
+			scope_stack.define_label("break", end_label)
+			scope_stack.define_label("continue", end_label)
+			visit_node(do_stmt.stmt)
+			scope_stack.pop()
+			
+			code.set_label(end_label)
+		
+		return
+	
 	var end_label: String = code.insert_unique_label("do_end")
 	var condition_label: String = code.insert_unique_label("do_condition")
 	var body_label: String = code.insert_unique_label("do_body")
@@ -249,7 +370,7 @@ func visit_do_stmt(do_stmt: DoStmtASTNode) -> void:
 	scope_stack.pop()
 	
 	code.set_label(condition_label)
-	visit_node(folder.fold_expr(do_stmt.expr))
+	visit_node(expr)
 	code.make_jump_not_zero_label(body_label)
 	
 	code.set_label(end_label)
