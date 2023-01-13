@@ -471,18 +471,19 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 
 # Visit a call expression AST node.
 func visit_call_expr(call_expr: CallExprASTNode) -> void:
-	if not call_expr.expr is IdentifierExprASTNode:
-		logger.log_error("Can only call a function!", call_expr.expr.span)
+	if not call_expr.callee_expr is IdentifierExprASTNode:
+		logger.log_error("Can only call a function!", call_expr.callee_expr.span)
 		visit_invalid_call_expr(call_expr)
 		return
 	
-	var symbol: Symbol = scope_stack.get_symbol(call_expr.expr.name)
+	var symbol: Symbol = scope_stack.get_symbol(call_expr.callee_expr.name)
 	
 	if symbol.access == Symbol.UNDEFINED:
 		visit_invalid_call_expr(call_expr)
 		return
 	elif not symbol.is_callable:
-		logger.log_error("Cannot call non-function `%s`!" % symbol.identifier, call_expr.expr.span)
+		logger.log_error(
+				"Cannot call non-function `%s`!" % symbol.identifier, call_expr.callee_expr.span)
 		visit_invalid_call_expr(call_expr)
 		return
 	
@@ -495,16 +496,16 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 
 # Visit a call expression AST node that has been invalidated.
 func visit_invalid_call_expr(call_expr: CallExprASTNode) -> void:
-	visit_node(call_expr.expr)
+	visit_node(call_expr.callee_expr)
 	
-	for expr in call_expr.exprs:
-		visit_node(expr)
+	for argument_expr in call_expr.argument_exprs:
+		visit_node(argument_expr)
 		code.make_drop()
 
 
 # Visit an intrinsic call expression AST node.
 func visit_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
-	var symbol: Symbol = scope_stack.get_symbol(call_expr.expr.name)
+	var symbol: Symbol = scope_stack.get_symbol(call_expr.callee_expr.name)
 	var intrinsic_func_name: String = symbol.str_value
 	
 	# Handle special case intrinsics.
@@ -519,20 +520,21 @@ func visit_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 		is_intrinsic_void = false
 		intrinsic_func_name = intrinsic_func_name.substr(1)
 	
-	for expr in call_expr.exprs:
-		visit_node(expr)
+	for argument_expr in call_expr.argument_exprs:
+		visit_node(argument_expr)
 	
-	if call_expr.exprs.size() != symbol.int_value:
+	if call_expr.argument_exprs.size() != symbol.int_value:
 		if symbol.int_value == 1:
 			logger.log_error(
 					"`%s` expects 1 argument, got %d!"
-					% [symbol.identifier, call_expr.exprs.size()], call_expr.span)
+					% [symbol.identifier, call_expr.argument_exprs.size()], call_expr.span)
 		else:
 			logger.log_error(
 					"`%s` expects %d arguments, got %d!"
-					% [symbol.identifier, symbol.int_value, call_expr.exprs.size()], call_expr.span)
+					% [symbol.identifier, symbol.int_value, call_expr.argument_exprs.size()],
+					call_expr.span)
 		
-		for _i in range(call_expr.exprs.size()):
+		for _i in range(call_expr.argument_exprs.size()):
 			code.make_drop()
 		
 		code.make_push_int(0)
@@ -546,40 +548,42 @@ func visit_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 
 # Visit a call expression AST node with the format intrinsic.
 func visit_format_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
-	if call_expr.exprs.empty():
+	if call_expr.argument_exprs.empty():
 		logger.log_error(
-				"`%s` expects at least 1 argument, got 0!" % call_expr.expr.name, call_expr.span)
+				"`%s` expects at least 1 argument, got 0!" % call_expr.callee_expr.name,
+				call_expr.span)
 		code.make_push_string("")
 		return
-	elif call_expr.exprs.size() == 1:
+	elif call_expr.argument_exprs.size() == 1:
 		code.make_push_string("{0}")
-		visit_node(call_expr.exprs[0])
+		visit_node(call_expr.argument_exprs[0])
 		code.make_format_string_count(1)
 		return
 	
-	for expr in call_expr.exprs:
-		visit_node(expr)
+	for argument_expr in call_expr.argument_exprs:
+		visit_node(argument_expr)
 	
-	code.make_format_string_count(call_expr.exprs.size() - 1)
+	code.make_format_string_count(call_expr.argument_exprs.size() - 1)
 
 
 # Visit a call expression AST node with the set flag intrinsic.
 func visit_set_flag_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
-	if call_expr.exprs.size() != 3:
+	if call_expr.argument_exprs.size() != 3:
 		logger.log_error(
-				"`%s` expects 3 arguments, got %d!" % [call_expr.expr.name, call_expr.exprs.size()],
+				"`%s` expects 3 arguments, got %d!"
+				% [call_expr.callee_expr.name, call_expr.argument_exprs.size()],
 				call_expr.span)
 		
-		for expr in call_expr.exprs:
-			visit_node(expr)
+		for argument_expr in call_expr.argument_exprs:
+			visit_node(argument_expr)
 			code.make_drop()
 		
 		code.make_push_int(0)
 		return
 	
-	visit_node(call_expr.exprs[2])
-	visit_node(call_expr.exprs[0])
-	visit_node(call_expr.exprs[1])
+	visit_node(call_expr.argument_exprs[2])
+	visit_node(call_expr.argument_exprs[0])
+	visit_node(call_expr.argument_exprs[1])
 	code.make_store_flag()
 
 

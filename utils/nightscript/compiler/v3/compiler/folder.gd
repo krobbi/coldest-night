@@ -108,10 +108,10 @@ func fold_bin_expr(bin_expr: BinExprASTNode) -> ExprASTNode:
 
 # Fold a call expression AST node.
 func fold_call_expr(call_expr: CallExprASTNode) -> ExprASTNode:
-	var folded: CallExprASTNode = copy_span(call_expr, CallExprASTNode.new(call_expr.expr))
+	var folded: CallExprASTNode = copy_span(call_expr, CallExprASTNode.new(call_expr.callee_expr))
 	
-	for expr in call_expr.exprs:
-		folded.exprs.push_back(fold_expr(expr))
+	for argument_expr in call_expr.argument_exprs:
+		folded.argument_exprs.push_back(fold_expr(argument_expr))
 	
 	return folded
 

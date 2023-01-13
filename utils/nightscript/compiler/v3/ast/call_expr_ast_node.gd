@@ -6,16 +6,16 @@ extends "expr_ast_node.gd"
 
 const ExprASTNode: GDScript = preload("expr_ast_node.gd")
 
-var expr: ExprASTNode
-var exprs: Array = []
+var callee_expr: ExprASTNode
+var argument_exprs: Array = []
 
-# Set the call expression's expression.
-func _init(expr_ref: ExprASTNode).("Call") -> void:
-	expr = expr_ref
+# Set the call expression's callee expression.
+func _init(callee_expr_ref: ExprASTNode).("Call") -> void:
+	callee_expr = callee_expr_ref
 
 
 # Get the call expression's children as an array.
 func get_children() -> Array:
-	var children: Array = [expr]
-	children.append_array(exprs)
+	var children: Array = [callee_expr]
+	children.append_array(argument_exprs)
 	return children

@@ -542,20 +542,20 @@ func parse_expr_call() -> ASTNode:
 			apply_span(expr)
 			continue
 		
-		var argument: ASTNode = parse_expr()
+		var argument_expr: ASTNode = parse_expr()
 		
-		if not argument is ExprASTNode:
-			return abort_span(argument)
+		if not argument_expr is ExprASTNode:
+			return abort_span(argument_expr)
 		
-		expr.exprs.push_back(argument)
+		expr.argument_exprs.push_back(argument_expr)
 		
 		while accept(Token.COMMA):
-			argument = parse_expr()
+			argument_expr = parse_expr()
 			
-			if not argument is ExprASTNode:
-				return abort_span(argument)
+			if not argument_expr is ExprASTNode:
+				return abort_span(argument_expr)
 			
-			expr.exprs.push_back(argument)
+			expr.argument_exprs.push_back(argument_expr)
 		
 		expect(Token.PARENTHESIS_CLOSE)
 		apply_span(expr)
