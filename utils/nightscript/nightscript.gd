@@ -141,7 +141,9 @@ class NightScriptVirtualMachine extends Reference:
 				var left: int = stack.pop_back()
 				stack.push_back(int(left <= right))
 			BINARY_AND:
-				stack.push_back(int(stack.pop_back() != 0 and stack.pop_back() != 0))
+				var right: int = stack.pop_back()
+				var left: int = stack.pop_back()
+				stack.push_back(int(right != 0 and left != 0))
 			BINARY_OR:
 				var right: int = stack.pop_back()
 				var left: int = stack.pop_back()
