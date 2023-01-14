@@ -19,6 +19,7 @@ class NightScriptVirtualMachine extends Reference:
 	var string_table: PoolStringArray = PoolStringArray()
 	var memory: StreamPeerBuffer = StreamPeerBuffer.new()
 	var stack: Array = []
+	var frame_pointer: int = 0
 	var option_pointers: Array = []
 	var option_texts: Array = []
 	var pathing_actors: Array = []
@@ -80,6 +81,34 @@ class NightScriptVirtualMachine extends Reference:
 				
 				if stack.pop_back() != 0:
 					memory.seek(jump_address)
+			CALL_FUNCTION:
+				var call_address: int = stack.pop_back()
+				var argument_count: int = stack.pop_back()
+				var arguments: Array = []
+				
+				for _i in range(argument_count):
+					arguments.push_front(stack.pop_back())
+				
+				stack.push_back(memory.get_position())
+				stack.push_back(frame_pointer)
+				
+				memory.seek(call_address)
+				frame_pointer = stack.size()
+				
+				for argument in arguments:
+					stack.push_back(argument)
+			RETURN_FROM_FUNCTION:
+				if frame_pointer <= 0:
+					is_awaiting = true
+					emit_signal("pop_machine")
+					return
+				
+				var return_value = stack.pop_back()
+				stack.resize(frame_pointer)
+				
+				frame_pointer = stack.pop_back()
+				memory.seek(stack.pop_back())
+				stack.push_back(return_value)
 			DROP:
 				stack.remove(stack.size() - 1)
 			DUPLICATE:
@@ -92,10 +121,10 @@ class NightScriptVirtualMachine extends Reference:
 				stack.push_back(string_table[memory.get_32()])
 			LOAD_LOCAL:
 				var offset: int = stack.pop_back()
-				stack.push_back(stack[offset])
+				stack.push_back(stack[frame_pointer + offset])
 			STORE_LOCAL:
 				var offset: int = stack.pop_back()
-				stack[offset] = stack[-1]
+				stack[frame_pointer + offset] = stack[-1]
 			LOAD_FLAG:
 				var key: String = stack.pop_back()
 				var namespace: String = stack.pop_back()
@@ -271,47 +300,49 @@ enum {
 	JUMP = 0x04,
 	JUMP_ZERO = 0x05,
 	JUMP_NOT_ZERO = 0x06,
-	DROP = 0x07,
-	DUPLICATE = 0x08,
-	PUSH_IS_REPEAT = 0x09,
-	PUSH_INT = 0x0a,
-	PUSH_STRING = 0x0b,
-	LOAD_LOCAL = 0x0c,
-	STORE_LOCAL = 0x0d,
-	LOAD_FLAG = 0x0e,
-	STORE_FLAG = 0x0f,
-	UNARY_NEGATE = 0x10,
-	UNARY_NOT = 0x11,
-	BINARY_ADD = 0x12,
-	BINARY_SUBTRACT = 0x13,
-	BINARY_MULTIPLY = 0x14,
-	BINARY_EQUALS = 0x15,
-	BINARY_NOT_EQUALS = 0x16,
-	BINARY_GREATER = 0x17,
-	BINARY_GREATER_EQUALS = 0x18,
-	BINARY_LESS = 0x19,
-	BINARY_LESS_EQUALS = 0x1a,
-	BINARY_AND = 0x1b,
-	BINARY_OR = 0x1c,
-	FORMAT_STRING = 0x1d,
-	SHOW_DIALOG = 0x1e,
-	HIDE_DIALOG = 0x1f,
-	CLEAR_DIALOG_NAME = 0x20,
-	DISPLAY_DIALOG_NAME = 0x21,
-	DISPLAY_DIALOG_MESSAGE = 0x22,
-	STORE_DIALOG_MENU_OPTION = 0x23,
-	SHOW_DIALOG_MENU = 0x24,
-	ACTOR_FACE_DIRECTION = 0x25,
-	ACTOR_FIND_PATH = 0x26,
-	RUN_ACTOR_PATHS = 0x27,
-	AWAIT_ACTOR_PATHS = 0x28,
-	FREEZE_PLAYER = 0x29,
-	THAW_PLAYER = 0x2a,
-	QUIT_TO_TITLE = 0x2b,
-	PAUSE_GAME = 0x2c,
-	UNPAUSE_GAME = 0x2d,
-	SAVE_GAME = 0x2e,
-	SAVE_CHECKPOINT = 0x2f,
+	CALL_FUNCTION = 0x07,
+	RETURN_FROM_FUNCTION = 0x08,
+	DROP = 0x09,
+	DUPLICATE = 0x0a,
+	PUSH_IS_REPEAT = 0x0b,
+	PUSH_INT = 0x0c,
+	PUSH_STRING = 0x0d,
+	LOAD_LOCAL = 0x0e,
+	STORE_LOCAL = 0x0f,
+	LOAD_FLAG = 0x10,
+	STORE_FLAG = 0x11,
+	UNARY_NEGATE = 0x12,
+	UNARY_NOT = 0x13,
+	BINARY_ADD = 0x14,
+	BINARY_SUBTRACT = 0x15,
+	BINARY_MULTIPLY = 0x16,
+	BINARY_EQUALS = 0x17,
+	BINARY_NOT_EQUALS = 0x18,
+	BINARY_GREATER = 0x19,
+	BINARY_GREATER_EQUALS = 0x1a,
+	BINARY_LESS = 0x1b,
+	BINARY_LESS_EQUALS = 0x1c,
+	BINARY_AND = 0x1d,
+	BINARY_OR = 0x1e,
+	FORMAT_STRING = 0x1f,
+	SHOW_DIALOG = 0x20,
+	HIDE_DIALOG = 0x21,
+	CLEAR_DIALOG_NAME = 0x22,
+	DISPLAY_DIALOG_NAME = 0x23,
+	DISPLAY_DIALOG_MESSAGE = 0x24,
+	STORE_DIALOG_MENU_OPTION = 0x25,
+	SHOW_DIALOG_MENU = 0x26,
+	ACTOR_FACE_DIRECTION = 0x27,
+	ACTOR_FIND_PATH = 0x28,
+	RUN_ACTOR_PATHS = 0x29,
+	AWAIT_ACTOR_PATHS = 0x2a,
+	FREEZE_PLAYER = 0x2b,
+	THAW_PLAYER = 0x2c,
+	QUIT_TO_TITLE = 0x2d,
+	PAUSE_GAME = 0x2e,
+	UNPAUSE_GAME = 0x2f,
+	SAVE_GAME = 0x30,
+	SAVE_CHECKPOINT = 0x31,
 }
 
 const THREAD_LIMIT: int = 16

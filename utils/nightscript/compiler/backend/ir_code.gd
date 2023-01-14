@@ -107,6 +107,15 @@ func make_op_int(type: int, value: int) -> void:
 	current.ops.push_back(op)
 
 
+# Make an IR operation in the current label with an int value and a string
+# value.
+func make_op_int_str(type: int, int_value: int, str_value: String) -> void:
+	var op: IROp = IROp.new(type)
+	op.int_value_a = int_value
+	op.str_value_a = str_value
+	current.ops.push_back(op)
+
+
 # Make an IR operation in the current label with a string value.
 func make_op_str(type: int, value: String) -> void:
 	var op: IROp = IROp.new(type)
@@ -165,6 +174,16 @@ func make_jump_zero_label(label: String) -> void:
 # Make a jump not zero label IR operation in the current label.
 func make_jump_not_zero_label(label: String) -> void:
 	make_op_str(IROp.JUMP_NOT_ZERO_LABEL, label)
+
+
+# Make a call function count label IR operation in the current label.
+func make_call_function_count_label(count: int, label: String) -> void:
+	make_op_int_str(IROp.CALL_FUNCTION_COUNT_LABEL, count, label)
+
+
+# Make a return from function IR operation in the current label.
+func make_return_from_function() -> void:
+	make_op(IROp.RETURN_FROM_FUNCTION)
 
 
 # Make a drop IR operation in the current label.
