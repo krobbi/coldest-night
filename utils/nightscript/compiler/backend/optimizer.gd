@@ -55,6 +55,12 @@ func is_op_label(op: IROp) -> bool:
 	]
 
 
+# Get whether an IR operation pushes a single value to the stack without causing
+# any side effects.
+func is_op_pure_push(op: IROp) -> bool:
+	return op.type in [IROp.PUSH_IS_REPEAT, IROp.PUSH_INT, IROp.PUSH_STRING, IROp.LOAD_LOCAL_OFFSET]
+
+
 # Get whether an IR operation is a terminator.
 func is_op_terminator(op: IROp) -> bool:
 	return op.type in [IROp.HALT, IROp.JUMP_LABEL, IROp.SHOW_DIALOG_MENU, IROp.QUIT_TO_TITLE]
@@ -72,6 +78,7 @@ func optimize_code(code: IRCode) -> void:
 		for method in [
 			"optimize_eliminate_unreachable_ops",
 			"optimize_eliminate_unreachable_blocks",
+			"optimize_eliminate_push_drops",
 		]:
 			var method_iterations: int = 256
 			
@@ -97,6 +104,8 @@ func optimize_eliminate_unreachable_ops(code: IRCode) -> bool:
 	return is_optimized
 
 
+# Eliminate IR blocks that can never be reached and return whether any
+# optimization was performed.
 func optimize_eliminate_unreachable_blocks(code: IRCode) -> bool:
 	var pending_blocks: Array = [code.blocks[0]]
 	var reachable_blocks: Array = []
@@ -122,5 +131,24 @@ func optimize_eliminate_unreachable_blocks(code: IRCode) -> bool:
 		if not code.blocks[index] in reachable_blocks:
 			code.blocks.remove(index)
 			is_optimized = true
+	
+	return is_optimized
+
+
+# Eliminate pure push IR operations that are immediately followed by a drop IR
+# operation and return whether any optimization was performed.
+func optimize_eliminate_push_drops(code: IRCode) -> bool:
+	var is_optimized: bool = false
+	
+	for block in code.blocks:
+		var index: int = 0
+		
+		while index < block.ops.size() - 1:
+			if is_op_pure_push(block.ops[index]) and block.ops[index + 1].type == IROp.DROP:
+				block.ops.remove(index)
+				block.ops.remove(index)
+				is_optimized = true
+			else:
+				index += 1
 	
 	return is_optimized
