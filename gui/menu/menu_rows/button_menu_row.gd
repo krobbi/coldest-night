@@ -9,27 +9,24 @@ signal pressed
 enum PressSound {NONE, OK, CANCEL}
 
 export(String) var text: String setget set_text
-export(
-		String, "", "accessibility", "advanced", "audio", "back", "clear", "controls", "credits",
-		"display", "language", "load", "next", "quit", "save", "settings"
-) var icon: String = "" setget set_icon
+export(Texture) var icon: Texture setget set_icon
 export(PressSound) var press_sound: int = PressSound.OK
 
 onready var _button: Button = $Content/Button
 
-# Virtual _ready method. Runs when the button menu row finishes entering the
-# scene tree. Sets the button's text and icon:
+# Run when the button menu row finishes entering the scene tree. Set the
+# button's text and icon.
 func _ready() -> void:
 	set_text(text)
 	set_icon(icon)
 
 
-# Abstract _press method. Runs when the button is pressed:
+# Run when the button is pressed.
 func _press() -> void:
 	pass
 
 
-# Sets the button's text:
+# Set the button's text.
 func set_text(value: String) -> void:
 	text = value
 	
@@ -37,21 +34,15 @@ func set_text(value: String) -> void:
 		_button.text = text
 
 
-# Sets the button's icon:
-func set_icon(value: String) -> void:
+# Set the button's icon.
+func set_icon(value: Texture) -> void:
 	icon = value
 	
-	if not _button:
-		return
-	elif icon.empty():
-		_button.icon = null
-		return
-	
-	_button.icon = load("res://resources/textures/gui/icons/%s.png" % icon)
+	if _button:
+		_button.icon = icon
 
 
-# Signal callback for pressed on the button. Runs when the button is pressed.
-# Emits the pressed signal:
+# Run when the button is pressed. Emit the pressed signal.
 func _on_button_pressed() -> void:
 	_press()
 	

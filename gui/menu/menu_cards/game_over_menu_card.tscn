@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/fixed_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_cards/game_over_menu_card.gd" type="Script" id=2]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/textures/gui/icons/next.png" type="Texture" id=4]
+[ext_resource path="res://resources/textures/gui/icons/quit.png" type="Texture" id=5]
 
 [node name="GameOverMenuCard" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
@@ -23,8 +25,7 @@ anchor_right = 0.0
 margin_right = 512.0
 tooltip = "TOOLTIP.BUTTON.GAME_OVER_RETRY"
 text = "BUTTON.GAME_OVER_RETRY"
-icon = "next"
-press_sound = 1
+icon = ExtResource( 4 )
 
 [node name="QuitToMainMenuButton" parent="CenterContainer/VBoxContainer/MenuList" index="1" instance=ExtResource( 3 )]
 anchor_right = 0.0
@@ -33,7 +34,7 @@ margin_right = 512.0
 margin_bottom = 68.0
 tooltip = "TOOLTIP.BUTTON.QUIT_TO_MAIN_MENU"
 text = "BUTTON.QUIT_TO_MAIN_MENU"
-icon = "quit"
+icon = ExtResource( 5 )
 press_sound = 2
 
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]

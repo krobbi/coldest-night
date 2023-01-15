@@ -4,10 +4,9 @@
 [ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=2]
 [ext_resource path="res://gui/menu/menu_rows/config_slider_menu_row.tscn" type="PackedScene" id=3]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=4]
-[ext_resource path="res://gui/menu/menu_card.gd" type="Script" id=5]
+[ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=5]
 
 [node name="AudioMenuCard" instance=ExtResource( 1 )]
-script = ExtResource( 5 )
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
 text = "HEADING.AUDIO_SETTINGS"
@@ -18,8 +17,6 @@ margin_bottom = 176.0
 [node name="MuteCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_right = 512.0
-is_pressed = false
-text = ""
 config = "audio.mute"
 
 [node name="MasterVolumeSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 3 )]
@@ -65,7 +62,7 @@ margin_right = 512.0
 margin_bottom = 176.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.SETTINGS"
 text = "BUTTON.GO_BACK"
-icon = "back"
+icon = ExtResource( 5 )
 press_sound = 2
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]

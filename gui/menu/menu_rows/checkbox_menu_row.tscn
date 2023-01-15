@@ -6,6 +6,8 @@
 [node name="CheckboxMenuRow" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 focus_node_path = NodePath("Content/CheckButton")
+is_pressed = false
+text = ""
 
 [node name="CheckButton" type="CheckButton" parent="Content" index="0"]
 anchor_right = 1.0

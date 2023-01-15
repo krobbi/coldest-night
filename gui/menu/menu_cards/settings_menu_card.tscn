@@ -1,8 +1,15 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_cards/settings_menu_card.gd" type="Script" id=2]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/textures/gui/icons/advanced.png" type="Texture" id=4]
+[ext_resource path="res://resources/textures/gui/icons/controls.png" type="Texture" id=5]
+[ext_resource path="res://resources/textures/gui/icons/display.png" type="Texture" id=6]
+[ext_resource path="res://resources/textures/gui/icons/audio.png" type="Texture" id=7]
+[ext_resource path="res://resources/textures/gui/icons/language.png" type="Texture" id=8]
+[ext_resource path="res://resources/textures/gui/icons/accessibility.png" type="Texture" id=9]
+[ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=10]
 
 [node name="SettingsMenuCard" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
@@ -29,8 +36,7 @@ anchor_right = 0.0
 margin_right = 512.0
 tooltip = "TOOLTIP.BUTTON.CONTROLS"
 text = "BUTTON.CONTROLS"
-icon = "controls"
-press_sound = 1
+icon = ExtResource( 5 )
 
 [node name="AccessibilitySettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 3 )]
 anchor_right = 0.0
@@ -39,8 +45,7 @@ margin_right = 512.0
 margin_bottom = 68.0
 tooltip = "TOOLTIP.BUTTON.ACCESSIBILITY_SETTINGS"
 text = "BUTTON.ACCESSIBILITY_SETTINGS"
-icon = "accessibility"
-press_sound = 1
+icon = ExtResource( 9 )
 
 [node name="AudioSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 3 )]
 anchor_right = 0.0
@@ -49,8 +54,7 @@ margin_right = 512.0
 margin_bottom = 104.0
 tooltip = "TOOLTIP.BUTTON.AUDIO_SETTINGS"
 text = "BUTTON.AUDIO_SETTINGS"
-icon = "audio"
-press_sound = 1
+icon = ExtResource( 7 )
 
 [node name="DisplaySettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 3 )]
 anchor_right = 0.0
@@ -59,8 +63,7 @@ margin_right = 512.0
 margin_bottom = 140.0
 tooltip = "TOOLTIP.BUTTON.DISPLAY_SETTINGS"
 text = "BUTTON.DISPLAY_SETTINGS"
-icon = "display"
-press_sound = 1
+icon = ExtResource( 6 )
 
 [node name="LanguageSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 3 )]
 anchor_right = 0.0
@@ -70,8 +73,7 @@ margin_bottom = 176.0
 appearance_condition = 5
 tooltip = "TOOLTIP.OPTION.LANGUAGE.LOCALE"
 text = "BUTTON.LANGUAGE_SETTINGS"
-icon = "language"
-press_sound = 1
+icon = ExtResource( 8 )
 
 [node name="AdvancedSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 3 )]
 anchor_right = 0.0
@@ -81,8 +83,7 @@ margin_bottom = 212.0
 appearance_condition = 3
 tooltip = "TOOLTIP.BUTTON.ADVANCED_SETTINGS"
 text = "BUTTON.ADVANCED_SETTINGS"
-icon = "advanced"
-press_sound = 1
+icon = ExtResource( 4 )
 
 [node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 3 )]
 anchor_right = 0.0
@@ -91,7 +92,7 @@ margin_right = 512.0
 margin_bottom = 248.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.FROM_SETTINGS"
 text = "BUTTON.GO_BACK"
-icon = "back"
+icon = ExtResource( 10 )
 press_sound = 2
 
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]

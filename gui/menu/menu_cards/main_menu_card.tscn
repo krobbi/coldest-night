@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://gui/menu/menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_cards/main_menu_card.gd" type="Script" id=2]
@@ -6,6 +6,11 @@
 [ext_resource path="res://resources/textures/identity/logo.png" type="Texture" id=4]
 [ext_resource path="res://gui/menu/menu_list.tscn" type="PackedScene" id=5]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=6]
+[ext_resource path="res://resources/textures/gui/icons/next.png" type="Texture" id=7]
+[ext_resource path="res://resources/textures/gui/icons/quit.png" type="Texture" id=8]
+[ext_resource path="res://resources/textures/gui/icons/settings.png" type="Texture" id=9]
+[ext_resource path="res://resources/textures/gui/icons/credits.png" type="Texture" id=10]
+[ext_resource path="res://resources/textures/gui/icons/load.png" type="Texture" id=11]
 
 [node name="MainMenuCard" instance=ExtResource( 1 )]
 theme = ExtResource( 3 )
@@ -83,8 +88,7 @@ margin_right = 512.0
 appearance_condition = 6
 tooltip = "TOOLTIP.BUTTON.CONTINUE_GAME"
 text = "BUTTON.CONTINUE_GAME"
-icon = "load"
-press_sound = 1
+icon = ExtResource( 11 )
 
 [node name="NewGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="1" instance=ExtResource( 6 )]
 anchor_right = 0.0
@@ -93,8 +97,7 @@ margin_right = 512.0
 margin_bottom = 68.0
 tooltip = "TOOLTIP.BUTTON.NEW_GAME"
 text = "BUTTON.NEW_GAME"
-icon = "next"
-press_sound = 1
+icon = ExtResource( 7 )
 
 [node name="SettingsButton" parent="CenterContainer/VBoxContainer/MenuList" index="2" instance=ExtResource( 6 )]
 anchor_right = 0.0
@@ -103,8 +106,7 @@ margin_right = 512.0
 margin_bottom = 104.0
 tooltip = "TOOLTIP.BUTTON.SETTINGS"
 text = "BUTTON.SETTINGS"
-icon = "settings"
-press_sound = 1
+icon = ExtResource( 9 )
 
 [node name="CreditsButton" parent="CenterContainer/VBoxContainer/MenuList" index="3" instance=ExtResource( 6 )]
 anchor_right = 0.0
@@ -113,8 +115,7 @@ margin_right = 512.0
 margin_bottom = 140.0
 tooltip = "TOOLTIP.BUTTON.CREDITS"
 text = "BUTTON.CREDITS"
-icon = "credits"
-press_sound = 1
+icon = ExtResource( 10 )
 
 [node name="DevlogButton" parent="CenterContainer/VBoxContainer/MenuList" index="4" instance=ExtResource( 6 )]
 anchor_right = 0.0
@@ -123,8 +124,7 @@ margin_right = 512.0
 margin_bottom = 176.0
 tooltip = "TOOLTIP.BUTTON.DEVLOG"
 text = "BUTTON.DEVLOG"
-icon = "credits"
-press_sound = 1
+icon = ExtResource( 10 )
 
 [node name="QuitGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="5" instance=ExtResource( 6 )]
 anchor_right = 0.0
@@ -133,7 +133,7 @@ margin_right = 512.0
 margin_bottom = 212.0
 tooltip = "TOOLTIP.BUTTON.QUIT_GAME"
 text = "BUTTON.QUIT_GAME"
-icon = "quit"
+icon = ExtResource( 8 )
 press_sound = 0
 
 [node name="MenuSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer" index="3"]

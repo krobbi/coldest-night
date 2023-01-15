@@ -3,10 +3,9 @@
 [ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_rows/config_option_menu_row.tscn" type="PackedScene" id=2]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=3]
-[ext_resource path="res://gui/menu/menu_card.gd" type="Script" id=4]
+[ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=4]
 
 [node name="LanguageMenuCard" instance=ExtResource( 1 )]
-script = ExtResource( 4 )
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
 text = "HEADING.LANGUAGE_SETTINGS"
@@ -29,7 +28,7 @@ margin_right = 512.0
 margin_bottom = 68.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.SETTINGS"
 text = "BUTTON.GO_BACK"
-icon = "back"
+icon = ExtResource( 4 )
 press_sound = 2
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]

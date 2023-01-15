@@ -6,6 +6,9 @@
 [node name="ButtonMenuRow" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 focus_node_path = NodePath("Content/Button")
+text = ""
+icon = null
+press_sound = 1
 
 [node name="Button" type="Button" parent="Content" index="0"]
 anchor_right = 1.0

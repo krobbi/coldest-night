@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/fixed_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_cards/results_menu_card.gd" type="Script" id=2]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/textures/gui/icons/next.png" type="Texture" id=4]
 
 [node name="ResultsMenuCard" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
@@ -58,8 +59,7 @@ anchor_right = 0.0
 margin_right = 512.0
 tooltip = "TOOLTIP.BUTTON.RESULTS_CONTINUE"
 text = "BUTTON.RESULTS_CONTINUE"
-icon = "next"
-press_sound = 1
+icon = ExtResource( 4 )
 
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="4"]
 margin_top = 110.0

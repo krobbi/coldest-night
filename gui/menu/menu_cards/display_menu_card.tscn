@@ -4,10 +4,9 @@
 [ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=2]
 [ext_resource path="res://gui/menu/menu_rows/config_option_menu_row.tscn" type="PackedScene" id=3]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=4]
-[ext_resource path="res://gui/menu/menu_card.gd" type="Script" id=5]
+[ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=5]
 
 [node name="DisplayMenuCard" instance=ExtResource( 1 )]
-script = ExtResource( 5 )
 
 [node name="VBoxContainer" parent="CenterContainer" index="0"]
 margin_left = 56.0
@@ -29,8 +28,6 @@ margin_bottom = 248.0
 [node name="FullscreenCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_right = 512.0
-is_pressed = false
-text = ""
 config = "display.fullscreen"
 
 [node name="VsyncCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
@@ -39,7 +36,6 @@ margin_top = 36.0
 margin_right = 512.0
 margin_bottom = 68.0
 is_pressed = true
-text = ""
 config = "display.vsync"
 
 [node name="PixelSnapCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
@@ -47,8 +43,6 @@ anchor_right = 0.0
 margin_top = 72.0
 margin_right = 512.0
 margin_bottom = 104.0
-is_pressed = false
-text = ""
 config = "display.pixel_snap"
 
 [node name="WindowScaleOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 3 )]
@@ -75,7 +69,6 @@ margin_top = 180.0
 margin_right = 512.0
 margin_bottom = 212.0
 is_pressed = true
-text = ""
 config = "display.display_barks"
 
 [node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 4 )]
@@ -85,7 +78,7 @@ margin_right = 512.0
 margin_bottom = 248.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.SETTINGS"
 text = "BUTTON.GO_BACK"
-icon = "back"
+icon = ExtResource( 5 )
 press_sound = 2
 
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]

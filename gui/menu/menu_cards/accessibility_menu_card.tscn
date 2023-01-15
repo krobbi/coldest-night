@@ -5,10 +5,9 @@
 [ext_resource path="res://gui/menu/menu_rows/config_slider_menu_row.tscn" type="PackedScene" id=3]
 [ext_resource path="res://gui/menu/menu_rows/config_option_menu_row.tscn" type="PackedScene" id=4]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=5]
-[ext_resource path="res://gui/menu/menu_card.gd" type="Script" id=6]
+[ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=6]
 
 [node name="AccessibilityMenuCard" instance=ExtResource( 1 )]
-script = ExtResource( 6 )
 
 [node name="VBoxContainer" parent="CenterContainer" index="0"]
 margin_left = 56.0
@@ -30,8 +29,6 @@ margin_bottom = 320.0
 [node name="LegibleFontCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_right = 512.0
-is_pressed = false
-text = ""
 config = "accessibility.legible_font"
 
 [node name="ReducedMotionCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
@@ -39,8 +36,6 @@ anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
 margin_bottom = 68.0
-is_pressed = false
-text = ""
 config = "accessibility.reduced_motion"
 
 [node name="TooltipsCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
@@ -49,7 +44,6 @@ margin_top = 72.0
 margin_right = 512.0
 margin_bottom = 104.0
 is_pressed = true
-text = ""
 config = "accessibility.tooltips"
 
 [node name="NeverGameOverCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]
@@ -57,8 +51,6 @@ anchor_right = 0.0
 margin_top = 108.0
 margin_right = 512.0
 margin_bottom = 140.0
-is_pressed = false
-text = ""
 config = "accessibility.never_game_over"
 
 [node name="RadarScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 3 )]
@@ -113,7 +105,7 @@ margin_right = 512.0
 margin_bottom = 320.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.SETTINGS"
 text = "BUTTON.GO_BACK"
-icon = "back"
+icon = ExtResource( 6 )
 press_sound = 2
 
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]

@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_cards/controls_menu_card.gd" type="Script" id=2]
 [ext_resource path="res://gui/menu/menu_rows/control_menu_row.tscn" type="PackedScene" id=3]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=4]
+[ext_resource path="res://resources/textures/gui/icons/clear.png" type="Texture" id=5]
+[ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=6]
 
 [node name="ControlsMenuCard" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
@@ -79,8 +81,7 @@ margin_right = 512.0
 margin_bottom = 284.0
 tooltip = "TOOLTIP.BUTTON.RESET_CONTROLS"
 text = "BUTTON.RESET_CONTROLS"
-icon = "clear"
-press_sound = 1
+icon = ExtResource( 5 )
 
 [node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 4 )]
 anchor_right = 0.0
@@ -89,7 +90,7 @@ margin_right = 512.0
 margin_bottom = 320.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.SETTINGS"
 text = "BUTTON.GO_BACK"
-icon = "back"
+icon = ExtResource( 6 )
 press_sound = 2
 
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]
