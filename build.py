@@ -148,14 +148,14 @@ class App:
             if not self.godot_path:
                 print(
                         "Expected a path to the Godot Engine executable "
-                        f"in '{self.GODOT_PATH_PATH}'")
+                        f"in '{self.GODOT_PATH_PATH}'!")
                 self.godot_state = Trit.FALSE
                 return False
             
             if not os.path.isfile(self.godot_path):
                 print(
                         "Failed to find a file for the "
-                        f"Godot Engine executable at '{self.godot_path}'")
+                        f"Godot Engine executable at '{self.godot_path}'!")
                 self.godot_state = Trit.FALSE
                 return False
             
