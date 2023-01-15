@@ -20,10 +20,12 @@ const KEYWORDS: Dictionary = {
 	"continue": Token.KEYWORD_CONTINUE,
 	"do": Token.KEYWORD_DO,
 	"else": Token.KEYWORD_ELSE,
+	"func": Token.KEYWORD_FUNC,
 	"if": Token.KEYWORD_IF,
 	"include": Token.KEYWORD_INCLUDE,
 	"menu": Token.KEYWORD_MENU,
 	"option": Token.KEYWORD_OPTION,
+	"return": Token.KEYWORD_RETURN,
 	"var": Token.KEYWORD_VAR,
 	"while": Token.KEYWORD_WHILE,
 }

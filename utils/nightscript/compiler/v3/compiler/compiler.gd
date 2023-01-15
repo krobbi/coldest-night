@@ -15,6 +15,7 @@ const DoStmtASTNode: GDScript = preload("../ast/do_stmt_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const ExprStmtASTNode: GDScript = preload("../ast/expr_stmt_ast_node.gd")
 const Folder: GDScript = preload("folder.gd")
+const FuncStmtASTNode: GDScript = preload("../ast/func_stmt_ast_node.gd")
 const IdentifierExprASTNode: GDScript = preload("../ast/identifier_expr_ast_node.gd")
 const IfStmtASTNode: GDScript = preload("../ast/if_stmt_ast_node.gd")
 const IfElseStmtASTNode: GDScript = preload("../ast/if_else_stmt_ast_node.gd")
@@ -24,6 +25,8 @@ const Logger: GDScript = preload("../logger/logger.gd")
 const MenuStmtASTNode: GDScript = preload("../ast/menu_stmt_ast_node.gd")
 const ModuleASTNode: GDScript = preload("../ast/module_ast_node.gd")
 const OptionStmtASTNode: GDScript = preload("../ast/option_stmt_ast_node.gd")
+const ReturnExprStmtASTNode: GDScript = preload("../ast/return_expr_stmt_ast_node.gd")
+const ReturnStmtASTNode: GDScript = preload("../ast/return_stmt_ast_node.gd")
 const RootASTNode: GDScript = preload("../ast/root_ast_node.gd")
 const ScopeStack: GDScript = preload("scope_stack.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
@@ -88,6 +91,8 @@ func visit_node(node: ASTNode) -> void:
 		visit_root(node)
 	elif node is ModuleASTNode:
 		visit_module(node)
+	elif node is FuncStmtASTNode:
+		visit_func_stmt(node)
 	elif node is BlockStmtASTNode:
 		visit_block_stmt(node)
 	elif node is IfStmtASTNode:
@@ -108,6 +113,10 @@ func visit_node(node: ASTNode) -> void:
 		visit_continue_stmt(node)
 	elif node is DeclStmtASTNode:
 		visit_decl_stmt(node)
+	elif node is ReturnStmtASTNode:
+		visit_return_stmt(node)
+	elif node is ReturnExprStmtASTNode:
+		visit_return_expr_stmt(node)
 	elif node is ExprStmtASTNode:
 		visit_expr_stmt(node)
 	elif node is UnExprASTNode:
@@ -169,6 +178,53 @@ func visit_root(root: RootASTNode) -> void:
 func visit_module(module: ModuleASTNode) -> void:
 	for stmt in module.stmts:
 		visit_node(stmt)
+
+
+# Visit a function statement AST node.
+func visit_func_stmt(func_stmt: FuncStmtASTNode) -> void:
+	var symbol: Symbol = scope_stack.get_symbol(func_stmt.identifier_expr.name)
+	var parent_label = code.get_label()
+	var body_label = code.append_unique_label("func_%s" % symbol.identifier)
+	var argument_names: Array = []
+	
+	for argument_expr in func_stmt.argument_exprs:
+		if argument_expr.name in argument_names:
+			logger.log_error(
+					"Argument `%s` is already defined for `%s`!"
+					% [argument_expr.name, symbol.identifier], argument_expr.span)
+		else:
+			argument_names.push_back(argument_expr.name)
+	
+	if symbol.access == Symbol.UNDEFINED:
+		scope_stack.define_func(symbol.identifier, body_label, argument_names.size())
+	else:
+		logger.log_error(
+				"`%s` is already defined in the current scope!" % symbol.identifier,
+				func_stmt.identifier_expr.span)
+	
+	scope_stack.push() # Buffer scope to clear scope.
+	code.set_label(body_label)
+	scope_stack.define_label("func", body_label)
+	scope_stack.undefine_label("break")
+	scope_stack.undefine_label("continue")
+	scope_stack.undefine_label("menu")
+	scope_stack.undefine_locals()
+	
+	scope_stack.push() # Argument definition scope.
+	
+	for argument_name in argument_names:
+		scope_stack.define_local(argument_name, true)
+	
+	scope_stack.push() # Function body scope.
+	visit_node(func_stmt.stmt)
+	code.make_push_int(0)
+	code.make_return_from_function()
+	scope_stack.pop()
+	
+	scope_stack.pop() # End argument definition scope.
+	scope_stack.pop() # End buffer scope.
+	
+	code.set_label(parent_label)
 
 
 # Visit a block statement AST node.
@@ -465,10 +521,10 @@ func visit_decl_stmt(decl_stmt: DeclStmtASTNode) -> void:
 	
 	if decl_stmt.operator == Token.KEYWORD_CONST:
 		if value_expr is IntExprASTNode:
-			scope_stack.define_literal_int(symbol.identifier, value_expr.value)
+			scope_stack.define_literal_int(symbol.identifier, value_expr.value, true)
 			return
 		elif value_expr is StrExprASTNode:
-			scope_stack.define_literal_str(symbol.identifier, value_expr.value)
+			scope_stack.define_literal_str(symbol.identifier, value_expr.value, true)
 			return
 		
 		visit_node(value_expr)
@@ -482,6 +538,26 @@ func visit_decl_stmt(decl_stmt: DeclStmtASTNode) -> void:
 				decl_stmt.span)
 		visit_node(value_expr)
 		code.make_drop()
+
+
+# Visit a return statement AST node.
+func visit_return_stmt(return_stmt: ReturnStmtASTNode) -> void:
+	if not scope_stack.has_label("func"):
+		logger.log_error("Cannot use `return` outside of a function!", return_stmt.span)
+		return
+	
+	code.make_push_int(0)
+	code.make_return_from_function()
+
+
+# Visit a return expression statement AST node.
+func visit_return_expr_stmt(return_expr_stmt: ReturnExprStmtASTNode) -> void:
+	if not scope_stack.has_label("func"):
+		logger.log_error("Cannot use `return` outside of a function!", return_expr_stmt.span)
+		return
+	
+	visit_node(folder.fold_expr(return_expr_stmt.expr))
+	code.make_return_from_function()
 
 
 # Visit an expression statement AST node.
@@ -609,6 +685,8 @@ func visit_call_expr(call_expr: CallExprASTNode) -> void:
 	
 	if symbol.access == Symbol.INTRINSIC:
 		visit_intrinsic_call_expr(call_expr)
+	elif symbol.access == Symbol.FUNC:
+		visit_func_call_expr(call_expr)
 	else:
 		logger.log_error("Bug: No caller for access type `%d`!" % symbol.access, call_expr.span)
 		visit_invalid_call_expr(call_expr)
@@ -732,6 +810,34 @@ func visit_set_flag_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 	visit_node(call_expr.argument_exprs[0])
 	visit_node(call_expr.argument_exprs[1])
 	code.make_store_flag()
+
+
+# Visit a function call expression AST node.
+func visit_func_call_expr(call_expr: CallExprASTNode) -> void:
+	var symbol: Symbol = scope_stack.get_symbol(call_expr.callee_expr.name)
+	
+	if call_expr.argument_exprs.size() != symbol.int_value:
+		if symbol.int_value == 1:
+			logger.log_error(
+					"`%s` expects 1 argument, got %d!"
+					% [symbol.identifier, call_expr.argument_exprs.size()], call_expr.span)
+		else:
+			logger.log_error(
+					"`%s` expects %d arguments, got %d!"
+					% [symbol.identifier, symbol.int_value, call_expr.argument_exprs.size()],
+					call_expr.span)
+		
+		for argument_expr in call_expr.argument_exprs:
+			visit_node(argument_expr)
+			code.make_drop()
+		
+		code.make_push_int(0)
+		return
+	
+	for argument_expr in call_expr.argument_exprs:
+		visit_node(argument_expr)
+	
+	code.make_call_function_count_label(symbol.int_value, symbol.str_value)
 
 
 # Visit an integer expression AST node.

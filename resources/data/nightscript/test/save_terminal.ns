@@ -1,0 +1,26 @@
+# NightScript Version 3.
+# Save Terminal
+# Common cutscene for save terminals.
+
+include "save_terminal_dialog";
+
+freeze();
+show();
+
+if(isRepeat()){
+	saveTerminalRepeatDialog();
+} else {
+	saveTerminalMainDialog();
+}
+
+menu {
+	option(saveTerminalGetSaveOption()){
+		save();
+		saveTerminalSavedDialog();
+	}
+	
+	option(saveTerminalGetNoSaveOption()){}
+}
+
+hide();
+thaw();

@@ -15,6 +15,7 @@ const DoStmtASTNode: GDScript = preload("../ast/do_stmt_ast_node.gd")
 const ErrorASTNode: GDScript = preload("../ast/error_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const ExprStmtASTNode: GDScript = preload("../ast/expr_stmt_ast_node.gd")
+const FuncStmtASTNode: GDScript = preload("../ast/func_stmt_ast_node.gd")
 const IdentifierExprASTNode: GDScript = preload("../ast/identifier_expr_ast_node.gd")
 const IfStmtASTNode: GDScript = preload("../ast/if_stmt_ast_node.gd")
 const IfElseStmtASTNode: GDScript = preload("../ast/if_else_stmt_ast_node.gd")
@@ -25,6 +26,8 @@ const Logger: GDScript = preload("../logger/logger.gd")
 const MenuStmtASTNode: GDScript = preload("../ast/menu_stmt_ast_node.gd")
 const ModuleASTNode: GDScript = preload("../ast/module_ast_node.gd")
 const OptionStmtASTNode: GDScript = preload("../ast/option_stmt_ast_node.gd")
+const ReturnExprStmtASTNode: GDScript = preload("../ast/return_expr_stmt_ast_node.gd")
+const ReturnStmtASTNode: GDScript = preload("../ast/return_stmt_ast_node.gd")
 const Span: GDScript = preload("../logger/span.gd")
 const StmtASTNode: GDScript = preload("../ast/stmt_ast_node.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
@@ -181,7 +184,9 @@ func parse_include() -> ASTNode:
 func parse_stmt() -> ASTNode:
 	begin_span()
 	
-	if next.type == Token.BRACE_OPEN:
+	if next.type == Token.KEYWORD_FUNC:
+		return abort_span(parse_stmt_func())
+	elif next.type == Token.BRACE_OPEN:
 		return abort_span(parse_stmt_block())
 	elif next.type == Token.KEYWORD_IF:
 		return abort_span(parse_stmt_if())
@@ -201,6 +206,8 @@ func parse_stmt() -> ASTNode:
 		return abort_span(parse_stmt_const())
 	elif next.type == Token.KEYWORD_VAR:
 		return abort_span(parse_stmt_var())
+	elif next.type == Token.KEYWORD_RETURN:
+		return abort_span(parse_stmt_return())
 	
 	var expr_stmt: ASTNode = parse_stmt_expr()
 	
@@ -208,6 +215,44 @@ func parse_stmt() -> ASTNode:
 		return abort_span(expr_stmt)
 	
 	return end_span(expr_stmt)
+
+
+# Parse a function statement.
+func parse_stmt_func() -> ASTNode:
+	begin_span()
+	expect(Token.KEYWORD_FUNC)
+	var identifier_expr: ASTNode = parse_expr_primary_identifier()
+	
+	if not identifier_expr is IdentifierExprASTNode:
+		return abort_span(identifier_expr)
+	
+	expect(Token.PARENTHESIS_OPEN)
+	var argument_exprs: Array = []
+	
+	if not accept(Token.PARENTHESIS_CLOSE):
+		var argument_expr: ASTNode = parse_expr_primary_identifier()
+		
+		if not argument_expr is IdentifierExprASTNode:
+			return abort_span(argument_expr)
+		
+		argument_exprs.push_back(argument_expr)
+		
+		while accept(Token.COMMA):
+			argument_expr = parse_expr_primary_identifier()
+			
+			if not argument_expr is IdentifierExprASTNode:
+				return abort_span(argument_expr)
+			
+			argument_exprs.push_back(argument_expr)
+		
+		expect(Token.PARENTHESIS_CLOSE)
+	
+	var stmt: ASTNode = parse_stmt()
+	
+	if not stmt is StmtASTNode:
+		return abort_span(stmt)
+	
+	return end_span(FuncStmtASTNode.new(identifier_expr, argument_exprs, stmt))
 
 
 # Parse a block statement.
@@ -371,6 +416,23 @@ func parse_stmt_const() -> ASTNode:
 # Parse a variable statement.
 func parse_stmt_var() -> ASTNode:
 	return parse_decl_stmt(Token.KEYWORD_VAR)
+
+
+# Parse a return statement.
+func parse_stmt_return() -> ASTNode:
+	begin_span()
+	expect(Token.KEYWORD_RETURN)
+	
+	if accept(Token.SEMICOLON):
+		return end_span(ReturnStmtASTNode.new())
+	
+	var expr: ASTNode = parse_expr()
+	
+	if not expr is ExprASTNode:
+		return abort_span(expr)
+	
+	expect(Token.SEMICOLON)
+	return end_span(ReturnExprStmtASTNode.new(expr))
 
 
 # Parse an expression statement.

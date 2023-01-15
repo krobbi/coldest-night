@@ -103,18 +103,22 @@ func define_intrinsic(identifier: String, method: String, argument_count: int) -
 	define_symbol(symbol)
 
 
-# Define a literal integer in the current scope from its identifier and value.
-func define_literal_int(identifier: String, value: int) -> void:
+# Define a literal integer in the current scope from its identifier, value, and
+# whether it is being declared as a local.
+func define_literal_int(identifier: String, value: int, is_local: bool) -> void:
 	var symbol: Symbol = Symbol.new(identifier, Symbol.LITERAL_INT)
 	symbol.is_evaluable = true
+	symbol.is_local = is_local
 	symbol.int_value = value
 	define_symbol(symbol)
 
 
-# Define a literal string in the current scope from its identifier and value.
-func define_literal_str(identifier: String, value: String) -> void:
+# Define a literal string in the current scope from its identifier, value, and
+# whether it is being declared as a local.
+func define_literal_str(identifier: String, value: String, is_local: bool) -> void:
 	var symbol: Symbol = Symbol.new(identifier, Symbol.LITERAL_STR)
 	symbol.is_evaluable = true
+	symbol.is_local = is_local
 	symbol.str_value = value
 	define_symbol(symbol)
 
@@ -123,14 +127,53 @@ func define_literal_str(identifier: String, value: String) -> void:
 func define_local(identifier: String, is_mutable: bool) -> void:
 	var symbol: Symbol = Symbol.new(identifier, Symbol.LOCAL)
 	symbol.is_evaluable = true
+	symbol.is_local = true
 	symbol.is_mutable = is_mutable
 	symbol.int_value = scopes[-1].total_local_count
+	define_symbol(symbol)
+
+
+# Define a function in the current scope from its identifier, label, and
+# argument count.
+func define_func(identifier: String, label: String, argument_count: int) -> void:
+	var symbol: Symbol = Symbol.new(identifier, Symbol.FUNC)
+	symbol.is_callable = true
+	symbol.str_value = label
+	symbol.int_value = argument_count
 	define_symbol(symbol)
 
 
 # Undefine a scoped label in the current scope from its key.
 func undefine_label(key: String) -> void:
 	scopes[-1].labels[key] = ""
+
+
+# Undefine all symbols accessible from the current scope that are declared as
+# locals.
+func undefine_locals() -> void:
+	var scope: Scope = scopes[-1]
+	var seen_identifiers: Array = []
+	
+	for identifier in scope.symbols:
+		seen_identifiers.push_back(identifier)
+		
+		if scope.symbols[identifier].is_local:
+			scope.symbols[identifier] = Symbol.new(identifier, Symbol.UNDEFINED)
+	
+	for index in range(scopes.size() - 2, -1, -1):
+		var parent_scope: Scope = scopes[index]
+		
+		for identifier in parent_scope.symbols:
+			if identifier in seen_identifiers:
+				continue
+			
+			seen_identifiers.push_back(identifier)
+			
+			if parent_scope.symbols[identifier].is_local:
+				scope.symbols[identifier] = Symbol.new(identifier, Symbol.UNDEFINED)
+	
+	scope.scope_local_count = 0
+	scope.total_local_count = 0
 
 
 # Drop all intermediate locals and jump to a scoped label from its key.

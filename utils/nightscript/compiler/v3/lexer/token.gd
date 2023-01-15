@@ -18,10 +18,12 @@ enum {
 	KEYWORD_CONTINUE, # `continue`.
 	KEYWORD_DO, # `do`.
 	KEYWORD_ELSE, # `else`.
+	KEYWORD_FUNC, # `func`.
 	KEYWORD_IF, # `if`.
 	KEYWORD_INCLUDE, # `include`.
 	KEYWORD_MENU, # `menu`.
 	KEYWORD_OPTION, # `option`.
+	KEYWORD_RETURN, # `return`.
 	KEYWORD_VAR, # `var`.
 	KEYWORD_WHILE, # `while`.
 	BANG, # `!`.
@@ -98,6 +100,8 @@ static func get_name(token_type: int) -> String:
 			return "`do`"
 		KEYWORD_ELSE:
 			return "`else`"
+		KEYWORD_FUNC:
+			return "`func`"
 		KEYWORD_IF:
 			return "`if`"
 		KEYWORD_INCLUDE:
@@ -106,6 +110,8 @@ static func get_name(token_type: int) -> String:
 			return "`menu`"
 		KEYWORD_OPTION:
 			return "`option`"
+		KEYWORD_RETURN:
+			return "`return`"
 		KEYWORD_VAR:
 			return "`var`"
 		KEYWORD_WHILE:
