@@ -478,12 +478,9 @@ _global_script_class_icons={
 
 config/name="Coldest Night"
 config/description="Space is lonely."
-run/main_scene="res://scenes/main/main.tscn"
+run/main_scene="res://scenes/menu/menu.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="krobbizoid/coldest_night"
-boot_splash/image="res://resources/textures/identity/boot_splash.png"
-boot_splash/use_filter=false
-boot_splash/bg_color=Color( 0.0509804, 0.027451, 0.0352941, 1 )
 config/icon="res://resources/textures/identity/icon.png"
 config/macos_native_icon="res://resources/textures/identity/icon.icns"
 config/windows_native_icon="res://resources/textures/identity/icon.ico"
