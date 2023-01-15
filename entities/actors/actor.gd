@@ -18,7 +18,6 @@ var facing: int = Facing.DOWN
 var velocity: Vector2 = Vector2.ZERO
 var nav_path: PoolVector2Array = PoolVector2Array()
 
-var _nav_map: RID = Global.tree.root.world_2d.navigation_map
 var _is_pathing: bool = false
 
 onready var state_machine: StateMachine = $StateMachine
@@ -27,8 +26,10 @@ onready var repulsive_area: RepulsiveArea = $RepulsiveArea
 onready var smooth_pivot: SmoothPivot = $SmoothPivot
 onready var camera_anchor: Position2D = smooth_pivot.get_node("CameraAnchor")
 
-# Virtual _physics_process method. Runs on every physics frame. Processes the
-# actor's state machine, moves the actor, and updates the actor's animation:
+onready var _nav_map: RID = Global.tree.root.world_2d.navigation_map
+
+# Run on every physics frame. Process the actor's state machine, move the actor,
+# and update the actor's animation.
 func _physics_process(delta: float) -> void:
 	state_machine.process_state(delta)
 	velocity = move_and_slide(velocity)
@@ -52,7 +53,7 @@ func _physics_process(delta: float) -> void:
 		animation_player.play("idle_%s" % get_facing_key())
 
 
-# Sets the actor's radar display:
+# Set the actor's radar display.
 func set_radar_display(value: int) -> void:
 	if radar_display == value:
 		return
@@ -63,7 +64,7 @@ func set_radar_display(value: int) -> void:
 			emit_signal("radar_display_changed", radar_display)
 
 
-# Gets the actor's facing key:
+# Get the actor's facing key.
 func get_facing_key() -> String:
 	match facing:
 		Facing.DOWN:
@@ -76,12 +77,12 @@ func get_facing_key() -> String:
 			return "right"
 
 
-# Gets the actor's speed:
+# Get the actor's speed.
 func get_speed() -> float:
 	return velocity.length()
 
 
-# Gets whether the actor is pathfinding:
+# Get whether the actor is pathfinding.
 func is_pathing() -> bool:
 	if nav_path.empty():
 		_is_pathing = false
@@ -89,12 +90,12 @@ func is_pathing() -> bool:
 	return _is_pathing
 
 
-# Finds a navigation path to a world position:
+# Find a navigation path to a world position.
 func find_nav_path(world_pos: Vector2) -> void:
 	nav_path = Navigation2DServer.map_get_path(_nav_map, position, world_pos, true)
 
 
-# Finds a navigation path to a point:
+# Find a navigation path to a point.
 func find_nav_path_point(point: String) -> void:
 	var level_host = find_parent("LevelHost")
 	
@@ -104,13 +105,13 @@ func find_nav_path_point(point: String) -> void:
 	find_nav_path(level_host.current_level.get_point_pos(point))
 
 
-# Runs the navigation path:
+# Run the navigation path.
 func run_nav_path() -> void:
 	if not nav_path.empty():
 		_is_pathing = true
 
 
-# Applies repulsion to the actor's velocity:
+# Apply repulsion to the actor's velocity.
 func apply_repulsion(speed: float, force: float, delta: float) -> void:
 	var repel_vector: Vector2 = repulsive_area.get_vector()
 	
