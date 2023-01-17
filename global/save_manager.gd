@@ -6,6 +6,8 @@ extends Reference
 # manipulating, and saving save data. It can be accessed from any script by
 # using 'Global.save'.
 
+const FORMAT_NAME: String = "krobbizoid.coldest-night.save-data"
+const FORMAT_VERSION: int = 1
 const SLOT_COUNT: int = 1
 const SAVES_DIR: String = "user://saves/"
 
@@ -124,10 +126,15 @@ func _load_file(save_data: SaveData, slot_index: int) -> void:
 		
 		return
 	
-	var parse_result: JSONParseResult = JSON.parse(file.get_as_text())
+	var text: String = file.get_as_text()
 	file.close()
 	
-	if parse_result.error != OK:
+	if not validate_json(text).empty():
+		return
+	
+	var parse_result: JSONParseResult = JSON.parse(text)
+	
+	if parse_result.error != OK or not parse_result.result or not parse_result.result is Dictionary:
 		return
 	
 	save_data.deserialize(parse_result.result)

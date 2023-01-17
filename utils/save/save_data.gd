@@ -54,6 +54,8 @@ func preset_new_game() -> void:
 # Serialize the save data to a JSON object.
 func serialize() -> Dictionary:
 	return {
+		"format_name": Global.save.FORMAT_NAME,
+		"format_version": Global.save.FORMAT_VERSION,
 		"state": serialize_state(),
 		"level": level,
 		"point": point,
