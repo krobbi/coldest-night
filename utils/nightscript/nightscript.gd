@@ -47,10 +47,10 @@ class NightScriptVirtualMachine extends Reference:
 		memory.seek(0)
 	
 	
-	# Get an actor in the scripted state from its key.
-	func get_scripted_actor(actor_key: String) -> Actor:
+	# Get an actor in the pathing state from its actor key.
+	func get_pathing_actor(actor_key: String) -> Actor:
 		for actor in Global.tree.get_nodes_in_group("actors"):
-			if actor.actor_key == actor_key and actor.state_machine.get_key() == "Scripted":
+			if actor.actor_key == actor_key and actor.state_machine.get_state_name() == "Pathing":
 				return actor
 		
 		return null
@@ -230,14 +230,14 @@ class NightScriptVirtualMachine extends Reference:
 			ACTOR_FACE_DIRECTION:
 				var degrees: int = stack.pop_back()
 				var key: String = stack.pop_back()
-				var actor: Actor = get_scripted_actor(key)
+				var actor: Actor = get_pathing_actor(key)
 				
 				if actor:
 					actor.smooth_pivot.pivot_to(deg2rad(float(degrees)))
 			ACTOR_FIND_PATH:
 				var point: String = stack.pop_back()
 				var key: String = stack.pop_back()
-				var actor: Actor = get_scripted_actor(key)
+				var actor: Actor = get_pathing_actor(key)
 				
 				if actor:
 					actor.find_nav_path_point(point)

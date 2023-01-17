@@ -61,7 +61,7 @@ func change_level(level_key: String) -> void:
 	_player.position = current_level.get_world_pos(save_data.point, save_data.offset)
 	current_level.midground.add_child(_player)
 	_player.smooth_pivot.rotation = save_data.angle
-	_player.state_machine.change_state("Moving")
+	_player.state_machine.change_state(_player.get_moving_state())
 	_player.enable_triggers()
 	Global.events.emit_signal("camera_follow_anchor_request", _player.camera_anchor)
 	Global.events.emit_signal("radar_camera_follow_anchor_request", _player)

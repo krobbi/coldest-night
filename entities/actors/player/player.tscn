@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://resources/textures/entities/actors/player/test/player.png" type="Texture" id=1]
-[ext_resource path="res://entities/actors/player/transitioning_player_state.gd" type="Script" id=2]
+[ext_resource path="res://resources/textures/entities/actors/player/player.png" type="Texture" id=1]
+[ext_resource path="res://entities/actors/player/states/moving_state.gd" type="Script" id=2]
 [ext_resource path="res://entities/actors/player/player.gd" type="Script" id=3]
-[ext_resource path="res://entities/actors/player/moving_player_state.gd" type="Script" id=4]
+[ext_resource path="res://entities/actors/player/states/transitioning_state.gd" type="Script" id=4]
 [ext_resource path="res://entities/actors/actor.tscn" type="PackedScene" id=5]
 [ext_resource path="res://components/interactor/interactor.tscn" type="PackedScene" id=6]
 
@@ -17,15 +17,19 @@ radius = 8.0
 script = ExtResource( 3 )
 actor_key = "player"
 radar_display = 1
-
-[node name="Scripted" parent="StateMachine" index="0"]
-speed = 160.0
+_freeze_state_path = NodePath("StateMachine/Pathing")
+_moving_state_path = NodePath("StateMachine/Moving")
+_transitioning_state_path = NodePath("StateMachine/Transitioning")
 
 [node name="Moving" type="Node" parent="StateMachine" index="1"]
-script = ExtResource( 4 )
+script = ExtResource( 2 )
+_player_path = NodePath("../..")
+_interactor_path = NodePath("../../SmoothPivot/Interactor")
+_smooth_pivot_path = NodePath("../../SmoothPivot")
 
 [node name="Transitioning" type="Node" parent="StateMachine" index="2"]
-script = ExtResource( 2 )
+script = ExtResource( 4 )
+_player_path = NodePath("../..")
 
 [node name="TriggeringArea" type="Area2D" parent="." index="4"]
 collision_layer = 32

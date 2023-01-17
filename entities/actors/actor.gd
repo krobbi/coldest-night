@@ -13,6 +13,8 @@ enum RadarDisplay {NONE, PLAYER, IDLE, GUARD}
 export(String) var actor_key: String
 export(float) var animation_threshold: float = 40.0
 export(RadarDisplay) var radar_display: int = RadarDisplay.GUARD setget set_radar_display
+export(float) var _repel_speed: float = 180.0
+export(float) var _repel_force: float = 900.0
 
 var facing: int = Facing.DOWN
 var velocity: Vector2 = Vector2.ZERO
@@ -28,10 +30,20 @@ onready var camera_anchor: Position2D = smooth_pivot.get_node("CameraAnchor")
 
 onready var _nav_map: RID = Global.tree.root.world_2d.navigation_map
 
-# Run on every physics frame. Process the actor's state machine, move the actor,
-# and update the actor's animation.
+# Initialize the actor's state machine.
+func _ready() -> void:
+	state_machine.init()
+
+
+# Run on every physics frame. Tick the actor's state machine, apply the actor's
+# repulsion, move the actor, and update the actor's animation.
 func _physics_process(delta: float) -> void:
-	state_machine.process_state(delta)
+	state_machine.tick(delta)
+	var repel_vector: Vector2 = repulsive_area.get_vector()
+	
+	if repel_vector:
+		velocity = velocity.move_toward(repel_vector * _repel_speed, _repel_force * delta)
+	
 	velocity = move_and_slide(velocity)
 	
 	var facing_vector: Vector2 = smooth_pivot.get_vector()
@@ -77,9 +89,19 @@ func get_facing_key() -> String:
 			return "right"
 
 
+# Set the actor's velocity.
+func set_velocity(value: Vector2) -> void:
+	velocity = value
+
+
 # Get the actor's speed.
 func get_speed() -> float:
 	return velocity.length()
+
+
+# Get the actor's velocity.
+func get_velocity() -> Vector2:
+	return velocity
 
 
 # Get whether the actor is pathfinding.
@@ -111,9 +133,29 @@ func run_nav_path() -> void:
 		_is_pathing = true
 
 
-# Apply repulsion to the actor's velocity.
-func apply_repulsion(speed: float, force: float, delta: float) -> void:
-	var repel_vector: Vector2 = repulsive_area.get_vector()
+# Follow the navigation path.
+func follow_nav_path(speed: float, acceleration: float, friction: float, delta: float) -> void:
+	if not is_pathing():
+		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+		return
 	
-	if repel_vector:
-		velocity = velocity.move_toward(repel_vector * speed, force * delta)
+	var target: Vector2 = nav_path[0]
+	var distance: float = position.distance_to(target)
+	
+	while distance < 0.5:
+		nav_path.remove(0)
+		
+		if nav_path.empty():
+			return
+		
+		target = nav_path[0]
+		distance = position.distance_to(target)
+	
+	var direction: Vector2 = position.direction_to(target)
+	velocity = velocity.move_toward(direction * speed, acceleration * delta)
+	smooth_pivot.pivot_to(direction.angle())
+	
+	if velocity.length() * delta >= distance - 8.0:
+		nav_path.remove(0)
+	
+	nav_path = nav_path

@@ -20,7 +20,7 @@ export(String) var relative_point: String
 # Virtual _player_pre_enter method. Runs before a player enters the change level
 # trigger. Disables the player:
 func _player_pre_enter(player: Player) -> void:
-	player.state_machine.change_state("Transitioning")
+	player.state_machine.change_state(player.get_transitioning_state())
 
 
 # Virtual _player_enter method. Runs when a player enters the change level
