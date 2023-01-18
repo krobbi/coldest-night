@@ -19,8 +19,7 @@ var _is_quitting: bool = false
 onready var tree: SceneTree = get_tree()
 onready var display: DisplayManager = DisplayManager.new(tree, config)
 
-# Virtual _ready method. Runs when the game starts. Loads settings and save
-# files to initialize the game.
+# Run when the game starts. Load settings and save files to initialize the game.
 func _ready() -> void:
 	config.load_file()
 	config.broadcast_values()
@@ -28,8 +27,7 @@ func _ready() -> void:
 	save.load_file()
 
 
-# Virtual _exit_tree method. Runs when the game stops. Destructs and frees
-# global objects.
+# Run when the game stops. Destruct and free global objects.
 func _exit_tree() -> void:
 	display.destruct()
 	display.free()
@@ -39,19 +37,17 @@ func _exit_tree() -> void:
 	controls.free()
 	audio.destruct()
 	audio.free()
-	config.destruct()
 	events.free()
-	config.free()
 
 
-# Virtual _input method. Runs when the global context receives an input event.
-# Handles controls for toggling fullscreen:
+# Run when the global context receives an input event. Handle controls for
+# toggling fullscreen.
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_fullscreen"):
 		display.set_fullscreen(not display.fullscreen)
 
 
-# Changes the current scene from its scene key:
+# Change the current scene from its scene key.
 func change_scene(scene_key: String, fade_out: bool = true, fade_in: bool = true) -> void:
 	if _is_changing_scene or not tree:
 		return

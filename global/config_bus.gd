@@ -1,12 +1,12 @@
 class_name ConfigBus
-extends Object
+extends Reference
 
 # Configuration Bus
 # The configuration bus is a global utility that handles loading, storing, and
 # saving configuration values and emitting configuration signals. It can be
 # accessed from any script by using 'Global.config'.
 
-class ConfigSignal extends Object:
+class ConfigSignal extends Reference:
 	
 	# Configuration Signal
 	# A configuration signal is a helper structure used by a configuration bus
@@ -19,8 +19,8 @@ class ConfigSignal extends Object:
 	var cast_type: int
 	var binds: Array
 	
-	# Constructor. Sets the configuration signal's configuration key, target,
-	# method, cast type, and binds:
+	# Set the configuration signal's configuration key, target, method, cast
+	# type, and binds.
 	func _init(
 			config_key_val: String, target_ref: Object, method_val: String,
 			cast_type_val: int, binds_ref: Array
@@ -32,20 +32,20 @@ class ConfigSignal extends Object:
 		binds = binds_ref
 	
 	
-	# Returns whether the configuration signal has a signature configuration
-	# key, target, and method:
+	# Return whether the configuration signal has a signature configuration key,
+	# target, and method.
 	func has_signature(config_key_val: String, target_ref: Object, method_val: String) -> bool:
 		return config_key == config_key_val and target == target_ref and method == method_val
 	
 	
-	# Emits the configuration signal with a value:
+	# Emit the configuration signal with a value.
 	func emit(value) -> void:
 		var args: Array = binds.duplicate()
 		args.insert(0, cast(value, cast_type))
 		target.callv(method, args)
 	
 	
-	# Casts a variable-type value to a type:
+	# Cast a variable-type value to a type.
 	static func cast(value, type: int):
 		match type:
 			TYPE_BOOL:
@@ -60,12 +60,12 @@ class ConfigSignal extends Object:
 				return value
 	
 	
-	# Casts a variable-type value to a bool:
+	# Cast a variable-type value to a bool.
 	static func cast_bool(value) -> bool:
 		return true if value else false
 	
 	
-	# Casts a variable-type value to an int:
+	# Cast a variable-type value to an int.
 	static func cast_int(value) -> int:
 		match typeof(value):
 			TYPE_BOOL, TYPE_REAL, TYPE_STRING:
@@ -76,7 +76,7 @@ class ConfigSignal extends Object:
 				return 0
 	
 	
-	# Casts a variable-type value to a float:
+	# Cast a variable-type value to a float.
 	static func cast_float(value) -> float:
 		match typeof(value):
 			TYPE_BOOL, TYPE_INT, TYPE_STRING:
@@ -87,7 +87,7 @@ class ConfigSignal extends Object:
 				return 0.0
 	
 	
-	# Casts a variable-type value to a string:
+	# Cast a variable-type value to a string.
 	static func cast_string(value) -> String:
 		match typeof(value):
 			TYPE_BOOL, TYPE_INT, TYPE_REAL:
@@ -133,8 +133,8 @@ var _data: Dictionary = {
 	"debug.optimize_nightscript": false,
 }
 
-# Sets a configuration value from its configuration key if it exists. Marks the
-# configuration values to be saved if the configuration value was changed:
+# Set a configuration value from its configuration key if it exists. Mark the
+# configuration values to be saved if the configuration value was changed.
 func set_value(config_key: String, value) -> void:
 	if _data.has(config_key) and not _strict_equals(_data[config_key], value):
 		_data[config_key] = value
@@ -145,62 +145,62 @@ func set_value(config_key: String, value) -> void:
 				config_signal.emit(value)
 
 
-# Sets a configuration value from its configuration key as a bool. Marks the
-# configuration values to be saved if the configuration value was changed:
+# Set a configuration value from its configuration key as a bool. Mark the
+# configuration values to be saved if the configuration value was changed.
 func set_bool(config_key: String, value: bool) -> void:
 	set_value(config_key, value)
 
 
-# Sets a configuration value from its configuration key as an int. Marks the
-# configuration values to be saved if the configuration value was changed:
+# Set a configuration value from its configuration key as an int. Mark the
+# configuration values to be saved if the configuration value was changed.
 func set_int(config_key: String, value: int) -> void:
 	set_value(config_key, value)
 
 
-# Sets a configuration value from its configuration key as a float. Marks the
-# configuration values to be saved if the configuration value was changed:
+# Set a configuration value from its configuration key as a float. Mark the
+# configuration values to be saved if the configuration value was changed.
 func set_float(config_key: String, value: float) -> void:
 	set_value(config_key, value)
 
 
-# Sets a configuration value from its configuration key as a string. Marks the
-# configuration values to be saved if the configuration value was changed:
+# Set a configuration value from its configuration key as a string. Mark the
+# configuration values to be saved if the configuration value was changed.
 func set_string(config_key: String, value: String) -> void:
 	set_value(config_key, value)
 
 
-# Gets a configuration value from its configuration key. Returns a default value
-# if the configuration key does not exist:
+# Get a configuration value from its configuration key. Return a default value
+# if the configuration key does not exist.
 func get_value(config_key: String, default = null):
 	return _data.get(config_key, default)
 
 
-# Gets a configuration value from its configuration key cast to a bool. Returns
-# a default value if the configuration key does not exist:
+# Get a configuration value from its configuration key cast to a bool. Return a
+# default value if the configuration key does not exist.
 func get_bool(config_key: String, default: bool = false) -> bool:
 	return ConfigSignal.cast_bool(_data.get(config_key, default))
 
 
-# Gets a configuration value from its configuration key cast to an int. Returns
-# a default value if the configuration key does not exist:
+# Get a configuration value from its configuration key cast to an int. Return a
+# default value if the configuration key does not exist.
 func get_int(config_key: String, default: int = 0) -> int:
 	return ConfigSignal.cast_int(_data.get(config_key, default))
 
 
-# Gets a configuraiton value from its configuration key cast to a float. Returns
-# a default value if the configuration key does not exist or if the
-# configuration value cannot be cast to a float:
+# Get a configuraiton value from its configuration key cast to a float. Return a
+# default value if the configuration key does not exist or if the configuration
+# value cannot be cast to a float.
 func get_float(config_key: String, default: float = 0.0) -> float:
 	return ConfigSignal.cast_float(_data.get(config_key, default))
 
 
-# Gets a configuration value from its configuration key cast to a string.
-# Returns a default value if the configuration key does not exist:
+# Get a configuration value from its configuration key cast to a string. Return
+# a default value if the configuration key does not exist.
 func get_string(config_key: String, default: String = "") -> String:
 	return ConfigSignal.cast_string(_data.get(config_key, default))
 
 
-# Connects a configuration value to a receiver method:
+# Connect a configuration value to a receiver method.
 func connect_value(
 		config_key: String, target: Object, method: String,
 		cast_type: int = TYPE_NIL, binds: Array = []
@@ -215,43 +215,42 @@ func connect_value(
 	_config_signals.push_back(ConfigSignal.new(config_key, target, method, cast_type, binds))
 
 
-# Connects a configuration value to a receiver method cast to a bool:
+# Connect a configuration value to a receiver method cast to a bool.
 func connect_bool(config_key: String, target: Object, method: String, binds: Array = []) -> void:
 	connect_value(config_key, target, method, TYPE_BOOL, binds)
 
 
-# Connects a configuration value to a receiver method cast to an int:
+# Connect a configuration value to a receiver method cast to an int.
 func connect_int(config_key: String, target: Object, method: String, binds: Array = []) -> void:
 	connect_value(config_key, target, method, TYPE_INT, binds)
 
 
-# Connects a configuration value to a receiver method cast to a float:
+# Connect a configuration value to a receiver method cast to a float.
 func connect_float(config_key: String, target: Object, method: String, binds: Array = []) -> void:
 	connect_value(config_key, target, method, TYPE_REAL, binds)
 
 
-# Connects a configuration value to a receiver method cast to a string:
+# Connect a configuration value to a receiver method cast to a string.
 func connect_string(config_key: String, target: Object, method: String, binds: Array = []) -> void:
 	connect_value(config_key, target, method, TYPE_STRING, binds)
 
 
-# Disconnects a configuration value from a receiver method:
+# Disconnect a configuration value from a receiver method.
 func disconnect_value(config_key: String, target: Object, method: String) -> void:
 	for i in range(_config_signals.size() - 1, -1, -1):
 		var config_signal: ConfigSignal = _config_signals[i]
 		
 		if config_signal.has_signature(config_key, target, method):
-			config_signal.free()
 			_config_signals.remove(i)
 
 
-# Emits all configuration signals:
+# Emit all configuration signals.
 func broadcast_values() -> void:
 	for config_signal in _config_signals:
-		config_signal.emit(_data.get(config_signal.config_key, null))
+		config_signal.emit(_data.get(config_signal.config_key))
 
 
-# Loads the configuration values from their file if it exists:
+# Load the configuration values from their file if it exists.
 func load_file() -> void:
 	var dir: Directory = Directory.new()
 	
@@ -283,7 +282,7 @@ func load_file() -> void:
 			_should_save = true
 
 
-# Saves the configuration values to their file if they are marked to be saved:
+# Save the configuration values to their file if they are marked to be saved.
 func save_file() -> void:
 	if not _should_save:
 		return
@@ -308,14 +307,6 @@ func save_file() -> void:
 		_should_save = false
 
 
-# Destructor. Frees the configuration bus' configuration signals:
-func destruct() -> void:
-	for config_signal in _config_signals:
-		config_signal.free()
-	
-	_config_signals.clear()
-
-
-# Returns whether two variable-type values have the same type and value:
+# Return whether two variable-type values have the same type and value.
 func _strict_equals(a, b) -> bool:
 	return typeof(a) == typeof(b) and a == b
