@@ -106,11 +106,6 @@ func _copy_save_data(source: SaveData, target: SaveData, copy_stats: bool) -> vo
 		target.stats.deserialize(original_stats)
 
 
-# Copies source statistics save data to target statistics save data by value:
-func _copy_stats_save_data(source: StatsSaveData, target: StatsSaveData) -> void:
-	target.deserialize(source.serialize())
-
-
 # Loads save data from its file from a slot index:
 func _load_file(save_data: SaveData, slot_index: int) -> void:
 	var file: File = File.new()
@@ -128,6 +123,7 @@ func _load_file(save_data: SaveData, slot_index: int) -> void:
 	
 	var reader: JSONReader = JSONReader.new(file.get_as_text())
 	file.close()
+	_validate_save_data_json(reader)
 	
 	if not reader.is_valid():
 		return
@@ -152,3 +148,17 @@ func _save_file(save_data: SaveData, slot_index: int) -> void:
 	
 	file.store_string("%s\n" % JSON.print(save_data.serialize(), "\t"))
 	file.close()
+
+
+# Validate save data JSON from a JSON reader.
+func _validate_save_data_json(reader: JSONReader) -> void:
+	reader.check_enum("format_name", [FORMAT_NAME])
+	reader.check_enum("format_version", [FORMAT_VERSION])
+	reader.check_enum("state", ["NEW_GAME", "NORMAL", "COMPLETED"])
+	reader.check_string("level")
+	reader.check_string("point")
+	reader.check_float("offset_x")
+	reader.check_float("offset_y")
+	reader.check_float("angle")
+	reader.check_dictionary("stats")
+	reader.check_dictionary("flags")

@@ -15,7 +15,7 @@ var point: String = "World"
 var offset: Vector2 = Vector2.ZERO
 var angle: float = 0.0
 
-# Sets a flag from its namespace and key:
+# Set a flag from its namespace and key.
 func set_flag(namespace: String, key: String, value: int) -> void:
 	if not flags.has(namespace):
 		flags[namespace] = {}
@@ -24,7 +24,7 @@ func set_flag(namespace: String, key: String, value: int) -> void:
 	Global.events.emit_signal("flag_changed", namespace, key, value)
 
 
-# Gets a flag from its namespace and key:
+# Get a flag from its namespace and key.
 func get_flag(namespace: String, key: String) -> int:
 	if not flags.has(namespace):
 		return 0
@@ -32,7 +32,7 @@ func get_flag(namespace: String, key: String) -> int:
 	return flags[namespace].get(key, 0)
 
 
-# Clears the save data to empty values:
+# Clear the save data to empty values.
 func clear() -> void:
 	state = State.NEW_GAME
 	stats.clear()
@@ -43,7 +43,7 @@ func clear() -> void:
 	angle = 0.0
 
 
-# Clears the save data to preset values for a new game:
+# Clear the save data to preset values for a new game.
 func preset_new_game() -> void:
 	clear()
 	level = "test.area_bx.north"
@@ -78,15 +78,15 @@ func serialize_state() -> String:
 			return "NORMAL"
 
 
-# Deserialize the save data from a JSON object.
+# Deserialize the save data from a validated JSON object.
 func deserialize(data: Dictionary) -> void:
-	deserialize_state(String(data.get("state", "NORMAL")))
-	level = String(data.get("level", "test.area_bx.hub"))
-	point = String(data.get("point", "Terminal"))
-	offset = Vector2(float(data.get("offset_x", 0.0)), float(data.get("offset_y", 0.0)))
-	angle = float(data.get("angle", PI * 0.5))
-	stats.deserialize(data.get("stats", {}).duplicate(true))
-	flags = data.get("flags", {}).duplicate(true)
+	deserialize_state(data.state)
+	level = data.level
+	point = data.point
+	offset = Vector2(float(data.offset_x), float(data.offset_y))
+	angle = float(data.angle)
+	stats.deserialize(data.stats.duplicate(true))
+	flags = data.flags.duplicate(true)
 
 
 # Deserialize the save data's state from a string.
