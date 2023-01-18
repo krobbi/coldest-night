@@ -126,18 +126,13 @@ func _load_file(save_data: SaveData, slot_index: int) -> void:
 		
 		return
 	
-	var text: String = file.get_as_text()
+	var reader: JSONReader = JSONReader.new(file.get_as_text())
 	file.close()
 	
-	if not validate_json(text).empty():
+	if not reader.is_valid():
 		return
 	
-	var parse_result: JSONParseResult = JSON.parse(text)
-	
-	if parse_result.error != OK or not parse_result.result or not parse_result.result is Dictionary:
-		return
-	
-	save_data.deserialize(parse_result.result)
+	save_data.deserialize(reader.get_data())
 
 
 # Saves save data to its file from a payload format and slot index:

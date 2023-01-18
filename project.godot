@@ -144,6 +144,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://components/interactor/interactor.gd"
 }, {
+"base": "Reference",
+"class": "JSONReader",
+"language": "GDScript",
+"path": "res://utils/io/json_reader.gd"
+}, {
 "base": "Object",
 "class": "LangManager",
 "language": "GDScript",
@@ -367,6 +372,7 @@ _global_script_class_icons={
 "GameOverMenuCard": "",
 "Interactable": "",
 "Interactor": "",
+"JSONReader": "",
 "LangManager": "",
 "LaserWall": "",
 "Level": "",
