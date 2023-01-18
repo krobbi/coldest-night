@@ -30,7 +30,16 @@ func get_data() -> Dictionary:
 
 # Get a property from the JSON reader.
 func get_property(property: String, default = null):
-	return _data.get(property, default)
+	if not has_property(property):
+		return default
+	
+	var parts: Array = Array(property.split("."))
+	var value = _data
+	
+	while not parts.empty():
+		value = value[parts.pop_front()]
+	
+	return value
 
 
 # Get whether the JSON reader is valid.
@@ -40,7 +49,25 @@ func is_valid() -> bool:
 
 # Get whether the JSON reader has a property.
 func has_property(property: String) -> bool:
-	return _data.has(property)
+	var parts: Array = Array(property.split("."))
+	var key: String = ""
+	var dictionary: Dictionary = _data
+	
+	while not parts.empty():
+		key = parts.pop_front()
+		
+		if key.empty() or not dictionary.has(key):
+			return false
+		
+		if parts.empty():
+			return true
+		
+		if typeof(dictionary[key]) != TYPE_DICTIONARY:
+			return false
+		
+		dictionary = dictionary[key]
+	
+	return false
 
 
 # Get whether the JSON reader has an enum property.
@@ -49,6 +76,23 @@ func has_enum(property: String, values: Array) -> bool:
 		return false
 	
 	return get_property(property) in values
+
+
+# Get whether the JSON reader has an int property. Float types are also accepted
+# as JSON has an ambiguous number format. Infinity, not a number, and float
+# types that do not round to themselves are not accepted.
+func has_int(property: String) -> bool:
+	if not has_property(property):
+		return false
+	
+	var value = get_property(property)
+	
+	if typeof(value) == TYPE_INT:
+		return true
+	elif typeof(value) == TYPE_REAL:
+		return not is_inf(value) and not is_nan(value) and floor(value) == value
+	
+	return false
 
 
 # Get whether the JSON reader has a float property. Int types are also accepted
@@ -93,6 +137,12 @@ func check_property(property: String) -> void:
 # Invalidate the JSON reader if it does not have an enum property.
 func check_enum(property: String, values: Array) -> void:
 	if not has_enum(property, values):
+		invalidate()
+
+
+# Invalidate the JSON reader if it does not have an int property.
+func check_int(property: String) -> void:
+	if not has_int(property):
 		invalidate()
 
 
