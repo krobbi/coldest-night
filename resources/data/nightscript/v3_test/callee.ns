@@ -1,6 +1,6 @@
 # NightScript Version 3.
-# Version 3 Call Test
-# Called by the NightScript version 3 test dialog to demonstrate the difference
+# Callee Test
+# Called by the NightScript version 3 caller test to demonstrate the difference
 # between calling and running.
 
 path("carol", "CaB");

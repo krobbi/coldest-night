@@ -1,0 +1,24 @@
+# NightScript Version 3.
+# Redirect Terminal
+# Cutscene for the redirect terminal in test/area_bx/west.
+
+include "redirect_terminal_dialog";
+
+const FLAG = "west_laser_state";
+
+freeze();
+show();
+
+redirectTerminalMainDialog();
+
+menu {
+	option(redirectTerminalGetRedirectOption()){
+		setFlag("test", FLAG, !getFlag("test", FLAG));
+		redirectTerminalRedirectedDialog();
+	}
+	
+	option(redirectTerminalGetCancelOption()){}
+}
+
+hide();
+thaw();

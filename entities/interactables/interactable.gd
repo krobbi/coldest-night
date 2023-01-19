@@ -1,28 +1,29 @@
 class_name Interactable
 extends Area2D
 
-# Interactable Base
-# Interactables are areas that run code when interacted with by the current
-# player.
+# Interactable
+# Interactables are areas that emit a signal when interacted with.
+
+signal interacted
 
 onready var _animated_sprite: AnimatedSprite = $AnimatedSprite
 
-# Abstract _interact method. Runs when the interactable is interacted with by
-# the current player:
+# Run when the interactable is interacted with.
 func _interact() -> void:
 	pass
 
 
-# Interacts with the interactable.
+# Interact with the interactable.
 func interact() -> void:
 	_interact()
+	emit_signal("interacted")
 
 
-# Marks the interactable as selected:
+# Mark the interactable as selected.
 func select() -> void:
 	_animated_sprite.play("select")
 
 
-# Marks the interactable as not selected:
+# Mark the interactable as not selected.
 func deselect() -> void:
 	_animated_sprite.play("deselect")

@@ -1,0 +1,33 @@
+# NightScript Version 3.
+# Unlock Terminal
+# Cutscene for the unlock terminal in test/area_bx/west.
+
+include "unlock_terminal_dialog";
+
+const FLAG = "west_unlocked";
+
+freeze();
+show();
+
+menu {
+	if(getFlag("test", FLAG)){
+		unlockTerminalLockPromptDialog();
+		
+		option(unlockTerminalGetLockOption()){
+			setFlag("test", FLAG, 0);
+			unlockTerminalLockedDialog();
+		}
+	} else {
+		unlockTerminalUnlockPromptDialog();
+		
+		option(unlockTerminalGetUnlockOption()){
+			setFlag("test", FLAG, 1);
+			unlockTerminalUnlockedDialog();
+		}
+	}
+	
+	option(unlockTerminalGetCancelOption()){}
+}
+
+hide();
+thaw();

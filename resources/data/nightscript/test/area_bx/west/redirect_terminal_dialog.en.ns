@@ -1,0 +1,19 @@
+# NightScript Version 3.
+# Redirect Terminal Dialog
+# English dialog implementation for the redirect terminal in test/area_bx/west.
+
+func redirectTerminalGetRedirectOption(){
+	return "Redirect barriers";
+}
+
+func redirectTerminalGetCancelOption(){
+	return "Cancel";
+}
+
+func redirectTerminalMainDialog(){
+	say("Redirect barriers?");
+}
+
+func redirectTerminalRedirectedDialog(){
+	say("Barriers redirected!");
+}

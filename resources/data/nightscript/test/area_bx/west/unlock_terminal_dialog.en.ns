@@ -1,0 +1,31 @@
+# NightScript Version 3.
+# Unlock Terminal Dialog
+# English dialog implementation for the unlock terminal in test/area_bx/west.
+
+func unlockTerminalGetLockOption(){
+	return "Lock annex";
+}
+
+func unlockTerminalGetUnlockOption(){
+	return "Unlock annex";
+}
+
+func unlockTerminalGetCancelOption(){
+	return "Cancel";
+}
+
+func unlockTerminalLockPromptDialog(){
+	say("West annex is unlocked.{p=0.5}\nLock annex?");
+}
+
+func unlockTerminalUnlockPromptDialog(){
+	say("West annex is locked.{p=0.5}\nUnlock annex?");
+}
+
+func unlockTerminalLockedDialog(){
+	say("Annex locked!");
+}
+
+func unlockTerminalUnlockedDialog(){
+	say("Annex unlocked!");
+}

@@ -1,6 +1,6 @@
 # NightScript Version 3.
-# Dialog Test
-# Display a dialog message.
+# Caller Test
+# Call and run a program.
 
 # Calling pause without this would cause a softlock unless another source
 # unpauses us.
