@@ -1,9 +1,12 @@
 extends Reference
 
-# NightScript Compiler Proxy
-# The NightScript compiler proxy is a proxy for different versions of the
-# NightScript compiler. It pre-processes NightScript source code to direct it to
-# the appropriate compiler.
+# NightScript Compiler
+# The NightScript compiler contains the interface for compiling NightScript
+# source code to NightScript bytecode. The NightScript source code is directed
+# to a frontend based on its version to generate a common intermediate code. The
+# compiler backend optimizes the intermediate code and serializes it to
+# NightScript bytecode. The game is exported with precompiled NightScript and
+# the NightScript compiler is excluded.
 
 const Assembler: GDScript = preload("backend/assembler.gd")
 const Frontend: GDScript = preload("frontend.gd")
@@ -12,9 +15,12 @@ const Optimizer: GDScript = preload("backend/optimizer.gd")
 
 # Create a new NightScript compiler frontend from NightScript source code.
 func create_frontend(source: String) -> Frontend:
+	var stripped_source: String = source.strip_edges(true, false)
 	var code: IRCode = IRCode.new()
 	
-	if source.strip_edges(true, false).begins_with("# NightScript Version 3."):
+	if stripped_source.begins_with("# NightScript Version 2."):
+		return preload("v2/frontend_v2.gd").new(code)
+	elif stripped_source.begins_with("# NightScript Version 3."):
 		return preload("v3/frontend_v3.gd").new(code)
 	
 	return preload("v2/frontend_v2.gd").new(code)

@@ -1,6 +1,6 @@
 # NightScript Version 3.
 # Save Terminal Dialog
-# English dialog for the save terminal cutscene.
+# English dialog implementation for save terminals.
 
 func saveTerminalGetSaveOption(){
 	return "Save progress";
