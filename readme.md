@@ -13,6 +13,7 @@ _All rights reserved._
    * [Issues Affecting Windows](#issues-affecting-windows)
    * [Issues Affecting macOS](#issues-affecting-macos)
 5. [Translating](#translating)
+   * [Translating NightScript](#translating-nightscript)
 6. [Credits and Licensing](#credits-and-licensing)
 7. [License](#license)
 
@@ -74,13 +75,6 @@ More lengthy or complex translations are determined from their file paths:
 | Credits files            | `resources/data/credits/credits_<locale>.txt`          |
 | NightScript source files | `resources/data/nightscript/<program key>.<locale>.ns` |
 
-NightScript source files may be given a 'global' locale by omitting the locale
-extension. A global locale means that the script should not need to be
-translated. If a complex script such as a cutscene needs to display
-translatable text it can be given a global locale, but call external scripts
-containing dialog by using the `call <program key>` statement. The appropriate
-translation will be selected automatically.
-
 If more than one locale is available to the game, a language menu will appear
 in the settings menu, otherwise it will be hidden. The translation system
 should respond automatically to the game's loaded locales and `locale/fallback`
@@ -88,6 +82,62 @@ project setting.
 
 The story, character names, and other attributes may not be final and may
 change.
+
+# Translating NightScript
+NightScript source files may be given a 'global' locale by omitting the locale
+extension. A global locale means that the script should not need to be
+translated.
+
+If a complex script needs to display translatable text it can be given a global
+locale and include another script with a locale. For example, `cutscene.ns`
+could include `cutscene_dialog.en.ns` by using `include "cutscene_dialog";`.
+The appropriate locale will be selected automatically. Functions can then be
+called from the included script. New scripts with the same name and implemented
+functions can then be created for each locale.
+
+See below for an example.
+
+`cutscene.ns`:
+```
+# NightScript Version 3.
+
+include "cutscene_dialog"; # File extensions are omitted from includes.
+
+freeze(); # Freeze the player.
+show(); # Show the dialog box.
+
+name(getName()); # Call `getName` and display the returned value as a name.
+displayDialog(); # Call `displayDialog` and ignore any returned value.
+
+hide(); # Hide the dialog box.
+thaw(); # Unfreeze the player.
+```
+
+`cutscene_dialog.en.ns`:
+```
+# NightScript Version 3.
+
+func getName(){
+   return "John";
+}
+
+func displayDialog(){
+   say("Hello, world!");
+}
+```
+
+`cutscene_dialog.fr.ns`:
+```
+# NightScript Version 3.
+
+func getName(){
+   return "Jean";
+}
+
+func displayDialog(){
+   say("Bonjour, le monde!");
+}
+```
 
 # Credits and Licensing
 See [docs/credits.md](./docs/credits.md) for a full copy of the credits.  

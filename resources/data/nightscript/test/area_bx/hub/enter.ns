@@ -1,0 +1,53 @@
+# NightScript Version 3.
+# Enter Hub
+# Cutscene for entering test/area_bx/hub.
+
+include "enter_dialog";
+
+const NORTH_TOTAL = 10;
+const WEST_TOTAL = NORTH_TOTAL + 6 + 1;
+
+func hasDialog(key, count){
+	if(!getFlag("test", key) && getFlag("test", "archival_unit_count") == count){
+		freeze();
+		show();
+		return setFlag("test", key, 1);
+	}
+	
+	return 0;
+}
+
+if(!getFlag("test", "hub_seen_terminal")){
+	setFlag("test", "hub_seen_terminal", 1);
+	freeze();
+	show();
+	enterHubTerminalDialog();
+	hide();
+	
+	path("player", "Terminal");
+	runPaths();
+	awaitPaths();
+	face("player", -90);
+	sleep(1000);
+	
+	show();
+	enterHubTerminalReachedDialog();
+	hide();
+	thaw();
+} else if(hasDialog("hub_seen_north_almost", NORTH_TOTAL - 1)){
+	enterHubNorthAlmostDialog();
+	hide();
+	thaw();
+} else if(hasDialog("hub_seen_north_complete", NORTH_TOTAL)){
+	enterHubNorthCompleteDialog();
+	hide();
+	thaw();
+} else if(hasDialog("hub_seen_west_almost", WEST_TOTAL - 1)){
+	enterHubWestAlmostDialog();
+	hide();
+	thaw();
+} else if(hasDialog("hub_seen_west_complete", WEST_TOTAL)){
+	enterHubWestCompleteDialog();
+	hide();
+	thaw();
+}
