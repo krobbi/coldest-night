@@ -23,7 +23,7 @@ extents = Vector2( 48, 160 )
 [node name="North" instance=ExtResource( 1 )]
 level_name = "LEVEL.TEST.AREA_BX.NORTH"
 is_safe = false
-cached_ns_programs = PoolStringArray( "dialog/test/start", "patrol/test/area_bx/north/brian", "patrol/test/area_bx/north/nora", "patrol/test/area_bx/north/archie", "patrol/test/area_bx/north/susie" )
+cached_ns_programs = PoolStringArray( "dialog/test/start" )
 autorun_ns_programs = PoolStringArray( "patrol/test/area_bx/north/brian", "patrol/test/area_bx/north/nora", "patrol/test/area_bx/north/archie", "patrol/test/area_bx/north/susie" )
 
 [node name="TileMap" parent="Background" index="0"]

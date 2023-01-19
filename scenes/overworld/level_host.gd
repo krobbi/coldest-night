@@ -48,6 +48,9 @@ func change_level(level_key: String) -> void:
 	Global.events.emit_signal("nightscript_stop_programs_request")
 	current_level = _create_level(level_key)
 	
+	for program_key in current_level.autorun_ns_programs:
+		Global.events.emit_signal("nightscript_cache_program_request", program_key)
+	
 	for program_key in current_level.cached_ns_programs:
 		Global.events.emit_signal("nightscript_cache_program_request", program_key)
 	
