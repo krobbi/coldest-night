@@ -8,27 +8,30 @@ export(String) var archival_unit_key: String
 
 var _is_collectable: bool = false
 
-# Virtual _ready method. Runs when the archival unit finishes entering the scene
-# tree. Frees the archival unit or plays the archival unit's animation:
+onready var _animated_sprite: AnimatedSprite = $AnimatedSprite
+
+# Run when the archival unit finishes entering the scene tree. Display the
+# archival unit as collected or play the archival unit's animation.
 func _ready() -> void:
 	if Global.save.get_working_data().get_flag("test_archival_unit", archival_unit_key):
 		_display_collected()
 	else:
-		$AnimatedSprite.play()
+		_animated_sprite.play()
 		_is_collectable = true
 
 
-# Displays the archival unit as collected:
+# Display the archival unit as collected.
 func _display_collected() -> void:
 	$TriggerShape.set_deferred("disabled", true)
-	$AnimatedSprite.stop()
-	$AnimatedSprite.frame = 0
+	_animated_sprite.stop()
+	_animated_sprite.frame = 0
+	_animated_sprite.offset.y = -8.0
+	$Shadow.hide()
 	modulate = Color("#60ad1818")
 
 
-# Signal callback for area_entered on the archival unit. Runs when a player's
-# triggering enters the archival unit's trigger area. Collects the archival
-# unit:
+# Run when a player's triggering area enters the archival unit's trigger area.
+# Collect the archival unit.
 func _on_area_entered(_area: Area2D) -> void:
 	if not _is_collectable:
 		return
