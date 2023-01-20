@@ -21,4 +21,4 @@ texture = ExtResource( 1 )
 offset = Vector2( 0, -16 )
 
 [node name="RunNightScriptInteractable" parent="." instance=ExtResource( 2 )]
-program = "test/save_terminal"
+_program_key = "test/save_terminal"

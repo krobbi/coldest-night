@@ -7,7 +7,6 @@
 [node name="Canyon" instance=ExtResource( 1 )]
 area_name = "AREA.TEST.CANYON"
 music = "canyon"
-has_radar = false
 
 [node name="WallMap" type="TileMap" parent="Background" index="0"]
 tile_set = ExtResource( 2 )

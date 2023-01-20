@@ -51,6 +51,8 @@ func change_level(level_key: String) -> void:
 	for program_key in current_level.autorun_ns_programs:
 		Global.events.emit_signal("nightscript_cache_program_request", program_key)
 	
+	_cache_nightscript_runners(current_level)
+	
 	for program_key in current_level.cached_ns_programs:
 		Global.events.emit_signal("nightscript_cache_program_request", program_key)
 	
@@ -110,3 +112,13 @@ func _create_level(level_key: String) -> Level:
 # Loads a level's scene from its level key:
 func _load_level_scene(level_key: String) -> PackedScene:
 	return load("res://levels/%s.tscn" % level_key.replace(".", "/")) as PackedScene
+
+
+# Recursively cache NightScript programs used by NightScript runners in a scene.
+func _cache_nightscript_runners(node: Node) -> void:
+	for child in node.get_children():
+		_cache_nightscript_runners(child)
+	
+	if node.is_in_group("nightscript_runners") and node.has_method("get_nightscript_program_key"):
+		Global.events.emit_signal(
+				"nightscript_cache_program_request", node.get_nightscript_program_key())

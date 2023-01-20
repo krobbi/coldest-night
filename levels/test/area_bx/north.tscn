@@ -22,8 +22,6 @@ extents = Vector2( 48, 160 )
 
 [node name="North" instance=ExtResource( 1 )]
 level_name = "LEVEL.TEST.AREA_BX.NORTH"
-is_safe = false
-cached_ns_programs = PoolStringArray( "dialog/test/start" )
 autorun_ns_programs = PoolStringArray( "patrol/test/area_bx/north/brian", "patrol/test/area_bx/north/nora", "patrol/test/area_bx/north/archie", "patrol/test/area_bx/north/susie" )
 
 [node name="TileMap" parent="Background" index="0"]
@@ -294,7 +292,7 @@ shape = SubResource( 1 )
 
 [node name="StartDialog" parent="Triggers" index="2" instance=ExtResource( 6 )]
 position = Vector2( -368, -496 )
-program = "dialog/test/start"
+_program_key = "dialog/test/start"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/StartDialog" index="0"]
 shape = SubResource( 2 )
