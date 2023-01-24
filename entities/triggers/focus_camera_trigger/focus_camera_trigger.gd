@@ -22,9 +22,9 @@ func _ready() -> void:
 # Run when the player enters the focus camera trigger. Focus the level camera on
 # the focus node.
 func _player_enter(_player: Player) -> void:
-	Global.events.emit_signal("camera_focus_request", _focus_node.global_position)
+	Global.events.emit_signal("camera_follow_anchor_request", _focus_node)
 
 
 # Run when the player exits the focus camera trigger. Unfocus the level camera.
 func _player_exit(_player: Player) -> void:
-	Global.events.emit_signal("camera_unfocus_request")
+	Global.events.emit_signal("camera_unfollow_anchor_request")
