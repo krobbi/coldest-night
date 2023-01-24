@@ -190,10 +190,13 @@ shape = SubResource( 3 )
 
 [node name="FocusElevator" parent="Triggers" index="8" instance=ExtResource( 5 )]
 position = Vector2( 0, 80 )
-point = "FocusElevator"
+_focus_node_path = NodePath("Position2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusElevator" index="0"]
 shape = SubResource( 5 )
+
+[node name="Position2D" type="Position2D" parent="Triggers/FocusElevator" index="1"]
+position = Vector2( 0, -80 )
 
 [node name="EntranceN" type="Position2D" parent="Points" index="0"]
 position = Vector2( 0, -464 )
@@ -209,8 +212,6 @@ position = Vector2( 0, 464 )
 
 [node name="Terminal" type="Position2D" parent="Points" index="4"]
 position = Vector2( -48, 112 )
-
-[node name="FocusElevator" type="Position2D" parent="Points" index="5"]
 
 [node name="Origin" parent="." index="8"]
 position = Vector2( 0, 80 )

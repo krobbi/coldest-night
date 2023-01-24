@@ -5,3 +5,4 @@
 
 [node name="FocusCameraTrigger" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
+_focus_node_path = NodePath("")

@@ -334,31 +334,43 @@ shape = SubResource( 1 )
 
 [node name="FocusNW" parent="Triggers" index="2" instance=ExtResource( 8 )]
 position = Vector2( -256, -128 )
-point = "FocusNW"
+_focus_node_path = NodePath("Position2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusNW" index="0"]
 shape = SubResource( 2 )
 
+[node name="Position2D" type="Position2D" parent="Triggers/FocusNW" index="1"]
+position = Vector2( 0, -144 )
+
 [node name="FocusNE" parent="Triggers" index="3" instance=ExtResource( 8 )]
 position = Vector2( 288, -128 )
-point = "FocusNE"
+_focus_node_path = NodePath("Position2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusNE" index="0"]
 shape = SubResource( 2 )
 
+[node name="Position2D" type="Position2D" parent="Triggers/FocusNE" index="1"]
+position = Vector2( 0, -144 )
+
 [node name="FocusSW" parent="Triggers" index="4" instance=ExtResource( 8 )]
 position = Vector2( -256, 128 )
-point = "FocusSW"
+_focus_node_path = NodePath("Position2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusSW" index="0"]
 shape = SubResource( 2 )
 
+[node name="Position2D" type="Position2D" parent="Triggers/FocusSW" index="1"]
+position = Vector2( 0, 80 )
+
 [node name="FocusSE" parent="Triggers" index="5" instance=ExtResource( 8 )]
 position = Vector2( 288, 128 )
-point = "FocusSE"
+_focus_node_path = NodePath("Position2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusSE" index="0"]
 shape = SubResource( 2 )
+
+[node name="Position2D" type="Position2D" parent="Triggers/FocusSE" index="1"]
+position = Vector2( 0, 80 )
 
 [node name="EntranceW" type="Position2D" parent="Points" index="0"]
 position = Vector2( -720, 0 )
@@ -366,28 +378,16 @@ position = Vector2( -720, 0 )
 [node name="EntranceE" type="Position2D" parent="Points" index="1"]
 position = Vector2( 752, 0 )
 
-[node name="FocusNW" type="Position2D" parent="Points" index="2"]
-position = Vector2( -256, -272 )
-
-[node name="FocusNE" type="Position2D" parent="Points" index="3"]
-position = Vector2( 288, -272 )
-
-[node name="FocusSW" type="Position2D" parent="Points" index="4"]
-position = Vector2( -256, 208 )
-
-[node name="FocusSE" type="Position2D" parent="Points" index="5"]
-position = Vector2( 288, 208 )
-
-[node name="PAlA" type="Position2D" parent="Points" index="6"]
+[node name="PAlA" type="Position2D" parent="Points" index="2"]
 position = Vector2( 656, -240 )
 
-[node name="PAlB" type="Position2D" parent="Points" index="7"]
+[node name="PAlB" type="Position2D" parent="Points" index="3"]
 position = Vector2( 656, -304 )
 
-[node name="PBoA" type="Position2D" parent="Points" index="8"]
+[node name="PBoA" type="Position2D" parent="Points" index="4"]
 position = Vector2( 656, 240 )
 
-[node name="PBoB" type="Position2D" parent="Points" index="9"]
+[node name="PBoB" type="Position2D" parent="Points" index="5"]
 position = Vector2( 656, 304 )
 
 [node name="Origin" parent="." index="8"]

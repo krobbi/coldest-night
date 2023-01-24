@@ -299,10 +299,12 @@ shape = SubResource( 2 )
 
 [node name="FocusCameraTrigger" parent="Triggers" index="3" instance=ExtResource( 7 )]
 position = Vector2( -272, -256 )
-point = "FocusBridge"
+_focus_node_path = NodePath("Position2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusCameraTrigger" index="0"]
 shape = SubResource( 3 )
+
+[node name="Position2D" type="Position2D" parent="Triggers/FocusCameraTrigger" index="1"]
 
 [node name="Start" type="Position2D" parent="Points" index="0"]
 position = Vector2( -368, -496 )
@@ -313,91 +315,88 @@ position = Vector2( 0, -720 )
 [node name="EntranceS" type="Position2D" parent="Points" index="2"]
 position = Vector2( 0, 752 )
 
-[node name="FocusBridge" type="Position2D" parent="Points" index="3"]
-position = Vector2( -272, -256 )
-
-[node name="PBrA" type="Position2D" parent="Points" index="4"]
+[node name="PBrA" type="Position2D" parent="Points" index="3"]
 position = Vector2( -272, -112 )
 
-[node name="PBrB" type="Position2D" parent="Points" index="5"]
+[node name="PBrB" type="Position2D" parent="Points" index="4"]
 position = Vector2( -272, -80 )
 
-[node name="PBrC" type="Position2D" parent="Points" index="6"]
+[node name="PBrC" type="Position2D" parent="Points" index="5"]
 position = Vector2( -176, 16 )
 
-[node name="PBrD" type="Position2D" parent="Points" index="7"]
+[node name="PBrD" type="Position2D" parent="Points" index="6"]
 position = Vector2( -368, 16 )
 
-[node name="PBrE" type="Position2D" parent="Points" index="8"]
+[node name="PBrE" type="Position2D" parent="Points" index="7"]
 position = Vector2( -272, 112 )
 
-[node name="PNoA" type="Position2D" parent="Points" index="9"]
+[node name="PNoA" type="Position2D" parent="Points" index="8"]
 position = Vector2( 16, -496 )
 
-[node name="PNoB" type="Position2D" parent="Points" index="10"]
+[node name="PNoB" type="Position2D" parent="Points" index="9"]
 position = Vector2( 48, -560 )
 
-[node name="PNoC" type="Position2D" parent="Points" index="11"]
+[node name="PNoC" type="Position2D" parent="Points" index="10"]
 position = Vector2( -112, -528 )
 
-[node name="PNoD" type="Position2D" parent="Points" index="12"]
+[node name="PNoD" type="Position2D" parent="Points" index="11"]
 position = Vector2( 272, -432 )
 
-[node name="PNoE" type="Position2D" parent="Points" index="13"]
+[node name="PNoE" type="Position2D" parent="Points" index="12"]
 position = Vector2( 352, -512 )
 
-[node name="PNoF" type="Position2D" parent="Points" index="14"]
+[node name="PNoF" type="Position2D" parent="Points" index="13"]
 position = Vector2( 272, -608 )
 
-[node name="PNoG" type="Position2D" parent="Points" index="15"]
+[node name="PNoG" type="Position2D" parent="Points" index="14"]
 position = Vector2( 192, -528 )
 
-[node name="PArA" type="Position2D" parent="Points" index="16"]
+[node name="PArA" type="Position2D" parent="Points" index="15"]
 position = Vector2( 0, 128 )
 
-[node name="PArB" type="Position2D" parent="Points" index="17"]
+[node name="PArB" type="Position2D" parent="Points" index="16"]
 position = Vector2( -136, 200 )
 
-[node name="PArC" type="Position2D" parent="Points" index="18"]
+[node name="PArC" type="Position2D" parent="Points" index="17"]
 position = Vector2( -160, 272 )
 
-[node name="PArD" type="Position2D" parent="Points" index="19"]
+[node name="PArD" type="Position2D" parent="Points" index="18"]
 position = Vector2( -152, 336 )
 
-[node name="PArE" type="Position2D" parent="Points" index="20"]
+[node name="PArE" type="Position2D" parent="Points" index="19"]
 position = Vector2( -112, 400 )
 
-[node name="PArF" type="Position2D" parent="Points" index="21"]
+[node name="PArF" type="Position2D" parent="Points" index="20"]
 position = Vector2( -80, 464 )
 
-[node name="PArG" type="Position2D" parent="Points" index="22"]
+[node name="PArG" type="Position2D" parent="Points" index="21"]
 position = Vector2( 80, 464 )
 
-[node name="PArH" type="Position2D" parent="Points" index="23"]
+[node name="PArH" type="Position2D" parent="Points" index="22"]
 position = Vector2( 112, 400 )
 
-[node name="PArI" type="Position2D" parent="Points" index="24"]
+[node name="PArI" type="Position2D" parent="Points" index="23"]
 position = Vector2( 152, 336 )
 
-[node name="PArJ" type="Position2D" parent="Points" index="25"]
+[node name="PArJ" type="Position2D" parent="Points" index="24"]
 position = Vector2( 160, 272 )
 
-[node name="PArK" type="Position2D" parent="Points" index="26"]
+[node name="PArK" type="Position2D" parent="Points" index="25"]
 position = Vector2( 136, 200 )
 
-[node name="PSuA" type="Position2D" parent="Points" index="27"]
+[node name="PSuA" type="Position2D" parent="Points" index="26"]
 position = Vector2( 112, 560 )
 
-[node name="PSuB" type="Position2D" parent="Points" index="28"]
+[node name="PSuB" type="Position2D" parent="Points" index="27"]
 position = Vector2( 272, 464 )
 
-[node name="PSuC" type="Position2D" parent="Points" index="29"]
+[node name="PSuC" type="Position2D" parent="Points" index="28"]
 position = Vector2( 352, 560 )
 
-[node name="PSuD" type="Position2D" parent="Points" index="30"]
+[node name="PSuD" type="Position2D" parent="Points" index="29"]
 position = Vector2( 272, 656 )
 
-[node name="PSuE" type="Position2D" parent="Points" index="31"]
+[node name="PSuE" type="Position2D" parent="Points" index="30"]
 position = Vector2( 176, 560 )
 
 [node name="Origin" parent="." index="8"]
