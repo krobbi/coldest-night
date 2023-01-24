@@ -19,18 +19,17 @@ export(String) var music: String
 export(PoolStringArray) var cached_ns_programs: PoolStringArray
 export(PoolStringArray) var autorun_ns_programs: PoolStringArray
 
+var _origin: Vector2 = Vector2.ZERO
 var _points: Dictionary = {}
 var _nav_regions: Array = []
 
-onready var midground: YSort = $Midground
-onready var radar: Node2D = $Radar
-onready var origin: Vector2 = $Origin.position
-onready var top_left: Vector2 = $TopLeft.position
-onready var bottom_right: Vector2 = $BottomRight.position
-
-# Virtual _ready method. Runs when the level is entered. Initializes the level:
+# Run when the level finishes entering the scene tree. Perform level
+# initialization that requires the level to be inside the scene tree.
 func _ready() -> void:
 	Global.audio.play_music(music)
+	
+	for program_key in autorun_ns_programs:
+		Global.events.emit_signal("nightscript_cache_program_request", program_key)
 	
 	var nav_tile_map: TileMap = $NavTileMap
 	var nav_tile_set: TileSet = nav_tile_map.tile_set
@@ -76,33 +75,65 @@ func _ready() -> void:
 	
 	Navigation2DServer.map_force_update(nav_map)
 	
-	$Radar.hide()
+	var radar_node: Node = $Radar
+	remove_child(radar_node)
+	Global.events.emit_signal("radar_render_node_request", radar_node)
+	radar_node.free()
 	
-	_collect_points($Points, _points)
+	var points_node: Node = $Points
+	remove_child(points_node)
 	
-	for point_node in $Points.get_children():
-		if point_node is Position2D and point_node.name != "World":
+	for point_node in points_node.get_children():
+		if point_node is Position2D:
 			_points[point_node.name] = point_node.position
+	
+	points_node.free()
+	
+	var origin_node: Node2D = $Origin
+	remove_child(origin_node)
+	_origin = origin_node.position
+	origin_node.free()
+	
+	var top_left_node: Node2D = $TopLeft
+	var bottom_right_node: Node2D = $BottomRight
+	remove_child(top_left_node)
+	remove_child(bottom_right_node)
+	Global.events.emit_signal(
+			"camera_set_limits_request", top_left_node.position, bottom_right_node.position)
+	top_left_node.free()
+	bottom_right_node.free()
+	
+	_cache_nightscript_runners(self)
+	
+	for program_key in cached_ns_programs:
+		Global.events.emit_signal("nightscript_cache_program_request", program_key)
+	
+	for program_key in autorun_ns_programs:
+		Global.events.emit_signal("nightscript_run_program_request", program_key)
 
 
-# Virtual _exit_tree method. Runs when the level exits the scene tree. Frees the
-# level's navigation regions:
+# Run when the level exits the scene tree. Free the level's navigation regions.
 func _exit_tree() -> void:
 	for nav_region in _nav_regions:
 		Navigation2DServer.region_set_map(nav_region, RID())
 		Navigation2DServer.free_rid(nav_region)
 
 
-# Gets a point's world position. Returns the level's origin position if the
-# point does not exist:
+# Get the parent node to add the player to.
+func get_player_parent() -> Node:
+	return $Midground
+
+
+# Get a point's world position. Returns the level's origin position if the point
+# does not exist.
 func get_point_pos(point: String) -> Vector2:
-	return _points.get(point, origin)
+	return _points.get(point, _origin)
 
 
-# Gets a point-relative position from a world position. This function returns
-# two values, the nearest point to the world position, and the offset from the
+# Get a point-relative position from a world position. This function returns two
+# values, the nearest point to the world position, and the offset from the
 # nearest point. The world position is returned as an offset from 'World' if the
-# level has no points:
+# level has no points.
 func get_relative_pos(world_pos: Vector2) -> Array:
 	var nearest_point: String = "World"
 	var nearest_pos: Vector2 = Vector2.ZERO
@@ -120,25 +151,23 @@ func get_relative_pos(world_pos: Vector2) -> Array:
 	return [nearest_point, world_pos - nearest_pos]
 
 
-# Gets a point-relative position's world position. Returns the offset as a world
-# position if the point is 'World'. Returns the level's origin position if the
-# point does not exist:
+# Get a point-relative position's world position. Return the offset as a world
+# position if the point is 'World'. Return the level's origin position if the
+# point does not exist.
 func get_world_pos(point: String, offset: Vector2) -> Vector2:
 	if point == "World":
 		return offset
 	elif _points.has(point):
 		return _points[point] + offset
 	else:
-		return origin
+		return _origin
 
 
-# Recursively collects points from position nodes to a dictionary of points:
-func _collect_points(node: Node, points: Dictionary, depth: int = 8) -> void:
-	if node is Position2D:
-		points[node.name] = node.global_position
+# Recursively cache NightScript runners in a node.
+func _cache_nightscript_runners(node: Node) -> void:
+	for child in node.get_children():
+		_cache_nightscript_runners(child)
 	
-	if depth:
-		depth -= 1
-		
-		for child in node.get_children():
-			_collect_points(child, points, depth)
+	if node.is_in_group("nightscript_runners") and node.has_method("get_nightscript_program_key"):
+		Global.events.emit_signal(
+				"nightscript_cache_program_request", node.get_nightscript_program_key())
