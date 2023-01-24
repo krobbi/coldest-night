@@ -16,7 +16,7 @@ func _player_enter(_player: Player) -> void:
 	var current_level: Level = Global.tree.current_scene.level_host.current_level
 	
 	if current_level:
-		Global.tree.current_scene.level_camera.focus(current_level.get_point_pos(point))
+		Global.events.emit_signal("camera_focus_request", current_level.get_point_pos(point))
 
 
 # Virtual _player_exit method. Runs when a player exits the focus camera

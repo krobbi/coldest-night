@@ -4,13 +4,15 @@ extends Object
 # Event Bus
 # The event bus is a global utility that handles loosely coupling objects by
 # providing gameplay-related signals. The event bus can be accessed from any
-# script by using 'Global.event'.
+# script by using 'Global.events'.
 
 signal accumulate_alert_count_request # warning-ignore: UNUSED_SIGNAL
 signal accumulate_time_request(delta) # warning-ignore: UNUSED_SIGNAL
+signal camera_focus_request(world_pos) # warning-ignore: UNUSED_SIGNAL
 signal camera_follow_anchor_request(anchor) # warning-ignore: UNUSED_SIGNAL
 # warning-ignore: UNUSED_SIGNAL
 signal camera_set_limits_request(top_left, bottom_right)
+signal camera_snap_request # warning-ignore: UNUSED_SIGNAL
 signal camera_unfocus_request # warning-ignore: UNUSED_SIGNAL
 signal camera_unfollow_anchor_request # warning-ignore: UNUSED_SIGNAL
 signal dialog_clear_name_request # warning-ignore: UNUSED_SIGNAL

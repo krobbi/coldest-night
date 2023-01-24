@@ -22,6 +22,8 @@ func _ready() -> void:
 		Global.display.disconnect("screen_stretch_changed", self, "snap")
 	
 	Global.events.safe_connect("camera_set_limits_request", self, "set_limits")
+	Global.events.safe_connect("camera_snap_request", self, "snap")
+	Global.events.safe_connect("camera_focus_request", self, "focus")
 	Global.events.safe_connect("camera_unfocus_request", self, "unfocus")
 	Global.events.safe_connect("camera_follow_anchor_request", self, "follow_anchor")
 	Global.events.safe_connect("camera_unfollow_anchor_request", self, "unfollow_anchor")
@@ -43,6 +45,8 @@ func _exit_tree() -> void:
 	Global.events.safe_disconnect("camera_unfollow_anchor_request", self, "unfollow_anchor")
 	Global.events.safe_disconnect("camera_follow_anchor_request", self, "follow_anchor")
 	Global.events.safe_disconnect("camera_unfocus_request", self, "unfocus")
+	Global.events.safe_disconnect("camera_focus_request", self, "focus")
+	Global.events.safe_disconnect("camera_snap_request", self, "snap")
 	Global.events.safe_disconnect("camera_set_limits_request", self, "set_limits")
 
 
