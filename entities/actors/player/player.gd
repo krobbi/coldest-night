@@ -8,6 +8,7 @@ export(NodePath) var _freeze_state_path: NodePath
 export(NodePath) var _moving_state_path: NodePath
 export(NodePath) var _transitioning_state_path: NodePath
 
+var _save_data: SaveData = Global.save.get_working_data()
 var _is_frozen: bool = false
 var _thaw_state: State
 
@@ -101,6 +102,9 @@ func interact() -> void:
 	_interactor.interact()
 
 
-# Run when a state save is requested. Display floating text.
+# Run when a state save is requested. Save the player's state and display
+# floating text.
 func _on_events_save_state_request() -> void:
+	_save_data.position = position
+	_save_data.angle = smooth_pivot.rotation
 	Global.events.emit_signal("floating_text_display_request", "FLOATING_TEXT.SAVED", position)

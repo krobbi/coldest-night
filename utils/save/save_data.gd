@@ -11,8 +11,7 @@ var state: int = State.NEW_GAME
 var stats: StatsSaveData = StatsSaveData.new()
 var level: String
 var flags: Dictionary = {}
-var point: String = "World"
-var offset: Vector2 = Vector2.ZERO
+var position: Vector2 = Vector2.ZERO
 var angle: float = 0.0
 
 # Set a flag from its namespace and key.
@@ -38,8 +37,7 @@ func clear() -> void:
 	stats.clear()
 	level = ""
 	flags.clear()
-	point = "World"
-	offset = Vector2.ZERO
+	position = Vector2.ZERO
 	angle = 0.0
 
 
@@ -47,7 +45,7 @@ func clear() -> void:
 func preset_new_game() -> void:
 	clear()
 	level = "test/area_bx/north"
-	point = "Start"
+	position = Vector2(-368.0, -496.0)
 
 
 # Serialize the save data to a JSON object.
@@ -57,9 +55,8 @@ func serialize() -> Dictionary:
 		"format_version": Global.save.FORMAT_VERSION,
 		"state": serialize_state(),
 		"level": level,
-		"point": point,
-		"offset_x": offset.x,
-		"offset_y": offset.y,
+		"position_x": position.x,
+		"position_y": position.y,
 		"angle": angle,
 		"stats": stats.serialize(),
 		"flags": flags.duplicate(true),
@@ -81,8 +78,7 @@ func serialize_state() -> String:
 func deserialize(data: Dictionary) -> void:
 	deserialize_state(data.state)
 	level = data.level
-	point = data.point
-	offset = Vector2(float(data.offset_x), float(data.offset_y))
+	position = Vector2(float(data.position_x), float(data.position_y))
 	angle = float(data.angle)
 	stats.deserialize(data.stats.duplicate(true))
 	flags = data.flags.duplicate(true)

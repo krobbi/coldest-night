@@ -46,6 +46,8 @@ signal radar_render_node_request(node) # warning-ignore: UNUSED_SIGNAL
 signal save_state_request # warning-ignore: UNUSED_SIGNAL
 signal subtitle_display_request(message) # warning-ignore: UNUSED_SIGNAL
 signal tooltip_display_request(message) # warning-ignore: UNUSED_SIGNAL
+# warning-ignore: UNUSED_SIGNAL
+signal transition_level_request(level_key, point, relative_point, is_relative_x, is_relative_y)
 
 # Safely connects a signal from the event bus to a target object's receiver
 # method:

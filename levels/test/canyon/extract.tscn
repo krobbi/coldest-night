@@ -101,10 +101,10 @@ polygon = PoolVector2Array( 416, 0, 448, 0, 448, 32, 416, 32 )
 
 [node name="ExitN" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( 160, -1168 )
-level = "test/area_bx/hub"
-point = "EntranceS"
-relative_mode = 1
-relative_point = "EntranceN"
+_level_key = "test/area_bx/hub"
+_point = "EntranceS"
+_relative_point = "EntranceN"
+_is_relative_x = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitN" index="0"]
 shape = SubResource( 1 )

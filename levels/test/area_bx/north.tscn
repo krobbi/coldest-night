@@ -272,20 +272,20 @@ points = PoolVector2Array( -96, 768, -96, 640, -128, 640, -128, 704, -416, 704, 
 
 [node name="ExitN" parent="Triggers" index="0" instance=ExtResource( 5 )]
 position = Vector2( 0, -816 )
-level = "test/area_bx/north_annex"
-point = "EntranceS"
-relative_mode = 1
-relative_point = "EntranceN"
+_level_key = "test/area_bx/north_annex"
+_point = "EntranceS"
+_relative_point = "EntranceN"
+_is_relative_x = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitN" index="0"]
 shape = SubResource( 4 )
 
 [node name="ExitS" parent="Triggers" index="1" instance=ExtResource( 5 )]
 position = Vector2( 0, 848 )
-level = "test/area_bx/hub"
-point = "EntranceN"
-relative_mode = 1
-relative_point = "EntranceS"
+_level_key = "test/area_bx/hub"
+_point = "EntranceN"
+_relative_point = "EntranceS"
+_is_relative_x = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitS" index="0"]
 shape = SubResource( 1 )

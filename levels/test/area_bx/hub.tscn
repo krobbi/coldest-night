@@ -122,40 +122,40 @@ polygon = PoolVector2Array( 192, 192, 256, 192, 256, 256, 192, 256 )
 
 [node name="ExitN" parent="Triggers" index="0" instance=ExtResource( 3 )]
 position = Vector2( 0, -560 )
-level = "test/area_bx/north"
-point = "EntranceS"
-relative_mode = 1
-relative_point = "EntranceN"
+_level_key = "test/area_bx/north"
+_point = "EntranceS"
+_relative_point = "EntranceN"
+_is_relative_x = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitN" index="0"]
 shape = SubResource( 1 )
 
 [node name="ExitW" parent="Triggers" index="1" instance=ExtResource( 3 )]
 position = Vector2( -560, 0 )
-level = "test/area_bx/west"
-point = "EntranceE"
-relative_mode = 2
-relative_point = "EntranceW"
+_level_key = "test/area_bx/west"
+_point = "EntranceE"
+_relative_point = "EntranceW"
+_is_relative_y = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitW" index="0"]
 shape = SubResource( 2 )
 
 [node name="ExitE" parent="Triggers" index="2" instance=ExtResource( 3 )]
 position = Vector2( 560, 0 )
-level = "test/area_bx/hub"
-point = "EntranceW"
-relative_mode = 2
-relative_point = "EntranceE"
+_level_key = "test/area_bx/hub"
+_point = "EntranceW"
+_relative_point = "EntranceE"
+_is_relative_y = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitE" index="0"]
 shape = SubResource( 2 )
 
 [node name="ExitS" parent="Triggers" index="3" instance=ExtResource( 3 )]
 position = Vector2( 0, 560 )
-level = "test/canyon/extract"
-point = "EntranceN"
-relative_mode = 1
-relative_point = "EntranceS"
+_level_key = "test/canyon/extract"
+_point = "EntranceN"
+_relative_point = "EntranceS"
+_is_relative_x = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitS" index="0"]
 shape = SubResource( 1 )

@@ -30,11 +30,6 @@ _global_script_classes=[ {
 "path": "res://gui/menu/menu_rows/button_menu_row.gd"
 }, {
 "base": "Trigger",
-"class": "ChangeLevelTrigger",
-"language": "GDScript",
-"path": "res://entities/triggers/change_level_trigger/change_level_trigger.gd"
-}, {
-"base": "Trigger",
 "class": "ChangeSceneTrigger",
 "language": "GDScript",
 "path": "res://entities/triggers/change_scene_trigger/change_scene_trigger.gd"
@@ -168,11 +163,6 @@ _global_script_classes=[ {
 "class": "LevelCamera",
 "language": "GDScript",
 "path": "res://scenes/overworld/level_camera.gd"
-}, {
-"base": "Node2D",
-"class": "LevelHost",
-"language": "GDScript",
-"path": "res://scenes/overworld/level_host.gd"
 }, {
 "base": "MenuCard",
 "class": "MainMenuCard",
@@ -349,7 +339,6 @@ _global_script_class_icons={
 "AdvancedMenuCard": "",
 "AudioManager": "",
 "ButtonMenuRow": "",
-"ChangeLevelTrigger": "",
 "ChangeSceneTrigger": "",
 "CheckboxMenuRow": "",
 "ColorGrader": "",
@@ -377,7 +366,6 @@ _global_script_class_icons={
 "LaserWall": "",
 "Level": "",
 "LevelCamera": "",
-"LevelHost": "",
 "MainMenuCard": "",
 "MenuCard": "",
 "MenuList": "",

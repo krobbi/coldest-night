@@ -1,21 +1,20 @@
-class_name LevelHost
 extends Node2D
 
 # Level Host
 # The level host is a component of the overworld scene that handles loading and
 # changing the current level and placing players in levels.
 
-var save_data: SaveData = Global.save.get_working_data()
 var current_level: Level = null
 
+var _save_data: SaveData = Global.save.get_working_data()
 var _player: Player = preload("res://entities/actors/player/player.tscn").instance()
 
 # Run when the level host enters the scene tree. Connect the level host to the
 # event bus.
 func _ready() -> void:
-	Global.events.safe_connect("save_state_request", self, "save_state")
+	Global.events.safe_connect("transition_level_request", self, "transition_level")
 	Global.events.safe_connect(
-			"accumulate_alert_count_request", save_data.stats, "accumulate_alert_count"
+			"accumulate_alert_count_request", _save_data.stats, "accumulate_alert_count"
 	)
 
 
@@ -23,13 +22,39 @@ func _ready() -> void:
 # the event bus.
 func _exit_tree() -> void:
 	Global.events.safe_disconnect(
-			"accumulate_alert_count_request", save_data.stats, "accumulate_alert_count"
+			"accumulate_alert_count_request", _save_data.stats, "accumulate_alert_count"
 	)
-	Global.events.safe_disconnect("save_state_request", self, "save_state")
+	Global.events.safe_disconnect("transition_level_request", self, "transition_level")
 
 
-# Change the current level from its level key.
-func change_level(level_key: String) -> void:
+# Transition the current level.
+func transition_level(
+		level_key: String, point: String, relative_point: String,
+		is_relative_x: bool, is_relative_y: bool) -> void:
+	_player.state_machine.change_state(_player.get_transitioning_state())
+	var offset: Vector2 = Vector2.ZERO
+	
+	if current_level:
+		var relative: Vector2 = _player.position - current_level.get_point_pos(relative_point)
+		
+		if is_relative_x:
+			offset.x = relative.x
+		
+		if is_relative_y:
+			offset.y = relative.y
+	
+	_save_data.level = level_key
+	_save_data.angle = _player.smooth_pivot.rotation
+	_change_level(level_key, point, offset)
+
+
+# Initialize the game state from save data.
+func load_state() -> void:
+	_change_level(_save_data.level, "World", _save_data.position)
+
+
+# Change the current level from its level key, point and offset.
+func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	Global.events.emit_signal("camera_unfollow_anchor_request")
 	Global.events.emit_signal("radar_camera_unfollow_anchor_request")
 	
@@ -50,9 +75,10 @@ func change_level(level_key: String) -> void:
 	yield(Global.tree, "idle_frame")
 	yield(Global.tree, "idle_frame")
 	
-	_player.position = current_level.get_world_pos(save_data.point, save_data.offset)
+	_save_data.position = current_level.get_world_pos(point, offset)
+	_player.position = _save_data.position
 	current_level.get_player_parent().add_child(_player)
-	_player.smooth_pivot.rotation = save_data.angle
+	_player.smooth_pivot.rotation = _save_data.angle
 	
 	Global.events.emit_signal("radar_refresh_entities_request")
 	Global.events.emit_signal("radar_camera_follow_anchor_request", _player)
@@ -61,29 +87,5 @@ func change_level(level_key: String) -> void:
 	_player.state_machine.change_state(_player.get_moving_state())
 	_player.enable_triggers()
 	
-	save_data.level = level_key
 	Global.save.save_checkpoint()
-	
 	Global.events.emit_signal("fade_in_request")
-
-
-# Move the player's saved position.
-func move_player(point: String, offset: Vector2) -> void:
-	save_data.point = point
-	save_data.offset = offset
-
-
-# Initialize the game state from save data.
-func load_state() -> void:
-	change_level(save_data.level)
-
-
-# Store the game state to save data.
-func save_state() -> void:
-	if not current_level:
-		return
-	
-	var relative_position: Array = current_level.get_relative_pos(_player.position)
-	save_data.point = relative_position[0]
-	save_data.offset = relative_position[1]
-	save_data.angle = _player.smooth_pivot.rotation

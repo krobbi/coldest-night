@@ -5,3 +5,8 @@
 
 [node name="ChangeLevelTrigger" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
+_level_key = ""
+_point = ""
+_relative_point = ""
+_is_relative_x = false
+_is_relative_y = false
