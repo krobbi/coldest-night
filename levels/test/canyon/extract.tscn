@@ -111,7 +111,7 @@ shape = SubResource( 1 )
 
 [node name="FocusExit" parent="Triggers" index="1" instance=ExtResource( 4 )]
 position = Vector2( -112, 0 )
-_focus_node_path = NodePath("")
+_focus_node_path = NodePath("Position2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusExit" index="0"]
 shape = SubResource( 2 )
