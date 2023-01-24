@@ -98,7 +98,7 @@ points = PoolVector2Array( 32, -32, 32, 0 )
 
 [node name="ExitS" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( 0, 400 )
-level = "test.area_bx.north"
+level = "test/area_bx/north"
 point = "EntranceN"
 relative_mode = 1
 relative_point = "EntranceS"

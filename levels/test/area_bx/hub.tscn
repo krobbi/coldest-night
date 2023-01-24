@@ -122,7 +122,7 @@ polygon = PoolVector2Array( 192, 192, 256, 192, 256, 256, 192, 256 )
 
 [node name="ExitN" parent="Triggers" index="0" instance=ExtResource( 3 )]
 position = Vector2( 0, -560 )
-level = "test.area_bx.north"
+level = "test/area_bx/north"
 point = "EntranceS"
 relative_mode = 1
 relative_point = "EntranceN"
@@ -132,7 +132,7 @@ shape = SubResource( 1 )
 
 [node name="ExitW" parent="Triggers" index="1" instance=ExtResource( 3 )]
 position = Vector2( -560, 0 )
-level = "test.area_bx.west"
+level = "test/area_bx/west"
 point = "EntranceE"
 relative_mode = 2
 relative_point = "EntranceW"
@@ -142,7 +142,7 @@ shape = SubResource( 2 )
 
 [node name="ExitE" parent="Triggers" index="2" instance=ExtResource( 3 )]
 position = Vector2( 560, 0 )
-level = "test.area_bx.hub"
+level = "test/area_bx/hub"
 point = "EntranceW"
 relative_mode = 2
 relative_point = "EntranceE"
@@ -152,7 +152,7 @@ shape = SubResource( 2 )
 
 [node name="ExitS" parent="Triggers" index="3" instance=ExtResource( 3 )]
 position = Vector2( 0, 560 )
-level = "test.canyon.extract"
+level = "test/canyon/extract"
 point = "EntranceN"
 relative_mode = 1
 relative_point = "EntranceS"

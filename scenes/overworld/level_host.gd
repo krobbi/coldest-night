@@ -46,7 +46,7 @@ func change_level(level_key: String) -> void:
 	
 	Global.events.emit_signal("nightscript_stop_programs_request")
 	
-	current_level = load("res://levels/%s.tscn" % level_key.replace(".", "/")).instance()
+	current_level = load("res://levels/%s.tscn" % level_key).instance()
 	add_child(current_level)
 	
 	yield(Global.tree, "idle_frame")

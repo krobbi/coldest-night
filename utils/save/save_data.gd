@@ -46,9 +46,8 @@ func clear() -> void:
 # Clear the save data to preset values for a new game.
 func preset_new_game() -> void:
 	clear()
-	level = "test.area_bx.north"
+	level = "test/area_bx/north"
 	point = "Start"
-	angle = 0.0
 
 
 # Serialize the save data to a JSON object.

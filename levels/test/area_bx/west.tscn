@@ -314,7 +314,7 @@ points = PoolVector2Array( 192, 216, 384, 216 )
 
 [node name="ExitW" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( -816, 0 )
-level = "test.area_bx.west_annex"
+level = "test/area_bx/west_annex"
 point = "EntranceE"
 relative_mode = 2
 relative_point = "EntranceW"
@@ -324,7 +324,7 @@ shape = SubResource( 1 )
 
 [node name="ExitE" parent="Triggers" index="1" instance=ExtResource( 2 )]
 position = Vector2( 848, 0 )
-level = "test.area_bx.hub"
+level = "test/area_bx/hub"
 point = "EntranceW"
 relative_mode = 2
 relative_point = "EntranceE"

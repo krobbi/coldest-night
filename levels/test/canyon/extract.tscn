@@ -101,7 +101,7 @@ polygon = PoolVector2Array( 416, 0, 448, 0, 448, 32, 416, 32 )
 
 [node name="ExitN" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( 160, -1168 )
-level = "test.area_bx.hub"
+level = "test/area_bx/hub"
 point = "EntranceS"
 relative_mode = 1
 relative_point = "EntranceN"
