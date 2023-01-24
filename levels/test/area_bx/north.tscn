@@ -316,109 +316,89 @@ position = Vector2( 0, 752 )
 [node name="FocusBridge" type="Position2D" parent="Points" index="3"]
 position = Vector2( -272, -256 )
 
-[node name="PatrolBrian" type="Node2D" parent="Points" index="4"]
+[node name="PBrA" type="Position2D" parent="Points" index="4"]
 position = Vector2( -272, -112 )
-__meta__ = {
-"_edit_lock_": true
-}
 
-[node name="PBrA" type="Position2D" parent="Points/PatrolBrian" index="0"]
+[node name="PBrB" type="Position2D" parent="Points" index="5"]
+position = Vector2( -272, -80 )
 
-[node name="PBrB" type="Position2D" parent="Points/PatrolBrian" index="1"]
-position = Vector2( 0, 32 )
+[node name="PBrC" type="Position2D" parent="Points" index="6"]
+position = Vector2( -176, 16 )
 
-[node name="PBrC" type="Position2D" parent="Points/PatrolBrian" index="2"]
-position = Vector2( 96, 128 )
+[node name="PBrD" type="Position2D" parent="Points" index="7"]
+position = Vector2( -368, 16 )
 
-[node name="PBrD" type="Position2D" parent="Points/PatrolBrian" index="3"]
-position = Vector2( -96, 128 )
+[node name="PBrE" type="Position2D" parent="Points" index="8"]
+position = Vector2( -272, 112 )
 
-[node name="PBrE" type="Position2D" parent="Points/PatrolBrian" index="4"]
-position = Vector2( 0, 224 )
-
-[node name="PatrolNora" type="Node2D" parent="Points" index="5"]
+[node name="PNoA" type="Position2D" parent="Points" index="9"]
 position = Vector2( 16, -496 )
-__meta__ = {
-"_edit_lock_": true
-}
 
-[node name="PNoA" type="Position2D" parent="Points/PatrolNora" index="0"]
+[node name="PNoB" type="Position2D" parent="Points" index="10"]
+position = Vector2( 48, -560 )
 
-[node name="PNoB" type="Position2D" parent="Points/PatrolNora" index="1"]
-position = Vector2( 32, -64 )
+[node name="PNoC" type="Position2D" parent="Points" index="11"]
+position = Vector2( -112, -528 )
 
-[node name="PNoC" type="Position2D" parent="Points/PatrolNora" index="2"]
-position = Vector2( -128, -32 )
+[node name="PNoD" type="Position2D" parent="Points" index="12"]
+position = Vector2( 272, -432 )
 
-[node name="PNoD" type="Position2D" parent="Points/PatrolNora" index="3"]
-position = Vector2( 256, 64 )
+[node name="PNoE" type="Position2D" parent="Points" index="13"]
+position = Vector2( 352, -512 )
 
-[node name="PNoE" type="Position2D" parent="Points/PatrolNora" index="4"]
-position = Vector2( 336, -16 )
+[node name="PNoF" type="Position2D" parent="Points" index="14"]
+position = Vector2( 272, -608 )
 
-[node name="PNoF" type="Position2D" parent="Points/PatrolNora" index="5"]
-position = Vector2( 256, -112 )
+[node name="PNoG" type="Position2D" parent="Points" index="15"]
+position = Vector2( 192, -528 )
 
-[node name="PNoG" type="Position2D" parent="Points/PatrolNora" index="6"]
-position = Vector2( 176, -32 )
-
-[node name="PatrolArchie" type="Node2D" parent="Points" index="6"]
+[node name="PArA" type="Position2D" parent="Points" index="16"]
 position = Vector2( 0, 128 )
-__meta__ = {
-"_edit_lock_": true
-}
 
-[node name="PArA" type="Position2D" parent="Points/PatrolArchie" index="0"]
+[node name="PArB" type="Position2D" parent="Points" index="17"]
+position = Vector2( -136, 200 )
 
-[node name="PArB" type="Position2D" parent="Points/PatrolArchie" index="1"]
-position = Vector2( -136, 72 )
+[node name="PArC" type="Position2D" parent="Points" index="18"]
+position = Vector2( -160, 272 )
 
-[node name="PArC" type="Position2D" parent="Points/PatrolArchie" index="2"]
-position = Vector2( -160, 144 )
+[node name="PArD" type="Position2D" parent="Points" index="19"]
+position = Vector2( -152, 336 )
 
-[node name="PArD" type="Position2D" parent="Points/PatrolArchie" index="3"]
-position = Vector2( -152, 208 )
+[node name="PArE" type="Position2D" parent="Points" index="20"]
+position = Vector2( -112, 400 )
 
-[node name="PArE" type="Position2D" parent="Points/PatrolArchie" index="4"]
-position = Vector2( -112, 272 )
+[node name="PArF" type="Position2D" parent="Points" index="21"]
+position = Vector2( -80, 464 )
 
-[node name="PArF" type="Position2D" parent="Points/PatrolArchie" index="5"]
-position = Vector2( -80, 336 )
+[node name="PArG" type="Position2D" parent="Points" index="22"]
+position = Vector2( 80, 464 )
 
-[node name="PArG" type="Position2D" parent="Points/PatrolArchie" index="6"]
-position = Vector2( 80, 336 )
+[node name="PArH" type="Position2D" parent="Points" index="23"]
+position = Vector2( 112, 400 )
 
-[node name="PArH" type="Position2D" parent="Points/PatrolArchie" index="7"]
-position = Vector2( 112, 272 )
+[node name="PArI" type="Position2D" parent="Points" index="24"]
+position = Vector2( 152, 336 )
 
-[node name="PArI" type="Position2D" parent="Points/PatrolArchie" index="8"]
-position = Vector2( 152, 208 )
+[node name="PArJ" type="Position2D" parent="Points" index="25"]
+position = Vector2( 160, 272 )
 
-[node name="PArJ" type="Position2D" parent="Points/PatrolArchie" index="9"]
-position = Vector2( 160, 144 )
+[node name="PArK" type="Position2D" parent="Points" index="26"]
+position = Vector2( 136, 200 )
 
-[node name="PArK" type="Position2D" parent="Points/PatrolArchie" index="10"]
-position = Vector2( 136, 72 )
-
-[node name="PatrolSusie" type="Node2D" parent="Points" index="7"]
+[node name="PSuA" type="Position2D" parent="Points" index="27"]
 position = Vector2( 112, 560 )
-__meta__ = {
-"_edit_lock_": true
-}
 
-[node name="PSuA" type="Position2D" parent="Points/PatrolSusie" index="0"]
+[node name="PSuB" type="Position2D" parent="Points" index="28"]
+position = Vector2( 272, 464 )
 
-[node name="PSuB" type="Position2D" parent="Points/PatrolSusie" index="1"]
-position = Vector2( 160, -96 )
+[node name="PSuC" type="Position2D" parent="Points" index="29"]
+position = Vector2( 352, 560 )
 
-[node name="PSuC" type="Position2D" parent="Points/PatrolSusie" index="2"]
-position = Vector2( 240, 0 )
+[node name="PSuD" type="Position2D" parent="Points" index="30"]
+position = Vector2( 272, 656 )
 
-[node name="PSuD" type="Position2D" parent="Points/PatrolSusie" index="3"]
-position = Vector2( 160, 96 )
-
-[node name="PSuE" type="Position2D" parent="Points/PatrolSusie" index="4"]
-position = Vector2( 64, 0 )
+[node name="PSuE" type="Position2D" parent="Points" index="31"]
+position = Vector2( 176, 560 )
 
 [node name="Origin" parent="." index="8"]
 position = Vector2( 0, 16 )

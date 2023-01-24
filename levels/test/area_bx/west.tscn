@@ -378,27 +378,17 @@ position = Vector2( -256, 208 )
 [node name="FocusSE" type="Position2D" parent="Points" index="5"]
 position = Vector2( 288, 208 )
 
-[node name="PatrolAlice" type="Node2D" parent="Points" index="6"]
+[node name="PAlA" type="Position2D" parent="Points" index="6"]
 position = Vector2( 656, -240 )
-__meta__ = {
-"_edit_lock_": true
-}
 
-[node name="PAlA" type="Position2D" parent="Points/PatrolAlice" index="0"]
+[node name="PAlB" type="Position2D" parent="Points" index="7"]
+position = Vector2( 656, -304 )
 
-[node name="PAlB" type="Position2D" parent="Points/PatrolAlice" index="1"]
-position = Vector2( 0, -64 )
-
-[node name="PatrolBob" type="Node2D" parent="Points" index="7"]
+[node name="PBoA" type="Position2D" parent="Points" index="8"]
 position = Vector2( 656, 240 )
-__meta__ = {
-"_edit_lock_": true
-}
 
-[node name="PBoA" type="Position2D" parent="Points/PatrolBob" index="0"]
-
-[node name="PBoB" type="Position2D" parent="Points/PatrolBob" index="1"]
-position = Vector2( 0, 64 )
+[node name="PBoB" type="Position2D" parent="Points" index="9"]
+position = Vector2( 656, 304 )
 
 [node name="Origin" parent="." index="8"]
 position = Vector2( 16, 0 )
