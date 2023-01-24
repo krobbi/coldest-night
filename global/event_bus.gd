@@ -7,7 +7,6 @@ extends Object
 # script by using 'Global.events'.
 
 signal accumulate_alert_count_request # warning-ignore: UNUSED_SIGNAL
-signal accumulate_time_request(delta) # warning-ignore: UNUSED_SIGNAL
 signal camera_follow_anchor_request(anchor) # warning-ignore: UNUSED_SIGNAL
 # warning-ignore: UNUSED_SIGNAL
 signal camera_set_limits_request(top_left, bottom_right)

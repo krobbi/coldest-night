@@ -17,13 +17,11 @@ func _ready() -> void:
 	Global.events.safe_connect(
 			"accumulate_alert_count_request", save_data.stats, "accumulate_alert_count"
 	)
-	Global.events.safe_connect("accumulate_time_request", save_data.stats, "accumulate_time")
 
 
 # Run when the level host exits the scene tree. Disconnects the level host from
 # the event bus.
 func _exit_tree() -> void:
-	Global.events.safe_disconnect("accumulate_time_request", save_data.stats, "accumulate_time")
 	Global.events.safe_disconnect(
 			"accumulate_alert_count_request", save_data.stats, "accumulate_alert_count"
 	)
