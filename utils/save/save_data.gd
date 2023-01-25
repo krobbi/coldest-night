@@ -5,6 +5,8 @@ extends Reference
 # Save data are structures that represent the data that is stored in a save
 # file.
 
+signal flag_changed(namespace, key, value)
+
 enum State {NEW_GAME, NORMAL, COMPLETED}
 
 var state: int = State.NEW_GAME
@@ -20,7 +22,7 @@ func set_flag(namespace: String, key: String, value: int) -> void:
 		flags[namespace] = {}
 	
 	flags[namespace][key] = value
-	Global.events.emit_signal("flag_changed", namespace, key, value)
+	emit_signal("flag_changed", namespace, key, value)
 
 
 # Get a flag from its namespace and key.

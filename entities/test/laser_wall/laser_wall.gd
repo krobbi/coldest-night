@@ -2,8 +2,8 @@ class_name LaserWall
 extends StaticBody2D
 
 # Laser Wall
-# A laser wall is a test entity that forms an obstruction until a flag condition
-# is met.
+# A laser wall is an entity that forms an obstruction until a flag condition is
+# met.
 
 signal wall_visibility_changed(wall_visible)
 
@@ -15,11 +15,12 @@ export(String) var flag_namespace: String = ""
 export(String) var flag_key: String
 export(int) var compare_value: int
 
+var _save_data: SaveData = Global.save.get_working_data()
+
 onready var _obstructive_shape: CollisionShape2D = $ObstructiveShape
 
-# Virtual _ready method. Runs when the laser wall finishes entering the scene
-# tree. Sets the laser wall's extents and connects the laser wall to the event
-# bus:
+# Run when the laser wall finishes entering the scene tree. Set the laser wall's
+# extents and connect the laser wall to the current working save data.
 func _ready() -> void:
 	var a: Vector2 = extents * -1.0
 	var b: Vector2 = extents
@@ -37,38 +38,39 @@ func _ready() -> void:
 	line.points[0] = a
 	line.points[1] = b
 	
-	if _eval_appearance_condition():
+	if _eval_appearance_condition(_save_data.get_flag(flag_namespace, flag_key)):
 		show_wall()
 	else:
 		hide_wall()
 	
-	Global.events.safe_connect("flag_changed", self, "_on_events_flag_changed")
+	if _save_data.connect("flag_changed", self, "_on_flag_changed") != OK:
+		if _save_data.is_connected("flag_changed", self, "_on_flag_changed"):
+			_save_data.disconnect("flag_changed", self, "_on_flag_changed")
 
 
-# Virtual _exit_tree method. Runs when the laser wall exits the scene tree.
-# Disconnects the laser wall from the event bus:
+# Run when the laser wall exits the scene tree. Disconnect the laser wall from
+# the current working save data.
 func _exit_tree() -> void:
-	Global.events.safe_disconnect("flag_changed", self, "_on_events_flag_changed")
+	if _save_data.is_connected("flag_changed", self, "_on_flag_changed"):
+		_save_data.disconnect("flag_changed", self, "_on_flag_changed")
 
 
-# Shows the laser wall:
+# Show the laser wall.
 func show_wall() -> void:
 	_obstructive_shape.set_deferred("disabled", false)
 	show()
 	emit_signal("wall_visibility_changed", true)
 
 
-# Hides the laser wall:
+# Hide the laser wall.
 func hide_wall() -> void:
 	hide()
 	_obstructive_shape.set_deferred("disabled", true)
 	emit_signal("wall_visibility_changed", false)
 
 
-# Evaluates the laser wall's appearance condition:
-func _eval_appearance_condition() -> bool:
-	var value: int = Global.save.get_working_data().get_flag(flag_namespace, flag_key)
-	
+# Evaluate whether the laser wall should be shown based on a value.
+func _eval_appearance_condition(value: int) -> bool:
 	match appearance_condition:
 		AppearanceCondition.NEVER:
 			return false
@@ -92,12 +94,12 @@ func _eval_appearance_condition() -> bool:
 			return true
 
 
-# Signal callback for flag_changed on the event bus. Updates whether the laser
-# wall is shown:
-func _on_events_flag_changed(namespace: String, key: String, _value: int) -> void:
+# Run when a flag is changed. Update whether the laser wall is shown.
+func _on_flag_changed(namespace: String, key: String, value: int) -> void:
 	if namespace != flag_namespace or key != flag_key:
 		return
-	elif _eval_appearance_condition():
+	
+	if _eval_appearance_condition(value):
 		show_wall()
 	else:
 		hide_wall()
