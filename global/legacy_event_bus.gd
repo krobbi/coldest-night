@@ -1,5 +1,5 @@
-class_name EventBus
-extends Object
+class_name LegacyEventBus
+extends Reference
 
 # Event Bus
 # The event bus is a global utility that handles loosely coupling objects by

@@ -11,14 +11,14 @@ const FORMAT_VERSION: int = 1
 const SLOT_COUNT: int = 1
 const SAVES_DIR: String = "user://saves/"
 
-var _events: EventBus
+var _events: LegacyEventBus
 var _working_data: SaveData = SaveData.new()
 var _checkpoint_data: SaveData = SaveData.new()
 var _slots: Array = []
 var _selected_slot: int = 0
 
 # Populate the save manager's slots.
-func _init(events_ref: EventBus) -> void:
+func _init(events_ref: LegacyEventBus) -> void:
 	_events = events_ref
 	_slots.resize(SLOT_COUNT)
 	
