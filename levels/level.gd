@@ -98,8 +98,7 @@ func _ready() -> void:
 	var bottom_right_node: Node2D = $BottomRight
 	remove_child(top_left_node)
 	remove_child(bottom_right_node)
-	Global.events.emit_signal(
-			"camera_set_limits_request", top_left_node.position, bottom_right_node.position)
+	EventBus.emit_camera_set_limits_request(top_left_node.position, bottom_right_node.position)
 	top_left_node.free()
 	bottom_right_node.free()
 	

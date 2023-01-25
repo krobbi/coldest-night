@@ -49,7 +49,7 @@ func load_state() -> void:
 
 # Change the current level from its level key, point and offset.
 func _change_level(level_key: String, point: String, offset: Vector2) -> void:
-	Global.events.emit_signal("camera_unfollow_anchor_request")
+	EventBus.emit_camera_unfollow_anchor_request()
 	Global.events.emit_signal("radar_camera_unfollow_anchor_request")
 	
 	if current_level:
@@ -76,7 +76,7 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	
 	Global.events.emit_signal("radar_refresh_entities_request")
 	Global.events.emit_signal("radar_camera_follow_anchor_request", _player)
-	Global.events.emit_signal("camera_follow_anchor_request", _player.camera_anchor)
+	EventBus.emit_camera_follow_anchor_request(_player.camera_anchor)
 	
 	_player.state_machine.change_state(_player.get_moving_state())
 	_player.enable_triggers()

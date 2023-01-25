@@ -6,10 +6,6 @@ extends Reference
 # providing gameplay-related signals. The event bus can be accessed from any
 # script by using 'Global.events'.
 
-signal camera_follow_anchor_request(anchor) # warning-ignore: UNUSED_SIGNAL
-# warning-ignore: UNUSED_SIGNAL
-signal camera_set_limits_request(top_left, bottom_right)
-signal camera_unfollow_anchor_request # warning-ignore: UNUSED_SIGNAL
 signal dialog_clear_name_request # warning-ignore: UNUSED_SIGNAL
 signal dialog_display_message_request(name) # warning-ignore: UNUSED_SIGNAL
 signal dialog_display_name_request(name) # warning-ignore: UNUSED_SIGNAL

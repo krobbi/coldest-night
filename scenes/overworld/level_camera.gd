@@ -11,7 +11,7 @@ var _anchor_stack: Array = []
 
 # Run when the level camera enters the scene tree. Disable the level camera's
 # process, connect the Global display manager's screen stretch changed signal to
-# snapping the camera, and connect the level camera to the event bus.
+# snapping the camera, and subscribe the level camera to the event bus.
 func _ready() -> void:
 	set_process(false)
 	var error: int = Global.display.connect("screen_stretch_changed", self, "snap")
@@ -19,9 +19,9 @@ func _ready() -> void:
 	if error and Global.display.is_connected("screen_stretch_changed", self, "snap"):
 		Global.display.disconnect("screen_stretch_changed", self, "snap")
 	
-	Global.events.safe_connect("camera_set_limits_request", self, "set_limits")
-	Global.events.safe_connect("camera_follow_anchor_request", self, "follow_anchor")
-	Global.events.safe_connect("camera_unfollow_anchor_request", self, "unfollow_anchor")
+	EventBus.subscribe_node("camera_set_limits_request", self, "set_limits")
+	EventBus.subscribe_node("camera_follow_anchor_request", self, "follow_anchor")
+	EventBus.subscribe_node("camera_unfollow_anchor_request", self, "unfollow_anchor")
 
 
 # Run on every frame while the level camera's process is enabled. Follow the
@@ -31,15 +31,10 @@ func _process(_delta: float) -> void:
 
 
 # Run when the level camera exits the scene tree. Disconnect the Global display
-# manager's screen stretch changed signal from snapping the camera and
-# disconnect the level camera from the event bus.
+# manager's screen stretch changed signal from snapping the camera.
 func _exit_tree() -> void:
 	if Global.display.is_connected("screen_stretch_changed", self, "snap"):
 		Global.display.disconnect("screen_stretch_changed", self, "snap")
-	
-	Global.events.safe_disconnect("camera_unfollow_anchor_request", self, "unfollow_anchor")
-	Global.events.safe_disconnect("camera_follow_anchor_request", self, "follow_anchor")
-	Global.events.safe_disconnect("camera_set_limits_request", self, "set_limits")
 
 
 # Set the level camera's limits to boundary positions.

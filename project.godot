@@ -422,6 +422,7 @@ default_bus_layout="res://resources/audio_bus_layouts/default_bus_layout.tres"
 
 [autoload]
 
+EventBus="*res://autoloads/event_bus/event_bus.tscn"
 Global="*res://autoloads/global/global.tscn"
 
 [display]
