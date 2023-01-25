@@ -22,7 +22,7 @@ _global_script_classes=[ {
 "base": "Object",
 "class": "AudioManager",
 "language": "GDScript",
-"path": "res://global/audio_manager.gd"
+"path": "res://autoloads/global/audio_manager.gd"
 }, {
 "base": "MenuRow",
 "class": "ButtonMenuRow",
@@ -47,7 +47,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "ConfigBus",
 "language": "GDScript",
-"path": "res://global/config_bus.gd"
+"path": "res://autoloads/global/config_bus.gd"
 }, {
 "base": "CheckboxMenuRow",
 "class": "ConfigCheckboxMenuRow",
@@ -72,7 +72,7 @@ _global_script_classes=[ {
 "base": "Object",
 "class": "ControlsManager",
 "language": "GDScript",
-"path": "res://global/controls_manager.gd"
+"path": "res://autoloads/global/controls_manager.gd"
 }, {
 "base": "MenuCard",
 "class": "ControlsMenuCard",
@@ -92,7 +92,7 @@ _global_script_classes=[ {
 "base": "Object",
 "class": "DisplayManager",
 "language": "GDScript",
-"path": "res://global/display_manager.gd"
+"path": "res://autoloads/global/display_manager.gd"
 }, {
 "base": "ColorRect",
 "class": "FadeTransition",
@@ -142,7 +142,7 @@ _global_script_classes=[ {
 "base": "Object",
 "class": "LangManager",
 "language": "GDScript",
-"path": "res://global/lang_manager.gd"
+"path": "res://autoloads/global/lang_manager.gd"
 }, {
 "base": "StaticBody2D",
 "class": "LaserWall",
@@ -152,7 +152,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "LegacyEventBus",
 "language": "GDScript",
-"path": "res://global/legacy_event_bus.gd"
+"path": "res://autoloads/global/legacy_event_bus.gd"
 }, {
 "base": "Node2D",
 "class": "Level",
@@ -287,7 +287,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "SaveManager",
 "language": "GDScript",
-"path": "res://global/save_manager.gd"
+"path": "res://autoloads/global/save_manager.gd"
 }, {
 "base": "MenuCard",
 "class": "SettingsMenuCard",
@@ -422,7 +422,7 @@ default_bus_layout="res://resources/audio_bus_layouts/default_bus_layout.tres"
 
 [autoload]
 
-Global="*res://global/global.tscn"
+Global="*res://autoloads/global/global.tscn"
 
 [display]
 
