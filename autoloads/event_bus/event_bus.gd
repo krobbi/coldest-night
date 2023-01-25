@@ -5,6 +5,11 @@ extends Node
 # providing globally accessible signals. The event bus can be accessed from any
 # script by using 'EventBus'.
 
+signal fade_in_request()
+signal fade_out_request()
+signal faded_in()
+signal faded_out()
+
 signal camera_set_limits_request(top_left, bottom_right)
 signal camera_follow_anchor_request(anchor)
 signal camera_unfollow_anchor_request()
@@ -44,6 +49,26 @@ func subscribe_node(
 func unsubscribe(event: String, target: Object, method: String) -> void:
 	if is_connected(event, target, method):
 		disconnect(event, target, method)
+
+
+# Emit a fade in request event.
+func emit_fade_in_request() -> void:
+	emit_signal("fade_in_request")
+
+
+# Emit a fade out request event.
+func emit_fade_out_request() -> void:
+	emit_signal("fade_out_request")
+
+
+# Emit a faded in event.
+func emit_faded_in() -> void:
+	emit_signal("faded_in")
+
+
+# Emit a faded out event.
+func emit_faded_out() -> void:
+	emit_signal("faded_out")
 
 
 # Emit a camera set limits request event.

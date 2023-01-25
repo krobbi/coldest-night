@@ -53,8 +53,8 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	Global.events.emit_signal("radar_camera_unfollow_anchor_request")
 	
 	if current_level:
-		Global.events.emit_signal("fade_out_request")
-		yield(Global.events, "faded_out")
+		EventBus.emit_fade_out_request()
+		yield(EventBus, "faded_out")
 		
 		Global.events.emit_signal("radar_clear_request")
 		_player.get_parent().remove_child(_player)
@@ -82,4 +82,4 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	_player.enable_triggers()
 	
 	Global.save.save_checkpoint()
-	Global.events.emit_signal("fade_in_request")
+	EventBus.emit_fade_in_request()

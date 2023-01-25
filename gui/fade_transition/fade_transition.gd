@@ -14,21 +14,14 @@ var _state: int = State.FADED_IN
 
 onready var _animation_player: AnimationPlayer = $AnimationPlayer
 
-# Virtual _ready method. Runs when the fade transition finishes entering the
-# scene tree. Connects the fade transition to the event bus:
+# Run when the fade transition finishes entering the scene tree. Subscribe the
+# fade transition to the event bus.
 func _ready() -> void:
-	Global.events.safe_connect("fade_in_request", self, "fade_in")
-	Global.events.safe_connect("fade_out_request", self, "fade_out")
+	EventBus.subscribe_node("fade_in_request", self, "fade_in")
+	EventBus.subscribe_node("fade_out_request", self, "fade_out")
 
 
-# Virtual _exit_tree method. Runs when the fade transition exits the scene tree.
-# Disconnects the fade transition from the event bus:
-func _exit_tree() -> void:
-	Global.events.safe_disconnect("fade_out_request", self, "fade_out")
-	Global.events.safe_disconnect("fade_in_request", self, "fade_in")
-
-
-# Fades in to the scene by fading out the fade transition:
+# Fade into the scene by fading out the fade transition.
 func fade_in() -> void:
 	match _state:
 		State.FADED_IN:
@@ -48,7 +41,7 @@ func fade_in() -> void:
 	emit_signal("faded_in")
 
 
-# Fades out from the scene by fading in the fade transition:
+# Fade out from the scene by fading in the fade transition.
 func fade_out() -> void:
 	match _state:
 		State.FADED_OUT:
@@ -68,13 +61,13 @@ func fade_out() -> void:
 	emit_signal("faded_out")
 
 
-# Signal callback for faded_in. Runs when the fade transition has faded in to
-# the scene. Emits faded_in on the event bus:
+# Run when the fade transition has faded into the scene. Emit the `faded_in`
+# event.
 func _on_faded_in() -> void:
-	Global.events.emit_signal("faded_in")
+	EventBus.emit_faded_in()
 
 
-# Signal callback for faded_out. Runs when the fade transition has faded out
-# from the scene. Emits faded_out on the event bus:
+# Run when the fade transition has faded out from the scene. Emit the
+# `faded_out` event.
 func _on_faded_out() -> void:
-	Global.events.emit_signal("faded_out")
+	EventBus.emit_faded_out()

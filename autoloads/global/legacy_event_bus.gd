@@ -6,10 +6,6 @@ extends Reference
 # providing gameplay-related signals. The event bus can be accessed from any
 # script by using 'Global.events'.
 
-signal fade_in_request # warning-ignore: UNUSED_SIGNAL
-signal fade_out_request # warning-ignore: UNUSED_SIGNAL
-signal faded_in # warning-ignore: UNUSED_SIGNAL
-signal faded_out # warning-ignore: UNUSED_SIGNAL
 # warning-ignore: UNUSED_SIGNAL
 signal floating_text_display_request(text, world_pos)
 signal game_over_request # warning-ignore: UNUSED_SIGNAL
