@@ -6,14 +6,6 @@ extends Reference
 # providing gameplay-related signals. The event bus can be accessed from any
 # script by using 'Global.events'.
 
-signal dialog_clear_name_request # warning-ignore: UNUSED_SIGNAL
-signal dialog_display_message_request(name) # warning-ignore: UNUSED_SIGNAL
-signal dialog_display_name_request(name) # warning-ignore: UNUSED_SIGNAL
-signal dialog_display_options_request(texts) # warning-ignore: UNUSED_SIGNAL
-signal dialog_hide_dialog_request # warning-ignore: UNUSED_SIGNAL
-signal dialog_message_finished # warning-ignore: UNUSED_SIGNAL
-signal dialog_option_pressed(index) # warning-ignore: UNUSED_SIGNAL
-signal dialog_show_dialog_request # warning-ignore: UNUSED_SIGNAL
 signal fade_in_request # warning-ignore: UNUSED_SIGNAL
 signal fade_out_request # warning-ignore: UNUSED_SIGNAL
 signal faded_in # warning-ignore: UNUSED_SIGNAL

@@ -214,11 +214,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/menu/menu_cards/pause_quit_menu_card.gd"
 }, {
-"base": "Dialog",
-"class": "PlainDialog",
-"language": "GDScript",
-"path": "res://gui/dialogs/plain_dialog/plain_dialog.gd"
-}, {
 "base": "Button",
 "class": "PlainDialogOption",
 "language": "GDScript",
@@ -376,7 +371,6 @@ _global_script_class_icons={
 "PauseMenu": "",
 "PauseMenuCard": "",
 "PauseQuitMenuCard": "",
-"PlainDialog": "",
 "PlainDialogOption": "",
 "Player": "",
 "Radar": "",

@@ -1,4 +1,3 @@
-class_name PlainDialog
 extends Dialog
 
 # Plain Dialog Display
@@ -22,19 +21,19 @@ onready var _name_label: RichTextLabel = $MessageLabel/NameLabel
 onready var _option_container: VBoxContainer = $MessageLabel/OptionContainer
 onready var _continue_label: Label = $MessageLabel/ContinueLabel
 
-# Virtual _ready method. Runs when the plain dialog finishes entering the scene
-# tree. Sets the continue label's text:
+# Run when the plain dialog finishes entering the scene tree. Set the continue
+# label's text.
 func _ready() -> void:
 	_continue_label.text = "(%s)" % Global.controls.get_mapping_name("interact")
 
 
-# Virtual _input method. Runs when the plain dialog display receives an input
-# event. Finishes the dialog message on receiving an accept input:
+# Run when the plain dialog display receives an input event. Finish the dialog
+# message on receiving an accept input.
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):
 		if _has_message and _message_label.percent_visible >= 1.0:
 			_has_message = false
-			Global.events.emit_signal("dialog_message_finished")
+			EventBus.emit_dialog_message_finished()
 		else:
 			_pause_timer.stop()
 			_type_timer.stop()
@@ -42,30 +41,29 @@ func _input(event: InputEvent) -> void:
 			_continue_label.show()
 
 
-# Virtual _hide_dialog method. Runs when the plain dialog display is hidden.
-# Clears the plain dialog display and name label:
+# Run when the plain dialog display is hidden. Clear the message and name
+# labels.
 func _hide_dialog() -> void:
 	hide()
 	_message_label.bbcode_text = ""
 	clear_name()
 
 
-# Virutal _clear_name method. Runs when the name is cleared from the plain
-# dialog display. Hides and clears the name label:
+# Run when the name is cleared from the plain dialog display. Hide and clear the
+# name label.
 func _clear_name() -> void:
 	_name_label.hide()
 	_name_label.bbcode_text = ""
 
 
-# Virtual _display_name method. Runs when a name is displayed to the plain
-# dialog display.
+# Run when a name is displayed to the plain dialog display.
 func _display_name(speaker_name: String) -> void:
 	_name_label.bbcode_text = speaker_name
 	_name_label.show()
 
 
-# Virtual _display_message method. Runs when a dialog message is displayed to
-# the plain dialog display. Starts typing the dialog message:
+# Run when a dialog message is displayed to the plain dialog display. Start
+# typing the dialog message.
 func _display_message(message: String) -> void:
 	_has_message = true
 	_continue_label.hide()
@@ -75,8 +73,8 @@ func _display_message(message: String) -> void:
 	_type_timer.start()
 
 
-# Virtual _display_options method. Runs when options are displayed to the plain
-# dialog display. Creates and connects options:
+# Run when options are displayed to the plain dialog display. Create and connect
+# options.
 func _display_options(texts: PoolStringArray) -> void:
 	_destruct_options()
 	_option_count = texts.size()
@@ -107,7 +105,7 @@ func _display_options(texts: PoolStringArray) -> void:
 	_select_option(0)
 
 
-# Selects an option from its option index:
+# Select an option from its option index.
 func _select_option(option_index: int) -> void:
 	if _selected_option == option_index or option_index < 0 or option_index >= _option_count:
 		return
@@ -120,21 +118,20 @@ func _select_option(option_index: int) -> void:
 	_options[_selected_option].grab_focus()
 
 
-# Connects a signal in a source object to selecting an option:
+# Connect a signal in a source object to selecting an option.
 func _connect_select(source: Object, signal_name: String, option_index: int) -> void:
-	var error: int = source.connect(signal_name, self, "_select_option", [option_index])
-	
-	if error and source.is_connected(signal_name, self, "_select_option"):
-		source.disconnect(signal_name, self, "_select_option")
+	if source.connect(signal_name, self, "_select_option", [option_index]) != OK:
+		if source.is_connected(signal_name, self, "_select_option"):
+			source.disconnect(signal_name, self, "_select_option")
 
 
-# Disconnects a signal in a source object from selecting an option:
+# Disconnect a signal in a source object from selecting an option.
 func _disconnect_select(source: Object, signal_name: String) -> void:
 	if source.is_connected(signal_name, self, "_select_option"):
 		source.disconnect(signal_name, self, "_select_option")
 
 
-# Disconnects and frees the plain dialog display's options:
+# Disconnect and free the plain dialog display's options.
 func _destruct_options() -> void:
 	for option in _options:
 		if option.is_connected("pressed", self, "_on_option_pressed"):
@@ -149,23 +146,22 @@ func _destruct_options() -> void:
 	_selected_option = -1
 
 
-# Signal callback for pause_requested on tags. Pauses typing the dialog message:
+# Run when a pause tag is parsed. Pause typing the dialog message.
 func _on_tags_pause_requested(duration: float) -> void:
 	_type_timer.stop()
 	_pause_timer.wait_time = duration
 	_pause_timer.start()
 
 
-# Signal callback for speed_requested on tags. Changes the typing speed of the
-# dialog message:
+# Run when a speed tag is parsed. Change the typing speed of the dialog message.
 func _on_tags_speed_requested(speed: float) -> void:
 	_type_timer.stop()
 	_type_timer.wait_time = TYPING_SPEED / clamp(speed, 0.1, 10.0)
 	_type_timer.start()
 
 
-# Signal callback for timeout on the type timer. Runs when the type timer times
-# out. Types the next character of the dialog message:
+# Run when the type timer times out. Type the next character of the dialog
+# message.
 func _on_type_timer_timeout() -> void:
 	if _message_label.percent_visible >= 1.0:
 		_type_timer.stop()
@@ -180,15 +176,13 @@ func _on_type_timer_timeout() -> void:
 		_speech_player.play()
 
 
-# Signal callback for timeout on the pause timer. Runs when the pause timer
-# times out. Resumes typing the dialog message:
+# Run when the pause timer times out. Resume typing the dialog message.
 func _on_pause_timer_timeout() -> void:
 	_type_timer.start()
 
 
-# Signal callback for pressed on an option. Runs when an option is pressed.
-# Destructs the plain dialog display's options and emits the
-# dialog_option_pressed event:
+# Run when an option is pressed. Destruct the plain dialog display's options and
+# emit the `dialog_option_pressed` event.
 func _on_option_pressed(index: int) -> void:
 	_destruct_options()
-	Global.events.emit_signal("dialog_option_pressed", index)
+	EventBus.emit_dialog_option_pressed(index)

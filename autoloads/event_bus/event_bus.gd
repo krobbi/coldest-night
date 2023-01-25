@@ -9,6 +9,15 @@ signal camera_set_limits_request(top_left, bottom_right)
 signal camera_follow_anchor_request(anchor)
 signal camera_unfollow_anchor_request()
 
+signal dialog_show_request()
+signal dialog_hide_request()
+signal dialog_clear_name_request()
+signal dialog_display_name_request(name)
+signal dialog_display_message_request(message)
+signal dialog_display_options_request(texts)
+signal dialog_message_finished()
+signal dialog_option_pressed(index)
+
 # Subscribe a target to an event.
 func subscribe(
 		event: String, target: Object, method: String, binds: Array = [], flags: int = 0) -> void:
@@ -50,6 +59,46 @@ func emit_camera_follow_anchor_request(anchor: Node2D) -> void:
 # Emit a camera unfollow anchor request event.
 func emit_camera_unfollow_anchor_request() -> void:
 	emit_signal("camera_unfollow_anchor_request")
+
+
+# Emit a dialog show request event.
+func emit_dialog_show_request() -> void:
+	emit_signal("dialog_show_request")
+
+
+# Emit a dialog hide request event.
+func emit_dialog_hide_request() -> void:
+	emit_signal("dialog_hide_request")
+
+
+# Emit a dialog clear name request event.
+func emit_dialog_clear_name_request() -> void:
+	emit_signal("dialog_clear_name_request")
+
+
+# Emit a dialog display name request event.
+func emit_dialog_display_name_request(name: String) -> void:
+	emit_signal("dialog_display_name_request", name)
+
+
+# Emit a dialog display message request event.
+func emit_dialog_display_message_request(message: String) -> void:
+	emit_signal("dialog_display_message_request", message)
+
+
+# Emit a dialog display options request event.
+func emit_dialog_display_options_request(texts: PoolStringArray) -> void:
+	emit_signal("dialog_display_options_request", texts)
+
+
+# Emit a dialog message finished event.
+func emit_dialog_message_finished() -> void:
+	emit_signal("dialog_message_finished")
+
+
+# Emit a dialog option pressed event.
+func emit_dialog_option_pressed(index: int) -> void:
+	emit_signal("dialog_option_pressed", index)
 
 
 # Unsubscribe a node from all of its subscribed events.

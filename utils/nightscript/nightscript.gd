@@ -187,46 +187,33 @@ class NightScriptVirtualMachine extends Reference:
 				var format_string: String = stack.pop_back()
 				stack.push_back(format_string.format(values))
 			SHOW_DIALOG:
-				Global.events.emit_signal("dialog_show_dialog_request")
+				EventBus.emit_dialog_show_request()
 			HIDE_DIALOG:
-				Global.events.emit_signal("dialog_hide_dialog_request")
+				EventBus.emit_dialog_hide_request()
 			CLEAR_DIALOG_NAME:
-				Global.events.emit_signal("dialog_clear_name_request")
+				EventBus.emit_dialog_clear_name_request()
 			DISPLAY_DIALOG_NAME:
-				Global.events.emit_signal("dialog_display_name_request", stack.pop_back())
+				EventBus.emit_dialog_display_name_request(stack.pop_back())
 			DISPLAY_DIALOG_MESSAGE:
 				is_awaiting = true
-				Global.events.emit_signal("dialog_display_message_request", stack.pop_back())
-				
-				if Global.events.connect(
-						"dialog_message_finished", self, "end_await", [], CONNECT_ONESHOT) != OK:
-					if Global.events.is_connected("dialog_message_finished", self, "end_await"):
-						Global.events.disconnect("dialog_message_finished", self, "end_await")
-					
-					is_awaiting = true
-					emit_signal("pop_machine")
+				EventBus.subscribe(
+						"dialog_message_finished", self, "end_await", [], CONNECT_ONESHOT)
+				EventBus.emit_dialog_display_message_request(stack.pop_back())
 			STORE_DIALOG_MENU_OPTION:
 				var pointer: int = stack.pop_back()
 				var text: String = stack.pop_back()
 				option_pointers.push_back(pointer)
 				option_texts.push_back(text)
 			SHOW_DIALOG_MENU:
-				if option_pointers.empty():
-					is_awaiting = true
-					emit_signal("pop_machine")
-					return
-				
-				if Global.events.connect("dialog_option_pressed", self, "select_option", [], CONNECT_ONESHOT) != OK:
-					if Global.events.is_connected("dialog_option_pressed", self, "select_option"):
-						Global.events.disconnect("dialog_option_pressed", self, "select_option")
-					
-					is_awaiting = true
-					emit_signal("pop_machine")
-					return
-				
 				is_awaiting = true
-				Global.events.emit_signal(
-						"dialog_display_options_request", PoolStringArray(option_texts))
+				
+				if option_pointers.empty():
+					emit_signal("pop_machine")
+					return
+				
+				EventBus.subscribe(
+						"dialog_option_pressed", self, "select_option", [], CONNECT_ONESHOT)
+				EventBus.emit_dialog_display_options_request(PoolStringArray(option_texts))
 			ACTOR_FACE_DIRECTION:
 				var degrees: int = stack.pop_back()
 				var key: String = stack.pop_back()

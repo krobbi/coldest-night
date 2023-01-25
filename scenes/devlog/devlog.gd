@@ -10,7 +10,7 @@ var _has_shown_silhouette: bool = false
 # dialog:
 func _ready() -> void:
 	Global.audio.play_music("devlog")
-	Global.events.safe_connect(
+	EventBus.subscribe(
 			"dialog_option_pressed", self, "_on_dialog_option_pressed", [], CONNECT_ONESHOT)
 	Global.events.safe_connect(
 			"nightscript_thread_finished", self,
