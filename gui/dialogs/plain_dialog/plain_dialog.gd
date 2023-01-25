@@ -19,61 +19,54 @@ onready var _speech_player: AudioStreamPlayer = $SpeechPlayer
 onready var _message_label: RichTextLabel = $MessageLabel
 onready var _name_label: RichTextLabel = $MessageLabel/NameLabel
 onready var _option_container: VBoxContainer = $MessageLabel/OptionContainer
-onready var _continue_label: Label = $MessageLabel/ContinueLabel
+onready var _continue_button: Button = $MessageLabel/ContinueButton
+onready var _select_rect: ColorRect = $MessageLabel/ContinueButton/SelectRect
 
-# Run when the plain dialog finishes entering the scene tree. Set the continue
-# label's text.
-func _ready() -> void:
-	_continue_label.text = "(%s)" % Global.controls.get_mapping_name("interact")
-
-
-# Run when the plain dialog display receives an input event. Finish the dialog
-# message on receiving an accept input.
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("interact"):
-		if _has_message and _message_label.percent_visible >= 1.0:
-			_has_message = false
-			EventBus.emit_dialog_message_finished()
-		else:
-			_pause_timer.stop()
-			_type_timer.stop()
-			_message_label.percent_visible = 1.0
-			_continue_label.show()
-
-
-# Run when the plain dialog display is hidden. Clear the message and name
-# labels.
+# Run when the plain dialog is hidden. Clear the continue button and message and
+# name labels.
 func _hide_dialog() -> void:
 	hide()
 	_message_label.bbcode_text = ""
 	clear_name()
+	_continue_button.hide()
+	_select_rect.rect_size.x = 0.0
 
 
-# Run when the name is cleared from the plain dialog display. Hide and clear the
-# name label.
+# Run when the name is cleared from the plain dialog. Hide and clear the name
+# label.
 func _clear_name() -> void:
 	_name_label.hide()
 	_name_label.bbcode_text = ""
 
 
-# Run when a name is displayed to the plain dialog display.
+# Run when a name is displayed to the plain dialog.
 func _display_name(speaker_name: String) -> void:
 	_name_label.bbcode_text = speaker_name
 	_name_label.show()
 
 
-# Run when a dialog message is displayed to the plain dialog display. Start
-# typing the dialog message.
+# Run when a dialog message is displayed to the plain dialog. Start typing the
+# dialog message and show the continue button.
 func _display_message(message: String) -> void:
 	_has_message = true
-	_continue_label.hide()
 	_message_label.bbcode_text = message
 	_message_label.percent_visible = 0.0
 	_type_timer.wait_time = TYPING_SPEED
 	_type_timer.start()
+	_continue_button.text = tr("BUTTON.DIALOG.CONTINUE").format(
+			{"mapping": Global.controls.get_mapping_name("interact")})
+	_continue_button.show()
+	_continue_button.grab_focus()
+	
+	if Global.config.get_bool("accessibility.reduced_motion"):
+		_select_rect.rect_size.x = 8.0
+	else:
+		# warning-ignore: RETURN_VALUE_DISCARDED
+		create_tween().tween_property(_select_rect, "rect_size:x", 8.0, 0.1).set_trans(
+				Tween.TRANS_SINE)
 
 
-# Run when options are displayed to the plain dialog display. Create and connect
+# Run when options are displayed to the plain dialog. Create and connect
 # options.
 func _display_options(texts: PoolStringArray) -> void:
 	_destruct_options()
@@ -102,6 +95,8 @@ func _display_options(texts: PoolStringArray) -> void:
 			option.focus_next = next_path
 			option.focus_neighbour_bottom = next_path
 	
+	_continue_button.hide()
+	_select_rect.rect_size.x = 0.0
 	_select_option(0)
 
 
@@ -131,7 +126,7 @@ func _disconnect_select(source: Object, signal_name: String) -> void:
 		source.disconnect(signal_name, self, "_select_option")
 
 
-# Disconnect and free the plain dialog display's options.
+# Disconnect and free the plain dialog's options.
 func _destruct_options() -> void:
 	for option in _options:
 		if option.is_connected("pressed", self, "_on_option_pressed"):
@@ -165,7 +160,6 @@ func _on_tags_speed_requested(speed: float) -> void:
 func _on_type_timer_timeout() -> void:
 	if _message_label.percent_visible >= 1.0:
 		_type_timer.stop()
-		_continue_label.show()
 		return
 	
 	tags.request(_message_label.visible_characters)
@@ -186,3 +180,20 @@ func _on_pause_timer_timeout() -> void:
 func _on_option_pressed(index: int) -> void:
 	_destruct_options()
 	EventBus.emit_dialog_option_pressed(index)
+
+
+# Run when the continue button is pressed. Finish the dialog message.
+func _on_continue_button_pressed() -> void:
+	if _has_message and _message_label.percent_visible >= 1.0:
+		_has_message = false
+		
+		if not Global.config.get_bool("accessibility.reduced_motion"):
+			# warning-ignore: RETURN_VALUE_DISCARDED
+			create_tween().tween_property(_select_rect, "rect_size:x", 0.0, 0.05).set_trans(
+					Tween.TRANS_SINE)
+		
+		EventBus.emit_dialog_message_finished()
+	else:
+		_pause_timer.stop()
+		_type_timer.stop()
+		_message_label.percent_visible = 1.0

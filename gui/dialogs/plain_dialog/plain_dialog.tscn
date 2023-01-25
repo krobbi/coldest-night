@@ -40,8 +40,9 @@ __meta__ = {
 
 [node name="NameLabel" type="RichTextLabel" parent="MessageLabel" index="0"]
 visible = false
-margin_top = -32.0
+margin_top = -28.0
 margin_right = 256.0
+margin_bottom = 4.0
 rect_min_size = Vector2( 256, 32 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -66,19 +67,30 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="ContinueLabel" type="Label" parent="MessageLabel" index="3"]
+[node name="ContinueButton" type="Button" parent="MessageLabel" index="3"]
 visible = false
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -256.0
+margin_bottom = 32.0
+text = "BUTTON.DIALOG.CONTINUE"
+align = 2
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="SelectRect" type="ColorRect" parent="MessageLabel/ContinueButton" index="0"]
+anchor_bottom = 1.0
+margin_left = 8.0
 margin_top = 8.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 256, 32 )
+margin_right = 8.0
+margin_bottom = -8.0
+mouse_filter = 1
 size_flags_horizontal = 0
 size_flags_vertical = 0
-align = 2
+color = Color( 1, 0.596078, 0.054902, 1 )
 __meta__ = {
 "_edit_lock_": true
 }
@@ -87,3 +99,4 @@ __meta__ = {
 [connection signal="speed_requested" from="DialogTagParser" to="." method="_on_tags_speed_requested"]
 [connection signal="timeout" from="TypeTimer" to="." method="_on_type_timer_timeout"]
 [connection signal="timeout" from="PauseTimer" to="." method="_on_pause_timer_timeout"]
+[connection signal="pressed" from="MessageLabel/ContinueButton" to="." method="_on_continue_button_pressed"]
