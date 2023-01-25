@@ -13,17 +13,11 @@ var _player: Player = preload("res://entities/actors/player/player.tscn").instan
 # event bus.
 func _ready() -> void:
 	Global.events.safe_connect("transition_level_request", self, "transition_level")
-	Global.events.safe_connect(
-			"accumulate_alert_count_request", _save_data.stats, "accumulate_alert_count"
-	)
 
 
 # Run when the level host exits the scene tree. Disconnects the level host from
 # the event bus.
 func _exit_tree() -> void:
-	Global.events.safe_disconnect(
-			"accumulate_alert_count_request", _save_data.stats, "accumulate_alert_count"
-	)
 	Global.events.safe_disconnect("transition_level_request", self, "transition_level")
 
 

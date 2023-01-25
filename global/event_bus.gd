@@ -6,7 +6,6 @@ extends Object
 # providing gameplay-related signals. The event bus can be accessed from any
 # script by using 'Global.events'.
 
-signal accumulate_alert_count_request # warning-ignore: UNUSED_SIGNAL
 signal camera_follow_anchor_request(anchor) # warning-ignore: UNUSED_SIGNAL
 # warning-ignore: UNUSED_SIGNAL
 signal camera_set_limits_request(top_left, bottom_right)
@@ -49,8 +48,8 @@ signal tooltip_display_request(message) # warning-ignore: UNUSED_SIGNAL
 # warning-ignore: UNUSED_SIGNAL
 signal transition_level_request(level_key, point, relative_point, is_relative_x, is_relative_y)
 
-# Safely connects a signal from the event bus to a target object's receiver
-# method:
+# Safely connect a signal from the event bus to a target object's receiver
+# method.
 func safe_connect(
 		signal_name: String, target: Object, method: String, binds: Array = [], flags: int = 0
 ) -> void:
@@ -63,8 +62,8 @@ func safe_connect(
 		disconnect(signal_name, target, method)
 
 
-# Safely disconnects a signal from the event bus to a target object's receiver
-# method:
+# Safely disconnect a signal from the event bus to a target object's receiver
+# method.
 func safe_disconnect(signal_name: String, target: Object, method: String) -> void:
 	if is_connected(signal_name, target, method):
 		disconnect(signal_name, target, method)
