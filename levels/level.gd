@@ -77,7 +77,7 @@ func _ready() -> void:
 	
 	var radar_node: Node = $Radar
 	remove_child(radar_node)
-	Global.events.emit_signal("radar_render_node_request", radar_node)
+	EventBus.emit_radar_render_node_request(radar_node)
 	radar_node.free()
 	
 	var points_node: Node = $Points

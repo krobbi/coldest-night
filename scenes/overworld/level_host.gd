@@ -50,13 +50,13 @@ func load_state() -> void:
 # Change the current level from its level key, point and offset.
 func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	EventBus.emit_camera_unfollow_anchor_request()
-	Global.events.emit_signal("radar_camera_unfollow_anchor_request")
+	EventBus.emit_radar_camera_unfollow_anchor_request()
 	
 	if current_level:
 		EventBus.emit_fade_out_request()
 		yield(EventBus, "faded_out")
 		
-		Global.events.emit_signal("radar_clear_request")
+		EventBus.emit_radar_clear_request()
 		_player.get_parent().remove_child(_player)
 		remove_child(current_level)
 		current_level.free()
@@ -74,8 +74,8 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	current_level.get_player_parent().add_child(_player)
 	_player.smooth_pivot.rotation = _save_data.angle
 	
-	Global.events.emit_signal("radar_refresh_entities_request")
-	Global.events.emit_signal("radar_camera_follow_anchor_request", _player)
+	EventBus.emit_radar_refresh_entities_request()
+	EventBus.emit_radar_camera_follow_anchor_request(_player)
 	EventBus.emit_camera_follow_anchor_request(_player.camera_anchor)
 	
 	_player.state_machine.change_state(_player.get_moving_state())

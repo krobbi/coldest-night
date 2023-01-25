@@ -19,12 +19,6 @@ signal nightscript_thread_finished # warning-ignore: UNUSED_SIGNAL
 signal pause_menu_open_menu_request # warning-ignore: UNUSED_SIGNAL
 signal player_freeze_request # warning-ignore: UNUSED_SIGNAL
 signal player_thaw_request # warning-ignore: UNUSED_SIGNAL
-# warning-ignore: UNUSED_SIGNAL
-signal radar_camera_follow_anchor_request(anchor)
-signal radar_camera_unfollow_anchor_request # warning-ignore: UNUSED_SIGNAL
-signal radar_clear_request # warning-ignore: UNUSED_SIGNAL
-signal radar_refresh_entities_request # warning-ignore: UNUSED_SIGNAL
-signal radar_render_node_request(node) # warning-ignore: UNUSED_SIGNAL
 signal save_state_request # warning-ignore: UNUSED_SIGNAL
 signal subtitle_display_request(message) # warning-ignore: UNUSED_SIGNAL
 signal tooltip_display_request(message) # warning-ignore: UNUSED_SIGNAL

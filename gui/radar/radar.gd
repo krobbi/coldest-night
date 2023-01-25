@@ -6,14 +6,11 @@ extends ViewportContainer
 # of the current level.
 
 const VisionAreaRenderer: PackedScene = preload(
-		"res://gui/radar/radar_vision_area_renderer/radar_vision_area_renderer.tscn"
-)
+		"res://gui/radar/radar_vision_area_renderer/radar_vision_area_renderer.tscn")
 const ActorRenderer: PackedScene = preload(
-		"res://gui/radar/radar_actor_renderer/radar_actor_renderer.tscn"
-)
+		"res://gui/radar/radar_actor_renderer/radar_actor_renderer.tscn")
 const LaserWallRenderer: PackedScene = preload(
-		"res://gui/radar/radar_laser_wall_renderer/radar_laser_wall_renderer.tscn"
-)
+		"res://gui/radar/radar_laser_wall_renderer/radar_laser_wall_renderer.tscn")
 
 const RESOLUTION: Vector2 = Vector2(128.0, 96.0)
 const MAX_DISPLAY_SCALE: float = 3.0
@@ -36,47 +33,36 @@ onready var _actor_container: Node2D = $Viewport/Foreground/Actors
 onready var _laser_wall_container: Node2D = $Viewport/Foreground/LaserWalls
 onready var _walls_renderer: RadarSegmentRenderer = $Viewport/Foreground/Walls
 
-# Virtual _ready method. Runs when the radar display finishes entering the scene
-# tree. Disables the radar display's process, sets the radar display's display
-# scale, and connects the radar display to the configuration bus and event bus:
+# Run when the radar display finishes entering the scene tree. Disable the radar
+# display's process, set the radar display's display scale, and connect the
+# radar display to the configuration bus and event bus.
 func _ready() -> void:
 	set_process(false)
 	set_display_scale(Global.config.get_float("accessibility.radar_scale"))
 	set_display_opacity(Global.config.get_float("accessibility.radar_opacity"))
 	Global.config.connect_float("accessibility.radar_scale", self, "set_display_scale")
 	Global.config.connect_float("accessibility.radar_opacity", self ,"set_display_opacity")
-	Global.events.safe_connect("radar_refresh_entities_request", self, "refresh_entities")
-	Global.events.safe_connect("radar_render_node_request", self, "render_node")
-	Global.events.safe_connect("radar_clear_request", self, "clear")
-	Global.events.safe_connect("radar_camera_follow_anchor_request", self, "camera_follow_anchor")
-	Global.events.safe_connect(
-			"radar_camera_unfollow_anchor_request", self, "camera_unfollow_anchor"
-	)
+	EventBus.subscribe_node("radar_clear_request", self, "clear")
+	EventBus.subscribe_node("radar_render_node_request", self, "render_node")
+	EventBus.subscribe_node("radar_referesh_entities_request", self, "refresh_entities")
+	EventBus.subscribe_node("radar_camera_follow_anchor_request", self, "camera_follow_anchor")
+	EventBus.subscribe_node("radar_camera_unfollow_anchor_request", self, "camera_unfollow_anchor")
 
 
-# Virtual _process method. Runs on every frame while the radar display's process
-# is enabled. Follows the camera anchor:
+# Run on every frame while the radar display's process is enabled. Follow the
+# camera anchor.
 func _process(_delta: float) -> void:
 	camera.position = _camera_anchor.position
 
 
-# Virtual _exit_tree method. Runs when the radar display exits the scene tree.
-# Disconnects the radar display from the configuration bus and event bus:
+# Run when the radar display exits the scene tree. Disconnect the radar display
+# from the configuration bus.
 func _exit_tree() -> void:
-	Global.events.safe_disconnect(
-			"radar_camera_unfollow_anchor_request", self, "camera_unfollow_anchor"
-	)
-	Global.events.safe_disconnect(
-			"radar_camera_follow_anchor_request", self, "camera_follow_anchor"
-	)
-	Global.events.safe_disconnect("radar_clear_request", self, "clear")
-	Global.events.safe_disconnect("radar_render_node_request", self, "render_node")
-	Global.events.safe_disconnect("radar_refresh_entities_request", self, "refresh_entities")
 	Global.config.disconnect_value("accessibility.radar_opacity", self, "set_display_opacity")
 	Global.config.disconnect_value("accessibility.radar_scale", self, "set_display_scale")
 
 
-# Sets the radar display's display scale:
+# Set the radar display's display scale.
 func set_display_scale(value: float) -> void:
 	if value < 1.0 or is_nan(value):
 		value = 1.0
@@ -92,7 +78,7 @@ func set_display_scale(value: float) -> void:
 	Global.config.set_float("accessibility.radar_scale", _display_scale)
 
 
-# Sets the radar display's display opacity:
+# Set the radar display's display opacity.
 func set_display_opacity(value: float) -> void:
 	if value < 0.0:
 		value = 0.0
@@ -104,7 +90,7 @@ func set_display_opacity(value: float) -> void:
 	Global.config.set_float("accessibility.radar_opacity", _display_opacity)
 
 
-# Refreshes all rendered entities on the radar display:
+# Refresh all rendered entities on the radar display.
 func refresh_entities() -> void:
 	clear_laser_walls()
 	clear_actors()
@@ -123,7 +109,7 @@ func refresh_entities() -> void:
 			render_laser_wall(laser_wall)
 
 
-# Renders a vision area to the radar display:
+# Render a vision area to the radar display.
 func render_vision_area(vision_area: VisionArea) -> void:
 	for vision_area_renderer in _vision_area_renderers:
 		if vision_area_renderer.is_available():
@@ -137,7 +123,7 @@ func render_vision_area(vision_area: VisionArea) -> void:
 	_vision_area_renderers.push_back(vision_area_renderer)
 
 
-# Renders an actor to the radar display:
+# Render an actor to the radar display.
 func render_actor(actor: Actor) -> void:
 	for actor_renderer in _actor_renderers:
 		if actor_renderer.is_available():
@@ -151,7 +137,7 @@ func render_actor(actor: Actor) -> void:
 	_actor_renderers.push_back(actor_renderer)
 
 
-# Renders a laser wall renderer to the radar display:
+# Render a laser wall renderer to the radar display.
 func render_laser_wall(laser_wall: LaserWall) -> void:
 	for laser_wall_renderer in _laser_wall_renderers:
 		if laser_wall_renderer.is_available():
@@ -165,7 +151,7 @@ func render_laser_wall(laser_wall: LaserWall) -> void:
 	_laser_wall_renderers.push_back(laser_wall_renderer)
 
 
-# Renders a radar data node to the radar display:
+# Render a radar data node to the radar display.
 func render_node(node: Node) -> void:
 	if node.has_node("Pits"):
 		_pits_renderer.render(_collect_node_polygons(node.get_node("Pits")))
@@ -183,7 +169,7 @@ func render_node(node: Node) -> void:
 		_walls_renderer.clear()
 
 
-# Clears the radar display:
+# Clear the radar display.
 func clear() -> void:
 	_walls_renderer.clear()
 	clear_laser_walls()
@@ -193,25 +179,25 @@ func clear() -> void:
 	_pits_renderer.clear()
 
 
-# Clears all laser walls from the radar display:
+# Clear all laser walls from the radar display.
 func clear_laser_walls() -> void:
 	for laser_wall_renderer in _laser_wall_renderers:
 		laser_wall_renderer.clear_laser_wall()
 
 
-# Clears all actors from the radar display:
+# Clear all actors from the radar display.
 func clear_actors() -> void:
 	for actor_renderer in _actor_renderers:
 		actor_renderer.clear_actor()
 
 
-# Clears all vision area renderers from the radar display:
+# Clear all vision area renderers from the radar display.
 func clear_vision_areas() -> void:
 	for vision_area_renderer in _vision_area_renderers:
 		vision_area_renderer.clear_vision_area()
 
 
-# Starts following a camera anchor:
+# Start following a camera anchor.
 func camera_follow_anchor(camera_anchor_ref: Node2D) -> void:
 	if _camera_anchor == camera_anchor_ref:
 		return
@@ -223,7 +209,7 @@ func camera_follow_anchor(camera_anchor_ref: Node2D) -> void:
 	set_process(true)
 
 
-# Stops following the current camera anchor:
+# Stop following the current camera anchor.
 func camera_unfollow_anchor() -> void:
 	if not _camera_anchor:
 		return
@@ -233,7 +219,7 @@ func camera_unfollow_anchor() -> void:
 	_camera_anchor = null
 
 
-# Recursively collects polygons from a node and its children:
+# Recursively collect polygons from a node and its children.
 func _collect_node_polygons(node: Node, depth: int = 8) -> Array:
 	var polygons: Array = []
 	
@@ -249,7 +235,7 @@ func _collect_node_polygons(node: Node, depth: int = 8) -> Array:
 	return polygons
 
 
-# Recursively collects line segments from a node and its children:
+# Recursively collect line segments from a node and its children.
 func _collect_node_segments(node: Node, depth: int = 8) -> PoolVector2Array:
 	var segments: PoolVector2Array = PoolVector2Array()
 	
@@ -267,7 +253,7 @@ func _collect_node_segments(node: Node, depth: int = 8) -> PoolVector2Array:
 	return segments
 
 
-# Segments a multi-segment line:
+# Segment a multi-segment line.
 func _segment_line(points: PoolVector2Array) -> PoolVector2Array:
 	var segment_count: int = points.size() - 1
 	var segments: PoolVector2Array = PoolVector2Array()
@@ -284,7 +270,7 @@ func _segment_line(points: PoolVector2Array) -> PoolVector2Array:
 	return segments
 
 
-# Segments a polygon:
+# Segment a polygon.
 func _segment_polygon(points: PoolVector2Array) -> PoolVector2Array:
 	if points.size() >= 3:
 		points.push_back(points[0])

@@ -23,6 +23,12 @@ signal dialog_display_options_request(texts)
 signal dialog_message_finished()
 signal dialog_option_pressed(index)
 
+signal radar_clear_request()
+signal radar_render_node_request(node)
+signal radar_referesh_entities_request()
+signal radar_camera_follow_anchor_request(anchor)
+signal radar_camera_unfollow_anchor_request()
+
 # Subscribe a target to an event.
 func subscribe(
 		event: String, target: Object, method: String, binds: Array = [], flags: int = 0) -> void:
@@ -124,6 +130,31 @@ func emit_dialog_message_finished() -> void:
 # Emit a dialog option pressed event.
 func emit_dialog_option_pressed(index: int) -> void:
 	emit_signal("dialog_option_pressed", index)
+
+
+# Emit a radar clear request event.
+func emit_radar_clear_request() -> void:
+	emit_signal("radar_clear_request")
+
+
+# Emit a radar render node request event.
+func emit_radar_render_node_request(node: Node) -> void:
+	emit_signal("radar_render_node_request", node)
+
+
+# Emit a radar refresh entities request event.
+func emit_radar_refresh_entities_request() -> void:
+	emit_signal("radar_referesh_entities_request")
+
+
+# Emit a radar camera follow anchor request event.
+func emit_radar_camera_follow_anchor_request(anchor: Node2D) -> void:
+	emit_signal("radar_camera_follow_anchor_request", anchor)
+
+
+# Emit a radar camera unfollow anchor request event.
+func emit_radar_camera_unfollow_anchor_request() -> void:
+	emit_signal("radar_camera_unfollow_anchor_request")
 
 
 # Unsubscribe a node from all of its subscribed events.
