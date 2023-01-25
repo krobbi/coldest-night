@@ -11,7 +11,7 @@ var events: LegacyEventBus = LegacyEventBus.new()
 var audio: AudioManager = AudioManager.new(self, config)
 var controls: ControlsManager = ControlsManager.new(config)
 var lang: LangManager = LangManager.new(config)
-var save: SaveManager = SaveManager.new(events)
+var save: SaveManager = SaveManager.new()
 
 var _is_changing_scene: bool = false
 var _is_quitting: bool = false

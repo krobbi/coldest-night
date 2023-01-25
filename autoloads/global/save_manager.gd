@@ -11,15 +11,13 @@ const FORMAT_VERSION: int = 1
 const SLOT_COUNT: int = 1
 const SAVES_DIR: String = "user://saves/"
 
-var _events: LegacyEventBus
 var _working_data: SaveData = SaveData.new()
 var _checkpoint_data: SaveData = SaveData.new()
 var _slots: Array = []
 var _selected_slot: int = 0
 
 # Populate the save manager's slots.
-func _init(events_ref: LegacyEventBus) -> void:
-	_events = events_ref
+func _init() -> void:
 	_slots.resize(SLOT_COUNT)
 	
 	for i in range(SLOT_COUNT):
@@ -78,7 +76,7 @@ func save_file() -> void:
 
 # Save the current game state to the selected slot's file.
 func save_game() -> void:
-	_events.emit_signal("save_state_request")
+	EventBus.emit_save_state_request()
 	_copy_save_data(_working_data, _checkpoint_data, true)
 	_copy_save_data(_working_data, _slots[_selected_slot], true)
 	_save_file(_slots[_selected_slot], _selected_slot)

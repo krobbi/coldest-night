@@ -18,12 +18,12 @@ onready var _transitioning_state: State = get_node(_transitioning_state_path)
 onready var _interactor: Interactor = $SmoothPivot/Interactor
 onready var _triggering_shape: CollisionShape2D = $TriggeringArea/TriggeringShape
 
-# Run when the player enters the scene tree. Connect the player to the event
+# Run when the player enters the scene tree. Subscribe the player to the event
 # bus.
 func _enter_tree() -> void:
 	Global.events.safe_connect("player_freeze_request", self, "freeze")
 	Global.events.safe_connect("player_thaw_request", self, "thaw")
-	Global.events.safe_connect("save_state_request", self, "_on_events_save_state_request")
+	EventBus.subscribe_node("save_state_request", self, "save_state")
 
 
 # Run when the player exits the scene tree. Disconnect the player from the event
@@ -31,7 +31,6 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	Global.events.safe_disconnect("player_freeze_request", self, "freeze")
 	Global.events.safe_disconnect("player_thaw_request", self, "thaw")
-	Global.events.safe_disconnect("save_state_request", self, "_on_events_save_state_request")
 
 
 # Get the player's interact input.
@@ -102,9 +101,8 @@ func interact() -> void:
 	_interactor.interact()
 
 
-# Run when a state save is requested. Save the player's state and display
-# floating text.
-func _on_events_save_state_request() -> void:
+# Save the player's state and display floating text.
+func save_state() -> void:
 	_save_data.position = position
 	_save_data.angle = smooth_pivot.rotation
 	Global.events.emit_signal("floating_text_display_request", "FLOATING_TEXT.SAVED", position)

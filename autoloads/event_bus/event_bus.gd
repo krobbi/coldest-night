@@ -5,6 +5,8 @@ extends Node
 # providing globally accessible signals. The event bus can be accessed from any
 # script by using 'EventBus'.
 
+signal save_state_request()
+
 signal fade_in_request()
 signal fade_out_request()
 signal faded_in()
@@ -55,6 +57,11 @@ func subscribe_node(
 func unsubscribe(event: String, target: Object, method: String) -> void:
 	if is_connected(event, target, method):
 		disconnect(event, target, method)
+
+
+# Emit a save state request event.
+func emit_save_state_request() -> void:
+	emit_signal("save_state_request")
 
 
 # Emit a fade in request event.
