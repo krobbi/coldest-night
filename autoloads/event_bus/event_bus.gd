@@ -7,6 +7,7 @@ extends Node
 
 signal save_state_request()
 signal game_over_request()
+signal transition_level_request(level_key, point, relative_point, is_relative_x, is_relative_y)
 
 signal fade_in_request()
 signal fade_out_request()
@@ -72,6 +73,15 @@ func emit_save_state_request() -> void:
 # Emit a game over request event.
 func emit_game_over_request() -> void:
 	emit_signal("game_over_request")
+
+
+# Emit a transition level request event.
+func emit_transition_level_request(
+		level_key: String, point: String, relative_point: String,
+		is_relative_x: bool, is_relative_y: bool) -> void:
+	emit_signal(
+			"transition_level_request", level_key, point, relative_point,
+			is_relative_x, is_relative_y)
 
 
 # Emit a fade in request event.

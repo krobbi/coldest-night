@@ -10,9 +10,8 @@ export(String) var _relative_point: String
 export(bool) var _is_relative_x: bool
 export(bool) var _is_relative_y: bool
 
-# Run when the player enters the change level trigger. Transition to the change
-# level trigger's level.
+# Run when the player enters the change level trigger. Emit the
+# `transition_level_request` event.
 func _player_enter(_player: Player) -> void:
-	Global.events.emit_signal(
-			"transition_level_request", _level_key, _point, _relative_point,
-			_is_relative_x, _is_relative_y)
+	EventBus.emit_transition_level_request(
+			_level_key, _point, _relative_point, _is_relative_x, _is_relative_y)

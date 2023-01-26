@@ -16,8 +16,6 @@ signal nightscript_thread_finished # warning-ignore: UNUSED_SIGNAL
 signal pause_menu_open_menu_request # warning-ignore: UNUSED_SIGNAL
 signal player_freeze_request # warning-ignore: UNUSED_SIGNAL
 signal player_thaw_request # warning-ignore: UNUSED_SIGNAL
-# warning-ignore: UNUSED_SIGNAL
-signal transition_level_request(level_key, point, relative_point, is_relative_x, is_relative_y)
 
 # Safely connect a signal from the event bus to a target object's receiver
 # method.

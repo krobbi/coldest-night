@@ -9,16 +9,10 @@ var current_level: Level = null
 var _save_data: SaveData = Global.save.get_working_data()
 var _player: Player = preload("res://entities/actors/player/player.tscn").instance()
 
-# Run when the level host enters the scene tree. Connect the level host to the
+# Run when the level host enters the scene tree. Subscribe the level host to the
 # event bus.
 func _ready() -> void:
-	Global.events.safe_connect("transition_level_request", self, "transition_level")
-
-
-# Run when the level host exits the scene tree. Disconnects the level host from
-# the event bus.
-func _exit_tree() -> void:
-	Global.events.safe_disconnect("transition_level_request", self, "transition_level")
+	EventBus.subscribe_node("transition_level_request", self, "transition_level")
 
 
 # Transition the current level.
