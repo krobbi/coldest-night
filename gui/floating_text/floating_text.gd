@@ -5,7 +5,7 @@ extends Control
 # A floating text display is a GUI element that briefly displays a short string
 # of text.
 
-# Displays floating text:
+# Display floating text.
 func display_text(text: String) -> void:
 	$Label.text = text
 	var animation_player: AnimationPlayer = $AnimationPlayer

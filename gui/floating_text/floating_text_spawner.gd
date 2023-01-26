@@ -1,4 +1,3 @@
-class_name FloatingTextSpawner
 extends Control
 
 # Floating Text Spawner
@@ -12,19 +11,13 @@ export(NodePath) var _camera_path: NodePath = NodePath()
 
 onready var _camera: Camera2D = get_node(_camera_path)
 
-# Virtual _ready method. Runs when the floating text spawner enters the scene
-# tree. Connects the floating text spawner to the event bus:
+# Run when the floating text spawner enters the scene tree. Subscribe the
+# floating text spawner to the event bus.
 func _ready() -> void:
-	Global.events.safe_connect("floating_text_display_request", self, "display_text")
+	EventBus.subscribe_node("floating_text_display_request", self, "display_text")
 
 
-# Virtual _exit_tree method. Runs when the floating text spawner exits the scene
-# tree. Disconnects the floating text spawner from the event bus:
-func _exit_tree() -> void:
-	Global.events.safe_disconnect("floating_text_display_request", self, "display_text")
-
-
-# Displays floating text at a world position:
+# Display floating text at a world position.
 func display_text(text: String, world_pos: Vector2) -> void:
 	var floating_text: FloatingText = FloatingTextScene.instance()
 	add_child(floating_text)

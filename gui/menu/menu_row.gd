@@ -32,17 +32,17 @@ onready var _select_rect: Panel = $SelectRect
 onready var _underline_rect: Panel = $UnderlineRect
 onready var _content: Control = $Content
 
-# Abstract _select method. Runs when the menu row is selected:
+# Run when the menu row is selected.
 func _select() -> void:
 	pass
 
 
-# Abstract _deselect method. Runs when the menu row is deselected:
+# Run when the menu row is deselected.
 func _deselect() -> void:
 	pass
 
 
-# Sets whether the menu row is selected:
+# Set whether the menu row is selected.
 func set_selected(value: bool) -> void:
 	if value:
 		select()
@@ -50,12 +50,12 @@ func set_selected(value: bool) -> void:
 		deselect()
 
 
-# Gets the menu row's focus node:
+# Get the menu row's focus node.
 func get_focus_node() -> Control:
 	return get_node(focus_node_path) as Control
 
 
-# Gets whether the menu row should appear:
+# Get whether the menu row should appear.
 func get_should_appear() -> bool:
 	match appearance_condition:
 		AppearanceCondition.NEVER:
@@ -74,7 +74,7 @@ func get_should_appear() -> bool:
 			return true
 
 
-# Selects the menu row:
+# Select the menu row.
 func select() -> void:
 	if is_selected:
 		return
@@ -92,11 +92,11 @@ func select() -> void:
 		tween.custom_step(_TWEEN_TIME) # warning-ignore: RETURN_VALUE_DISCARDED
 	
 	_select()
-	Global.events.emit_signal("tooltip_display_request", tooltip)
+	EventBus.emit_tooltip_display_request(tooltip)
 	emit_signal("selected")
 
 
-# Deselects the menu row:
+# Deselect the menu row.
 func deselect() -> void:
 	if not is_selected:
 		return

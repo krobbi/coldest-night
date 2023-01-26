@@ -12,6 +12,10 @@ signal fade_out_request()
 signal faded_in()
 signal faded_out()
 
+signal floating_text_display_request(text, world_pos)
+signal subtitle_display_request(message)
+signal tooltip_display_request(message)
+
 signal camera_set_limits_request(top_left, bottom_right)
 signal camera_follow_anchor_request(anchor)
 signal camera_unfollow_anchor_request()
@@ -82,6 +86,21 @@ func emit_faded_in() -> void:
 # Emit a faded out event.
 func emit_faded_out() -> void:
 	emit_signal("faded_out")
+
+
+# Emit a floating text display request event.
+func emit_floating_text_display_request(text: String, world_pos: Vector2) -> void:
+	emit_signal("floating_text_display_request", text, world_pos)
+
+
+# Emit a subtitle display request event.
+func emit_subtitle_display_request(message: String) -> void:
+	emit_signal("subtitle_display_request", message)
+
+
+# Emit a tooltip display request event.
+func emit_tooltip_display_request(message: String) -> void:
+	emit_signal("tooltip_display_request", message)
 
 
 # Emit a camera set limits request event.

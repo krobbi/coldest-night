@@ -73,7 +73,7 @@ func _on_vision_area_player_seen(player: Player, world_pos: Vector2) -> void:
 	target = player
 	
 	if is_idle():
-		Global.events.emit_signal("subtitle_display_request", "SUBTITLE.BARK.SEEN")
+		EventBus.emit_subtitle_display_request("SUBTITLE.BARK.SEEN")
 	
 	if not Global.config.get_bool("accessibility.never_game_over"):
 		Global.events.emit_signal("game_over_request")
@@ -94,4 +94,4 @@ func _on_vision_area_player_lost(player: Player, world_pos: Vector2) -> void:
 func _on_vision_area_suspicion_seen(world_pos: Vector2) -> void:
 	if is_idle():
 		investigate(world_pos, 16.0, 64.0)
-		Global.events.emit_signal("subtitle_display_request", "SUBTITLE.BARK.SUSPICIOUS")
+		EventBus.emit_subtitle_display_request("SUBTITLE.BARK.SUSPICIOUS")

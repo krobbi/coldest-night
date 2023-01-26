@@ -45,7 +45,5 @@ func _on_area_entered(_area: Area2D) -> void:
 				"test", "archival_unit_count", save_data.get_flag("test", "archival_unit_count") + 1
 		)
 	
-	Global.events.emit_signal(
-			"floating_text_display_request", "FLOATING_TEXT.TEST.ARCHIVAL_UNIT", position
-	)
+	EventBus.emit_floating_text_display_request("FLOATING_TEXT.TEST.ARCHIVAL_UNIT", position)
 	_display_collected()

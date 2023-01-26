@@ -6,8 +6,6 @@ extends Reference
 # providing gameplay-related signals. The event bus can be accessed from any
 # script by using 'Global.events'.
 
-# warning-ignore: UNUSED_SIGNAL
-signal floating_text_display_request(text, world_pos)
 signal game_over_request # warning-ignore: UNUSED_SIGNAL
 # warning-ignore: UNUSED_SIGNAL
 signal nightscript_cache_program_request(program_key)
@@ -19,8 +17,6 @@ signal nightscript_thread_finished # warning-ignore: UNUSED_SIGNAL
 signal pause_menu_open_menu_request # warning-ignore: UNUSED_SIGNAL
 signal player_freeze_request # warning-ignore: UNUSED_SIGNAL
 signal player_thaw_request # warning-ignore: UNUSED_SIGNAL
-signal subtitle_display_request(message) # warning-ignore: UNUSED_SIGNAL
-signal tooltip_display_request(message) # warning-ignore: UNUSED_SIGNAL
 # warning-ignore: UNUSED_SIGNAL
 signal transition_level_request(level_key, point, relative_point, is_relative_x, is_relative_y)
 

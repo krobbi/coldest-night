@@ -105,4 +105,4 @@ func interact() -> void:
 func save_state() -> void:
 	_save_data.position = position
 	_save_data.angle = smooth_pivot.rotation
-	Global.events.emit_signal("floating_text_display_request", "FLOATING_TEXT.SAVED", position)
+	EventBus.emit_floating_text_display_request("FLOATING_TEXT.SAVED", position)

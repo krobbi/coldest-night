@@ -104,11 +104,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/floating_text/floating_text.gd"
 }, {
-"base": "Control",
-"class": "FloatingTextSpawner",
-"language": "GDScript",
-"path": "res://gui/floating_text/floating_text_spawner.gd"
-}, {
 "base": "Trigger",
 "class": "FocusCameraTrigger",
 "language": "GDScript",
@@ -314,11 +309,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://utils/save/stats_save_data.gd"
 }, {
-"base": "Label",
-"class": "Subtitle",
-"language": "GDScript",
-"path": "res://gui/subtitle/subtitle.gd"
-}, {
 "base": "Area2D",
 "class": "Trigger",
 "language": "GDScript",
@@ -349,7 +339,6 @@ _global_script_class_icons={
 "DisplayManager": "",
 "FadeTransition": "",
 "FloatingText": "",
-"FloatingTextSpawner": "",
 "FocusCameraTrigger": "",
 "GameOverMenu": "",
 "GameOverMenuCard": "",
@@ -391,7 +380,6 @@ _global_script_class_icons={
 "State": "",
 "StateMachine": "",
 "StatsSaveData": "",
-"Subtitle": "",
 "Trigger": "",
 "VisionArea": ""
 }

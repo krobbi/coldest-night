@@ -35,7 +35,7 @@ func enter() -> void:
 # state.
 func tick(delta: float) -> State:
 	if _remaining_turns <= 0:
-		Global.events.emit_signal("subtitle_display_request", "SUBTITLE.BARK.LOST")
+		EventBus.emit_subtitle_display_request("SUBTITLE.BARK.LOST")
 		return _finished_state
 	
 	_wait_timer -= delta
