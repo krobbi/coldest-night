@@ -18,7 +18,6 @@ signal nightscript_run_program_request(program_key)
 signal nightscript_stop_programs_request()
 signal nightscript_cache_program_request(program_key)
 signal nightscript_flush_cache_request()
-signal nightscript_thread_finished()
 
 signal fade_in_request()
 signal fade_out_request()
@@ -133,11 +132,6 @@ func emit_nightscript_cache_program_request(program_key: String) -> void:
 # Emit a NightScript flush cache request event.
 func emit_nightscript_flush_cache_request() -> void:
 	emit_signal("nightscript_flush_cache_request")
-
-
-# Emit a NightScript thread finished event.
-func emit_nightscript_thread_finished() -> void:
-	emit_signal("nightscript_thread_finished")
 
 
 # Emit a fade in request event.

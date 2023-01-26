@@ -279,6 +279,8 @@ class NightScriptVirtualMachine extends Reference:
 		is_awaiting = false
 
 
+signal thread_joined
+
 enum {
 	HALT = 0x00,
 	RUN_PROGRAM = 0x01,
@@ -518,7 +520,7 @@ func _pop_thread(thread_index: int) -> void:
 		vm.disconnect("pop_machine", self, "_pop_thread")
 	
 	if _threads[thread_index].empty():
-		EventBus.emit_nightscript_thread_finished()
+		emit_signal("thread_joined")
 	else:
 		_threads[thread_index][-1].end_await()
 	

@@ -14,8 +14,6 @@ func _ready() -> void:
 	match _save_data.state:
 		SaveData.State.NEW_GAME:
 			Global.audio.play_music("briefing")
-			EventBus.subscribe_node(
-					"nightscript_thread_finished", self, "_load_normal", [], CONNECT_ONESHOT)
 			EventBus.emit_nightscript_run_program_request("dialog/test/new_game")
 		SaveData.State.COMPLETED:
 			Global.change_scene("results")

@@ -11,9 +11,6 @@ func _ready() -> void:
 	Global.audio.play_music("devlog")
 	EventBus.subscribe_node(
 			"dialog_option_pressed", self, "_on_dialog_option_pressed", [], CONNECT_ONESHOT)
-	EventBus.subscribe_node(
-			"nightscript_thread_finished", self, "_on_nightscript_thread_finished",
-			[], CONNECT_ONESHOT)
 	EventBus.emit_nightscript_run_program_request("dialog/devlog")
 	
 	if Global.config.get_bool("accessibility.reduced_motion"):
@@ -33,5 +30,5 @@ func _on_dialog_option_pressed(index: int) -> void:
 
 
 # Run when the devlog dialog finishes. Return to the menu scene.
-func _on_nightscript_thread_finished() -> void:
+func _on_nightscript_thread_joined() -> void:
 	Global.change_scene("menu")

@@ -18,3 +18,5 @@ __meta__ = {
 [node name="NightScript" parent="." instance=ExtResource( 3 )]
 
 [node name="PlainDialog" parent="." instance=ExtResource( 2 )]
+
+[connection signal="thread_joined" from="NightScript" to="." method="_load_normal" flags=6]

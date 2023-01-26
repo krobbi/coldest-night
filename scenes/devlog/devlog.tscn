@@ -59,3 +59,5 @@ __meta__ = {
 }
 
 [node name="PlainDialog" parent="." instance=ExtResource( 3 )]
+
+[connection signal="thread_joined" from="NightScript" to="." method="_on_nightscript_thread_joined" flags=6]
