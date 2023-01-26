@@ -20,7 +20,7 @@ func open_menu() -> void:
 		return
 	
 	_is_open = true
-	Global.events.emit_signal("player_freeze_request")
+	EventBus.emit_player_freeze_request()
 	Global.audio.play_music("game_over", false)
 	show()
 	var tween: SceneTreeTween = create_tween()

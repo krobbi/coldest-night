@@ -10,7 +10,7 @@ export(NodePath) var _transitioning_state_path: NodePath
 
 var _save_data: SaveData = Global.save.get_working_data()
 var _is_frozen: bool = false
-var _thaw_state: State
+var _unfreeze_state: State
 
 onready var _freeze_state: State = get_node(_freeze_state_path)
 onready var _moving_state: State = get_node(_moving_state_path)
@@ -21,16 +21,9 @@ onready var _triggering_shape: CollisionShape2D = $TriggeringArea/TriggeringShap
 # Run when the player enters the scene tree. Subscribe the player to the event
 # bus.
 func _enter_tree() -> void:
-	Global.events.safe_connect("player_freeze_request", self, "freeze")
-	Global.events.safe_connect("player_thaw_request", self, "thaw")
+	EventBus.subscribe_node("player_freeze_request", self, "freeze")
+	EventBus.subscribe_node("player_unfreeze_request", self, "unfreeze")
 	EventBus.subscribe_node("save_state_request", self, "save_state")
-
-
-# Run when the player exits the scene tree. Disconnect the player from the event
-# bus.
-func _exit_tree() -> void:
-	Global.events.safe_disconnect("player_freeze_request", self, "freeze")
-	Global.events.safe_disconnect("player_thaw_request", self, "thaw")
 
 
 # Get the player's interact input.
@@ -58,30 +51,25 @@ func get_transitioning_state() -> State:
 	return _transitioning_state
 
 
-# Get whether the player is frozen.
-func is_frozen() -> bool:
-	return _is_frozen
-
-
 # Freeze the player.
 func freeze() -> void:
 	if _is_frozen:
 		return
 	
 	_is_frozen = true
-	_thaw_state = state_machine.get_state()
+	_unfreeze_state = state_machine.get_state()
 	state_machine.change_state(_freeze_state)
 	disable_triggers()
 
 
-# Thaw the player.
-func thaw() -> void:
+# Unfreeze the player.
+func unfreeze() -> void:
 	if not _is_frozen:
 		return
 	
 	_is_frozen = false
 	enable_triggers()
-	state_machine.change_state(_thaw_state)
+	state_machine.change_state(_unfreeze_state)
 
 
 # Enables the player's ability to interact with triggers and interactables.
@@ -94,11 +82,6 @@ func enable_triggers() -> void:
 func disable_triggers() -> void:
 	_triggering_shape.set_deferred("disabled", true)
 	_interactor.disable()
-
-
-# Interact with the player's selected interactable if one is available.
-func interact() -> void:
-	_interactor.interact()
 
 
 # Save the player's state and display floating text.

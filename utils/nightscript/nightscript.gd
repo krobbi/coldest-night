@@ -243,9 +243,9 @@ class NightScriptVirtualMachine extends Reference:
 				if not pathing_actors.empty():
 					memory.seek(memory.get_position() - 1)
 			FREEZE_PLAYER:
-				Global.events.emit_signal("player_freeze_request")
+				EventBus.emit_player_freeze_request()
 			THAW_PLAYER:
-				Global.events.emit_signal("player_thaw_request")
+				EventBus.emit_player_unfreeze_request()
 			QUIT_TO_TITLE:
 				is_awaiting = true
 				Global.change_scene("menu")

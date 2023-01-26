@@ -14,8 +14,6 @@ signal nightscript_run_program_request(program_key)
 signal nightscript_stop_programs_request # warning-ignore: UNUSED_SIGNAL
 signal nightscript_thread_finished # warning-ignore: UNUSED_SIGNAL
 signal pause_menu_open_menu_request # warning-ignore: UNUSED_SIGNAL
-signal player_freeze_request # warning-ignore: UNUSED_SIGNAL
-signal player_thaw_request # warning-ignore: UNUSED_SIGNAL
 
 # Safely connect a signal from the event bus to a target object's receiver
 # method.

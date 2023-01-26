@@ -9,6 +9,9 @@ signal save_state_request()
 signal game_over_request()
 signal transition_level_request(level_key, point, relative_point, is_relative_x, is_relative_y)
 
+signal player_freeze_request()
+signal player_unfreeze_request()
+
 signal fade_in_request()
 signal fade_out_request()
 signal faded_in()
@@ -82,6 +85,16 @@ func emit_transition_level_request(
 	emit_signal(
 			"transition_level_request", level_key, point, relative_point,
 			is_relative_x, is_relative_y)
+
+
+# Emit a player freeze request event.
+func emit_player_freeze_request() -> void:
+	emit_signal("player_freeze_request")
+
+
+# Emit a player unfreeze request event.
+func emit_player_unfreeze_request() -> void:
+	emit_signal("player_unfreeze_request")
 
 
 # Emit a fade in request event.
