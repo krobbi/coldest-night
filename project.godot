@@ -119,11 +119,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://entities/test/laser_wall/laser_wall.gd"
 }, {
-"base": "Reference",
-"class": "LegacyEventBus",
-"language": "GDScript",
-"path": "res://autoloads/global/legacy_event_bus.gd"
-}, {
 "base": "Node2D",
 "class": "Level",
 "language": "GDScript",
@@ -297,7 +292,6 @@ _global_script_class_icons={
 "JSONReader": "",
 "LangManager": "",
 "LaserWall": "",
-"LegacyEventBus": "",
 "Level": "",
 "LevelCamera": "",
 "MainMenuCard": "",

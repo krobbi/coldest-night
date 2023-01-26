@@ -7,7 +7,6 @@ extends Node
 # script by using 'Global'.
 
 var config: ConfigBus = ConfigBus.new()
-var events: LegacyEventBus = LegacyEventBus.new()
 var audio: AudioManager = AudioManager.new(self, config)
 var controls: ControlsManager = ControlsManager.new(config)
 var lang: LangManager = LangManager.new(config)
