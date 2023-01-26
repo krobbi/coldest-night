@@ -17,4 +17,4 @@ __meta__ = {
 
 [node name="MenuStack" parent="." instance=ExtResource( 2 )]
 
-[connection signal="root_popped" from="MenuStack" to="." method="close_menu"]
+[connection signal="root_popped" from="MenuStack" to="." method="_on_menu_stack_root_popped"]

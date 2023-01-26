@@ -32,7 +32,7 @@ func tick(delta: float) -> State:
 	if _player.get_interact_input():
 		_interactor.interact()
 	elif _player.get_pause_input():
-		Global.events.emit_signal("pause_menu_open_menu_request")
+		EventBus.emit_pause_game_request()
 	
 	_save_data.stats.accumulate_time(delta)
 	_player.set_velocity(velocity)

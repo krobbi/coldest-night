@@ -6,6 +6,7 @@ extends Node
 # script by using 'EventBus'.
 
 signal save_state_request()
+signal pause_game_request()
 signal game_over_request()
 signal transition_level_request(level_key, point, relative_point, is_relative_x, is_relative_y)
 
@@ -72,6 +73,11 @@ func unsubscribe(event: String, target: Object, method: String) -> void:
 # Emit a save state request event.
 func emit_save_state_request() -> void:
 	emit_signal("save_state_request")
+
+
+# Emit a pause game request event.
+func emit_pause_game_request() -> void:
+	emit_signal("pause_game_request")
 
 
 # Emit a game over request event.
