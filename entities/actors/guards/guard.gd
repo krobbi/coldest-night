@@ -76,7 +76,7 @@ func _on_vision_area_player_seen(player: Player, world_pos: Vector2) -> void:
 		EventBus.emit_subtitle_display_request("SUBTITLE.BARK.SEEN")
 	
 	if not Global.config.get_bool("accessibility.never_game_over"):
-		Global.events.emit_signal("game_over_request")
+		EventBus.emit_game_over_request()
 	
 	state_machine.change_state(_seen_player_state)
 	request_investigation(world_pos, 16.0, 64.0)

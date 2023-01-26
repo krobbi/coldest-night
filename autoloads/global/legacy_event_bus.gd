@@ -6,7 +6,6 @@ extends Reference
 # providing gameplay-related signals. The event bus can be accessed from any
 # script by using 'Global.events'.
 
-signal game_over_request # warning-ignore: UNUSED_SIGNAL
 # warning-ignore: UNUSED_SIGNAL
 signal nightscript_cache_program_request(program_key)
 signal nightscript_flush_cache_request # warning-ignore: UNUSED_SIGNAL

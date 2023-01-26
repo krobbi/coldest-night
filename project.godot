@@ -109,16 +109,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://entities/triggers/focus_camera_trigger/focus_camera_trigger.gd"
 }, {
-"base": "ColorRect",
-"class": "GameOverMenu",
-"language": "GDScript",
-"path": "res://gui/menu/menus/game_over_menu.gd"
-}, {
-"base": "MenuCard",
-"class": "GameOverMenuCard",
-"language": "GDScript",
-"path": "res://gui/menu/menu_cards/game_over_menu_card.gd"
-}, {
 "base": "Area2D",
 "class": "Interactable",
 "language": "GDScript",
@@ -340,8 +330,6 @@ _global_script_class_icons={
 "FadeTransition": "",
 "FloatingText": "",
 "FocusCameraTrigger": "",
-"GameOverMenu": "",
-"GameOverMenuCard": "",
 "Interactable": "",
 "Interactor": "",
 "JSONReader": "",

@@ -1,4 +1,3 @@
-class_name GameOverMenuCard
 extends MenuCard
 
 # Game Over Menu Card
