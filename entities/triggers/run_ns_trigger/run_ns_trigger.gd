@@ -1,4 +1,3 @@
-class_name RunNSTrigger
 extends Trigger
 
 # Run NightScript Trigger
@@ -12,7 +11,6 @@ func get_nightscript_program_key() -> String:
 	return _program_key
 
 
-# Run when a player enters the run NightScript trigger. Run a NightScript
-# program.
-func _player_enter(_player: Player) -> void:
+# Run when the run NightScript trigger is entered. Run a NightScript program.
+func _enter() -> void:
 	Global.events.emit_signal("nightscript_run_program_request", _program_key)

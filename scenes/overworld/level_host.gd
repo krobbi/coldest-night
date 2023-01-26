@@ -19,7 +19,7 @@ func _ready() -> void:
 func transition_level(
 		level_key: String, point: String, relative_point: String,
 		is_relative_x: bool, is_relative_y: bool) -> void:
-	_player.state_machine.change_state(_player.get_transitioning_state())
+	EventBus.emit_player_transition_request()
 	var offset: Vector2 = Vector2.ZERO
 	
 	if current_level:

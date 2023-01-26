@@ -1,9 +1,8 @@
-class_name FocusCameraTrigger
 extends Trigger
 
 # Focus Camera Trigger
 # A focus camera trigger is a trigger that focuses the level camera on a node
-# when entered by the player.
+# when entered.
 
 export(NodePath) var _focus_node_path: NodePath
 
@@ -19,12 +18,12 @@ func _ready() -> void:
 			_focus_node = focus_node
 
 
-# Run when the player enters the focus camera trigger. Focus the level camera on
-# the focus node.
-func _player_enter(_player: Player) -> void:
+# Run when the focus camera trigger is entered. Focus the level camera on the
+# focus node.
+func _enter() -> void:
 	EventBus.emit_camera_follow_anchor_request(_focus_node)
 
 
-# Run when the player exits the focus camera trigger. Unfocus the level camera.
-func _player_exit(_player: Player) -> void:
+# Run when the focus camera trigger is exited. Unfocus the level camera.
+func _exit() -> void:
 	EventBus.emit_camera_unfollow_anchor_request()

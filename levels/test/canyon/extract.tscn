@@ -121,7 +121,7 @@ position = Vector2( -80, 0 )
 
 [node name="ChangeSceneTrigger" parent="Triggers" index="2" instance=ExtResource( 5 )]
 position = Vector2( -336, 0 )
-scene = "results"
+_scene_key = "results"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ChangeSceneTrigger" index="0"]
 shape = SubResource( 3 )

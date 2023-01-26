@@ -11,6 +11,7 @@ signal transition_level_request(level_key, point, relative_point, is_relative_x,
 
 signal player_freeze_request()
 signal player_unfreeze_request()
+signal player_transition_request()
 
 signal fade_in_request()
 signal fade_out_request()
@@ -95,6 +96,11 @@ func emit_player_freeze_request() -> void:
 # Emit a player unfreeze request event.
 func emit_player_unfreeze_request() -> void:
 	emit_signal("player_unfreeze_request")
+
+
+# Emit a player transition request event.
+func emit_player_transition_request() -> void:
+	emit_signal("player_transition_request")
 
 
 # Emit a fade in request event.

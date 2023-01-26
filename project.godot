@@ -29,11 +29,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/menu/menu_rows/button_menu_row.gd"
 }, {
-"base": "Trigger",
-"class": "ChangeSceneTrigger",
-"language": "GDScript",
-"path": "res://entities/triggers/change_scene_trigger/change_scene_trigger.gd"
-}, {
 "base": "MenuRow",
 "class": "CheckboxMenuRow",
 "language": "GDScript",
@@ -103,11 +98,6 @@ _global_script_classes=[ {
 "class": "FloatingText",
 "language": "GDScript",
 "path": "res://gui/floating_text/floating_text.gd"
-}, {
-"base": "Trigger",
-"class": "FocusCameraTrigger",
-"language": "GDScript",
-"path": "res://entities/triggers/focus_camera_trigger/focus_camera_trigger.gd"
 }, {
 "base": "Area2D",
 "class": "Interactable",
@@ -254,11 +244,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://entities/interactables/run_ns_interactable/run_ns_interactable.gd"
 }, {
-"base": "Trigger",
-"class": "RunNSTrigger",
-"language": "GDScript",
-"path": "res://entities/triggers/run_ns_trigger/run_ns_trigger.gd"
-}, {
 "base": "Reference",
 "class": "SaveData",
 "language": "GDScript",
@@ -314,7 +299,6 @@ _global_script_class_icons={
 "AdvancedMenuCard": "",
 "AudioManager": "",
 "ButtonMenuRow": "",
-"ChangeSceneTrigger": "",
 "CheckboxMenuRow": "",
 "ColorGrader": "",
 "ConfigBus": "",
@@ -329,7 +313,6 @@ _global_script_class_icons={
 "DisplayManager": "",
 "FadeTransition": "",
 "FloatingText": "",
-"FocusCameraTrigger": "",
 "Interactable": "",
 "Interactor": "",
 "JSONReader": "",
@@ -359,7 +342,6 @@ _global_script_class_icons={
 "RepulsiveArea": "",
 "ResultsMenuCard": "",
 "RunNSInteractable": "",
-"RunNSTrigger": "",
 "SaveData": "",
 "SaveManager": "",
 "SettingsMenuCard": "",

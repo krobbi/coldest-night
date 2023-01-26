@@ -23,6 +23,7 @@ onready var _triggering_shape: CollisionShape2D = $TriggeringArea/TriggeringShap
 func _enter_tree() -> void:
 	EventBus.subscribe_node("player_freeze_request", self, "freeze")
 	EventBus.subscribe_node("player_unfreeze_request", self, "unfreeze")
+	EventBus.subscribe_node("player_transition_request", self, "transition")
 	EventBus.subscribe_node("save_state_request", self, "save_state")
 
 
@@ -46,11 +47,6 @@ func get_moving_state() -> State:
 	return _moving_state
 
 
-# Get the player's transitioning state.
-func get_transitioning_state() -> State:
-	return _transitioning_state
-
-
 # Freeze the player.
 func freeze() -> void:
 	if _is_frozen:
@@ -70,6 +66,11 @@ func unfreeze() -> void:
 	_is_frozen = false
 	enable_triggers()
 	state_machine.change_state(_unfreeze_state)
+
+
+# Transition the player.
+func transition() -> void:
+	state_machine.change_state(_transitioning_state)
 
 
 # Enables the player's ability to interact with triggers and interactables.

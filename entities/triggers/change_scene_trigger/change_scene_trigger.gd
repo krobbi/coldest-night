@@ -1,19 +1,12 @@
-class_name ChangeSceneTrigger
 extends Trigger
 
 # Change Scene Trigger
 # A change scene trigger is a trigger that changes the current scene when
-# entered by a player.
+# entered.
 
-export(String) var scene: String
+export(String) var _scene_key: String
 
-# Virtual _player_pre_enter method. Runs before a player enters the change scene
-# trigger. Disables the player:
-func _player_pre_enter(player: Player) -> void:
-	player.state_machine.change_state(player.get_transitioning_state())
-
-
-# Virtual _player_enter method. Runs when a player enters the change scene
-# trigger. Changes the current scene:
-func _player_enter(_player: Player) -> void:
-	Global.change_scene(scene)
+# Run when a the change scene trigger is entered. Change the current scene.
+func _enter() -> void:
+	EventBus.emit_player_transition_request()
+	Global.change_scene(_scene_key)
