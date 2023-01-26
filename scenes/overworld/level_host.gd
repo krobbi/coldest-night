@@ -55,7 +55,7 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 		remove_child(current_level)
 		current_level.free()
 	
-	Global.events.emit_signal("nightscript_stop_programs_request")
+	EventBus.emit_nightscript_stop_programs_request()
 	
 	current_level = load("res://levels/%s.tscn" % level_key).instance()
 	add_child(current_level)

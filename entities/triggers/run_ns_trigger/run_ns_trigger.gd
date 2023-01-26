@@ -13,4 +13,4 @@ func get_nightscript_program_key() -> String:
 
 # Run when the run NightScript trigger is entered. Run a NightScript program.
 func _enter() -> void:
-	Global.events.emit_signal("nightscript_run_program_request", _program_key)
+	EventBus.emit_nightscript_run_program_request(_program_key)

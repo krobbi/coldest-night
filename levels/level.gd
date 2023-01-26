@@ -29,7 +29,7 @@ func _ready() -> void:
 	Global.audio.play_music(music)
 	
 	for program_key in autorun_ns_programs:
-		Global.events.emit_signal("nightscript_cache_program_request", program_key)
+		EventBus.emit_nightscript_cache_program_request(program_key)
 	
 	var nav_tile_map: TileMap = $NavTileMap
 	var nav_tile_set: TileSet = nav_tile_map.tile_set
@@ -105,10 +105,10 @@ func _ready() -> void:
 	_cache_nightscript_runners(self)
 	
 	for program_key in cached_ns_programs:
-		Global.events.emit_signal("nightscript_cache_program_request", program_key)
+		EventBus.emit_nightscript_cache_program_request(program_key)
 	
 	for program_key in autorun_ns_programs:
-		Global.events.emit_signal("nightscript_run_program_request", program_key)
+		EventBus.emit_nightscript_run_program_request(program_key)
 
 
 # Run when the level exits the scene tree. Free the level's navigation regions.
@@ -168,5 +168,4 @@ func _cache_nightscript_runners(node: Node) -> void:
 		_cache_nightscript_runners(child)
 	
 	if node.is_in_group("nightscript_runners") and node.has_method("get_nightscript_program_key"):
-		Global.events.emit_signal(
-				"nightscript_cache_program_request", node.get_nightscript_program_key())
+		EventBus.emit_nightscript_cache_program_request(node.get_nightscript_program_key())

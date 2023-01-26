@@ -63,7 +63,7 @@ class NightScriptVirtualMachine extends Reference:
 				is_awaiting = true
 				emit_signal("pop_machine")
 			RUN_PROGRAM:
-				Global.events.emit_signal("nightscript_run_program_request", stack.pop_back())
+				EventBus.emit_nightscript_run_program_request(stack.pop_back())
 			CALL_PROGRAM:
 				is_awaiting = true
 				emit_signal("push_machine", stack.pop_back())
@@ -348,17 +348,16 @@ var _program_cache: Dictionary = {}
 var _threads: Array = []
 
 # Run when the NightScript component enters the scene tree. Disable the physics
-# process and connect to the event bus and language manager.
+# process, subscribe the NightScript component to the event bus and connect the
+# NightScript component to the language manager.
 func _ready() -> void:
 	set_physics_process(false)
-	Global.events.safe_connect("nightscript_run_program_request", self, "run_program")
-	Global.events.safe_connect("nightscript_stop_programs_request", self, "stop_programs")
-	Global.events.safe_connect("nightscript_cache_program_request", self, "cache_program")
-	Global.events.safe_connect("nightscript_flush_cache_request", self, "flush_cache")
+	EventBus.subscribe_node("nightscript_run_program_request", self, "run_program")
+	EventBus.subscribe_node("nightscript_stop_programs_request", self, "stop_programs")
+	EventBus.subscribe_node("nightscript_cache_program_request", self, "cache_program")
+	EventBus.subscribe_node("nightscript_flush_cache_request", self, "flush_cache")
 	
-	var error: int = Global.lang.connect("locale_changed", self, "flush_cache")
-	
-	if error:
+	if Global.lang.connect("locale_changed", self, "flush_cache") != OK:
 		if Global.lang.is_connected("locale_changed", self, "flush_cache"):
 			Global.lang.disconnect("locale_changed", self, "flush_cache")
 		
@@ -391,15 +390,11 @@ func _physics_process(delta: float) -> void:
 
 
 # Run when the NightScript component exits the scene tree. Disconnect the
-# NightScript component from the event bus and language manager.
+# NightScript component from the language manager.
 func _exit_tree() -> void:
 	if Global.lang.is_connected("locale_changed", self, "flush_cache"):
 		Global.lang.disconnect("locale_changed", self, "flush_cache")
 	
-	Global.events.safe_disconnect("nightscript_flush_cache_request", self, "flush_cache")
-	Global.events.safe_disconnect("nightscript_cache_program_request", self, "cache_program")
-	Global.events.safe_disconnect("nightscript_stop_programs_request", self, "stop_programs")
-	Global.events.safe_disconnect("nightscript_run_program_request", self, "run_program")
 	stop_programs()
 
 
@@ -523,7 +518,7 @@ func _pop_thread(thread_index: int) -> void:
 		vm.disconnect("pop_machine", self, "_pop_thread")
 	
 	if _threads[thread_index].empty():
-		Global.events.emit_signal("nightscript_thread_finished")
+		EventBus.emit_nightscript_thread_finished()
 	else:
 		_threads[thread_index][-1].end_await()
 	

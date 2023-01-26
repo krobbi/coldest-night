@@ -5,25 +5,23 @@ extends Control
 
 var _has_shown_silhouette: bool = false
 
-# Virtual _ready method. Runs when the dialog scene is entered. Plays background
-# music, connects to the devlog scene to the event bus, and runs the devlog
-# dialog:
+# Run when the dialog scene is entered. Play background music, subscribe the
+# devlog scene to the event bus, and run the devlog dialog.
 func _ready() -> void:
 	Global.audio.play_music("devlog")
-	EventBus.subscribe(
+	EventBus.subscribe_node(
 			"dialog_option_pressed", self, "_on_dialog_option_pressed", [], CONNECT_ONESHOT)
-	Global.events.safe_connect(
-			"nightscript_thread_finished", self,
-			"_on_nightscript_thread_finished", [], CONNECT_ONESHOT)
-	Global.events.emit_signal("nightscript_run_program_request", "dialog/devlog")
+	EventBus.subscribe_node(
+			"nightscript_thread_finished", self, "_on_nightscript_thread_finished",
+			[], CONNECT_ONESHOT)
+	EventBus.emit_nightscript_run_program_request("dialog/devlog")
 	
 	if Global.config.get_bool("accessibility.reduced_motion"):
 		$BackgroundRect.material = null
 
 
-# Signal callback for pressing a dialog option. Runs when a dialog option is
-# pressed. Detects when the user chooses 'No' in the dialog and shows the
-# silhouette:
+# Run when a dialog option is pressed. Show the silhouette if the user has
+# pressed `No`.
 func _on_dialog_option_pressed(index: int) -> void:
 	if _has_shown_silhouette or index != 1:
 		return
@@ -34,7 +32,6 @@ func _on_dialog_option_pressed(index: int) -> void:
 	tween.tween_property($SilhouetteRect, "rect_position:x", 400.0, 3.0)
 
 
-# Signal callback for a finished NightScript thread. Runs when the devlog dialog
-# finishes. Returns to the menu scene:
+# Run when the devlog dialog finishes. Return to the menu scene.
 func _on_nightscript_thread_finished() -> void:
 	Global.change_scene("menu")

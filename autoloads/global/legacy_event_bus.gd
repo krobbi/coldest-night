@@ -6,14 +6,6 @@ extends Reference
 # providing gameplay-related signals. The event bus can be accessed from any
 # script by using 'Global.events'.
 
-# warning-ignore: UNUSED_SIGNAL
-signal nightscript_cache_program_request(program_key)
-signal nightscript_flush_cache_request # warning-ignore: UNUSED_SIGNAL
-# warning-ignore: UNUSED_SIGNAL
-signal nightscript_run_program_request(program_key)
-signal nightscript_stop_programs_request # warning-ignore: UNUSED_SIGNAL
-signal nightscript_thread_finished # warning-ignore: UNUSED_SIGNAL
-
 # Safely connect a signal from the event bus to a target object's receiver
 # method.
 func safe_connect(

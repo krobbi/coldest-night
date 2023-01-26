@@ -14,11 +14,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://entities/actors/actor.gd"
 }, {
-"base": "MenuCard",
-"class": "AdvancedMenuCard",
-"language": "GDScript",
-"path": "res://gui/menu/menu_cards/advanced_menu_card.gd"
-}, {
 "base": "Object",
 "class": "AudioManager",
 "language": "GDScript",
@@ -281,7 +276,6 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Actor": "",
-"AdvancedMenuCard": "",
 "AudioManager": "",
 "ButtonMenuRow": "",
 "CheckboxMenuRow": "",

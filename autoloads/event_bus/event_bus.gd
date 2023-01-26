@@ -14,6 +14,12 @@ signal player_freeze_request()
 signal player_unfreeze_request()
 signal player_transition_request()
 
+signal nightscript_run_program_request(program_key)
+signal nightscript_stop_programs_request()
+signal nightscript_cache_program_request(program_key)
+signal nightscript_flush_cache_request()
+signal nightscript_thread_finished()
+
 signal fade_in_request()
 signal fade_out_request()
 signal faded_in()
@@ -107,6 +113,31 @@ func emit_player_unfreeze_request() -> void:
 # Emit a player transition request event.
 func emit_player_transition_request() -> void:
 	emit_signal("player_transition_request")
+
+
+# Emit a NightScript run program request event.
+func emit_nightscript_run_program_request(program_key: String) -> void:
+	emit_signal("nightscript_run_program_request", program_key)
+
+
+# Emit a NightScript stop programs request event.
+func emit_nightscript_stop_programs_request() -> void:
+	emit_signal("nightscript_stop_programs_request")
+
+
+# Emit a NightScript cache program request event.
+func emit_nightscript_cache_program_request(program_key: String) -> void:
+	emit_signal("nightscript_cache_program_request", program_key)
+
+
+# Emit a NightScript flush cache request event.
+func emit_nightscript_flush_cache_request() -> void:
+	emit_signal("nightscript_flush_cache_request")
+
+
+# Emit a NightScript thread finished event.
+func emit_nightscript_thread_finished() -> void:
+	emit_signal("nightscript_thread_finished")
 
 
 # Emit a fade in request event.

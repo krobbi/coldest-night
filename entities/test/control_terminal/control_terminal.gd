@@ -14,4 +14,4 @@ func get_nightscript_program_key() -> String:
 # Run when the control terminal's interactable is interacted with. Run the
 # control terminal's NightScript program.
 func _on_interactable_interacted() -> void:
-	Global.events.emit_signal("nightscript_run_program_request", _program_key)
+	EventBus.emit_nightscript_run_program_request(_program_key)

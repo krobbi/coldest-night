@@ -14,4 +14,4 @@ func get_nightscript_program_key() -> String:
 # Run when the run NightScript interactable is interacted with. Run a
 # NightScript program.
 func _interact() -> void:
-	Global.events.emit_signal("nightscript_run_program_request", _program_key)
+	EventBus.emit_nightscript_run_program_request(_program_key)
