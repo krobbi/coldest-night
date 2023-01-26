@@ -1,4 +1,3 @@
-class_name RunNSInteractable
 extends Interactable
 
 # Run NightScript Interactable

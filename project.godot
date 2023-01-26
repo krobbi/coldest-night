@@ -239,11 +239,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/menu/menu_cards/results_menu_card.gd"
 }, {
-"base": "Interactable",
-"class": "RunNSInteractable",
-"language": "GDScript",
-"path": "res://entities/interactables/run_ns_interactable/run_ns_interactable.gd"
-}, {
 "base": "Reference",
 "class": "SaveData",
 "language": "GDScript",
@@ -341,7 +336,6 @@ _global_script_class_icons={
 "RadarVisionAreaRenderer": "",
 "RepulsiveArea": "",
 "ResultsMenuCard": "",
-"RunNSInteractable": "",
 "SaveData": "",
 "SaveManager": "",
 "SettingsMenuCard": "",
