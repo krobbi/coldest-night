@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://levels/test/area_bx.tscn" type="PackedScene" id=1]
 [ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=2]
+[ext_resource path="res://entities/test/serial_test/serial_test.tscn" type="PackedScene" id=3]
 [ext_resource path="res://entities/actors/guards/robot_guard.tscn" type="PackedScene" id=4]
 [ext_resource path="res://entities/test/save_terminal/save_terminal.tscn" type="PackedScene" id=5]
 [ext_resource path="res://entities/test/control_terminal/control_terminal.tscn" type="PackedScene" id=6]
@@ -34,7 +35,18 @@ position = Vector2( 224, -128 )
 actor_key = "dave"
 start_facing = 1
 
-[node name="Terminals" type="YSort" parent="Midground" index="2"]
+[node name="SerialTests" type="YSort" parent="Midground" index="2"]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="SerialTestWest" parent="Midground/SerialTests" index="0" instance=ExtResource( 3 )]
+position = Vector2( -112, 112 )
+
+[node name="SerialTestEast" parent="Midground/SerialTests" index="1" instance=ExtResource( 3 )]
+position = Vector2( 112, 112 )
+
+[node name="Terminals" type="YSort" parent="Midground" index="3"]
 __meta__ = {
 "_edit_lock_": true
 }
