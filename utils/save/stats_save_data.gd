@@ -5,18 +5,18 @@ extends Reference
 # Statistics save data are structures that represent persistent statistics that
 # are stored in save files.
 
-var time_fraction: float = 0.0
-var time_seconds: int = 0
-var time_minutes: int = 0
 var time_hours: int = 0
+var time_minutes: int = 0
+var time_seconds: int = 0
+var time_fraction: float = 0.0
 var alert_count: int = 0
 
 # Clear the statistics save data to empty values.
 func clear() -> void:
-	time_fraction = 0.0
-	time_seconds = 0
-	time_minutes = 0
 	time_hours = 0
+	time_minutes = 0
+	time_seconds = 0
+	time_fraction = 0.0
 	alert_count = 0
 
 

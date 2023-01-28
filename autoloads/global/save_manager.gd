@@ -162,6 +162,7 @@ func _validate_save_data_json(reader: JSONReader) -> void:
 	reader.check_int("stats.time_seconds")
 	reader.check_float("stats.time_fraction")
 	reader.check_int("stats.alert_count")
+	reader.check_dictionary("nodes")
 	
 	if not reader.has_dictionary("flags"):
 		reader.invalidate()
