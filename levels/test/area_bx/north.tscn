@@ -37,43 +37,33 @@ __meta__ = {
 
 [node name="Bridge" parent="Midground/ArchivalUnits" index="0" instance=ExtResource( 2 )]
 position = Vector2( -272, -336 )
-archival_unit_key = "north_bridge"
 
 [node name="Guard" parent="Midground/ArchivalUnits" index="1" instance=ExtResource( 2 )]
 position = Vector2( 16, -496 )
-archival_unit_key = "north_guard"
 
 [node name="Corner" parent="Midground/ArchivalUnits" index="2" instance=ExtResource( 2 )]
 position = Vector2( 352, -608 )
-archival_unit_key = "north_corner"
 
 [node name="Cross" parent="Midground/ArchivalUnits" index="3" instance=ExtResource( 2 )]
 position = Vector2( 272, 16 )
-archival_unit_key = "north_cross"
 
 [node name="Nook" parent="Midground/ArchivalUnits" index="4" instance=ExtResource( 2 )]
 position = Vector2( 272, 208 )
-archival_unit_key = "north_nook"
 
 [node name="Maze" parent="Midground/ArchivalUnits" index="5" instance=ExtResource( 2 )]
 position = Vector2( 0, -416 )
-archival_unit_key = "north_maze"
 
 [node name="Shelf" parent="Midground/ArchivalUnits" index="6" instance=ExtResource( 2 )]
 position = Vector2( 0, 464 )
-archival_unit_key = "north_shelf"
 
 [node name="Horizontal" parent="Midground/ArchivalUnits" index="7" instance=ExtResource( 2 )]
 position = Vector2( -272, 16 )
-archival_unit_key = "north_horizontal"
 
 [node name="Vertical" parent="Midground/ArchivalUnits" index="8" instance=ExtResource( 2 )]
 position = Vector2( 272, 560 )
-archival_unit_key = "north_vertical"
 
 [node name="Cranny" parent="Midground/ArchivalUnits" index="9" instance=ExtResource( 2 )]
 position = Vector2( 240, 240 )
-archival_unit_key = "north_cranny"
 
 [node name="Guards" type="YSort" parent="Midground" index="2"]
 __meta__ = {

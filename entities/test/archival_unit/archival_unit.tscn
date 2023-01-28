@@ -47,7 +47,7 @@ animations = [ {
 "speed": 8.0
 } ]
 
-[node name="ArchivalUnit" type="Area2D"]
+[node name="ArchivalUnit" type="Area2D" groups=["persistent"]]
 collision_layer = 0
 collision_mask = 32
 monitorable = false

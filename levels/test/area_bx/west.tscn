@@ -41,27 +41,21 @@ __meta__ = {
 
 [node name="RoboA" parent="Midground/ArchivalUnits" index="0" instance=ExtResource( 5 )]
 position = Vector2( -528, -368 )
-archival_unit_key = "robo_a"
 
 [node name="RoboB" parent="Midground/ArchivalUnits" index="1" instance=ExtResource( 5 )]
 position = Vector2( 16, -368 )
-archival_unit_key = "robo_b"
 
 [node name="RoboC" parent="Midground/ArchivalUnits" index="2" instance=ExtResource( 5 )]
 position = Vector2( 560, -368 )
-archival_unit_key = "robo_c"
 
 [node name="RoboD" parent="Midground/ArchivalUnits" index="3" instance=ExtResource( 5 )]
 position = Vector2( -528, 368 )
-archival_unit_key = "robo_d"
 
 [node name="RoboE" parent="Midground/ArchivalUnits" index="4" instance=ExtResource( 5 )]
 position = Vector2( 16, 368 )
-archival_unit_key = "robo_e"
 
 [node name="RoboF" parent="Midground/ArchivalUnits" index="5" instance=ExtResource( 5 )]
 position = Vector2( 560, 368 )
-archival_unit_key = "robo_f"
 
 [node name="Guards" type="YSort" parent="Midground" index="2"]
 __meta__ = {

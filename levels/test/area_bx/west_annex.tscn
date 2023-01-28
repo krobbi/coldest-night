@@ -24,7 +24,6 @@ __meta__ = {
 
 [node name="ArchivalUnit" parent="Midground/ArchivalUnits" index="0" instance=ExtResource( 2 )]
 position = Vector2( 16, -16 )
-archival_unit_key = "annex"
 
 [node name="Terminals" type="YSort" parent="Midground" index="2"]
 __meta__ = {
