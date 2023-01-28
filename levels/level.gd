@@ -24,11 +24,11 @@ var _origin: Vector2 = Vector2.ZERO
 var _points: Dictionary = {}
 var _nav_regions: Array = []
 
-# Run when the level enters the scene tree. Free serializable nodes if the level
+# Run when the level enters the scene tree. Free persistent nodes if the level
 # has a saved state in the current working save data.
 func _enter_tree() -> void:
-	if _save_data.nodes.has(filename):
-		_free_serializable(self)
+	if _save_data.scenes.has(filename):
+		_free_persistent(self)
 
 
 # Run when the level finishes entering the scene tree. Initialize the level.
@@ -109,17 +109,16 @@ func _ready() -> void:
 	top_left_node.free()
 	bottom_right_node.free()
 	
-	if _save_data.nodes.has(filename):
-		for data in _save_data.nodes[filename]:
+	if _save_data.scenes.has(filename):
+		for data in _save_data.scenes[filename]:
 			var node: Node = load(data.filename).instance()
-			node.name = data.name
 			
 			if node is Node2D:
 				node.position = Vector2(data.position_x, data.position_y)
 			
 			get_node(NodePath(data.parent)).add_child(node)
 			
-			if node.has_method("deserialize"):
+			if data.has("data") and node.has_method("deserialize"):
 				node.deserialize(data.data)
 	
 	EventBus.subscribe_node("save_state_request", self, "save_state")
@@ -186,42 +185,39 @@ func get_world_pos(point: String, offset: Vector2) -> Vector2:
 
 # Save the level's state to the current working save data.
 func save_state() -> void:
-	_save_data.nodes[filename] = []
-	_save_node(self, _save_data.nodes[filename])
+	var array: Array = []
+	
+	for node in Global.tree.get_nodes_in_group("persistent"):
+		if node.filename.empty():
+			continue
+		
+		var data = {
+			"filename": node.filename,
+			"parent": String(get_path_to(node.get_parent())),
+		}
+		
+		if node is Node2D:
+			data.position_x = node.position.x
+			data.position_y = node.position.y
+		
+		if node.has_method("serialize"):
+			data.data = node.serialize()
+		
+		array.push_back(data)
+	
+	_save_data.scenes[filename] = array
 
 
-# Recursively free serializable nodes.
-func _free_serializable(node: Node) -> void:
-	if not node.is_in_group("serializable"):
+# Recursively free persistent nodes.
+func _free_persistent(node: Node) -> void:
+	if not node.is_in_group("persistent"):
 		for child in node.get_children():
-			_free_serializable(child)
+			_free_persistent(child)
 		
 		return
 	
 	node.get_parent().remove_child(node)
 	node.free()
-
-
-# Recursively save a node to an array.
-func _save_node(node: Node, array: Array) -> void:
-	if not node.is_in_group("serializable") or not node.has_method("serialize"):
-		for child in node.get_children():
-			_save_node(child, array)
-		
-		return
-	
-	var data: Dictionary = {
-		"filename": node.filename,
-		"parent": String(get_path_to(node.get_parent())),
-		"name": node.name,
-		"data": node.serialize(),
-	}
-	
-	if node is Node2D:
-		data.position_x = node.position.x
-		data.position_y = node.position.y
-	
-	array.push_back(data)
 
 
 # Recursively cache NightScript runners in a node.

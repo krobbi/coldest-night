@@ -15,7 +15,7 @@ var position: Vector2 = Vector2.ZERO
 var angle: float = 0.0
 var stats: StatsSaveData = StatsSaveData.new()
 var flags: Dictionary = {}
-var nodes: Dictionary = {}
+var scenes: Dictionary = {}
 
 # Set a flag from its namespace and key.
 func set_flag(namespace: String, key: String, value: int) -> void:
@@ -42,7 +42,7 @@ func clear() -> void:
 	angle = 0.0
 	stats.clear()
 	flags.clear()
-	nodes.clear()
+	scenes.clear()
 
 
 # Clear the save data to preset values for a new game.
@@ -75,7 +75,7 @@ func serialize() -> Dictionary:
 		"angle": angle,
 		"stats": stats.serialize(),
 		"flags": flags.duplicate(true),
-		"nodes": nodes.duplicate(true),
+		"scenes": scenes.duplicate(true),
 	}
 
 
@@ -98,4 +98,4 @@ func deserialize(data: Dictionary) -> void:
 	angle = float(data.angle)
 	stats.deserialize(data.stats.duplicate(true))
 	flags = data.flags.duplicate(true)
-	nodes = data.nodes.duplicate(true)
+	scenes = data.scenes.duplicate(true)
