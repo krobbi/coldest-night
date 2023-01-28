@@ -24,11 +24,15 @@ var _origin: Vector2 = Vector2.ZERO
 var _points: Dictionary = {}
 var _nav_regions: Array = []
 
-# Run when the level finishes entering the scene tree. Perform level
-# initialization that requires the level to be inside the scene tree.
+# Run when the level enters the scene tree. Free serializable nodes if the level
+# has a saved state in the current working save data.
+func _enter_tree() -> void:
+	if _save_data.nodes.has(filename):
+		_free_serializable(self)
+
+
+# Run when the level finishes entering the scene tree. Initialize the level.
 func _ready() -> void:
-	EventBus.subscribe_node("save_state_request", self, "save_state")
-	
 	Global.audio.play_music(music)
 	
 	for program_key in autorun_ns_programs:
@@ -105,6 +109,21 @@ func _ready() -> void:
 	top_left_node.free()
 	bottom_right_node.free()
 	
+	if _save_data.nodes.has(filename):
+		for data in _save_data.nodes[filename]:
+			var node: Node = load(data.filename).instance()
+			node.name = data.name
+			
+			if node is Node2D:
+				node.position = Vector2(data.position_x, data.position_y)
+			
+			get_node(NodePath(data.parent)).add_child(node)
+			
+			if node.has_method("deserialize"):
+				node.deserialize(data.data)
+	
+	EventBus.subscribe_node("save_state_request", self, "save_state")
+	
 	_cache_nightscript_runners(self)
 	
 	for program_key in cached_ns_programs:
@@ -169,6 +188,18 @@ func get_world_pos(point: String, offset: Vector2) -> Vector2:
 func save_state() -> void:
 	_save_data.nodes[filename] = []
 	_save_node(self, _save_data.nodes[filename])
+
+
+# Recursively free serializable nodes.
+func _free_serializable(node: Node) -> void:
+	if not node.is_in_group("serializable"):
+		for child in node.get_children():
+			_free_serializable(child)
+		
+		return
+	
+	node.get_parent().remove_child(node)
+	node.free()
 
 
 # Recursively save a node to an array.

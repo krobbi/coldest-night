@@ -11,6 +11,11 @@ func serialize() -> Dictionary:
 	return {"state": _sprite.frame}
 
 
+# Deserialize the serial test from a JSON object.
+func deserialize(data: Dictionary) -> void:
+	_sprite.frame = int(data.get("state", 0))
+
+
 # Run when the serial test's interactable is interacted with. Toggle the serial
 # test's state.
 func _on_interactable_interacted() -> void:
