@@ -6,6 +6,11 @@ extends StaticBody2D
 
 onready var _sprite: Sprite = $Sprite
 
+# Serialize the serial test to a JSON object.
+func serialize() -> Dictionary:
+	return {"state": _sprite.frame}
+
+
 # Run when the serial test's interactable is interacted with. Toggle the serial
 # test's state.
 func _on_interactable_interacted() -> void:

@@ -19,6 +19,7 @@ export(String) var music: String
 export(PoolStringArray) var cached_ns_programs: PoolStringArray
 export(PoolStringArray) var autorun_ns_programs: PoolStringArray
 
+var _save_data: SaveData = Global.save.get_working_data()
 var _origin: Vector2 = Vector2.ZERO
 var _points: Dictionary = {}
 var _nav_regions: Array = []
@@ -26,6 +27,8 @@ var _nav_regions: Array = []
 # Run when the level finishes entering the scene tree. Perform level
 # initialization that requires the level to be inside the scene tree.
 func _ready() -> void:
+	EventBus.subscribe_node("save_state_request", self, "save_state")
+	
 	Global.audio.play_music(music)
 	
 	for program_key in autorun_ns_programs:
@@ -160,6 +163,34 @@ func get_world_pos(point: String, offset: Vector2) -> Vector2:
 		return _points[point] + offset
 	else:
 		return _origin
+
+
+# Save the level's state to the current working save data.
+func save_state() -> void:
+	_save_data.nodes[filename] = []
+	_save_node(self, _save_data.nodes[filename])
+
+
+# Recursively save a node to an array.
+func _save_node(node: Node, array: Array) -> void:
+	if not node.is_in_group("serializable") or not node.has_method("serialize"):
+		for child in node.get_children():
+			_save_node(child, array)
+		
+		return
+	
+	var data: Dictionary = {
+		"filename": node.filename,
+		"parent": String(get_path_to(node.get_parent())),
+		"name": node.name,
+		"data": node.serialize(),
+	}
+	
+	if node is Node2D:
+		data.position_x = node.position.x
+		data.position_y = node.position.y
+	
+	array.push_back(data)
 
 
 # Recursively cache NightScript runners in a node.

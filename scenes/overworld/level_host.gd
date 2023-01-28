@@ -50,6 +50,8 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 		EventBus.emit_fade_out_request()
 		yield(EventBus, "faded_out")
 		
+		current_level.save_state()
+		
 		EventBus.emit_radar_clear_request()
 		_player.get_parent().remove_child(_player)
 		remove_child(current_level)
