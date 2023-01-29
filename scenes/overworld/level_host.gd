@@ -72,7 +72,7 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	
 	EventBus.emit_radar_refresh_entities_request()
 	EventBus.emit_radar_camera_follow_anchor_request(_player)
-	EventBus.emit_camera_follow_anchor_request(_player.camera_anchor)
+	EventBus.emit_camera_follow_anchor_request(_player.get_camera_anchor())
 	
 	_player.state_machine.change_state(_player.get_moving_state())
 	_player.enable_triggers()

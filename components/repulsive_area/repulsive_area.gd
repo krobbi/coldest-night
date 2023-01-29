@@ -5,7 +5,7 @@ extends Area2D
 # A repulsive area is a component of an entity that can query a vector away from
 # other nearby repulsive areas.
 
-# Gets the repulsive area's repulsion vector:
+# Get the repulsive area's repulsion vector.
 func get_vector() -> Vector2:
 	var vector: Vector2 = Vector2.ZERO
 	

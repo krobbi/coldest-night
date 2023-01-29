@@ -21,16 +21,16 @@ onready var _lost_player_state: State = get_node(_lost_player_state_path)
 func _ready() -> void:
 	match start_facing:
 		Facing.UP:
-			facing = Facing.UP
+			_facing = Facing.UP
 			smooth_pivot.rotation = PI * -0.5
 		Facing.RIGHT:
-			facing = Facing.RIGHT
+			_facing = Facing.RIGHT
 			smooth_pivot.rotation = 0.0
 		Facing.DOWN:
-			facing = Facing.DOWN
+			_facing = Facing.DOWN
 			smooth_pivot.rotation = PI * 0.5
 		Facing.LEFT:
-			facing = Facing.LEFT
+			_facing = Facing.LEFT
 			smooth_pivot.rotation = PI
 
 
