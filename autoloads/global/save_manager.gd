@@ -6,7 +6,7 @@ extends Reference
 # manipulating, and saving save data. It can be accessed from any script by
 # using 'Global.save'.
 
-const FORMAT_NAME: String = "krobbizoid.coldest-night.save-data"
+const FORMAT_NAME: String = "krobbizoid.coldest-night.save"
 const FORMAT_VERSION: int = 1
 const SLOT_COUNT: int = 1
 const SAVES_DIR: String = "user://saves/"
