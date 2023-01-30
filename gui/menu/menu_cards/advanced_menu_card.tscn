@@ -14,29 +14,37 @@ script = ExtResource( 2 )
 text = "HEADING.ADVANCED_SETTINGS"
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 104.0
+margin_bottom = 140.0
 
-[node name="OptimizeNightScriptCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 3 )]
+[node name="ReadableSavesCheckboxMenuRow" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_right = 512.0
-appearance_condition = 2
-config = "debug.optimize_nightscript"
+appearance_condition = 3
+config = "advanced.readable_saves"
 
-[node name="FlushNightScriptCacheButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 4 )]
+[node name="OptimizeNightScriptCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
 margin_bottom = 68.0
+appearance_condition = 2
+config = "debug.optimize_nightscript"
+
+[node name="FlushNightScriptCacheButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 4 )]
+anchor_right = 0.0
+margin_top = 72.0
+margin_right = 512.0
+margin_bottom = 104.0
 appearance_condition = 3
 tooltip = "TOOLTIP.BUTTON.FLUSH_NIGHTSCRIPT_CACHE"
 text = "BUTTON.FLUSH_NIGHTSCRIPT_CACHE"
 icon = ExtResource( 5 )
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 4 )]
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 4 )]
 anchor_right = 0.0
-margin_top = 72.0
+margin_top = 108.0
 margin_right = 512.0
-margin_bottom = 104.0
+margin_bottom = 140.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.SETTINGS"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 6 )

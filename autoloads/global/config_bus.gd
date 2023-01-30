@@ -130,6 +130,7 @@ var _data: Dictionary = {
 	"display.display_barks": true,
 	"language.locale": "auto",
 	"advanced.show_advanced": false,
+	"advanced.readable_saves": false,
 	"debug.optimize_nightscript": false,
 }
 

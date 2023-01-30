@@ -95,6 +95,14 @@ func _get_slot_path(slot_index: int) -> String:
 	return "%ssave_%d.json" % [SAVES_DIR, slot_index + 1]
 
 
+# Get save data serialized to a string.
+func _get_data_string(save_data: SaveData) -> String:
+	if Global.config.get_bool("advanced.readable_saves"):
+		return "%s\n" % JSON.print(save_data.serialize(), "\t")
+	
+	return JSON.print(save_data.serialize())
+
+
 # Copy source save data to target save data by value.
 func _copy_save_data(source: SaveData, target: SaveData, copy_stats: bool) -> void:
 	var original_stats: Dictionary = target.stats.serialize()
@@ -144,7 +152,7 @@ func _save_file(save_data: SaveData, slot_index: int) -> void:
 		
 		return
 	
-	file.store_string("%s\n" % JSON.print(save_data.serialize(), "\t"))
+	file.store_string(_get_data_string(save_data))
 	file.close()
 
 
