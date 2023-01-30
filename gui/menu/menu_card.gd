@@ -17,11 +17,21 @@ var _next_tooltip: String = ""
 onready var _tooltip_timer: Timer = $TooltipTimer
 
 # Run when the menu card finishes entering the scene tree. Find the tooltip
-# label and subscribe the menu card to the event bus.
+# label, connect the menu card to the configuration bus, and subscribe the menu
+# card to the event bus.
 func _ready() -> void:
 	if _tooltip_label_path and get_node(_tooltip_label_path) is Label:
 		_tooltip_label = get_node(_tooltip_label_path)
+		_tooltip_label.visible = Global.config.get_bool("accessibility.tooltips")
+		Global.config.connect_bool("accessibility.tooltips", _tooltip_label, "set_visible")
 		EventBus.subscribe_node("tooltip_display_request", self, "display_tooltip")
+
+
+# Run when the menu card exits the scene tree. Disconnect the menu card from the
+# configuration bus.
+func _exit_tree() -> void:
+	if _tooltip_label:
+		Global.config.disconnect_value("accessibility.tooltips", _tooltip_label, "set_visible")
 
 
 # Run when the menu card receives an input event. Handle controls for manually
@@ -47,8 +57,9 @@ func select_row(menu_row: int) -> void:
 func display_tooltip(message: String) -> void:
 	if not _tooltip_label:
 		return
-	elif not Global.config.get_bool("accessibility.tooltips"):
-		message = ""
+	elif _tooltip_label.text.empty():
+		_tooltip_label.text = message
+		return
 	
 	_next_tooltip = message
 	_tooltip_timer.start()
@@ -72,5 +83,4 @@ func request_pop() -> void:
 
 # Runs when the tooltip timer times out. Update the displayed tooltip.
 func _on_tooltip_timer_timeout() -> void:
-	if _tooltip_label:
-		_tooltip_label.text = _next_tooltip
+	_tooltip_label.text = _next_tooltip
