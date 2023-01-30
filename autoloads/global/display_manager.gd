@@ -174,7 +174,7 @@ func get_window_scale_options() -> Dictionary:
 	var options: Dictionary = {}
 	
 	for i in range(1, _window_scale_max + 1):
-		options["%dx" % i] = i
+		options[tr("OPTION.DISPLAY.WINDOW_SCALE.VALUE").format({"window_scale": i})] = i
 	
 	return options
 
