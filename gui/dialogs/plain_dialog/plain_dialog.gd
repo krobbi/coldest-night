@@ -53,7 +53,7 @@ func _display_message(message: String) -> void:
 	_message_label.percent_visible = 0.0
 	_type_timer.wait_time = TYPING_SPEED
 	_type_timer.start()
-	_continue_button.text = tr("BUTTON.DIALOG.CONTINUE").format(
+	_continue_button.text = tr("BUTTON.DIALOG_CONTINUE").format(
 			{"mapping": Global.controls.get_mapping_name("interact")})
 	_continue_button.show()
 	_continue_button.grab_focus()
