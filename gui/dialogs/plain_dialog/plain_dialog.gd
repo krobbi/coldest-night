@@ -20,7 +20,6 @@ onready var _message_label: RichTextLabel = $MessageLabel
 onready var _name_label: RichTextLabel = $MessageLabel/NameLabel
 onready var _option_container: VBoxContainer = $MessageLabel/OptionContainer
 onready var _continue_button: Button = $MessageLabel/ContinueButton
-onready var _select_rect: ColorRect = $MessageLabel/ContinueButton/SelectRect
 
 # Run when the plain dialog is hidden. Clear the continue button and message and
 # name labels.
@@ -29,7 +28,6 @@ func _hide_dialog() -> void:
 	_message_label.bbcode_text = ""
 	clear_name()
 	_continue_button.hide()
-	_select_rect.rect_size.x = 0.0
 
 
 # Run when the name is cleared from the plain dialog. Hide and clear the name
@@ -54,16 +52,9 @@ func _display_message(message: String) -> void:
 	_type_timer.wait_time = TYPING_SPEED
 	_type_timer.start()
 	_continue_button.text = tr("BUTTON.DIALOG_CONTINUE").format(
-			{"mapping": Global.controls.get_mapping_name("interact")})
+			{"mapping": InputManager.get_mapping_name("interact")})
 	_continue_button.show()
 	_continue_button.grab_focus()
-	
-	if Global.config.get_bool("accessibility.reduced_motion"):
-		_select_rect.rect_size.x = 8.0
-	else:
-		# warning-ignore: RETURN_VALUE_DISCARDED
-		create_tween().tween_property(_select_rect, "rect_size:x", 8.0, 0.1).set_trans(
-				Tween.TRANS_SINE)
 
 
 # Run when options are displayed to the plain dialog. Create and connect
@@ -96,7 +87,6 @@ func _display_options(texts: PoolStringArray) -> void:
 			option.focus_neighbour_bottom = next_path
 	
 	_continue_button.hide()
-	_select_rect.rect_size.x = 0.0
 	_select_option(0)
 
 
@@ -186,12 +176,6 @@ func _on_option_pressed(index: int) -> void:
 func _on_continue_button_pressed() -> void:
 	if _has_message and _message_label.percent_visible >= 1.0:
 		_has_message = false
-		
-		if not Global.config.get_bool("accessibility.reduced_motion"):
-			# warning-ignore: RETURN_VALUE_DISCARDED
-			create_tween().tween_property(_select_rect, "rect_size:x", 0.0, 0.05).set_trans(
-					Tween.TRANS_SINE)
-		
 		EventBus.emit_dialog_message_finished()
 	else:
 		_pause_timer.stop()

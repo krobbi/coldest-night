@@ -34,7 +34,7 @@ func get_interact_input() -> bool:
 
 # Get the player's move input.
 func get_move_input() -> Vector2:
-	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	return Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
 
 
 # Get the player's pause input.

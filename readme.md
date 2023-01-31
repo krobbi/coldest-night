@@ -44,13 +44,14 @@ building the game.
 You may encounter the following issues when running the game:
 
 ## Issues Affecting All Platforms
-* The internal payload format version of save files will only change between
-public builds, which may result in corrupted save files when running
-development versions.
+* The format version of save files will only change between public builds,
+which may result in corrupted save files from running development versions.
 * Using a high DPI display may cause issues as compatibility with high DPI
 displays has not been tested.
-* Setting controls to controller inputs may cause issues as mapping controller
-inputs has not been tested.
+* Controller buttons cannot be mapped to controls in versions `0.7.0` and below
+unless they have an analog pressure input. (Not tested on real hardware.)
+* Mapping controls to controller inputs may cause issues as controller inputs
+have not been tested with real hardware.
 
 ## Issues Affecting Windows
 * Using an audio playback format with a sample rate other than 44100 Hz may

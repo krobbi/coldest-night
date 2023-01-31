@@ -73,24 +73,12 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -256.0
+margin_left = -32.0
 margin_bottom = 32.0
-text = "BUTTON.DIALOG_CONTINUE"
+grow_horizontal = 0
+rect_min_size = Vector2( 32, 32 )
+size_flags_horizontal = 3
 align = 2
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="SelectRect" type="ColorRect" parent="MessageLabel/ContinueButton" index="0"]
-anchor_bottom = 1.0
-margin_left = 8.0
-margin_top = 8.0
-margin_right = 8.0
-margin_bottom = -8.0
-mouse_filter = 1
-size_flags_horizontal = 0
-size_flags_vertical = 0
-color = Color( 1, 0.596078, 0.054902, 1 )
 __meta__ = {
 "_edit_lock_": true
 }

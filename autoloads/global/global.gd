@@ -4,11 +4,10 @@ extends Node
 # The global context is an auto-loaded singleton scene that is always loaded
 # when the game is running. It stores functions and objects that need to be
 # accessed across multiple scenes. The global context can be accessed from any
-# script by using 'Global'.
+# script by using `Global`.
 
 var config: ConfigBus = ConfigBus.new()
 var audio: AudioManager = AudioManager.new(self, config)
-var controls: ControlsManager = ControlsManager.new(config)
 var lang: LangManager = LangManager.new(config)
 var save: SaveManager = SaveManager.new()
 
@@ -32,8 +31,6 @@ func _exit_tree() -> void:
 	display.free()
 	lang.destruct()
 	lang.free()
-	controls.destruct()
-	controls.free()
 	audio.destruct()
 	audio.free()
 

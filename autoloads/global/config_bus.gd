@@ -103,13 +103,13 @@ const FILE_PATH: String = "user://settings.cfg"
 var _should_save: bool = false
 var _config_signals: Array = []
 var _data: Dictionary = {
-	"controls.move_up_mapping": "key.%d" % KEY_UP,
-	"controls.move_down_mapping": "key.%d" % KEY_DOWN,
-	"controls.move_left_mapping": "key.%d" % KEY_LEFT,
-	"controls.move_right_mapping": "key.%d" % KEY_RIGHT,
-	"controls.interact_mapping": "key.%d" % KEY_Z,
-	"controls.pause_mapping": "key.%d" % KEY_ESCAPE,
-	"controls.toggle_fullscreen_mapping": "key.%d" % KEY_F11,
+	"controls.move_up_mapping": "auto",
+	"controls.move_down_mapping": "auto",
+	"controls.move_left_mapping": "auto",
+	"controls.move_right_mapping": "auto",
+	"controls.interact_mapping": "auto",
+	"controls.pause_mapping": "auto",
+	"controls.toggle_fullscreen_mapping": "auto",
 	"accessibility.legible_font": false,
 	"accessibility.reduced_motion": false,
 	"accessibility.tooltips": true,

@@ -3,7 +3,7 @@ extends Node
 # Event Bus
 # The event bus is an autoload scene that loosely couples gameplay systems by
 # providing globally accessible signals. The event bus can be accessed from any
-# script by using 'EventBus'.
+# script by using `EventBus`.
 
 signal save_state_request()
 signal pause_game_request()

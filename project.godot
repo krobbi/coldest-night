@@ -59,11 +59,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/menu/menu_rows/control_menu_row.gd"
 }, {
-"base": "Object",
-"class": "ControlsManager",
-"language": "GDScript",
-"path": "res://autoloads/global/controls_manager.gd"
-}, {
 "base": "MenuCard",
 "class": "ControlsMenuCard",
 "language": "GDScript",
@@ -280,7 +275,6 @@ _global_script_class_icons={
 "ConfigOptionMenuRow": "",
 "ConfigSliderMenuRow": "",
 "ControlMenuRow": "",
-"ControlsManager": "",
 "ControlsMenuCard": "",
 "Dialog": "",
 "DialogTagParser": "",
@@ -345,6 +339,7 @@ default_bus_layout="res://resources/audio_bus_layouts/default_bus_layout.tres"
 [autoload]
 
 EventBus="*res://autoloads/event_bus/event_bus.tscn"
+InputManager="*res://autoloads/input_manager/input_manager.tscn"
 Global="*res://autoloads/global/global.tscn"
 
 [display]
