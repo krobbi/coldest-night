@@ -104,11 +104,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://utils/io/json_reader.gd"
 }, {
-"base": "Reference",
-"class": "LangManager",
-"language": "GDScript",
-"path": "res://autoloads/global/lang_manager.gd"
-}, {
 "base": "StaticBody2D",
 "class": "LaserWall",
 "language": "GDScript",
@@ -284,7 +279,6 @@ _global_script_class_icons={
 "Interactable": "",
 "Interactor": "",
 "JSONReader": "",
-"LangManager": "",
 "LaserWall": "",
 "Level": "",
 "LevelCamera": "",
@@ -341,6 +335,7 @@ default_bus_layout="res://resources/audio_bus_layouts/default_bus_layout.tres"
 EventBus="*res://autoloads/event_bus/event_bus.tscn"
 ConfigBus="*res://autoloads/config_bus/config_bus.tscn"
 InputManager="*res://autoloads/input_manager/input_manager.tscn"
+LangManager="*res://autoloads/lang_manager/lang_manager.tscn"
 Global="*res://autoloads/global/global.tscn"
 
 [display]

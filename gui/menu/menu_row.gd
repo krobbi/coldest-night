@@ -67,7 +67,7 @@ func get_should_appear() -> bool:
 		AppearanceCondition.MULTIPLE_WINDOW_SCALES:
 			return Global.display.get_window_scale_max() > 1
 		AppearanceCondition.MULTIPLE_LOCALES:
-			return Global.lang.get_locale_count() > 1
+			return LangManager.get_locale_count() > 1
 		AppearanceCondition.HAS_SAVE:
 			return Global.save.get_working_data().state != SaveData.State.NEW_GAME
 		AppearanceCondition.ALWAYS, _:

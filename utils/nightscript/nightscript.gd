@@ -359,9 +359,9 @@ func _ready() -> void:
 	EventBus.subscribe_node("nightscript_cache_program_request", self, "cache_program")
 	EventBus.subscribe_node("nightscript_flush_cache_request", self, "flush_cache")
 	
-	if Global.lang.connect("locale_changed", self, "flush_cache") != OK:
-		if Global.lang.is_connected("locale_changed", self, "flush_cache"):
-			Global.lang.disconnect("locale_changed", self, "flush_cache")
+	if LangManager.connect("locale_changed", self, "flush_cache") != OK:
+		if LangManager.is_connected("locale_changed", self, "flush_cache"):
+			LangManager.disconnect("locale_changed", self, "flush_cache")
 		
 		_is_caching = false
 
@@ -392,10 +392,11 @@ func _physics_process(delta: float) -> void:
 
 
 # Run when the NightScript component exits the scene tree. Disconnect the
-# NightScript component from the language manager.
+# NightScript component from the language manager. and stop all currently
+# running NightScript programs.
 func _exit_tree() -> void:
-	if Global.lang.is_connected("locale_changed", self, "flush_cache"):
-		Global.lang.disconnect("locale_changed", self, "flush_cache")
+	if LangManager.is_connected("locale_changed", self, "flush_cache"):
+		LangManager.disconnect("locale_changed", self, "flush_cache")
 	
 	stop_programs()
 
@@ -451,14 +452,14 @@ func _get_bytecode(program_key: String) -> PoolByteArray:
 	
 	var file: File = File.new()
 	var path: String = "res://resources/data/nightscript/%s.%s.ns" % [
-			program_key, Global.lang.get_locale()]
+			program_key, LangManager.get_locale()]
 	
 	if not file.file_exists(path):
 		path = "res://resources/data/nightscript/%s.ns" % program_key
 		
 		if not file.file_exists(path):
 			path = "res://resources/data/nightscript/%s.%s.ns" % [
-					program_key, Global.lang.get_default_locale()]
+					program_key, LangManager.get_default_locale()]
 			
 			if not file.file_exists(path):
 				return EMPTY_BYTECODE
@@ -477,7 +478,7 @@ func _get_bytecode(program_key: String) -> PoolByteArray:
 	
 	if OS.is_debug_build():
 		var compiler: Reference = load("res://utils/nightscript/compiler/ns_compiler.gd").new()
-		return compiler.compile_path(Global.lang.get_locale(), path, ConfigBus.get_bool(
+		return compiler.compile_path(LangManager.get_locale(), path, ConfigBus.get_bool(
 				"debug.optimize_nightscript"))
 	
 	return EMPTY_BYTECODE

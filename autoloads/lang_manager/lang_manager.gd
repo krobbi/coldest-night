@@ -1,9 +1,8 @@
-class_name LangManager
-extends Reference
+extends Node
 
 # Language Manager
-# The language manager is a global utility that handles storing and applying
-# language settings. It can be accessed from any script by using `Global.lang`.
+# The language manager is an autoload scene that handles storing and applying
+# language settings. It can be accessed from any script by using `LangManager`.
 
 signal locale_changed(locale)
 
@@ -11,11 +10,11 @@ var _default_locale: String = ProjectSettings.get_setting("locale/fallback")
 var _locale: String = TranslationServer.get_locale()
 var _supported_locales: PoolStringArray = PoolStringArray(TranslationServer.get_loaded_locales())
 
-# Normalize the default locale and subscribe the language manager to the
-# configuration bus.
-func _init() -> void:
+# Run when the language manager enters the scene tree. Normalize the default
+# locale and subscribe the language manager to the configuration bus.
+func _ready() -> void:
 	_default_locale = _normalize_locale(_default_locale)
-	ConfigBus.subscribe_string("language.locale", self, "set_locale")
+	ConfigBus.subscribe_node_string("language.locale", self, "set_locale")
 
 
 # Set the locale.
@@ -76,8 +75,3 @@ func _normalize_locale(locale: String) -> String:
 			return supported_locale
 	
 	return _default_locale
-
-
-# Unsubscribe the language manager from the configuration bus.
-func destruct() -> void:
-	ConfigBus.unsubscribe("language.locale", self, "set_locale")

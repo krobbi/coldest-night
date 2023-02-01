@@ -13,7 +13,6 @@ var _is_quitting: bool = false
 
 onready var tree: SceneTree = get_tree()
 onready var audio: AudioManager = AudioManager.new()
-onready var lang: LangManager = LangManager.new()
 onready var display: DisplayManager = DisplayManager.new()
 
 # Run when the game starts. Load settings and save files to initialize the game.
@@ -28,7 +27,6 @@ func _ready() -> void:
 # settings.
 func _exit_tree() -> void:
 	display.destruct()
-	lang.destruct()
 	audio.destruct()
 	ConfigBus.save_file()
 

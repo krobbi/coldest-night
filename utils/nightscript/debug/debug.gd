@@ -63,7 +63,7 @@ func _get_code_string(code: IRCode) -> String:
 
 # Get output text from input text.
 func _get_output_text(input: String) -> String:
-	var ast: ASTNode = _resolver.resolve_source(Global.lang.get_locale(), input)
+	var ast: ASTNode = _resolver.resolve_source(LangManager.get_locale(), input)
 	var result: String = "# AST\n%s" % _get_ast_string(ast, [])
 	
 	_compiler.compile_ast(ast)

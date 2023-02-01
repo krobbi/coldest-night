@@ -26,31 +26,30 @@ var _selected_option: int = -1
 onready var _label: Label = $Content/Label
 onready var _button: Button = $Content/Button
 
-# Virtual _ready method. Runs when the option menu row finishes entering the
-# scene tree. Sets the option's values and text:
+# Run when the option menu row finishes entering the scene tree. Set the
+# option's values and text.
 func _ready() -> void:
 	set_option_source(option_source)
 	set_options(options)
 	set_text(text)
 
 
-# Virtual _input method. Runs when the option menu row receives an input event.
-# Handles controls for selecting options if the option menu row is selected:
+# Run when the option menu row receives an input event. Handle controls for
+# selecting options if the option menu row is selected.
 func _input(event: InputEvent) -> void:
 	if is_selected:
-		if event.is_action_pressed("move_right", true):
+		if event.is_action_pressed("ui_right", true):
 			select_next()
-		elif event.is_action_pressed("move_left", true):
+		elif event.is_action_pressed("ui_left", true):
 			select_previous()
 
 
-# Abstract _change_value method. Runs when the selected option's value is
-# changed:
+# Run when the selected option's value is changed.
 func _change_value(_value) -> void:
 	pass
 
 
-# Sets the option's source:
+# Set the option's source.
 func set_option_source(value: int) -> void:
 	option_source = value
 	
@@ -65,13 +64,13 @@ func set_option_source(value: int) -> void:
 		OptionSource.DISPLAY_SCALE_MODE:
 			set_options(Global.display.get_scale_mode_options())
 		OptionSource.LANGUAGE_LOCALE:
-			set_options(Global.lang.get_locale_options())
+			set_options(LangManager.get_locale_options())
 		OptionSource.OPTIONS, _:
 			option_source = OptionSource.OPTIONS
 			set_options(options)
 
 
-# Sets the option's options:
+# Set the option's options.
 func set_options(value: Dictionary) -> void:
 	var previous_value = get_value()
 	options = value
@@ -87,7 +86,7 @@ func set_options(value: Dictionary) -> void:
 		set_value(previous_value, true)
 
 
-# Sets the option's text:
+# Set the option's text.
 func set_text(value: String) -> void:
 	text = value
 	
@@ -95,8 +94,8 @@ func set_text(value: String) -> void:
 		_label.text = text
 
 
-# Sets the selected option's value if an option with that value exists. Selects
-# the first option if no option is selected:
+# Set the selected option's value if an option with that value exists. Select
+# the first option if no option is selected.
 func set_value(value, no_signal: bool = false) -> void:
 	for i in range(_option_count):
 		var test_value = _option_values[i]
@@ -113,8 +112,8 @@ func set_value(value, no_signal: bool = false) -> void:
 		select_option(0, no_signal)
 
 
-# Gets the selected option's value. Returns a default value if no option is
-# selected:
+# Get the selected option's value. Return a default value if no option is
+# selected.
 func get_value(default = null):
 	if _selected_option >= 0 and _selected_option < _option_count:
 		return _option_values[_selected_option]
@@ -122,7 +121,7 @@ func get_value(default = null):
 		return default
 
 
-# Selects an option from its index and emits the value_changed signal:
+# Select an option from its index and emits the value_changed signal.
 func select_option(index: int, no_signal: bool = false) -> void:
 	if _selected_option == index or index < 0 or index >= _option_count:
 		return
@@ -136,13 +135,13 @@ func select_option(index: int, no_signal: bool = false) -> void:
 		emit_signal("value_changed", _option_values[_selected_option])
 
 
-# Selects the previous option if there are multiple options:
+# Select the previous option if there are multiple options.
 func select_previous() -> void:
 	if _option_count > 1:
 		select_option((_selected_option - 1 + _option_count) % _option_count)
 
 
-# Selects the next option if there are multiple options:
+# Select the next option if there are multiple options.
 func select_next() -> void:
 	if _option_count > 1:
 		select_option((_selected_option + 1) % _option_count)

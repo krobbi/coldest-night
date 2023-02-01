@@ -11,14 +11,14 @@ var _is_exiting: bool = false
 onready var _credits_label: RichTextLabel = $CreditsLabel
 onready var _credits_camera: Camera2D = $CreditsCamera
 
-# Virtual _ready method. Runs when the credits scene is entered. Loads and
-# parses the credits file and plays background music:
+# Run when the credits scene is entered. Load and parse the credits file and
+# play background music.
 func _ready() -> void:
 	var file: File = File.new()
-	var path: String = CREDITS_PATH % Global.lang.get_locale()
+	var path: String = CREDITS_PATH % LangManager.get_locale()
 	
 	if not file.file_exists(path):
-		path = CREDITS_PATH % Global.lang.get_default_locale()
+		path = CREDITS_PATH % LangManager.get_default_locale()
 	
 	if file.open(path, File.READ) != OK:
 		if file.is_open():
@@ -43,15 +43,15 @@ func _ready() -> void:
 	Global.audio.play_music("credits", false)
 
 
-# Virtual _input method. Runs when the credits scene receives an input event.
-# Handles controls for quitting to the title screen scene:
+# Run when the credits scene receives an input event. Handle controls for
+# quitting to the menu scene.
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		_exit_credits()
 
 
-# Virtual _process method. Runs on every frame. Scrolls the credits camera down
-# and quits to the title screen scene if the credits are finished:
+# Run on every frame. Scroll the credits camera down and quit to the title
+# screen scene if the credits are finished.
 func _process(delta: float) -> void:
 	_credits_camera.position.y += SPEED * delta
 	
@@ -59,7 +59,7 @@ func _process(delta: float) -> void:
 		_exit_credits()
 
 
-# Exits the credits scene:
+# Exit the credits scene.
 func _exit_credits() -> void:
 	if _is_exiting:
 		return
