@@ -1,10 +1,10 @@
-class_name ConfigBus
+class_name LegacyConfigBus
 extends Reference
 
 # Configuration Bus
 # The configuration bus is a global utility that handles loading, storing, and
 # saving configuration values and emitting configuration signals. It can be
-# accessed from any script by using 'Global.config'.
+# accessed from any script by using `Global.config`.
 
 class ConfigSignal extends Reference:
 	

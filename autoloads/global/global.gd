@@ -6,16 +6,16 @@ extends Node
 # accessed across multiple scenes. The global context can be accessed from any
 # script by using `Global`.
 
-var config: ConfigBus = ConfigBus.new()
-var audio: AudioManager = AudioManager.new(self, config)
-var lang: LangManager = LangManager.new(config)
+var config: LegacyConfigBus = LegacyConfigBus.new()
 var save: SaveManager = SaveManager.new()
 
 var _is_changing_scene: bool = false
 var _is_quitting: bool = false
 
 onready var tree: SceneTree = get_tree()
-onready var display: DisplayManager = DisplayManager.new(tree, config)
+onready var audio: AudioManager = AudioManager.new()
+onready var lang: LangManager = LangManager.new()
+onready var display: DisplayManager = DisplayManager.new()
 
 # Run when the game starts. Load settings and save files to initialize the game.
 func _ready() -> void:
@@ -25,14 +25,11 @@ func _ready() -> void:
 	save.load_file()
 
 
-# Run when the game stops. Destruct and free global objects.
+# Run when the game stops. Destruct global objects.
 func _exit_tree() -> void:
 	display.destruct()
-	display.free()
 	lang.destruct()
-	lang.free()
 	audio.destruct()
-	audio.free()
 
 
 # Run when the global context receives an input event. Handle controls for
