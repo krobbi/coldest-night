@@ -19,7 +19,7 @@ func deselect() -> void:
 
 # Tween the plain dialog option's select rect's width to a target width.
 func _tween_select_rect_width(width: float) -> void:
-	if Global.config.get_bool("accessibility.reduced_motion"):
+	if ConfigBus.get_bool("accessibility.reduced_motion"):
 		_select_rect.rect_size.x = width
 	else:
 		# warning-ignore: RETURN_VALUE_DISCARDED

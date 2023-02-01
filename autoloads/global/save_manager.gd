@@ -97,7 +97,7 @@ func _get_slot_path(slot_index: int) -> String:
 
 # Get save data serialized to a string.
 func _get_data_string(save_data: SaveData) -> String:
-	if Global.config.get_bool("advanced.readable_saves"):
+	if ConfigBus.get_bool("advanced.readable_saves"):
 		return "%s\n" % JSON.print(save_data.serialize(), "\t")
 	
 	return JSON.print(save_data.serialize())

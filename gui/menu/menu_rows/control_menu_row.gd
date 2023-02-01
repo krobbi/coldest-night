@@ -32,10 +32,10 @@ func _input(event: InputEvent) -> void:
 	Global.audio.play_clip("sfx.menu_ok")
 
 
-# Run when the control menu row exits the scene tree. Disconnect the control
+# Run when the control menu row exits the scene tree. Unsubscribe the control
 # menu row from the configuration bus.
 func _exit_tree() -> void:
-	Global.config.disconnect_value("controls.%s_mapping" % action, self, "_on_config_value_changed")
+	ConfigBus.unsubscribe("controls.%s_mapping" % action, self, "_on_config_value_changed")
 
 
 # Run when the control menu row is deselected. Stop awaiting an input.
@@ -45,9 +45,9 @@ func _deselect() -> void:
 
 # Set the control button's action.
 func set_action(value: String) -> void:
-	Global.config.disconnect_value("controls.%s_mapping" % action, self, "_on_config_value_changed")
+	ConfigBus.unsubscribe("controls.%s_mapping" % action, self, "_on_config_value_changed")
 	action = value
-	Global.config.connect_string("controls.%s_mapping" % action, self, "_on_config_value_changed")
+	ConfigBus.subscribe_string("controls.%s_mapping" % action, self, "_on_config_value_changed")
 	
 	if _label:
 		_label.text = "CONTROL.ACTION.%s" % action.to_upper()

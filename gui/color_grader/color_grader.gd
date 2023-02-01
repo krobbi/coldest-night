@@ -7,16 +7,10 @@ extends ColorRect
 
 var grading: String = "none" setget set_grading
 
-# Virtual _ready method. Runs when the color grader enters the scene tree.
-# Connects the color grader to the configuration bus:
+# Run when the color grader enters the scene tree. Subscribe the color grader to
+# the configuration bus.
 func _ready() -> void:
-	Global.config.connect_string("accessibility.color_grading", self, "set_grading")
-
-
-# Virtual _exit_tree method. Runs when the color grader exits the scene tree.
-# Disconnects the color grader from the configuration bus:
-func _exit_tree() -> void:
-	Global.config.disconnect_value("accessibility.color_grading", self, "set_grading")
+	ConfigBus.subscribe_node_string("accessibility.color_grading", self, "set_grading")
 
 
 # Sets the color grader's grading:

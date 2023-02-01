@@ -13,7 +13,7 @@ var _music_player: AudioStreamPlayer = AudioStreamPlayer.new()
 var _current_music: String = ""
 var _clips: Dictionary = {}
 
-# Create the music player, populate the audio buses, and connect the audio
+# Create the music player, populate the audio buses, and subscribe the audio
 # manager to the configuration bus.
 func _init() -> void:
 	_music_player.name = "MusicPlayer"
@@ -28,10 +28,10 @@ func _init() -> void:
 		if bus_map.has(bus_name):
 			_buses[bus_map[bus_name]] = AudioServer.get_bus_index(bus_name)
 	
-	Global.config.connect_bool("audio.mute", self, "set_muted")
+	ConfigBus.subscribe_bool("audio.mute", self, "set_muted")
 	
 	for bus_key in _buses:
-		Global.config.connect_float(
+		ConfigBus.subscribe_float(
 				"audio.%s_volume" % bus_key, self, "_on_config_changed", [bus_key])
 
 
@@ -39,6 +39,7 @@ func _init() -> void:
 func set_muted(value: bool) -> void:
 	is_muted = value
 	AudioServer.set_bus_mute(0, is_muted)
+	ConfigBus.set_bool("audio.mute", is_muted)
 
 
 # Set the volume of an audio bus from its bus key.
@@ -52,7 +53,7 @@ func set_bus_volume(bus_key: String, value: float) -> void:
 		value = 100.0
 	
 	AudioServer.set_bus_volume_db(_buses[bus_key], linear2db(value * 0.01))
-	Global.config.set_float("audio.%s_volume" % bus_key, value)
+	ConfigBus.set_float("audio.%s_volume" % bus_key, value)
 
 
 # Get the volume of an audio bus from its bus key.
@@ -114,12 +115,12 @@ func stop_music() -> void:
 	play_music("")
 
 
-# Disconnect the audio manager from the configuration bus.
+# Unsubscribe the audio manager from the configuration bus.
 func destruct() -> void:
 	for bus_key in _buses:
-		Global.config.disconnect_value("audio.%s_volume" % bus_key, self, "_on_config_changed")
+		ConfigBus.unsubscribe("audio.%s_volume" % bus_key, self, "_on_config_changed")
 	
-	Global.config.disconnect_value("audio.mute", self, "set_muted")
+	ConfigBus.unsubscribe("audio.mute", self, "set_muted")
 
 
 # Run when an audio bus' volume changes in the configuration bus. Set the audio

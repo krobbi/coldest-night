@@ -34,14 +34,14 @@ onready var _laser_wall_container: Node2D = $Viewport/Foreground/LaserWalls
 onready var _walls_renderer: RadarSegmentRenderer = $Viewport/Foreground/Walls
 
 # Run when the radar display finishes entering the scene tree. Disable the radar
-# display's process, set the radar display's display scale, and connect the
+# display's process, set the radar display's display scale, and subscribe the
 # radar display to the configuration bus and event bus.
 func _ready() -> void:
 	set_process(false)
-	set_display_scale(Global.config.get_float("accessibility.radar_scale"))
-	set_display_opacity(Global.config.get_float("accessibility.radar_opacity"))
-	Global.config.connect_float("accessibility.radar_scale", self, "set_display_scale")
-	Global.config.connect_float("accessibility.radar_opacity", self ,"set_display_opacity")
+	set_display_scale(ConfigBus.get_float("accessibility.radar_scale"))
+	set_display_opacity(ConfigBus.get_float("accessibility.radar_opacity"))
+	ConfigBus.subscribe_node_float("accessibility.radar_scale", self, "set_display_scale")
+	ConfigBus.subscribe_node_float("accessibility.radar_opacity", self ,"set_display_opacity")
 	EventBus.subscribe_node("radar_clear_request", self, "clear")
 	EventBus.subscribe_node("radar_render_node_request", self, "render_node")
 	EventBus.subscribe_node("radar_referesh_entities_request", self, "refresh_entities")
@@ -53,13 +53,6 @@ func _ready() -> void:
 # camera anchor.
 func _process(_delta: float) -> void:
 	camera.position = _camera_anchor.position
-
-
-# Run when the radar display exits the scene tree. Disconnect the radar display
-# from the configuration bus.
-func _exit_tree() -> void:
-	Global.config.disconnect_value("accessibility.radar_opacity", self, "set_display_opacity")
-	Global.config.disconnect_value("accessibility.radar_scale", self, "set_display_scale")
 
 
 # Set the radar display's display scale.
@@ -75,7 +68,7 @@ func set_display_scale(value: float) -> void:
 	rect_size = RESOLUTION * _display_scale
 	rect_position.x = 624.0 - rect_size.x
 	camera.zoom = Vector2(8.0, 8.0) / _display_scale
-	Global.config.set_float("accessibility.radar_scale", _display_scale)
+	ConfigBus.set_float("accessibility.radar_scale", _display_scale)
 
 
 # Set the radar display's display opacity.
@@ -87,7 +80,7 @@ func set_display_opacity(value: float) -> void:
 	
 	_display_opacity = value
 	_background_polygon.color.a = _display_opacity * 0.01
-	Global.config.set_float("accessibility.radar_opacity", _display_opacity)
+	ConfigBus.set_float("accessibility.radar_opacity", _display_opacity)
 
 
 # Refresh all rendered entities on the radar display.

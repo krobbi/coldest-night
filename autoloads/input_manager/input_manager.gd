@@ -27,7 +27,7 @@ var _mappings: Dictionary = DEFAULT_MAPPINGS.duplicate()
 var _linked_action_events: Dictionary = {}
 
 # Run when the input manager enters the scene tree. Populate the linked input
-# action events, initialize the default input action mappings, and connect the
+# action events, initialize the default input action mappings, and subscribe the
 # input manager to the configuration bus.
 func _ready() -> void:
 	for linked_action in LINKED_ACTIONS.values():
@@ -36,15 +36,8 @@ func _ready() -> void:
 	reset_mappings()
 	
 	for action in DEFAULT_MAPPINGS:
-		Global.config.connect_string(
+		ConfigBus.subscribe_node_string(
 				"controls.%s_mapping" % action, self, "_on_config_changed", [action])
-
-
-# Run when the input manager exits the scene tree. Disconnect the input manager
-# from the configuration bus.
-func _exit_tree() -> void:
-	for action in DEFAULT_MAPPINGS:
-		Global.config.disconnect_value("controls.%s_mapping" % action, self, "_on_config_changed")
 
 
 # Get an input mapping code's human-readable name.
@@ -193,7 +186,7 @@ func map_action_event(action: String, event: InputEvent, swap: bool = true) -> v
 			map_action_code(other_action, previous_code, false)
 	
 	_mappings[action] = code
-	Global.config.set_string("controls.%s_mapping" % action, code)
+	ConfigBus.set_string("controls.%s_mapping" % action, code)
 
 
 # Reset all input action mappings to their defaults.

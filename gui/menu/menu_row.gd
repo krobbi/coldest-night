@@ -63,7 +63,7 @@ func get_should_appear() -> bool:
 		AppearanceCondition.DEBUG:
 			return OS.is_debug_build()
 		AppearanceCondition.ADVANCED:
-			return OS.is_debug_build() or Global.config.get_bool("advanced.show_advanced")
+			return OS.is_debug_build() or ConfigBus.get_bool("advanced.show_advanced")
 		AppearanceCondition.MULTIPLE_WINDOW_SCALES:
 			return Global.display.get_window_scale_max() > 1
 		AppearanceCondition.MULTIPLE_LOCALES:
@@ -88,7 +88,7 @@ func select() -> void:
 	# warning-ignore: RETURN_VALUE_DISCARDED
 	tween.tween_property(_content, "modulate", _COLOR_SELECT, _TWEEN_TIME)
 	
-	if Global.config.get_bool("accessibility.reduced_motion"):
+	if ConfigBus.get_bool("accessibility.reduced_motion"):
 		tween.custom_step(_TWEEN_TIME) # warning-ignore: RETURN_VALUE_DISCARDED
 	
 	_select()
@@ -110,7 +110,7 @@ func deselect() -> void:
 	# warning-ignore: RETURN_VALUE_DISCARDED
 	tween.tween_property(_content, "modulate", _COLOR_DESELECT, _TWEEN_TIME)
 	
-	if Global.config.get_bool("accessibility.reduced_motion"):
+	if ConfigBus.get_bool("accessibility.reduced_motion"):
 		tween.custom_step(_TWEEN_TIME) # warning-ignore: RETURN_VALUE_DISCARDED
 	
 	_deselect()

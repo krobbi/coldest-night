@@ -477,7 +477,7 @@ func _get_bytecode(program_key: String) -> PoolByteArray:
 	
 	if OS.is_debug_build():
 		var compiler: Reference = load("res://utils/nightscript/compiler/ns_compiler.gd").new()
-		return compiler.compile_path(Global.lang.get_locale(), path, Global.config.get_bool(
+		return compiler.compile_path(Global.lang.get_locale(), path, ConfigBus.get_bool(
 				"debug.optimize_nightscript"))
 	
 	return EMPTY_BYTECODE

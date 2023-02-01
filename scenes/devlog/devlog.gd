@@ -13,7 +13,7 @@ func _ready() -> void:
 			"dialog_option_pressed", self, "_on_dialog_option_pressed", [], CONNECT_ONESHOT)
 	EventBus.emit_nightscript_run_program_request("dialog/devlog")
 	
-	if Global.config.get_bool("accessibility.reduced_motion"):
+	if ConfigBus.get_bool("accessibility.reduced_motion"):
 		$BackgroundRect.material = null
 
 

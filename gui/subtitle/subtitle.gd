@@ -16,7 +16,7 @@ func _ready() -> void:
 
 # Display a subtitle to the subtitle display.
 func display_subtitle(message: String) -> void:
-	if not Global.config.get_bool("display.display_barks"):
+	if not ConfigBus.get_bool("display.display_barks"):
 		return
 	
 	_next_message = message

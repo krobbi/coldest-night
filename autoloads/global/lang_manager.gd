@@ -11,11 +11,11 @@ var _default_locale: String = ProjectSettings.get_setting("locale/fallback")
 var _locale: String = TranslationServer.get_locale()
 var _supported_locales: PoolStringArray = PoolStringArray(TranslationServer.get_loaded_locales())
 
-# Normalize the default locale and connect the language manager to the
+# Normalize the default locale and subscribe the language manager to the
 # configuration bus.
 func _init() -> void:
 	_default_locale = _normalize_locale(_default_locale)
-	Global.config.connect_string("language.locale", self, "set_locale")
+	ConfigBus.subscribe_string("language.locale", self, "set_locale")
 
 
 # Set the locale.
@@ -25,7 +25,7 @@ func set_locale(value: String) -> void:
 	
 	_locale = _normalize_locale(value)
 	TranslationServer.set_locale(_locale)
-	Global.config.set_string("language.locale", _locale)
+	ConfigBus.set_string("language.locale", _locale)
 	emit_signal("locale_changed", _locale)
 
 
@@ -78,6 +78,6 @@ func _normalize_locale(locale: String) -> String:
 	return _default_locale
 
 
-# Disconnect the language manager from the configuration bus.
+# Unsubscribe the language manager from the configuration bus.
 func destruct() -> void:
-	Global.config.disconnect_value("language.locale", self, "set_locale")
+	ConfigBus.unsubscribe("language.locale", self, "set_locale")

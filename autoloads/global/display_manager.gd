@@ -36,19 +36,19 @@ var _text_themes: Array = [
 	load("res://resources/themes/popup_text.tres"),
 ]
 
-# Connect the display manager to the configuration bus.
+# Subscribe the display manager to the configuration bus.
 func _init() -> void:
-	Global.config.connect_bool("accessibility.legible_font", self, "set_legible_font")
-	Global.config.connect_bool("display.fullscreen", self, "set_fullscreen")
-	Global.config.connect_bool("display.vsync", self, "set_vsync")
-	Global.config.connect_bool("display.pixel_snap", self, "set_pixel_snap")
-	Global.config.connect_int("display.window_scale", self, "set_window_scale")
-	Global.config.connect_string("display.scale_mode", self, "_set_scale_mode_string")
+	ConfigBus.subscribe_bool("accessibility.legible_font", self, "set_legible_font")
+	ConfigBus.subscribe_bool("display.fullscreen", self, "set_fullscreen")
+	ConfigBus.subscribe_bool("display.vsync", self, "set_vsync")
+	ConfigBus.subscribe_bool("display.pixel_snap", self, "set_pixel_snap")
+	ConfigBus.subscribe_int("display.window_scale", self, "set_window_scale")
+	ConfigBus.subscribe_string("display.scale_mode", self, "_set_scale_mode_string")
 
 
 # Set whether an alternative, more legible font is used.
 func set_legible_font(value: bool) -> void:
-	Global.config.set_bool("accessibility.legible_font", value)
+	ConfigBus.set_bool("accessibility.legible_font", value)
 	
 	if legible_font == value:
 		return
@@ -62,7 +62,7 @@ func set_legible_font(value: bool) -> void:
 
 # Set whether the display is fullscreen.
 func set_fullscreen(value: bool) -> void:
-	Global.config.set_bool("display.fullscreen", value)
+	ConfigBus.set_bool("display.fullscreen", value)
 	
 	if fullscreen == value:
 		return
@@ -91,7 +91,7 @@ func set_fullscreen(value: bool) -> void:
 
 # Set whether the display uses vsync.
 func set_vsync(value: bool) -> void:
-	Global.config.set_bool("display.vsync", value)
+	ConfigBus.set_bool("display.vsync", value)
 	
 	if vsync == value:
 		return
@@ -102,7 +102,7 @@ func set_vsync(value: bool) -> void:
 
 # Set whether the display uses pixel snapping.
 func set_pixel_snap(value: bool) -> void:
-	Global.config.set_bool("display.pixel_snap", value)
+	ConfigBus.set_bool("display.pixel_snap", value)
 	
 	if pixel_snap == value:
 		return
@@ -123,7 +123,7 @@ func set_window_scale(value: int) -> void:
 	else:
 		window_scale = value
 	
-	Global.config.set_int("display.window_scale", window_scale)
+	ConfigBus.set_int("display.window_scale", window_scale)
 	
 	if fullscreen:
 		_should_apply_window_scale = true
@@ -140,15 +140,15 @@ func set_scale_mode(value: int) -> void:
 		ScaleMode.STRETCH:
 			scale_mode = ScaleMode.STRETCH
 			_set_handling_resize(false)
-			Global.config.set_string("display.scale_mode", "stretch")
+			ConfigBus.set_string("display.scale_mode", "stretch")
 		ScaleMode.PIXEL:
 			scale_mode = ScaleMode.PIXEL
 			_set_handling_resize(not fullscreen)
-			Global.config.set_string("display.scale_mode", "pixel")
+			ConfigBus.set_string("display.scale_mode", "pixel")
 		ScaleMode.ASPECT, _:
 			scale_mode = ScaleMode.ASPECT
 			_set_handling_resize(false)
-			Global.config.set_string("display.scale_mode", "aspect")
+			ConfigBus.set_string("display.scale_mode", "aspect")
 	
 	_apply_screen_stretch()
 	
@@ -180,15 +180,15 @@ func get_scale_mode_options() -> Dictionary:
 	}
 
 
-# Disconnect the display manager from the configuration bus and stop handling
+# Unsubscribe the display manager from the configuration bus and stop handling
 # resizing the display.
 func destruct() -> void:
-	Global.config.disconnect_value("display.scale_mode", self, "_set_scale_mode_string")
-	Global.config.disconnect_value("display.window_scale", self, "set_window_scale")
-	Global.config.disconnect_value("display.pixel_snap", self, "set_pixel_snap")
-	Global.config.disconnect_value("display.vsync", self, "set_vsync")
-	Global.config.disconnect_value("display.fullscreen", self, "set_fullscreen")
-	Global.config.disconnect_value("accessibility.legible_font", self, "set_legible_font")
+	ConfigBus.unsubscribe("display.scale_mode", self, "_set_scale_mode_string")
+	ConfigBus.unsubscribe("display.window_scale", self, "set_window_scale")
+	ConfigBus.unsubscribe("display.pixel_snap", self, "set_pixel_snap")
+	ConfigBus.unsubscribe("display.vsync", self, "set_vsync")
+	ConfigBus.unsubscribe("display.fullscreen", self, "set_fullscreen")
+	ConfigBus.unsubscribe("accessibility.legible_font", self, "set_legible_font")
 	_set_handling_resize(false)
 
 

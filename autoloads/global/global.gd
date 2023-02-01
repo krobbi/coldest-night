@@ -6,7 +6,6 @@ extends Node
 # accessed across multiple scenes. The global context can be accessed from any
 # script by using `Global`.
 
-var config: LegacyConfigBus = LegacyConfigBus.new()
 var save: SaveManager = SaveManager.new()
 
 var _is_changing_scene: bool = false
@@ -19,17 +18,19 @@ onready var display: DisplayManager = DisplayManager.new()
 
 # Run when the game starts. Load settings and save files to initialize the game.
 func _ready() -> void:
-	config.load_file()
-	config.broadcast_values()
+	ConfigBus.load_file()
+	ConfigBus.broadcast()
 	save.select_slot(0)
 	save.load_file()
 
 
-# Run when the game stops. Destruct global objects.
+# Run when the game stops. Destruct global objects and save any changed
+# settings.
 func _exit_tree() -> void:
 	display.destruct()
 	lang.destruct()
 	audio.destruct()
+	ConfigBus.save_file()
 
 
 # Run when the global context receives an input event. Handle controls for
