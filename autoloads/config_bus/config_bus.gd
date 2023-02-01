@@ -206,7 +206,7 @@ func save_file() -> void:
 	var file: ConfigFile = ConfigFile.new()
 	
 	for config_key in _data:
-		if OS.is_debug_build() and config_key.begins_with("debug."):
+		if config_key.begins_with("debug.") and not OS.is_debug_build():
 			continue
 		
 		var config_key_parts: PoolStringArray = config_key.split(".", false, 1)
@@ -235,7 +235,7 @@ func load_file() -> void:
 	_should_save = false
 	
 	for config_key in _data:
-		if OS.is_debug_build() and config_key.begins_with("debug."):
+		if config_key.begins_with("debug.") and not OS.is_debug_build():
 			continue
 		
 		var config_key_parts: PoolStringArray = config_key.split(".", false, 1)
