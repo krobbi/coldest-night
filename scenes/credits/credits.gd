@@ -27,18 +27,7 @@ func _ready() -> void:
 		_exit_credits()
 		return
 	
-	for line in file.get_as_text().strip_edges().split("\n"):
-		line = line.strip_edges()
-		
-		if line.begins_with("##"):
-			_credits_label.bbcode_text += ("[color=#ff980e]%s[/color]\n"
-					% line.substr(2).strip_edges())
-		elif line.begins_with("#"):
-			_credits_label.bbcode_text += ("[center][color=#ff980e]%s[/color][/center]\n"
-					% line.substr(1).strip_edges())
-		else:
-			_credits_label.bbcode_text += "%s\n" % line
-	
+	_credits_label.bbcode_text = _parse_credits(file.get_as_text())
 	file.close()
 	Global.audio.play_music("credits", false)
 
@@ -57,6 +46,30 @@ func _process(delta: float) -> void:
 	
 	if _credits_camera.position.y > _credits_label.rect_position.y + _credits_label.rect_size.y:
 		_exit_credits()
+
+
+# Parse a credits source to credits bbcode.
+func _parse_credits(source: String) -> String:
+	var is_line_centered: bool = false
+	var result: String = ""
+	
+	for line in source.split("\n"):
+		line = line.strip_edges()
+		
+		if line.begins_with("##"):
+			line = "[color=#ff980e]%s[/color]" % line.substr(2).strip_edges(true, false)
+			is_line_centered = false
+		elif line.begins_with("#"):
+			result = "%s\n\n" % result
+			line = "[color=#ff980e]%s[/color]" % line.substr(1).strip_edges(true, false)
+			is_line_centered = true
+		
+		if is_line_centered and not line.empty():
+			line = "[center]%s[/center]" % line
+		
+		result = "%s%s\n" % [result, line]
+	
+	return result.strip_edges()
 
 
 # Exit the credits scene.
