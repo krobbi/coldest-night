@@ -8,9 +8,10 @@ var _opacity: float = 80.0
 
 onready var _menu_stack: MenuStack = $MenuStack
 
-# Run when the pause menu finishes entering the scene tree. Subscribe the pause
-# menu to the configuration bus and event bus.
+# Run when the pause menu finishes entering the scene tree. Set the pause menu's
+# opacity and subscribe the pause menu to the configuration bus and event bus.
 func _ready() -> void:
+	_set_opacity(ConfigBus.get_float("accessibility.pause_opacity"))
 	EventBus.subscribe_node("pause_game_request", self, "_open_menu")
 	ConfigBus.subscribe_node_float("accessibility.pause_opacity", self, "_set_opacity")
 
