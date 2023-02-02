@@ -7,7 +7,7 @@ extends EditorExportPlugin
 # Run when the game exports a resource file. Transform the resource file if
 # applicable.
 func _export_file(path: String, _type: String, _features: PoolStringArray) -> void:
-	if path.match("res://resources/data/nightscript/*.ns"):
+	if path.match("res://nightscript/scripts/*.ns"):
 		_pipe_compile_nightscript(path)
 
 
@@ -15,7 +15,7 @@ func _export_file(path: String, _type: String, _features: PoolStringArray) -> vo
 func _pipe_compile_nightscript(path: String) -> void:
 	skip()
 	
-	var compiler: Reference = load("res://utils/nightscript/compiler/ns_compiler.gd").new()
+	var compiler: Reference = load("res://nightscript/compiler/ns_compiler.gd").new()
 	
 	if path.count(".") == 2:
 		var locale: String = path.split(".")[1]

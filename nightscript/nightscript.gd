@@ -451,14 +451,14 @@ func _get_bytecode(program_key: String) -> PoolByteArray:
 		return _program_cache[program_key]
 	
 	var file: File = File.new()
-	var path: String = "res://resources/data/nightscript/%s.%s.ns" % [
+	var path: String = "res://nightscript/scripts/%s.%s.ns" % [
 			program_key, LangManager.get_locale()]
 	
 	if not file.file_exists(path):
-		path = "res://resources/data/nightscript/%s.ns" % program_key
+		path = "res://nightscript/scripts/%s.ns" % program_key
 		
 		if not file.file_exists(path):
-			path = "res://resources/data/nightscript/%s.%s.ns" % [
+			path = "res://nightscript/scripts/%s.%s.ns" % [
 					program_key, LangManager.get_default_locale()]
 			
 			if not file.file_exists(path):
@@ -477,7 +477,7 @@ func _get_bytecode(program_key: String) -> PoolByteArray:
 		return EMPTY_BYTECODE
 	
 	if OS.is_debug_build():
-		var compiler: Reference = load("res://utils/nightscript/compiler/ns_compiler.gd").new()
+		var compiler: Reference = load("res://nightscript/compiler/ns_compiler.gd").new()
 		return compiler.compile_path(LangManager.get_locale(), path, ConfigBus.get_bool(
 				"debug.optimize_nightscript"))
 	

@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scenes/devlog/devlog.gd" type="Script" id=1]
-[ext_resource path="res://utils/nightscript/nightscript.tscn" type="PackedScene" id=2]
+[ext_resource path="res://nightscript/nightscript.tscn" type="PackedScene" id=2]
 [ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/textures/scenes/devlog/background.png" type="Texture" id=4]
 [ext_resource path="res://resources/textures/scenes/devlog/silhouette.png" type="Texture" id=5]

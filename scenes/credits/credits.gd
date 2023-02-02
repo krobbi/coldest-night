@@ -3,7 +3,7 @@ extends Control
 # Credits Scene
 # The credits scene is a scene that displays the game's credits.
 
-const CREDITS_PATH: String = "res://resources/data/credits/credits_%s.txt"
+const CREDITS_PATH: String = "res://scenes/credits/credits_%s.txt"
 const SPEED: float = 30.0
 
 var _is_exiting: bool = false

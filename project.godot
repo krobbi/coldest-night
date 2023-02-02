@@ -102,7 +102,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "JSONReader",
 "language": "GDScript",
-"path": "res://utils/io/json_reader.gd"
+"path": "res://autoloads/save_manager/json_reader.gd"
 }, {
 "base": "StaticBody2D",
 "class": "LaserWall",
@@ -142,7 +142,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "NightScript",
 "language": "GDScript",
-"path": "res://utils/nightscript/nightscript.gd"
+"path": "res://nightscript/nightscript.gd"
 }, {
 "base": "MenuRow",
 "class": "OptionMenuRow",

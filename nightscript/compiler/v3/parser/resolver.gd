@@ -11,7 +11,7 @@ const RootASTNode: GDScript = preload("../ast/root_ast_node.gd")
 const Span: GDScript = preload("../logger/span.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
 
-const PATH_BASE: String = "res://resources/data/nightscript/"
+const PATH_BASE: String = "res://nightscript/scripts/"
 const BAD_PATH_CHARS: String = '"*./:<>?\\|'
 const SOURCE_MODULE_NAME: String = "<source>"
 

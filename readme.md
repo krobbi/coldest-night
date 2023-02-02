@@ -71,10 +71,10 @@ English. A table for translation keys in alphabetical order can be found at
 
 More lengthy or complex translations are determined from their file paths:
 
-| File type                | Naming convention                                      |
-| :----------------------- | :----------------------------------------------------- |
-| Credits files            | `resources/data/credits/credits_<locale>.txt`          |
-| NightScript source files | `resources/data/nightscript/<program key>.<locale>.ns` |
+| File type                | Naming convention                               |
+| :----------------------- | :---------------------------------------------- |
+| Credits files            | `scenes/credits/credits_<locale>.txt`           |
+| NightScript source files | `nightscript/scripts/<program key>.<locale>.ns` |
 
 If more than one locale is available to the game, a language menu will appear
 in the settings menu, otherwise it will be hidden. The translation system
