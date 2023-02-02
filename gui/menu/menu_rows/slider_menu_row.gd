@@ -15,8 +15,8 @@ export(String) var text: String setget set_text
 onready var _label: Label = $Content/Label
 onready var _slider: HSlider = $Content/HSlider
 
-# Virtual _ready method. Runs when the slider menu row finishes entering the
-# scene tree. Sets the slider's values and text:
+# Run when the slider menu row finishes entering the scene tree. Set the
+# slider's values and text.
 func _ready() -> void:
 	set_min_value(min_value)
 	set_max_value(max_value)
@@ -25,19 +25,19 @@ func _ready() -> void:
 	set_text(text)
 
 
-# Virtual _exit_tree method. Runs when the slider menu row exits the scene tree.
-# Disconnects the slider's value_changed signal from the slider menu row:
+# Run when the slider menu row exits the scene tree. Disconnect the slider's
+# `value_changed` signal from the slider menu row.
 func _exit_tree() -> void:
 	if _slider.is_connected("value_changed", self, "_on_slider_value_changed"):
 		_slider.disconnect("value_changed", self, "_on_slider_value_changed")
 
 
-# Abstract _change_value method. Runs when the slider's value is changed:
+# Run when the slider's value is changed.
 func _change_value(_value: float) -> void:
 	pass
 
 
-# Sets the slider's value:
+# Set the slider's value.
 func set_value(value: float) -> void:
 	slider_value = value
 	
@@ -45,7 +45,7 @@ func set_value(value: float) -> void:
 		_slider.value = slider_value
 
 
-# Sets the slider's value without emitting the value changed signal:
+# Set the slider's value without emitting the `value_changed` signal.
 func set_value_no_signal(value: float) -> void:
 	slider_value = value
 	
@@ -59,7 +59,7 @@ func set_value_no_signal(value: float) -> void:
 		_slider.disconnect("value_changed", self, "_on_slider_value_changed")
 
 
-# Sets the slider's minimum value:
+# Set the slider's minimum value.
 func set_min_value(value: float) -> void:
 	min_value = value
 	
@@ -67,7 +67,7 @@ func set_min_value(value: float) -> void:
 		_slider.min_value = min_value
 
 
-# Sets the slider's maximum value:
+# Set the slider's maximum value.
 func set_max_value(value: float) -> void:
 	max_value = value
 	
@@ -75,7 +75,7 @@ func set_max_value(value: float) -> void:
 		_slider.max_value = max_value
 
 
-# Sets the slider's step:
+# Set the slider's step.
 func set_step(value: float) -> void:
 	step = value
 	
@@ -83,7 +83,7 @@ func set_step(value: float) -> void:
 		_slider.step = step
 
 
-# Sets the slider's text:
+# Set the slider's text.
 func set_text(value: String) -> void:
 	text = value
 	
@@ -91,9 +91,8 @@ func set_text(value: String) -> void:
 		_label.text = text
 
 
-# Signal callback for value_changed on the slider. Runs when the slider's value
-# changes. Emits the value_changed signal:
+# Run when the slider's value changes. Emit the `value_changed` signal.
 func _on_slider_value_changed(value: float) -> void:
 	_change_value(value)
-	Global.audio.play_clip("sfx.menu_move")
+	AudioManager.play_clip("sfx.menu_move")
 	emit_signal("value_changed", value)

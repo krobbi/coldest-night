@@ -7,7 +7,6 @@ extends Node
 var _is_changing_scene: bool = false
 
 onready var tree: SceneTree = get_tree()
-onready var audio: AudioManager = AudioManager.new()
 onready var display: DisplayManager = DisplayManager.new()
 
 # Run when the global context finishes entering the scene tree. Initialize the
@@ -22,7 +21,6 @@ func _ready() -> void:
 # Run when the global context exits the scene tree. Destruct the game.
 func _exit_tree() -> void:
 	display.destruct()
-	audio.destruct()
 	ConfigBus.save_file()
 
 

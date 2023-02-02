@@ -96,7 +96,7 @@ func _select_option(option_index: int) -> void:
 		return
 	elif _selected_option != -1:
 		_options[_selected_option].deselect()
-		Global.audio.play_clip("sfx.menu_move")
+		AudioManager.play_clip("sfx.menu_move")
 	
 	_selected_option = option_index
 	_options[_selected_option].select()

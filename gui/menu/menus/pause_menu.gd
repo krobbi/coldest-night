@@ -35,7 +35,7 @@ func _open_menu() -> void:
 	Global.tree.paused = true
 	_menu_stack.push_card("pause")
 	show()
-	Global.audio.play_clip("sfx.menu_move")
+	AudioManager.play_clip("sfx.menu_move")
 
 
 # Run when the menu stack's root is popped. Close the menu.

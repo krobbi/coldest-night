@@ -14,11 +14,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://entities/actors/actor.gd"
 }, {
-"base": "Reference",
-"class": "AudioManager",
-"language": "GDScript",
-"path": "res://autoloads/global/audio_manager.gd"
-}, {
 "base": "MenuRow",
 "class": "ButtonMenuRow",
 "language": "GDScript",
@@ -246,7 +241,6 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Actor": "",
-"AudioManager": "",
 "ButtonMenuRow": "",
 "CheckboxMenuRow": "",
 "ColorGrader": "",
@@ -316,6 +310,7 @@ default_bus_layout="res://resources/audio_bus_layouts/default_bus_layout.tres"
 
 EventBus="*res://autoloads/event_bus/event_bus.tscn"
 ConfigBus="*res://autoloads/config_bus/config_bus.tscn"
+AudioManager="*res://autoloads/audio_manager/audio_manager.tscn"
 InputManager="*res://autoloads/input_manager/input_manager.tscn"
 LangManager="*res://autoloads/lang_manager/lang_manager.tscn"
 SaveManager="*res://autoloads/save_manager/save_manager.tscn"

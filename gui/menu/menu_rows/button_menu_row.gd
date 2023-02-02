@@ -48,8 +48,8 @@ func _on_button_pressed() -> void:
 	
 	match press_sound:
 		PressSound.OK:
-			Global.audio.play_clip("sfx.menu_ok")
+			AudioManager.play_clip("sfx.menu_ok")
 		PressSound.CANCEL:
-			Global.audio.play_clip("sfx.menu_cancel")
+			AudioManager.play_clip("sfx.menu_cancel")
 	
 	emit_signal("pressed")

@@ -33,7 +33,7 @@ func _enter_tree() -> void:
 
 # Run when the level finishes entering the scene tree. Initialize the level.
 func _ready() -> void:
-	Global.audio.play_music(music)
+	AudioManager.play_music(music)
 	
 	for program_key in autorun_ns_programs:
 		EventBus.emit_nightscript_cache_program_request(program_key)

@@ -8,8 +8,8 @@ var _menu_rows: Array = []
 var _menu_row_count: int = 0
 var _selected_menu_row: int = -1
 
-# Virtual _ready method. Runs when the menu list enters the scene tree. adds and
-# connects the menu list's menu rows:
+# Run when the menu list enters the scene tree. add and connect the menu list's
+# menu rows.
 func _ready() -> void:
 	for child in get_children():
 		if not child is MenuRow:
@@ -21,7 +21,7 @@ func _ready() -> void:
 	
 	_menu_row_count = _menu_rows.size()
 	
-	# Connect menu rows if there is more than 1 menu row:
+	# Connect menu rows if there is more than 1 menu row.
 	for i in range(int(_menu_row_count > 1) * _menu_row_count):
 		var menu_row: MenuRow = _menu_rows[i]
 		var focus_node: Control = menu_row.get_focus_node()
@@ -37,26 +37,26 @@ func _ready() -> void:
 		connect_select_row(menu_row, "mouse_entered", i)
 
 
-# Virtual _exit_tree method. Runs when the menu list exits the scene tree.
-# Disconnects signals from selecting menu rows:
+# Run when the menu list exits the scene tree. Disconnect signals from selecting
+# menu rows.
 func _exit_tree() -> void:
 	for connection in get_incoming_connections():
 		if connection.method_name == "select_row":
 			connection.source.disconnect(connection.signal_name, self, connection.method_name)
 
 
-# Gets the selected menu row's index:
+# Get the selected menu row's index.
 func get_selected_row() -> int:
 	return _selected_menu_row
 
 
-# Selects a menu row from its index:
+# Select a menu row from its index.
 func select_row(index: int) -> void:
 	if _selected_menu_row == index or index < 0 or index >= _menu_row_count:
 		return
 	elif _selected_menu_row != -1:
 		_menu_rows[_selected_menu_row].deselect()
-		Global.audio.play_clip("sfx.menu_move")
+		AudioManager.play_clip("sfx.menu_move")
 	
 	_selected_menu_row = index
 	var menu_row: MenuRow = _menu_rows[_selected_menu_row]
@@ -64,7 +64,7 @@ func select_row(index: int) -> void:
 	menu_row.get_focus_node().grab_focus()
 
 
-# Connects a signal to selecting a menu row:
+# Connect a signal to selecting a menu row.
 func connect_select_row(source: Object, signal_name: String, index: int) -> void:
 	var error: int = source.connect(signal_name, self, "select_row", [index])
 	

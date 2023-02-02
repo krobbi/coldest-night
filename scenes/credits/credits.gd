@@ -29,7 +29,7 @@ func _ready() -> void:
 	
 	_credits_label.bbcode_text = _parse_credits(file.get_as_text())
 	file.close()
-	Global.audio.play_music("credits", false)
+	AudioManager.play_music("credits", false)
 
 
 # Run when the credits scene receives an input event. Handle controls for

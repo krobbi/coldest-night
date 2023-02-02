@@ -21,7 +21,7 @@ func open_menu() -> void:
 	
 	_is_open = true
 	EventBus.emit_player_freeze_request()
-	Global.audio.play_music("game_over", false)
+	AudioManager.play_music("game_over", false)
 	show()
 	var tween: SceneTreeTween = create_tween()
 	# warning-ignore: RETURN_VALUE_DISCARDED
@@ -34,5 +34,5 @@ func open_menu() -> void:
 # the game over menu card to the menu stack.
 func _on_tween_callback() -> void:
 	Global.tree.paused = true
-	Global.audio.play_music("menu")
+	AudioManager.play_music("menu")
 	_menu_stack.push_card("game_over")

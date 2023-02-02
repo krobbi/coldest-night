@@ -29,7 +29,7 @@ func _input(event: InputEvent) -> void:
 	Global.tree.set_input_as_handled() # Don't do anything else with the input.
 	InputManager.map_action_event(action, event)
 	set_awaiting_input(false)
-	Global.audio.play_clip("sfx.menu_ok")
+	AudioManager.play_clip("sfx.menu_ok")
 
 
 # Run when the control menu row exits the scene tree. Unsubscribe the control
