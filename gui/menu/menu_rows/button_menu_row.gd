@@ -1,4 +1,3 @@
-class_name ButtonMenuRow
 extends MenuRow
 
 # Button Menu Row

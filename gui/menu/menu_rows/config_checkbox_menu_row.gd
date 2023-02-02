@@ -1,4 +1,3 @@
-class_name ConfigCheckboxMenuRow
 extends CheckboxMenuRow
 
 # Configuration Checkbox Menu Row
@@ -19,12 +18,12 @@ func _exit_tree() -> void:
 	ConfigBus.unsubscribe(config, self, "set_pressed_no_signal")
 
 
-# Run when the checkbox is toggled. Set the subscribed configuration value:
+# Run when the checkbox is toggled. Set the subscribed configuration value.
 func _toggle(value: bool) -> void:
 	ConfigBus.set_bool(config, value)
 
 
-# Sets the checkbox's configuration value.
+# Set the checkbox's configuration value.
 func set_config(value: String) -> void:
 	ConfigBus.unsubscribe(config, self, "set_pressed_no_signal")
 	config = value

@@ -1,4 +1,3 @@
-class_name ControlMenuRow
 extends MenuRow
 
 # Control Menu Row

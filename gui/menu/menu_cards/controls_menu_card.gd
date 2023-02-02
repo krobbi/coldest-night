@@ -1,4 +1,3 @@
-class_name ControlsMenuCard
 extends MenuCard
 
 # Controls Menu Card

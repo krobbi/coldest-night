@@ -1,4 +1,3 @@
-class_name FadeTransition
 extends ColorRect
 
 # Fade Transition

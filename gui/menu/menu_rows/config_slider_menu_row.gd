@@ -1,4 +1,3 @@
-class_name ConfigSliderMenuRow
 extends SliderMenuRow
 
 # Configuration Slider Menu Row

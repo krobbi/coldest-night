@@ -1,4 +1,3 @@
-class_name Radar
 extends ViewportContainer
 
 # Radar Display

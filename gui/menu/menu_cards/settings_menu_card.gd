@@ -1,4 +1,3 @@
-class_name SettingsMenuCard
 extends MenuCard
 
 # Settings Menu Card

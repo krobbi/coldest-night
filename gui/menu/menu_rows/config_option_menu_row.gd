@@ -1,4 +1,3 @@
-class_name ConfigOptionMenuRow
 extends OptionMenuRow
 
 # Configuration Option Menu Row
@@ -20,7 +19,7 @@ func _exit_tree() -> void:
 
 
 # Run when the selected option's value is changed. Set the subscribed
-# configuration value:
+# configuration value.
 func _change_value(value) -> void:
 	ConfigBus.set_value(config, value)
 
