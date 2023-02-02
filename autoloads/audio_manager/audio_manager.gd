@@ -81,12 +81,14 @@ func _on_mute_changed(value: bool) -> void:
 # Run when an audio bus' volume changes in the configuration bus. Set the audio
 # bus' volume.
 func _on_volume_changed(value: float, bus_key: String) -> void:
-	if not _buses.has(bus_key):
+	if value < 0.0:
+		ConfigBus.set_float("audio.%s_volume" % bus_key, 0.0)
+		return
+	elif value > 100.0 or is_inf(value) or is_nan(value):
+		ConfigBus.set_float("audio.%s_volume" % bus_key, 100.0)
 		return
 	
-	if value < 0.0:
-		value = 0.0
-	elif value > 100.0 or is_inf(value) or is_nan(value):
-		value = 100.0
+	if not _buses.has(bus_key):
+		return
 	
 	AudioServer.set_bus_volume_db(_buses[bus_key], linear2db(value * 0.01))
