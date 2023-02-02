@@ -33,7 +33,7 @@ func _open_menu() -> void:
 		return
 	
 	_is_open = true
-	Global.tree.paused = true
+	get_tree().paused = true
 	_menu_stack.push_card("pause")
 	show()
 	AudioManager.play_clip("sfx.menu_move")
@@ -47,4 +47,4 @@ func _on_menu_stack_root_popped() -> void:
 	_is_open = false
 	hide()
 	_menu_stack.clear()
-	Global.tree.set_deferred("paused", false)
+	get_tree().set_deferred("paused", false)

@@ -59,7 +59,7 @@ func investigate(world_pos: Vector2, min_distance: float, max_distance: float) -
 
 # Request other guards to investigate a world position.
 func request_investigation(world_pos: Vector2, min_distance: float, max_distance: float) -> void:
-	for guard in Global.tree.get_nodes_in_group("guards"):
+	for guard in get_tree().get_nodes_in_group("guards"):
 		if guard == self:
 			continue
 		

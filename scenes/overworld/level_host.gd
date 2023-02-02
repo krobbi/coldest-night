@@ -62,8 +62,8 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	current_level = load("res://levels/%s.tscn" % level_key).instance()
 	add_child(current_level)
 	
-	yield(Global.tree, "idle_frame")
-	yield(Global.tree, "idle_frame")
+	yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
 	
 	_save_data.position = current_level.get_world_pos(point, offset)
 	_player.position = _save_data.position

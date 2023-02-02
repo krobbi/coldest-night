@@ -24,7 +24,7 @@ var _nav_path: PoolVector2Array = PoolVector2Array()
 onready var state_machine: StateMachine = $StateMachine
 onready var smooth_pivot: SmoothPivot = $SmoothPivot
 
-onready var _nav_map: RID = Global.tree.root.world_2d.navigation_map
+onready var _nav_map: RID = get_tree().root.world_2d.navigation_map
 onready var _animation_player: AnimationPlayer = $AnimationPlayer
 onready var _repulsive_area: RepulsiveArea = $RepulsiveArea
 onready var _camera_anchor: Position2D = $SmoothPivot/CameraAnchor

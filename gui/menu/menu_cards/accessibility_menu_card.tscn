@@ -26,10 +26,12 @@ margin_right = 528.0
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
 margin_bottom = 320.0
 
-[node name="LegibleFontCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
+[node name="FontOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_right = 512.0
-config = "accessibility.legible_font"
+option_source = 1
+text = ""
+config = "accessibility.font"
 
 [node name="ReducedMotionCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
 anchor_right = 0.0
@@ -94,7 +96,7 @@ anchor_right = 0.0
 margin_top = 252.0
 margin_right = 512.0
 margin_bottom = 284.0
-option_source = 1
+option_source = 2
 text = ""
 config = "accessibility.color_grading"
 

@@ -69,11 +69,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/dialogs/dialog_tag_parser.gd"
 }, {
-"base": "Reference",
-"class": "DisplayManager",
-"language": "GDScript",
-"path": "res://autoloads/global/display_manager.gd"
-}, {
 "base": "ColorRect",
 "class": "FadeTransition",
 "language": "GDScript",
@@ -252,7 +247,6 @@ _global_script_class_icons={
 "ControlsMenuCard": "",
 "Dialog": "",
 "DialogTagParser": "",
-"DisplayManager": "",
 "FadeTransition": "",
 "FloatingText": "",
 "Interactable": "",
@@ -311,6 +305,7 @@ default_bus_layout="res://resources/audio_bus_layouts/default_bus_layout.tres"
 EventBus="*res://autoloads/event_bus/event_bus.tscn"
 ConfigBus="*res://autoloads/config_bus/config_bus.tscn"
 AudioManager="*res://autoloads/audio_manager/audio_manager.tscn"
+DisplayManager="*res://autoloads/display_manager/display_manager.tscn"
 InputManager="*res://autoloads/input_manager/input_manager.tscn"
 LangManager="*res://autoloads/lang_manager/lang_manager.tscn"
 SaveManager="*res://autoloads/save_manager/save_manager.tscn"

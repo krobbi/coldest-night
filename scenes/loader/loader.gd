@@ -9,7 +9,7 @@ var _save_data: SaveData = SaveManager.get_working_data()
 # Run when the loader scene is entered. Ensure the game is not paused, start the
 # new game dialog on a new game, and change to the overworld scene.
 func _ready() -> void:
-	Global.tree.paused = false
+	get_tree().paused = false
 	
 	match _save_data.state:
 		SaveData.State.NEW_GAME:

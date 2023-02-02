@@ -13,6 +13,7 @@ class NightScriptVirtualMachine extends Reference:
 	signal push_machine(program_key)
 	signal pop_machine
 	
+	var tree: SceneTree
 	var is_repeat: bool
 	var is_pausable: bool
 	var is_awaiting: bool = false
@@ -27,7 +28,8 @@ class NightScriptVirtualMachine extends Reference:
 	
 	# Deserialize the NightScript virtual machine from its thread ID, whether
 	# the NightScript program is a repeat, and NightScript bytecode.
-	func _init(is_repeat_val: bool, bytecode: PoolByteArray) -> void:
+	func _init(tree_ref: SceneTree, is_repeat_val: bool, bytecode: PoolByteArray) -> void:
+		tree = tree_ref
 		is_repeat = is_repeat_val
 		
 		var buffer: StreamPeerBuffer = StreamPeerBuffer.new()
@@ -49,7 +51,7 @@ class NightScriptVirtualMachine extends Reference:
 	
 	# Get an actor in the pathing state from its actor key.
 	func get_pathing_actor(actor_key: String) -> Actor:
-		for actor in Global.tree.get_nodes_in_group("actors"):
+		for actor in tree.get_nodes_in_group("actors"):
 			if actor.actor_key == actor_key and actor.state_machine.get_state_name() == "Pathing":
 				return actor
 		
@@ -250,9 +252,9 @@ class NightScriptVirtualMachine extends Reference:
 				is_awaiting = true
 				Global.change_scene("menu")
 			PAUSE_GAME:
-				Global.tree.paused = true
+				tree.paused = true
 			UNPAUSE_GAME:
-				Global.tree.paused = false
+				tree.paused = false
 			SAVE_GAME:
 				SaveManager.save_game()
 			SAVE_CHECKPOINT:
@@ -374,7 +376,7 @@ func _physics_process(delta: float) -> void:
 		
 		var vm: NightScriptVirtualMachine = thread[-1]
 		
-		if vm.is_awaiting or vm.is_pausable and Global.tree.paused:
+		if vm.is_awaiting or vm.is_pausable and get_tree().paused:
 			continue
 		
 		if vm.sleep_timer > 0.0:
@@ -384,7 +386,7 @@ func _physics_process(delta: float) -> void:
 		var steps: int = RUN_STEP_LIMIT
 		
 		while steps > 0:
-			if vm.is_awaiting or vm.sleep_timer > 0.0 or vm.is_pausable and Global.tree.paused:
+			if vm.is_awaiting or vm.sleep_timer > 0.0 or vm.is_pausable and get_tree().paused:
 				break
 			
 			steps -= 1
@@ -492,6 +494,7 @@ func _push_thread(program_key: String, thread_index: int) -> void:
 		_program_cache[program_key] = bytecode
 	
 	var vm: NightScriptVirtualMachine = NightScriptVirtualMachine.new(
+			get_tree(),
 			SaveManager.get_working_data().get_flag("ns_repeat", program_key) != 0, bytecode)
 	SaveManager.get_working_data().set_flag("ns_repeat", program_key, 1)
 	

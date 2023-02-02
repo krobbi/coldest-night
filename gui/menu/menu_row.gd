@@ -65,7 +65,7 @@ func get_should_appear() -> bool:
 		AppearanceCondition.ADVANCED:
 			return OS.is_debug_build() or ConfigBus.get_bool("advanced.show_advanced")
 		AppearanceCondition.MULTIPLE_WINDOW_SCALES:
-			return Global.display.get_window_scale_max() > 1
+			return DisplayManager.get_max_window_scale() > 1
 		AppearanceCondition.MULTIPLE_LOCALES:
 			return LangManager.get_locale_count() > 1
 		AppearanceCondition.HAS_SAVE:

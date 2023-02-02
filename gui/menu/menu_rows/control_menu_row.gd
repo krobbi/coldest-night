@@ -26,7 +26,7 @@ func _input(event: InputEvent) -> void:
 	if not is_awaiting_input or not InputManager.is_event_mappable(event):
 		return
 	
-	Global.tree.set_input_as_handled() # Don't do anything else with the input.
+	get_tree().set_input_as_handled() # Don't do anything else with the input.
 	InputManager.map_action_event(action, event)
 	set_awaiting_input(false)
 	AudioManager.play_clip("sfx.menu_ok")
@@ -59,7 +59,7 @@ func set_action(value: String) -> void:
 # Set whether the control button is awaiting an input.
 func set_awaiting_input(value: bool) -> void:
 	if value:
-		for other in Global.tree.get_nodes_in_group("control_menu_rows"):
+		for other in get_tree().get_nodes_in_group("control_menu_rows"):
 			if self != other:
 				other.is_awaiting_input = false
 		

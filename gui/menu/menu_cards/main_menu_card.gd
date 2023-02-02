@@ -30,4 +30,4 @@ func _on_devlog_button_pressed() -> void:
 
 # Run when the quit game button is pressed. Quit the game.
 func _on_quit_game_button_pressed() -> void:
-	Global.tree.quit()
+	get_tree().quit()

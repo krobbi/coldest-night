@@ -17,7 +17,7 @@ margin_bottom = 68.0
 anchor_right = 0.0
 margin_right = 512.0
 appearance_condition = 5
-option_source = 4
+option_source = 5
 text = ""
 config = "language.locale"
 

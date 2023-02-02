@@ -17,7 +17,7 @@ var _data: Dictionary = {
 	"controls.interact_mapping": "auto",
 	"controls.pause_mapping": "auto",
 	"controls.toggle_fullscreen_mapping": "auto",
-	"accessibility.legible_font": false,
+	"accessibility.font": "coldnight",
 	"accessibility.reduced_motion": false,
 	"accessibility.tooltips": true,
 	"accessibility.never_game_over": false,

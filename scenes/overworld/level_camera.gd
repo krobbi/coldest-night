@@ -10,15 +10,9 @@ var _anchor: Node2D = null
 var _anchor_stack: Array = []
 
 # Run when the level camera enters the scene tree. Disable the level camera's
-# process, connect the Global display manager's screen stretch changed signal to
-# snapping the camera, and subscribe the level camera to the event bus.
+# process and subscribe the level camera to the event bus.
 func _ready() -> void:
 	set_process(false)
-	var error: int = Global.display.connect("screen_stretch_changed", self, "snap")
-	
-	if error and Global.display.is_connected("screen_stretch_changed", self, "snap"):
-		Global.display.disconnect("screen_stretch_changed", self, "snap")
-	
 	EventBus.subscribe_node("camera_set_limits_request", self, "set_limits")
 	EventBus.subscribe_node("camera_follow_anchor_request", self, "follow_anchor")
 	EventBus.subscribe_node("camera_unfollow_anchor_request", self, "unfollow_anchor")
@@ -28,13 +22,6 @@ func _ready() -> void:
 # anchor node.
 func _process(_delta: float) -> void:
 	position = _anchor.global_position
-
-
-# Run when the level camera exits the scene tree. Disconnect the Global display
-# manager's screen stretch changed signal from snapping the camera.
-func _exit_tree() -> void:
-	if Global.display.is_connected("screen_stretch_changed", self, "snap"):
-		Global.display.disconnect("screen_stretch_changed", self, "snap")
 
 
 # Set the level camera's limits to boundary positions.

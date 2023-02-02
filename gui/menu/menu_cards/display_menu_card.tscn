@@ -50,7 +50,7 @@ anchor_right = 0.0
 margin_top = 108.0
 margin_right = 512.0
 margin_bottom = 140.0
-option_source = 2
+option_source = 3
 text = ""
 config = "display.window_scale"
 
@@ -59,7 +59,7 @@ anchor_right = 0.0
 margin_top = 144.0
 margin_right = 512.0
 margin_bottom = 176.0
-option_source = 3
+option_source = 4
 text = ""
 config = "display.scale_mode"
 

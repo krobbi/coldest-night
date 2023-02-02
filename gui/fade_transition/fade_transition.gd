@@ -35,7 +35,7 @@ func fade_in() -> void:
 	_state = State.FADING_IN
 	_animation_player.play("fade_in")
 	yield(_animation_player, "animation_finished")
-	yield(Global.tree, "idle_frame")
+	yield(get_tree(), "idle_frame")
 	hide()
 	_state = State.FADED_IN
 	emit_signal("faded_in")
@@ -56,7 +56,7 @@ func fade_out() -> void:
 	show()
 	_animation_player.play("fade_out")
 	yield(_animation_player, "animation_finished")
-	yield(Global.tree, "idle_frame")
+	yield(get_tree(), "idle_frame")
 	_state = State.FADED_OUT
 	emit_signal("faded_out")
 

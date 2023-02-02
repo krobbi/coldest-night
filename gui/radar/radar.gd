@@ -63,7 +63,7 @@ func set_display_scale(value: float) -> void:
 		value = MAX_DISPLAY_SCALE
 	
 	_display_scale = value
-	yield(Global.tree, "idle_frame")
+	yield(get_tree(), "idle_frame")
 	_viewport.size = RESOLUTION * _display_scale
 	rect_size = RESOLUTION * _display_scale
 	rect_position.x = 624.0 - rect_size.x
@@ -89,15 +89,15 @@ func refresh_entities() -> void:
 	clear_actors()
 	clear_vision_areas()
 	
-	for vision_area in Global.tree.get_nodes_in_group("vision_areas"):
+	for vision_area in get_tree().get_nodes_in_group("vision_areas"):
 		if vision_area is VisionArea:
 			render_vision_area(vision_area)
 	
-	for actor in Global.tree.get_nodes_in_group("actors"):
+	for actor in get_tree().get_nodes_in_group("actors"):
 		if actor is Actor:
 			render_actor(actor)
 	
-	for laser_wall in Global.tree.get_nodes_in_group("laser_walls"):
+	for laser_wall in get_tree().get_nodes_in_group("laser_walls"):
 		if laser_wall is LaserWall:
 			render_laser_wall(laser_wall)
 

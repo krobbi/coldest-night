@@ -33,6 +33,6 @@ func open_menu() -> void:
 # Run when the game over menu has finished appearing. Play menu music and push
 # the game over menu card to the menu stack.
 func _on_tween_callback() -> void:
-	Global.tree.paused = true
+	get_tree().paused = true
 	AudioManager.play_music("menu")
 	_menu_stack.push_card("game_over")

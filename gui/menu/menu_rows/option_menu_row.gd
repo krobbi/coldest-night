@@ -8,6 +8,7 @@ signal value_changed(value)
 
 enum OptionSource {
 	OPTIONS,
+	ACCESSIBILITY_FONT,
 	ACCESSIBILITY_COLOR_GRADING,
 	DISPLAY_WINDOW_SCALE,
 	DISPLAY_SCALE_MODE,
@@ -57,12 +58,14 @@ func set_option_source(value: int) -> void:
 		return
 	
 	match option_source:
+		OptionSource.ACCESSIBILITY_FONT:
+			set_options(DisplayManager.get_font_options())
 		OptionSource.ACCESSIBILITY_COLOR_GRADING:
 			set_options(ColorGrader.get_grading_options())
 		OptionSource.DISPLAY_WINDOW_SCALE:
-			set_options(Global.display.get_window_scale_options())
+			set_options(DisplayManager.get_window_scale_options())
 		OptionSource.DISPLAY_SCALE_MODE:
-			set_options(Global.display.get_scale_mode_options())
+			set_options(DisplayManager.get_scale_mode_options())
 		OptionSource.LANGUAGE_LOCALE:
 			set_options(LangManager.get_locale_options())
 		OptionSource.OPTIONS, _:

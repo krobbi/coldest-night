@@ -65,7 +65,7 @@ func _ready() -> void:
 	occlusion_map.update_dirty_quadrants()
 	
 	# HACK: Bypass error when baking navigation map:
-	var nav_map: RID = Global.tree.root.world_2d.navigation_map
+	var nav_map: RID = get_tree().root.world_2d.navigation_map
 	
 	for cell in nav_tile_map.get_used_cells_by_id(NavTile.NAVIGABLE):
 		var coord: Vector2 = nav_tile_map.get_cell_autotile_coord(int(cell.x), int(cell.y))
@@ -187,7 +187,7 @@ func get_world_pos(point: String, offset: Vector2) -> Vector2:
 func save_state() -> void:
 	var array: Array = []
 	
-	for node in Global.tree.get_nodes_in_group("persistent"):
+	for node in get_tree().get_nodes_in_group("persistent"):
 		if node.filename.empty():
 			continue
 		
