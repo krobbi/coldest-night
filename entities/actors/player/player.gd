@@ -8,7 +8,7 @@ export(NodePath) var _freeze_state_path: NodePath
 export(NodePath) var _moving_state_path: NodePath
 export(NodePath) var _transitioning_state_path: NodePath
 
-var _save_data: SaveData = Global.save.get_working_data()
+var _save_data: SaveData = SaveManager.get_working_data()
 var _is_frozen: bool = false
 var _unfreeze_state: State
 

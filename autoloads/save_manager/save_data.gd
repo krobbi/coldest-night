@@ -66,8 +66,8 @@ func serialize_state() -> String:
 # Serialize the save data to a JSON object.
 func serialize() -> Dictionary:
 	return {
-		"format_name": Global.save.FORMAT_NAME,
-		"format_version": Global.save.FORMAT_VERSION,
+		"format_name": SaveManager.FORMAT_NAME,
+		"format_version": SaveManager.FORMAT_VERSION,
 		"state": serialize_state(),
 		"level": level,
 		"position_x": position.x,

@@ -19,7 +19,7 @@ func _on_area_entered(_area: Area2D) -> void:
 		return
 	
 	_is_collected = true
-	var save_data: SaveData = Global.save.get_working_data()
+	var save_data: SaveData = SaveManager.get_working_data()
 	save_data.set_flag(
 			"test", "archival_unit_count", save_data.get_flag("test", "archival_unit_count") + 1)
 	EventBus.emit_floating_text_display_request("FLOATING_TEXT.TEST.ARCHIVAL_UNIT", position)

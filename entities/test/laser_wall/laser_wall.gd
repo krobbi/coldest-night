@@ -15,7 +15,7 @@ export(String) var flag_namespace: String = ""
 export(String) var flag_key: String
 export(int) var compare_value: int
 
-var _save_data: SaveData = Global.save.get_working_data()
+var _save_data: SaveData = SaveManager.get_working_data()
 
 onready var _obstructive_shape: CollisionShape2D = $ObstructiveShape
 

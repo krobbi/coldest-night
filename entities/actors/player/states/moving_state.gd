@@ -11,7 +11,7 @@ export(float) var _speed: float = 180.0
 export(float) var _acceleration: float = 1000.0
 export(float) var _friction: float = 1200.0
 
-var _save_data: SaveData = Global.save.get_working_data()
+var _save_data: SaveData = SaveManager.get_working_data()
 
 onready var _player: Player = get_node(_player_path)
 onready var _smooth_pivot: SmoothPivot = get_node(_smooth_pivot_path)

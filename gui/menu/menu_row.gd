@@ -69,7 +69,7 @@ func get_should_appear() -> bool:
 		AppearanceCondition.MULTIPLE_LOCALES:
 			return LangManager.get_locale_count() > 1
 		AppearanceCondition.HAS_SAVE:
-			return Global.save.get_working_data().state != SaveData.State.NEW_GAME
+			return SaveManager.get_working_data().state != SaveData.State.NEW_GAME
 		AppearanceCondition.ALWAYS, _:
 			return true
 

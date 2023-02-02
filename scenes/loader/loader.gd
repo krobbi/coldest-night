@@ -4,7 +4,7 @@ extends Control
 # The loader scene is a scene that loads the game from the current working save
 # data.
 
-var _save_data: SaveData = Global.save.get_working_data()
+var _save_data: SaveData = SaveManager.get_working_data()
 
 # Run when the loader scene is entered. Ensure the game is not paused, start the
 # new game dialog on a new game, and change to the overworld scene.

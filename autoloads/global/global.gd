@@ -6,8 +6,6 @@ extends Node
 # accessed across multiple scenes. The global context can be accessed from any
 # script by using `Global`.
 
-var save: SaveManager = SaveManager.new()
-
 var _is_changing_scene: bool = false
 var _is_quitting: bool = false
 
@@ -19,8 +17,8 @@ onready var display: DisplayManager = DisplayManager.new()
 func _ready() -> void:
 	ConfigBus.load_file()
 	ConfigBus.broadcast()
-	save.select_slot(0)
-	save.load_file()
+	SaveManager.select_slot(0)
+	SaveManager.load_file()
 
 
 # Run when the game stops. Destruct global objects and save any changed

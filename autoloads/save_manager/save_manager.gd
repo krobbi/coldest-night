@@ -1,10 +1,8 @@
-class_name SaveManager
-extends Reference
+extends Node
 
 # Save Manager
-# The save manager is a global utility that handles loading, storing,
-# manipulating, and saving save data. It can be accessed from any script by
-# using 'Global.save'.
+# The save manager is an autoload scene that handles loading, storing, and
+# saving save data. It can be accessed from any script by using `SaveManager`.
 
 const FORMAT_NAME: String = "krobbizoid.coldest-night.save"
 const FORMAT_VERSION: int = 1
@@ -16,8 +14,9 @@ var _checkpoint_data: SaveData = SaveData.new()
 var _slots: Array = []
 var _selected_slot: int = 0
 
-# Populate the save manager's slots.
-func _init() -> void:
+# Run when the save manager enters the scene tree. Populate the save manager's
+# slots.
+func _ready() -> void:
 	_slots.resize(SLOT_COUNT)
 	
 	for i in range(SLOT_COUNT):

@@ -128,11 +128,11 @@ class NightScriptVirtualMachine extends Reference:
 			LOAD_FLAG:
 				var key: String = stack.pop_back()
 				var namespace: String = stack.pop_back()
-				stack.push_back(Global.save.get_working_data().get_flag(namespace, key))
+				stack.push_back(SaveManager.get_working_data().get_flag(namespace, key))
 			STORE_FLAG:
 				var key: String = stack.pop_back()
 				var namespace: String = stack.pop_back()
-				Global.save.get_working_data().set_flag(namespace, key, stack[-1])
+				SaveManager.get_working_data().set_flag(namespace, key, stack[-1])
 			UNARY_NEGATE:
 				stack.push_back(-stack.pop_back())
 			UNARY_NOT:
@@ -254,9 +254,9 @@ class NightScriptVirtualMachine extends Reference:
 			UNPAUSE_GAME:
 				Global.tree.paused = false
 			SAVE_GAME:
-				Global.save.save_game()
+				SaveManager.save_game()
 			SAVE_CHECKPOINT:
-				Global.save.save_checkpoint()
+				SaveManager.save_checkpoint()
 	
 	
 	# End the awaiting state.
@@ -492,8 +492,8 @@ func _push_thread(program_key: String, thread_index: int) -> void:
 		_program_cache[program_key] = bytecode
 	
 	var vm: NightScriptVirtualMachine = NightScriptVirtualMachine.new(
-			Global.save.get_working_data().get_flag("ns_repeat", program_key) != 0, bytecode)
-	Global.save.get_working_data().set_flag("ns_repeat", program_key, 1)
+			SaveManager.get_working_data().get_flag("ns_repeat", program_key) != 0, bytecode)
+	SaveManager.get_working_data().set_flag("ns_repeat", program_key, 1)
 	
 	if vm.connect("push_machine", self, "_push_thread", [thread_index]) != OK:
 		if vm.is_connected("push_machine", self, "_push_thread"):

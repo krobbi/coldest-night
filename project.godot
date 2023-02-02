@@ -119,11 +119,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scenes/overworld/level_camera.gd"
 }, {
-"base": "MenuCard",
-"class": "MainMenuCard",
-"language": "GDScript",
-"path": "res://gui/menu/menu_cards/main_menu_card.gd"
-}, {
 "base": "Control",
 "class": "MenuCard",
 "language": "GDScript",
@@ -204,20 +199,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://components/repulsive_area/repulsive_area.gd"
 }, {
-"base": "MenuCard",
-"class": "ResultsMenuCard",
-"language": "GDScript",
-"path": "res://gui/menu/menu_cards/results_menu_card.gd"
-}, {
 "base": "Reference",
 "class": "SaveData",
 "language": "GDScript",
-"path": "res://utils/save/save_data.gd"
-}, {
-"base": "Reference",
-"class": "SaveManager",
-"language": "GDScript",
-"path": "res://autoloads/global/save_manager.gd"
+"path": "res://autoloads/save_manager/save_data.gd"
 }, {
 "base": "MenuCard",
 "class": "SettingsMenuCard",
@@ -247,7 +232,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "StatsSaveData",
 "language": "GDScript",
-"path": "res://utils/save/stats_save_data.gd"
+"path": "res://autoloads/save_manager/stats_save_data.gd"
 }, {
 "base": "Area2D",
 "class": "Trigger",
@@ -282,7 +267,6 @@ _global_script_class_icons={
 "LaserWall": "",
 "Level": "",
 "LevelCamera": "",
-"MainMenuCard": "",
 "MenuCard": "",
 "MenuList": "",
 "MenuRow": "",
@@ -299,9 +283,7 @@ _global_script_class_icons={
 "RadarSegmentRenderer": "",
 "RadarVisionAreaRenderer": "",
 "RepulsiveArea": "",
-"ResultsMenuCard": "",
 "SaveData": "",
-"SaveManager": "",
 "SettingsMenuCard": "",
 "SliderMenuRow": "",
 "SmoothPivot": "",
@@ -336,6 +318,7 @@ EventBus="*res://autoloads/event_bus/event_bus.tscn"
 ConfigBus="*res://autoloads/config_bus/config_bus.tscn"
 InputManager="*res://autoloads/input_manager/input_manager.tscn"
 LangManager="*res://autoloads/lang_manager/lang_manager.tscn"
+SaveManager="*res://autoloads/save_manager/save_manager.tscn"
 Global="*res://autoloads/global/global.tscn"
 
 [display]

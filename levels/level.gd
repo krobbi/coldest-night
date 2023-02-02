@@ -19,7 +19,7 @@ export(String) var music: String
 export(PoolStringArray) var cached_ns_programs: PoolStringArray
 export(PoolStringArray) var autorun_ns_programs: PoolStringArray
 
-var _save_data: SaveData = Global.save.get_working_data()
+var _save_data: SaveData = SaveManager.get_working_data()
 var _origin: Vector2 = Vector2.ZERO
 var _points: Dictionary = {}
 var _nav_regions: Array = []

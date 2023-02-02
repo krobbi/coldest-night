@@ -6,7 +6,7 @@ extends Node2D
 
 var current_level: Level = null
 
-var _save_data: SaveData = Global.save.get_working_data()
+var _save_data: SaveData = SaveManager.get_working_data()
 var _player: Player = preload("res://entities/actors/player/player.tscn").instance()
 
 # Run when the level host enters the scene tree. Subscribe the level host to the
@@ -77,5 +77,5 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	_player.state_machine.change_state(_player.get_moving_state())
 	_player.enable_triggers()
 	
-	Global.save.save_checkpoint()
+	SaveManager.save_checkpoint()
 	EventBus.emit_fade_in_request()
