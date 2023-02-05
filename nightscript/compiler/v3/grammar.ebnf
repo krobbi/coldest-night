@@ -2,7 +2,7 @@
 
 module = { include }, { stmt }, EOF ;
 
-include = "include", expr_primary_str, ";" ;
+include = "include", expr_primary_str, eos ;
 
 stmt = (
 	stmt_func | stmt_block | stmt_if | stmt_while | stmt_do | stmt_menu |
@@ -18,15 +18,17 @@ stmt_func = (
 stmt_block = "{", { stmt }, "}" ;
 stmt_if = "if", expr_paren, stmt, [ "else", stmt ] ;
 stmt_while = "while", expr_paren, stmt ;
-stmt_do = "do", stmt, "while", expr_paren, ";" ;
+stmt_do = "do", stmt, "while", expr_paren, eos ;
 stmt_menu = "menu", stmt ;
 stmt_option = "option", expr_paren, stmt ;
-stmt_break = "break", ";" ;
-stmt_continue = "continue", ";" ;
-stmt_const = "const", expr_primary_identifier, "=", expr, ";" ;
-stmt_var = "var", expr_primary_identifier, "=", expr, ";" ;
-stmt_return = "return", [ expr ], ";" ;
-stmt_expr = expr, ";" ;
+stmt_break = "break", eos ;
+stmt_continue = "continue", eos ;
+stmt_const = "const", expr_primary_identifier, "=", expr, eos ;
+stmt_var = "var", expr_primary_identifier, "=", expr, eos ;
+stmt_return = "return", [ expr ], eos ;
+stmt_expr = expr, eos ;
+
+eos = ";" ;
 
 expr_paren = "(", expr, ")" ;
 expr = expr_assignment ;

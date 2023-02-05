@@ -80,16 +80,31 @@ func accept(type: int) -> bool:
 	return true
 
 
+# Accept an end of statement marker.
+func accept_eos() -> bool:
+	if accept(Token.SEMICOLON):
+		return true
+	
+	return false
+
+
 # Advance to the next valid token if its type matches a type. Otherwise, log an
 # error message.
 func expect(type: int) -> void:
 	if not accept(type):
 		var error_span: Span = current.span.duplicate()
 		error_span.shrink_to_end()
-		
 		logger.log_error(
 				"Expected %s, got %s!" % [Token.get_name(type), Token.get_name(next.type)],
 				error_span)
+
+
+# Expect an end of statement marker.
+func expect_eos() -> void:
+	if not accept_eos():
+		var error_span: Span = current.span.duplicate()
+		error_span.shrink_to_end()
+		logger.log_error("Expected `;`, got %s!" % Token.get_name(next.type), error_span)
 
 
 # Mark the current token as a token that must be advanced from.
@@ -176,7 +191,7 @@ func parse_include() -> ASTNode:
 	if not expr is StrExprASTNode:
 		return abort_span(expr)
 	
-	expect(Token.SEMICOLON)
+	expect_eos()
 	return end_span(IncludeASTNode.new(expr))
 
 
@@ -340,7 +355,7 @@ func parse_stmt_do() -> ASTNode:
 	if not expr is ExprASTNode:
 		return abort_span(expr)
 	
-	expect(Token.SEMICOLON)
+	expect_eos()
 	return end_span(DoStmtASTNode.new(stmt, expr))
 
 
@@ -377,7 +392,7 @@ func parse_stmt_option() -> ASTNode:
 func parse_stmt_break() -> ASTNode:
 	begin_span()
 	expect(Token.KEYWORD_BREAK)
-	expect(Token.SEMICOLON)
+	expect_eos()
 	return end_span(BreakStmtASTNode.new())
 
 
@@ -385,7 +400,7 @@ func parse_stmt_break() -> ASTNode:
 func parse_stmt_continue() -> ASTNode:
 	begin_span()
 	expect(Token.KEYWORD_CONTINUE)
-	expect(Token.SEMICOLON)
+	expect_eos()
 	return end_span(ContinueStmtASTNode.new())
 
 
@@ -404,7 +419,7 @@ func parse_decl_stmt(operator: int) -> ASTNode:
 	if not value_expr is ExprASTNode:
 		return abort_span(value_expr)
 	
-	expect(Token.SEMICOLON)
+	expect_eos()
 	return end_span(DeclStmtASTNode.new(operator, identifier_expr, value_expr))
 
 
@@ -423,7 +438,7 @@ func parse_stmt_return() -> ASTNode:
 	begin_span()
 	expect(Token.KEYWORD_RETURN)
 	
-	if accept(Token.SEMICOLON):
+	if accept_eos():
 		return end_span(ReturnStmtASTNode.new())
 	
 	var expr: ASTNode = parse_expr()
@@ -431,7 +446,7 @@ func parse_stmt_return() -> ASTNode:
 	if not expr is ExprASTNode:
 		return abort_span(expr)
 	
-	expect(Token.SEMICOLON)
+	expect_eos()
 	return end_span(ReturnExprStmtASTNode.new(expr))
 
 
@@ -444,7 +459,7 @@ func parse_stmt_expr() -> ASTNode:
 	if not expr is ExprASTNode:
 		return abort_span(expr)
 	
-	expect(Token.SEMICOLON)
+	expect_eos()
 	return end_span(ExprStmtASTNode.new(expr))
 
 
