@@ -57,7 +57,7 @@ enum {
 	RUN_ACTOR_PATHS,
 	AWAIT_ACTOR_PATHS,
 	FREEZE_PLAYER,
-	THAW_PLAYER,
+	UNFREEZE_PLAYER,
 	PAUSE_GAME,
 	UNPAUSE_GAME,
 	SAVE_GAME,
@@ -181,8 +181,8 @@ func _to_string() -> String:
 			return "await_actor_paths;"
 		FREEZE_PLAYER:
 			return "freeze_player;"
-		THAW_PLAYER:
-			return "thaw_player;"
+		UNFREEZE_PLAYER:
+			return "unfreeze_player;"
 		PAUSE_GAME:
 			return "pause_game;"
 		UNPAUSE_GAME:

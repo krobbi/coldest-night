@@ -11,4 +11,4 @@ setFlag("v3_test", "counter", VALUE);
 say(format("Counter: {0}", VALUE));
 
 hide();
-thaw();
+unfreeze();

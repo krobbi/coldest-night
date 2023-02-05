@@ -21,4 +21,4 @@ menu {
 }
 
 hide();
-thaw();
+unfreeze();

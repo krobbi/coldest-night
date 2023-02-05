@@ -246,7 +246,7 @@ class NightScriptVirtualMachine extends Reference:
 					memory.seek(memory.get_position() - 1)
 			FREEZE_PLAYER:
 				EventBus.emit_player_freeze_request()
-			THAW_PLAYER:
+			UNFREEZE_PLAYER:
 				EventBus.emit_player_unfreeze_request()
 			PAUSE_GAME:
 				tree.paused = true
@@ -325,7 +325,7 @@ enum {
 	RUN_ACTOR_PATHS = 0x29,
 	AWAIT_ACTOR_PATHS = 0x2a,
 	FREEZE_PLAYER = 0x2b,
-	THAW_PLAYER = 0x2c,
+	UNFREEZE_PLAYER = 0x2c,
 	PAUSE_GAME = 0x2d,
 	UNPAUSE_GAME = 0x2e,
 	SAVE_GAME = 0x2f,

@@ -33,21 +33,21 @@ if(!getFlag("test", "hub_seen_terminal")){
 	show();
 	enterHubTerminalReachedDialog();
 	hide();
-	thaw();
+	unfreeze();
 } else if(hasDialog("hub_seen_north_almost", NORTH_TOTAL - 1)){
 	enterHubNorthAlmostDialog();
 	hide();
-	thaw();
+	unfreeze();
 } else if(hasDialog("hub_seen_north_complete", NORTH_TOTAL)){
 	enterHubNorthCompleteDialog();
 	hide();
-	thaw();
+	unfreeze();
 } else if(hasDialog("hub_seen_west_almost", WEST_TOTAL - 1)){
 	enterHubWestAlmostDialog();
 	hide();
-	thaw();
+	unfreeze();
 } else if(hasDialog("hub_seen_west_complete", WEST_TOTAL)){
 	enterHubWestCompleteDialog();
 	hide();
-	thaw();
+	unfreeze();
 }

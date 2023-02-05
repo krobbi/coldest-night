@@ -391,9 +391,9 @@ func make_freeze_player() -> void:
 	make_op(IROp.FREEZE_PLAYER)
 
 
-# Make a thaw player IR operation in the current label.
-func make_thaw_player() -> void:
-	make_op(IROp.THAW_PLAYER)
+# Make an unfreeze player IR operation in the current label.
+func make_unfreeze_player() -> void:
+	make_op(IROp.UNFREEZE_PLAYER)
 
 
 # Make a pause game IR operation in the current label.

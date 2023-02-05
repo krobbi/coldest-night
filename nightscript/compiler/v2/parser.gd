@@ -403,7 +403,7 @@ func parse_stmt() -> ASTNode:
 	elif accept(Token.LESS_STAR):
 		return make_int(ASTNode.OP_STMT, ASTNode.OP_FREEZE_PLAYER)
 	elif accept(Token.STAR_GREATER):
-		return make_int(ASTNode.OP_STMT, ASTNode.OP_THAW_PLAYER)
+		return make_int(ASTNode.OP_STMT, ASTNode.OP_UNFREEZE_PLAYER)
 	elif accept(Token.SEMICOLON):
 		return make_node(ASTNode.NOP_STMT)
 	

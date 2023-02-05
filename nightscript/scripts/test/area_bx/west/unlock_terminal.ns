@@ -30,4 +30,4 @@ menu {
 }
 
 hide();
-thaw();
+unfreeze();

@@ -31,4 +31,4 @@ say("We can even pause the game while this happens.");
 unpause();
 
 hide();
-thaw();
+unfreeze();

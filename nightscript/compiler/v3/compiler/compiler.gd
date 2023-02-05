@@ -80,7 +80,7 @@ func compile_ast(root: RootASTNode) -> void:
 	if not code.is_pausable:
 		code.make_unpause_game()
 	
-	code.make_thaw_player()
+	code.make_unfreeze_player()
 	code.make_push_int(1)
 	code.make_sleep()
 
@@ -163,7 +163,7 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("setFlag", "*visit_set_flag_intrinsic_call_expr", 3)
 	scope_stack.define_intrinsic("show", "make_show_dialog", 0)
 	scope_stack.define_intrinsic("sleep", "make_sleep", 1)
-	scope_stack.define_intrinsic("thaw", "make_thaw_player", 0)
+	scope_stack.define_intrinsic("unfreeze", "make_unfreeze_player", 0)
 	scope_stack.define_intrinsic("unpause", "make_unpause_game", 0)
 	
 	for module in root.modules:

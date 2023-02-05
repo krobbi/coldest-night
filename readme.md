@@ -111,7 +111,7 @@ name(getName()); # Call `getName` and display the returned value as a name.
 displayDialog(); # Call `displayDialog` and ignore any returned value.
 
 hide(); # Hide the dialog box.
-thaw(); # Unfreeze the player.
+unfreeze(); # Unfreeze the player.
 ```
 
 `cutscene_dialog.en.ns`:

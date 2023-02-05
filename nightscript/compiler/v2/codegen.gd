@@ -81,7 +81,7 @@ func generate_code(ast: ASTNode) -> void:
 	if not code.is_pausable:
 		code.make_unpause_game()
 	
-	code.make_thaw_player()
+	code.make_unfreeze_player()
 	code.make_push_int(1)
 	code.make_sleep()
 
@@ -601,8 +601,8 @@ func make_op_ir(opcode: int) -> void:
 			code.make_await_actor_paths()
 		ASTNode.OP_FREEZE_PLAYER:
 			code.make_freeze_player()
-		ASTNode.OP_THAW_PLAYER:
-			code.make_thaw_player()
+		ASTNode.OP_UNFREEZE_PLAYER:
+			code.make_unfreeze_player()
 		ASTNode.OP_PAUSE_GAME:
 			code.make_pause_game()
 		ASTNode.OP_UNPAUSE_GAME:
