@@ -156,7 +156,6 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("name", "*visit_name_intrinsic_call_expr", -1)
 	scope_stack.define_intrinsic("path", "make_actor_find_path", 2)
 	scope_stack.define_intrinsic("pause", "make_pause_game", 0)
-	scope_stack.define_intrinsic("quit", "make_quit_to_title", 0)
 	scope_stack.define_intrinsic("run", "make_run_program", 1)
 	scope_stack.define_intrinsic("runPaths", "make_run_actor_paths", 0)
 	scope_stack.define_intrinsic("save", "make_save_game", 0)

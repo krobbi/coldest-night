@@ -27,7 +27,6 @@ stmt    = "{" { stmt } "}"
         | "exit" [ ";" ]
         | "call" LITERAL_STRING [ ";" ]
         | "run" LITERAL_STRING [ ";" ]
-        | "quit" [ ";" ]
         | "pause" [ ";" ]
         | "unpause" [ ";" ]
         | "save" [ ";" ]

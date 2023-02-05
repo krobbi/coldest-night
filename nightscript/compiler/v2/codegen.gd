@@ -603,8 +603,6 @@ func make_op_ir(opcode: int) -> void:
 			code.make_freeze_player()
 		ASTNode.OP_THAW_PLAYER:
 			code.make_thaw_player()
-		ASTNode.OP_QUIT_TO_TITLE:
-			code.make_quit_to_title()
 		ASTNode.OP_PAUSE_GAME:
 			code.make_pause_game()
 		ASTNode.OP_UNPAUSE_GAME:

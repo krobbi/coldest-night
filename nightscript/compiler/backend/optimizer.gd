@@ -66,13 +66,7 @@ func is_op_pure_push(op: IROp) -> bool:
 
 # Get whether an IR operation is a terminator.
 func is_op_terminator(op: IROp) -> bool:
-	return op.type in [
-		IROp.HALT,
-		IROp.JUMP_LABEL,
-		IROp.RETURN_FROM_FUNCTION,
-		IROp.SHOW_DIALOG_MENU,
-		IROp.QUIT_TO_TITLE,
-	]
+	return op.type in [IROp.HALT, IROp.JUMP_LABEL, IROp.RETURN_FROM_FUNCTION, IROp.SHOW_DIALOG_MENU]
 
 
 # Optimize IR code.

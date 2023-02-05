@@ -358,9 +358,6 @@ func parse_stmt() -> ASTNode:
 		)
 		optional(Token.SEMICOLON)
 		return node
-	elif accept(Token.KEYWORD_QUIT):
-		optional(Token.SEMICOLON)
-		return make_int(ASTNode.OP_STMT, ASTNode.OP_QUIT_TO_TITLE)
 	elif accept(Token.KEYWORD_PAUSE):
 		optional(Token.SEMICOLON)
 		return make_int(ASTNode.OP_STMT, ASTNode.OP_PAUSE_GAME)

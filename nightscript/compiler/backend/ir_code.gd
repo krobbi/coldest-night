@@ -396,11 +396,6 @@ func make_thaw_player() -> void:
 	make_op(IROp.THAW_PLAYER)
 
 
-# Make a quit to title IR operation in the current label.
-func make_quit_to_title() -> void:
-	make_op(IROp.QUIT_TO_TITLE)
-
-
 # Make a pause game IR operation in the current label.
 func make_pause_game() -> void:
 	make_op(IROp.PAUSE_GAME)

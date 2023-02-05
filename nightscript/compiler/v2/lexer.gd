@@ -177,8 +177,6 @@ func get_next_token() -> Token:
 				return make_token(Token.KEYWORD_OR)
 			"pause":
 				return make_token(Token.KEYWORD_PAUSE)
-			"quit":
-				return make_token(Token.KEYWORD_QUIT)
 			"run":
 				return make_token(Token.KEYWORD_RUN)
 			"save":

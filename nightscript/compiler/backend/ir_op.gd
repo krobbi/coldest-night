@@ -58,7 +58,6 @@ enum {
 	AWAIT_ACTOR_PATHS,
 	FREEZE_PLAYER,
 	THAW_PLAYER,
-	QUIT_TO_TITLE,
 	PAUSE_GAME,
 	UNPAUSE_GAME,
 	SAVE_GAME,
@@ -184,8 +183,6 @@ func _to_string() -> String:
 			return "freeze_player;"
 		THAW_PLAYER:
 			return "thaw_player;"
-		QUIT_TO_TITLE:
-			return "quit_to_title;"
 		PAUSE_GAME:
 			return "pause_game;"
 		UNPAUSE_GAME:

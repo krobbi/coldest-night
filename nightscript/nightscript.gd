@@ -248,9 +248,6 @@ class NightScriptVirtualMachine extends Reference:
 				EventBus.emit_player_freeze_request()
 			THAW_PLAYER:
 				EventBus.emit_player_unfreeze_request()
-			QUIT_TO_TITLE:
-				is_awaiting = true
-				Global.change_scene("menu")
 			PAUSE_GAME:
 				tree.paused = true
 			UNPAUSE_GAME:
@@ -329,11 +326,10 @@ enum {
 	AWAIT_ACTOR_PATHS = 0x2a,
 	FREEZE_PLAYER = 0x2b,
 	THAW_PLAYER = 0x2c,
-	QUIT_TO_TITLE = 0x2d,
-	PAUSE_GAME = 0x2e,
-	UNPAUSE_GAME = 0x2f,
-	SAVE_GAME = 0x30,
-	SAVE_CHECKPOINT = 0x31,
+	PAUSE_GAME = 0x2d,
+	UNPAUSE_GAME = 0x2e,
+	SAVE_GAME = 0x2f,
+	SAVE_CHECKPOINT = 0x30,
 }
 
 const THREAD_LIMIT: int = 16

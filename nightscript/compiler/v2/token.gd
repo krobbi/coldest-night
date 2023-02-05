@@ -27,7 +27,6 @@ enum {
 	KEYWORD_NOT, # `not`
 	KEYWORD_OR, # `or`
 	KEYWORD_PAUSE, # `pause`
-	KEYWORD_QUIT, # `quit`
 	KEYWORD_RUN, # `run`
 	KEYWORD_SAVE, # `save`
 	KEYWORD_TRUE, # `true`
