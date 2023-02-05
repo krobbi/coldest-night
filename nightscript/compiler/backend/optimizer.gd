@@ -8,6 +8,17 @@ const IRBlock: GDScript = preload("ir_block.gd")
 const IRCode: GDScript = preload("ir_code.gd")
 const IROp: GDScript = preload("ir_op.gd")
 
+# Set an IR operation's referenced label if it exists.
+func set_op_label(op: IROp, label: String) -> void:
+	if not is_op_label(op):
+		return
+	elif op.type == IROp.STORE_DIALOG_MENU_OPTION_TEXT_LABEL:
+		op.str_value_b = label
+		return
+	
+	op.str_value_a = label
+
+
 # Get an IR block from its label. Return null if the block does not exist.
 func get_block(code: IRCode, label: String) -> IRBlock:
 	for block in code.blocks:
@@ -89,6 +100,7 @@ func optimize_code(code: IRCode) -> void:
 		iterations -= 1
 		
 		for method in [
+			"optimize_thread_labels",
 			"optimize_merge_subsequent_blocks",
 			"optimize_eliminate_unreachable_ops",
 			"optimize_eliminate_unreachable_blocks",
@@ -99,6 +111,35 @@ func optimize_code(code: IRCode) -> void:
 			while call(method, code) and method_iterations > 0:
 				is_optimized = true
 				method_iterations -= 1
+
+
+# Redirect IR operations referencing empty IR blocks or jump operations to the
+# subsequent IR block or jump target and return whether any optimization was
+# performed.
+func optimize_thread_labels(code: IRCode) -> bool:
+	var is_optimized: bool = false
+	
+	for block in code.blocks:
+		var target_label: String = ""
+		
+		if block.ops.empty():
+			var next_block: IRBlock = get_next_block(code, block)
+			
+			if next_block:
+				target_label = next_block.label
+		elif block.ops[0].type == IROp.JUMP_LABEL:
+			target_label = get_op_label(block.ops[0])
+		
+		if target_label.empty() or target_label == block.label:
+			continue
+		
+		for other_block in code.blocks:
+			for op in other_block.ops:
+				if is_op_label(op) and get_op_label(op) == block.label:
+					set_op_label(op, target_label)
+					is_optimized = true
+	
+	return is_optimized
 
 
 # Merge subsequent IR blocks if the second IR block is not referenced in IR code
