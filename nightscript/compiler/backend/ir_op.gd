@@ -74,6 +74,14 @@ func _init(type_val: int) -> void:
 	type = type_val
 
 
+# Copy another IR operation by value.
+func copy(other: Reference) -> void:
+	type = other.type
+	int_value_a = other.int_value_a
+	str_value_a = other.str_value_a
+	str_value_b = other.str_value_b
+
+
 # Return the IR operation's string representation.
 func _to_string() -> String:
 	match type:

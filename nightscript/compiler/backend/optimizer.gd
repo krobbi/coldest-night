@@ -102,6 +102,7 @@ func optimize_code(code: IRCode) -> void:
 		for method in [
 			"optimize_thread_labels",
 			"optimize_merge_subsequent_blocks",
+			"optimize_thread_terminators",
 			"optimize_eliminate_unreachable_ops",
 			"optimize_eliminate_unreachable_blocks",
 			"optimize_eliminate_push_drops",
@@ -154,6 +155,26 @@ func optimize_merge_subsequent_blocks(code: IRCode) -> bool:
 			code.blocks[index - 1].ops.append_array(block.ops)
 			code.blocks.remove(index)
 			is_optimized = true
+	
+	return is_optimized
+
+
+# Replace jump IR operations to a terminator operation with a copy of the
+# terminator operation and return whether any optimization was performed.
+func optimize_thread_terminators(code: IRCode):
+	var is_optimized: bool = false
+	
+	for block in code.blocks:
+		if block.ops.empty() or not is_op_terminator(block.ops[0]):
+			continue
+		
+		for other_block in code.blocks:
+			for op in other_block.ops:
+				if(
+						op.type == IROp.JUMP_LABEL and get_op_label(op) == block.label
+						and op != block.ops[0]):
+					op.copy(block.ops[0])
+					is_optimized = true
 	
 	return is_optimized
 
