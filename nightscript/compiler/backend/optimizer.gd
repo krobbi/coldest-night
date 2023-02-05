@@ -37,6 +37,16 @@ func get_op_label(op: IROp) -> String:
 	return op.str_value_a
 
 
+# Get whether an IR block is referenced in IR code.
+func is_block_referenced(code: IRCode, block: IRBlock) -> bool:
+	for other_block in code.blocks:
+		for op in other_block.ops:
+			if is_op_label(op) and get_op_label(op) == block.label:
+				return true
+	
+	return false
+
+
 # Get whether an IR block is terminated.
 func is_block_terminated(block: IRBlock) -> bool:
 	for index in range(block.ops.size() - 1, -1, -1):
@@ -79,6 +89,7 @@ func optimize_code(code: IRCode) -> void:
 		iterations -= 1
 		
 		for method in [
+			"optimize_merge_subsequent_blocks",
 			"optimize_eliminate_unreachable_ops",
 			"optimize_eliminate_unreachable_blocks",
 			"optimize_eliminate_push_drops",
@@ -88,6 +99,22 @@ func optimize_code(code: IRCode) -> void:
 			while call(method, code) and method_iterations > 0:
 				is_optimized = true
 				method_iterations -= 1
+
+
+# Merge subsequent IR blocks if the second IR block is not referenced in IR code
+# and return whether any optimization was performed.
+func optimize_merge_subsequent_blocks(code: IRCode) -> bool:
+	var is_optimized: bool = false
+	
+	for index in range(code.blocks.size() - 1, 0, -1):
+		var block: IRBlock = code.blocks[index]
+		
+		if not is_block_referenced(code, block):
+			code.blocks[index - 1].ops.append_array(block.ops)
+			code.blocks.remove(index)
+			is_optimized = true
+	
+	return is_optimized
 
 
 # Eliminate IR operations that follow a terminator operation and return whether
