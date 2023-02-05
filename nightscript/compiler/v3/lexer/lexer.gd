@@ -230,7 +230,7 @@ func get_next_token() -> Token:
 			
 			for operator in OPERATORS:
 				if operator.begins_with(substring):
-					advance(1)
+					advance(length)
 					return create_error_token(
 							"Illegal operator `%s`! Did you mean `%s`?" % [substring, operator])
 	
