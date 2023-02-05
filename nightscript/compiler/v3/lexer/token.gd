@@ -28,7 +28,6 @@ enum {
 	KEYWORD_WHILE, # `while`.
 	BANG, # `!`.
 	BANG_EQUALS, # `!=`.
-	AMPERSAND, # `&`.
 	AMPERSAND_AMPERSAND, # `&&`.
 	PARENTHESIS_OPEN, # `(`.
 	PARENTHESIS_CLOSE, # `)`.
@@ -44,7 +43,6 @@ enum {
 	GREATER, # `>`.
 	GREATER_EQUALS, # `>=`.
 	BRACE_OPEN, # `{`.
-	PIPE, # `|`.
 	PIPE_PIPE, # `||`.
 	BRACE_CLOSE, # `}`.
 }
@@ -120,8 +118,6 @@ static func get_name(token_type: int) -> String:
 			return "`!`"
 		BANG_EQUALS:
 			return "`!=`"
-		AMPERSAND:
-			return "`&`"
 		AMPERSAND_AMPERSAND:
 			return "`&&`"
 		PARENTHESIS_OPEN:
@@ -152,8 +148,6 @@ static func get_name(token_type: int) -> String:
 			return "`>=`"
 		BRACE_OPEN:
 			return "`{`"
-		PIPE:
-			return "`|`"
 		PIPE_PIPE:
 			return "`||`"
 		BRACE_CLOSE:

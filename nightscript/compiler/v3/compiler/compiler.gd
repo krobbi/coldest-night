@@ -635,8 +635,6 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 		
 		if bin_expr.operator == Token.BANG_EQUALS:
 			code.make_binary_not_equals()
-		elif bin_expr.operator == Token.AMPERSAND:
-			code.make_binary_and()
 		elif bin_expr.operator == Token.STAR:
 			code.make_binary_multiply()
 		elif bin_expr.operator == Token.PLUS:
@@ -653,8 +651,6 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 			code.make_binary_greater()
 		elif bin_expr.operator == Token.GREATER_EQUALS:
 			code.make_binary_greater_equals()
-		elif bin_expr.operator == Token.PIPE:
-			code.make_binary_or()
 		else:
 			logger.log_error(
 					"Bug: No binary operation for operator %s!" % Token.get_name(bin_expr.operator),

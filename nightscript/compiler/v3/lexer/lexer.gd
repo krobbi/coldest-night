@@ -33,7 +33,6 @@ const KEYWORDS: Dictionary = {
 const OPERATORS: Dictionary = {
 	"!": Token.BANG,
 	"!=": Token.BANG_EQUALS,
-	"&": Token.AMPERSAND,
 	"&&": Token.AMPERSAND_AMPERSAND,
 	"(": Token.PARENTHESIS_OPEN,
 	")": Token.PARENTHESIS_CLOSE,
@@ -49,7 +48,6 @@ const OPERATORS: Dictionary = {
 	">": Token.GREATER,
 	">=": Token.GREATER_EQUALS,
 	"{": Token.BRACE_OPEN,
-	"|": Token.PIPE,
 	"||": Token.PIPE_PIPE,
 	"}": Token.BRACE_CLOSE,
 }
@@ -226,6 +224,15 @@ func get_next_token() -> Token:
 			if OPERATORS.has(operator):
 				advance(length)
 				return create_token(OPERATORS[operator])
+		
+		for length in range(max_length, 0, -1):
+			var substring: String = source.substr(span.end_offset, length)
+			
+			for operator in OPERATORS:
+				if operator.begins_with(substring):
+					advance(1)
+					return create_error_token(
+							"Illegal operator `%s`! Did you mean `%s`?" % [substring, operator])
 	
 	if not lexeme.empty():
 		return create_error_token(

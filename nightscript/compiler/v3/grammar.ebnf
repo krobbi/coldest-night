@@ -35,9 +35,7 @@ expr = expr_assignment ;
 
 expr_assignment = expr_logical_or, [ "=", expr_assignment ] ;
 expr_logical_or = expr_logical_and, { "||", expr_logical_and } ;
-expr_logical_and = expr_eager_or, { "&&", expr_eager_or } ;
-expr_eager_or = expr_eager_and, { "|", expr_eager_and } ;
-expr_eager_and = expr_not, { "&", expr_not } ;
+expr_logical_and = expr_not, { "&&", expr_not } ;
 expr_not = "!", expr_not | expr_equality ;
 expr_equality = expr_comparison, { ( "!=" | "==" ), expr_comparison } ;
 expr_comparison = expr_sum, { ( "<" | "<=" | ">" | ">=" ), expr_sum } ;

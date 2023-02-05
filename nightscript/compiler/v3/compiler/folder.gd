@@ -76,9 +76,6 @@ func fold_bin_expr(bin_expr: BinExprASTNode) -> ExprASTNode:
 	
 	if bin_expr.operator == Token.BANG_EQUALS:
 		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value != rhs_expr.value)))
-	elif bin_expr.operator == Token.AMPERSAND:
-		return copy_span(
-				bin_expr, IntExprASTNode.new(int(lhs_expr.value != 0 and rhs_expr.value != 0)))
 	elif bin_expr.operator == Token.AMPERSAND_AMPERSAND:
 		return copy_span(bin_expr, rhs_expr if lhs_expr.value != 0 else lhs_expr)
 	elif bin_expr.operator == Token.STAR:
@@ -97,9 +94,6 @@ func fold_bin_expr(bin_expr: BinExprASTNode) -> ExprASTNode:
 		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value > rhs_expr.value)))
 	elif bin_expr.operator == Token.GREATER_EQUALS:
 		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value >= rhs_expr.value)))
-	elif bin_expr.operator == Token.PIPE:
-		return copy_span(
-				bin_expr, IntExprASTNode.new(int(lhs_expr.value != 0 or rhs_expr.value != 0)))
 	elif bin_expr.operator == Token.PIPE_PIPE:
 		return copy_span(bin_expr, lhs_expr if lhs_expr.value != 0 else rhs_expr)
 	

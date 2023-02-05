@@ -538,17 +538,7 @@ func parse_expr_logical_or() -> ASTNode:
 
 # Parse a logical and expression.
 func parse_expr_logical_and() -> ASTNode:
-	return parse_expr_bin("parse_expr_eager_or", [Token.AMPERSAND_AMPERSAND])
-
-
-# Parse an eager or expression.
-func parse_expr_eager_or() -> ASTNode:
-	return parse_expr_bin("parse_expr_eager_and", [Token.PIPE])
-
-
-# Parse an eager and expression.
-func parse_expr_eager_and() -> ASTNode:
-	return parse_expr_bin("parse_expr_not", [Token.AMPERSAND])
+	return parse_expr_bin("parse_expr_not", [Token.AMPERSAND_AMPERSAND])
 
 
 # Parse a not expression.
