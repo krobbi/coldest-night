@@ -255,41 +255,11 @@ func fold_expression(node: ASTNode) -> ASTNode:
 		var left: ASTNode = node.children[0]
 		var right: ASTNode = node.children[1]
 		var is_left_const: bool = left.type == ASTNode.INT
-		var is_right_const: bool = right.type == ASTNode.INT
-		var is_const: bool = is_left_const and is_right_const
 		
-		if is_const and node.int_value == ASTNode.BOOL_AND:
-			folded = left
-			folded.int_value = int(left.int_value != 0 and right.int_value != 0)
-		elif is_const and node.int_value == ASTNode.BOOL_OR:
-			folded = left
-			folded.int_value = int(left.int_value != 0 or right.int_value != 0)
-		elif is_left_const and node.int_value == ASTNode.BOOL_AND:
-			if left.int_value == 0:
-				folded = left
-			else:
-				folded.type = ASTNode.BIN_EXPR
-				folded.int_value = ASTNode.BIN_AND
-				folded.children[0].int_value = 1
+		if is_left_const and node.int_value == ASTNode.BOOL_AND:
+			folded = right if left.int_value != 0 else left
 		elif is_left_const and node.int_value == ASTNode.BOOL_OR:
-			if left.int_value != 0:
-				folded = left
-				folded.int_value = 1
-			else:
-				folded.type = ASTNode.BIN_EXPR
-				folded.int_value = ASTNode.BIN_OR
-		elif is_right_const and node.int_value == ASTNode.BOOL_AND:
-			folded.type = ASTNode.BIN_EXPR
-			folded.int_value = ASTNode.BIN_AND
-			
-			if right.int_value != 0:
-				folded.children[1].int_value = 1
-		elif is_right_const and node.int_value == ASTNode.BOOL_OR:
-			folded.type = ASTNode.BIN_EXPR
-			folded.int_value = ASTNode.BIN_OR
-			
-			if right.int_value != 0:
-				folded.children[1].int_value = 1
+			folded = left if left.int_value != 0 else right
 	
 	return folded
 
@@ -724,43 +694,23 @@ func visit_bin_expr(node: ASTNode) -> void:
 # Recursively visits and evaluates a short-circuit boolean expression AST node
 # and its children:
 func visit_bool_expr(node: ASTNode) -> void:
-	visit_node(node.children[0])
+	var end_label: String = code.insert_unique_label("bool_end")
 	
-	match node.int_value:
-		ASTNode.BOOL_AND:
-			var end_label: String = code.insert_unique_label("bool_and_end")
-			var long_label: String = code.insert_unique_label("bool_and_long")
-			
-			code.make_duplicate()
-			code.make_jump_not_zero_label(long_label)
-			code.make_jump_label(end_label)
-			
-			code.set_label(long_label)
-			visit_node(node.children[1])
-			code.make_binary_and()
-			code.make_jump_label(end_label)
-			
-			code.set_label(end_label)
-		ASTNode.BOOL_OR:
-			var end_label: String = code.insert_unique_label("bool_or_end")
-			var short_label: String = code.insert_unique_label("bool_or_short")
-			
-			code.make_jump_not_zero_label(short_label)
-			code.make_push_int(0)
-			visit_node(node.children[1])
-			code.make_binary_or()
-			code.make_jump_label(end_label)
-			
-			code.set_label(short_label)
-			code.make_push_int(1)
-			code.make_jump_label(end_label)
-			
-			code.set_label(end_label)
-		_:
-			err(
-					"Codegen bug: Unimplemented visitor for boolean operator type '%d'!"
-					% node.int_value
-			)
+	visit_node(node.children[0])
+	code.make_duplicate()
+	
+	if node.int_value == ASTNode.BOOL_AND:
+		code.make_jump_zero_label(end_label)
+	elif node.int_value == ASTNode.BOOL_OR:
+		code.make_jump_not_zero_label(end_label)
+	else:
+		err("Codegen bug: Unimplemented visitor for boolean operator type '%d'!" % node.int_value)
+		code.make_drop() # Preserve stack size.
+	
+	code.make_drop()
+	visit_node(node.children[1])
+	
+	code.set_label(end_label)
 
 
 # Recursively visits and evaluates an assignment expression AST node and its
