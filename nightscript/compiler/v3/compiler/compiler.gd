@@ -833,7 +833,8 @@ func visit_func_call_expr(call_expr: CallExprASTNode) -> void:
 	for argument_expr in call_expr.argument_exprs:
 		visit_node(argument_expr)
 	
-	code.make_call_function_count_label(symbol.int_value, symbol.str_value)
+	code.make_push_int(symbol.int_value)
+	code.make_call_function_label(symbol.str_value)
 
 
 # Visit an integer expression AST node.

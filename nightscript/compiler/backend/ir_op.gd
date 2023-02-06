@@ -12,7 +12,7 @@ enum {
 	JUMP_LABEL,
 	JUMP_ZERO_LABEL,
 	JUMP_NOT_ZERO_LABEL,
-	CALL_FUNCTION_COUNT_LABEL,
+	CALL_FUNCTION_LABEL,
 	RETURN_FROM_FUNCTION,
 	DROP,
 	DUPLICATE,
@@ -87,8 +87,8 @@ func _to_string() -> String:
 			return "jump_zero %s;" % str_value
 		JUMP_NOT_ZERO_LABEL:
 			return "jump_not_zero %s;" % str_value
-		CALL_FUNCTION_COUNT_LABEL:
-			return "call_function %d %s;" % [int_value, str_value]
+		CALL_FUNCTION_LABEL:
+			return "call_function %s;" % str_value
 		RETURN_FROM_FUNCTION:
 			return "return_from_function;"
 		DROP:
