@@ -55,9 +55,8 @@ enum {
 }
 
 var type: int
-var int_value_a: int = 0
-var str_value_a: String = ""
-var str_value_b: String = ""
+var int_value: int = 0
+var str_value: String = ""
 
 # Set the IR operation's type.
 func _init(type_val: int) -> void:
@@ -67,9 +66,8 @@ func _init(type_val: int) -> void:
 # Copy another IR operation by value.
 func copy(other: Reference) -> void:
 	type = other.type
-	int_value_a = other.int_value_a
-	str_value_a = other.str_value_a
-	str_value_b = other.str_value_b
+	int_value = other.int_value
+	str_value = other.str_value
 
 
 # Return the IR operation's string representation.
@@ -84,13 +82,13 @@ func _to_string() -> String:
 		SLEEP:
 			return "sleep;"
 		JUMP_LABEL:
-			return "jump %s;" % str_value_a
+			return "jump %s;" % str_value
 		JUMP_ZERO_LABEL:
-			return "jump_zero %s;" % str_value_a
+			return "jump_zero %s;" % str_value
 		JUMP_NOT_ZERO_LABEL:
-			return "jump_not_zero %s;" % str_value_a
+			return "jump_not_zero %s;" % str_value
 		CALL_FUNCTION_COUNT_LABEL:
-			return "call_function %d %s;" % [int_value_a, str_value_a]
+			return "call_function %d %s;" % [int_value, str_value]
 		RETURN_FROM_FUNCTION:
 			return "return_from_function;"
 		DROP:
@@ -100,13 +98,13 @@ func _to_string() -> String:
 		PUSH_IS_REPEAT:
 			return "push_is_repeat;"
 		PUSH_INT:
-			return "push_int %d;" % int_value_a
+			return "push_int %d;" % int_value
 		PUSH_STRING:
-			return 'push_string "%s";' % str_value_a.c_escape()
+			return 'push_string "%s";' % str_value.c_escape()
 		LOAD_LOCAL_OFFSET:
-			return "load_local %d;" % int_value_a
+			return "load_local %d;" % int_value
 		STORE_LOCAL_OFFSET:
-			return "store_local %d;" % int_value_a
+			return "store_local %d;" % int_value
 		LOAD_FLAG:
 			return "load_flag;"
 		STORE_FLAG:
@@ -134,7 +132,7 @@ func _to_string() -> String:
 		BINARY_LESS_EQUALS:
 			return "binary_less_equals;"
 		FORMAT_STRING_COUNT:
-			return "format_string %d;" % int_value_a
+			return "format_string %d;" % int_value
 		SHOW_DIALOG:
 			return "show_dialog;"
 		HIDE_DIALOG:
@@ -146,7 +144,7 @@ func _to_string() -> String:
 		DISPLAY_DIALOG_MESSAGE:
 			return "display_dialog_message;"
 		STORE_DIALOG_MENU_OPTION_LABEL:
-			return "store_dialog_menu_option %s;" % str_value_a
+			return "store_dialog_menu_option %s;" % str_value
 		SHOW_DIALOG_MENU:
 			return "show_dialog_menu;"
 		ACTOR_FACE_DIRECTION:

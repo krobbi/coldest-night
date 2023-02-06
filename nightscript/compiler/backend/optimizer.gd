@@ -13,7 +13,7 @@ func set_op_label(op: IROp, label: String) -> void:
 	if not is_op_label(op):
 		return
 	
-	op.str_value_a = label
+	op.str_value = label
 
 
 # Get an IR block from its label. Return null if the block does not exist.
@@ -40,7 +40,7 @@ func get_op_label(op: IROp) -> String:
 	if not is_op_label(op):
 		return ""
 	
-	return op.str_value_a
+	return op.str_value
 
 
 # Get whether an IR block is referenced in IR code.

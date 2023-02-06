@@ -103,7 +103,7 @@ func make_op(type: int) -> void:
 # Make an IR operation in the current label with an int value.
 func make_op_int(type: int, value: int) -> void:
 	var op: IROp = IROp.new(type)
-	op.int_value_a = value
+	op.int_value = value
 	current.ops.push_back(op)
 
 
@@ -111,23 +111,15 @@ func make_op_int(type: int, value: int) -> void:
 # value.
 func make_op_int_str(type: int, int_value: int, str_value: String) -> void:
 	var op: IROp = IROp.new(type)
-	op.int_value_a = int_value
-	op.str_value_a = str_value
+	op.int_value = int_value
+	op.str_value = str_value
 	current.ops.push_back(op)
 
 
 # Make an IR operation in the current label with a string value.
 func make_op_str(type: int, value: String) -> void:
 	var op: IROp = IROp.new(type)
-	op.str_value_a = value
-	current.ops.push_back(op)
-
-
-# Make an IR operation in the current label with two string values.
-func make_op_str_str(type: int, value_a: String, value_b: String) -> void:
-	var op: IROp = IROp.new(type)
-	op.str_value_a = value_a
-	op.str_value_b = value_b
+	op.str_value = value
 	current.ops.push_back(op)
 
 
