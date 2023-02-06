@@ -12,9 +12,6 @@ const IROp: GDScript = preload("ir_op.gd")
 func set_op_label(op: IROp, label: String) -> void:
 	if not is_op_label(op):
 		return
-	elif op.type == IROp.STORE_DIALOG_MENU_OPTION_TEXT_LABEL:
-		op.str_value_b = label
-		return
 	
 	op.str_value_a = label
 
@@ -42,8 +39,6 @@ func get_next_block(code: IRCode, block: IRBlock) -> IRBlock:
 func get_op_label(op: IROp) -> String:
 	if not is_op_label(op):
 		return ""
-	elif op.type == IROp.STORE_DIALOG_MENU_OPTION_TEXT_LABEL:
-		return op.str_value_b
 	
 	return op.str_value_a
 
@@ -80,7 +75,6 @@ func is_op_label(op: IROp) -> bool:
 		IROp.JUMP_NOT_ZERO_LABEL,
 		IROp.CALL_FUNCTION_COUNT_LABEL,
 		IROp.STORE_DIALOG_MENU_OPTION_LABEL,
-		IROp.STORE_DIALOG_MENU_OPTION_TEXT_LABEL,
 	]
 
 

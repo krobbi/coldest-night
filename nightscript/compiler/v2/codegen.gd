@@ -70,10 +70,12 @@ func generate_code(ast: ASTNode) -> void:
 		code.make_pause_game()
 	
 	code.make_show_dialog()
-	code.make_display_dialog_name_text("Error")
+	code.make_push_string("Error")
+	code.make_display_dialog_name()
 	
 	for error in error_log.get_errors():
-		code.make_display_dialog_message_text(error.message)
+		code.make_push_string(error.message)
+		code.make_display_dialog_message()
 	
 	code.make_clear_dialog_name()
 	code.make_hide_dialog()
@@ -466,7 +468,8 @@ func visit_option_stmt(node: ASTNode) -> void:
 	var end_label: String = code.insert_unique_label("option_end")
 	var body_label: String = code.insert_unique_label("option_body")
 	
-	code.make_store_dialog_menu_option_text_label(node.children[0].string_value, body_label)
+	code.make_push_string(node.children[0].string_value)
+	code.make_store_dialog_menu_option_label(body_label)
 	code.make_jump_label(end_label)
 	
 	code.set_label(body_label)
@@ -549,6 +552,10 @@ func make_op_ir(opcode: int) -> void:
 	match opcode:
 		ASTNode.OP_HALT:
 			code.make_halt()
+		ASTNode.OP_RUN_PROGRAM:
+			code.make_run_program()
+		ASTNode.OP_CALL_PROGRAM:
+			code.make_call_program()
 		ASTNode.OP_SLEEP:
 			code.make_sleep()
 		ASTNode.OP_DROP:
@@ -557,6 +564,8 @@ func make_op_ir(opcode: int) -> void:
 			code.make_show_dialog()
 		ASTNode.OP_HIDE_DIALOG:
 			code.make_hide_dialog()
+		ASTNode.OP_DISPLAY_DIALOG_MESSAGE:
+			code.make_display_dialog_message()
 		ASTNode.OP_RUN_ACTOR_PATHS:
 			code.make_run_actor_paths()
 		ASTNode.OP_AWAIT_ACTOR_PATHS:
@@ -584,13 +593,8 @@ func visit_op_stmt(node: ASTNode) -> void:
 
 # Visits and evaluates a text operation statement AST node:
 func visit_text_op_stmt(node: ASTNode) -> void:
-	match node.int_value:
-		ASTNode.OP_RUN_PROGRAM:
-			code.make_run_program_key(node.children[0].string_value)
-		ASTNode.OP_CALL_PROGRAM:
-			code.make_call_program_key(node.children[0].string_value)
-		ASTNode.OP_DISPLAY_DIALOG_MESSAGE:
-			code.make_display_dialog_message_text(node.children[0].string_value)
+	code.make_push_string(node.children[0].string_value)
+	make_op_ir(node.int_value)
 
 
 # Recursively visits and evaluates an expression operation statement AST node
@@ -608,8 +612,9 @@ func visit_actor_face_direction_stmt(node: ASTNode) -> void:
 
 # Visits and evaluates a path finding statement AST node:
 func visit_path_stmt(node: ASTNode) -> void:
-	code.make_actor_find_path_key_point(
-			node.children[0].string_value, node.children[1].string_value)
+	code.make_push_string(node.children[0].string_value)
+	code.make_push_string(node.children[1].string_value)
+	code.make_actor_find_path()
 	
 	if node.int_value == ASTNode.PATH_RUN or node.int_value == ASTNode.PATH_RUN_AWAIT:
 		code.make_run_actor_paths()
@@ -625,7 +630,8 @@ func visit_display_dialog_name_stmt(node: ASTNode) -> void:
 	if text.empty():
 		code.make_clear_dialog_name()
 	else:
-		code.make_display_dialog_name_text(text)
+		code.make_push_string(text)
+		code.make_display_dialog_name()
 
 
 # Visit and evaluate an is repeat expression AST node:

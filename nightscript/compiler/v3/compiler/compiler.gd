@@ -69,10 +69,12 @@ func compile_ast(root: RootASTNode) -> void:
 		code.make_pause_game()
 	
 	code.make_show_dialog()
-	code.make_display_dialog_name_text("Error")
+	code.make_push_string("Error")
+	code.make_display_dialog_name()
 	
 	for record in logger.get_records():
-		code.make_display_dialog_message_text("%s:\n%s" % [record.span, record.message])
+		code.make_push_string("%s:\n%s" % [record.span, record.message])
+		code.make_display_dialog_message()
 	
 	code.make_clear_dialog_name()
 	code.make_hide_dialog()

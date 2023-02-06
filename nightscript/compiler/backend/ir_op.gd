@@ -7,9 +7,7 @@ extends Reference
 enum {
 	HALT,
 	RUN_PROGRAM,
-	RUN_PROGRAM_KEY,
 	CALL_PROGRAM,
-	CALL_PROGRAM_KEY,
 	SLEEP,
 	JUMP_LABEL,
 	JUMP_ZERO_LABEL,
@@ -41,15 +39,11 @@ enum {
 	HIDE_DIALOG,
 	CLEAR_DIALOG_NAME,
 	DISPLAY_DIALOG_NAME,
-	DISPLAY_DIALOG_NAME_TEXT,
 	DISPLAY_DIALOG_MESSAGE,
-	DISPLAY_DIALOG_MESSAGE_TEXT,
 	STORE_DIALOG_MENU_OPTION_LABEL,
-	STORE_DIALOG_MENU_OPTION_TEXT_LABEL,
 	SHOW_DIALOG_MENU,
 	ACTOR_FACE_DIRECTION,
 	ACTOR_FIND_PATH,
-	ACTOR_FIND_PATH_KEY_POINT,
 	RUN_ACTOR_PATHS,
 	AWAIT_ACTOR_PATHS,
 	FREEZE_PLAYER,
@@ -85,12 +79,8 @@ func _to_string() -> String:
 			return "halt;"
 		RUN_PROGRAM:
 			return "run_program;"
-		RUN_PROGRAM_KEY:
-			return 'run_program "%s";' % str_value_a.c_escape()
 		CALL_PROGRAM:
 			return "call_program;"
-		CALL_PROGRAM_KEY:
-			return 'call_program "%s";' % str_value_a.c_escape()
 		SLEEP:
 			return "sleep;"
 		JUMP_LABEL:
@@ -153,24 +143,16 @@ func _to_string() -> String:
 			return "clear_dialog_name;"
 		DISPLAY_DIALOG_NAME:
 			return "display_dialog_name;"
-		DISPLAY_DIALOG_NAME_TEXT:
-			return 'display_dialog_name "%s";' % str_value_a.c_escape()
 		DISPLAY_DIALOG_MESSAGE:
 			return "display_dialog_message;"
-		DISPLAY_DIALOG_MESSAGE_TEXT:
-			return 'display_dialog_message "%s";' % str_value_a.c_escape()
 		STORE_DIALOG_MENU_OPTION_LABEL:
 			return "store_dialog_menu_option %s;" % str_value_a
-		STORE_DIALOG_MENU_OPTION_TEXT_LABEL:
-			return 'store_dialog_menu_option "%s" %s;' % [str_value_a.c_escape(), str_value_b]
 		SHOW_DIALOG_MENU:
 			return "show_dialog_menu;"
 		ACTOR_FACE_DIRECTION:
 			return "actor_face_direction;"
 		ACTOR_FIND_PATH:
 			return "actor_find_path;"
-		ACTOR_FIND_PATH_KEY_POINT:
-			return 'actor_find_path %s "%s";' % [str_value_a, str_value_b.c_escape()]
 		RUN_ACTOR_PATHS:
 			return "run_actor_paths;"
 		AWAIT_ACTOR_PATHS:

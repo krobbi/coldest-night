@@ -141,19 +141,9 @@ func make_run_program() -> void:
 	make_op(IROp.RUN_PROGRAM)
 
 
-# Make a run program key IR operation in the current label.
-func make_run_program_key(key: String) -> void:
-	make_op_str(IROp.RUN_PROGRAM_KEY, key)
-
-
 # Make a call program IR operation in the current label.
 func make_call_program() -> void:
 	make_op(IROp.CALL_PROGRAM)
-
-
-# Make a call program key IR operation in the current label.
-func make_call_program_key(key: String) -> void:
-	make_op_str(IROp.CALL_PROGRAM_KEY, key)
 
 
 # Make a sleep IR operation in the current label.
@@ -311,29 +301,14 @@ func make_display_dialog_name() -> void:
 	make_op(IROp.DISPLAY_DIALOG_NAME)
 
 
-# Make a display dialog name text IR operation in the current label.
-func make_display_dialog_name_text(text: String) -> void:
-	make_op_str(IROp.DISPLAY_DIALOG_NAME_TEXT, text)
-
-
 # Make a display dialog message IR operation in the current label.
 func make_display_dialog_message() -> void:
 	make_op(IROp.DISPLAY_DIALOG_MESSAGE)
 
 
-# Make a display dialog message text IR operation in the current label.
-func make_display_dialog_message_text(text: String) -> void:
-	make_op_str(IROp.DISPLAY_DIALOG_MESSAGE_TEXT, text)
-
-
 # Make a store dialog menu option label IR operation in the current label.
 func make_store_dialog_menu_option_label(label: String) -> void:
 	make_op_str(IROp.STORE_DIALOG_MENU_OPTION_LABEL, label)
-
-
-# Make a store dialog menu option text label IR operation in the current label.
-func make_store_dialog_menu_option_text_label(text: String, label: String) -> void:
-	make_op_str_str(IROp.STORE_DIALOG_MENU_OPTION_TEXT_LABEL, text, label)
 
 
 # Make a show dialog menu IR operation in the current label.
@@ -349,11 +324,6 @@ func make_actor_face_direction() -> void:
 # Make an actor find path IR operation in the current label.
 func make_actor_find_path() -> void:
 	make_op(IROp.ACTOR_FIND_PATH)
-
-
-# Make an actor find path key point IR operation in the current label.
-func make_actor_find_path_key_point(key: String, point: String) -> void:
-	make_op_str_str(IROp.ACTOR_FIND_PATH_KEY_POINT, key, point)
 
 
 # Make a run actor paths IR operation in the current label.
