@@ -9,6 +9,7 @@ const BinExprASTNode: GDScript = preload("../ast/bin_expr_ast_node.gd")
 const BlockStmtASTNode: GDScript = preload("../ast/block_stmt_ast_node.gd")
 const BreakStmtASTNode: GDScript = preload("../ast/break_stmt_ast_node.gd")
 const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
+const ConstStmtASTNode: GDScript = preload("../ast/const_stmt_ast_node.gd")
 const ContinueStmtASTNode: GDScript = preload("../ast/continue_stmt_ast_node.gd")
 const DeclStmtASTNode: GDScript = preload("../ast/decl_stmt_ast_node.gd")
 const DoStmtASTNode: GDScript = preload("../ast/do_stmt_ast_node.gd")
@@ -113,6 +114,8 @@ func visit_node(node: ASTNode) -> void:
 		visit_break_stmt(node)
 	elif node is ContinueStmtASTNode:
 		visit_continue_stmt(node)
+	elif node is ConstStmtASTNode:
+		visit_const_stmt(node)
 	elif node is DeclStmtASTNode:
 		visit_decl_stmt(node)
 	elif node is ReturnStmtASTNode:
@@ -495,6 +498,30 @@ func visit_continue_stmt(continue_stmt: ContinueStmtASTNode) -> void:
 		scope_stack.jump_to_label("continue")
 	else:
 		logger.log_error("Used `continue` outside of a continuable statement!", continue_stmt.span)
+
+
+# Visit a constant declaration statement AST node.
+func visit_const_stmt(const_stmt: ConstStmtASTNode) -> void:
+	var symbol: Symbol = scope_stack.get_symbol(const_stmt.identifier_expr.name)
+	var value_expr: ExprASTNode = folder.fold_expr(const_stmt.value_expr)
+	
+	if symbol.access != Symbol.UNDEFINED:
+		logger.log_error(
+				"`%s` is already defined in the current scope!" % symbol.identifier,
+				const_stmt.identifier_expr.span)
+		visit_node(value_expr)
+		code.make_drop()
+		return
+	
+	if value_expr is IntExprASTNode:
+		scope_stack.define_literal_int(symbol.identifier, value_expr.value, false)
+	elif value_expr is StrExprASTNode:
+		scope_stack.define_literal_str(symbol.identifier, value_expr.value, false)
+	else:
+		logger.log_error(
+				"Constant `%s` expects a constant value!" % symbol.identifier, value_expr.span)
+		visit_node(value_expr)
+		code.make_drop()
 
 
 # Visit a declaration statement AST node.

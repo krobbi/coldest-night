@@ -4,6 +4,7 @@
 
 include "enter_dialog";
 
+const COUNT_FLAG = "test/area_bx/archival_unit_count";
 const TERMINAL_FLAG = "test/area_hub/hub/seen_terminal";
 const NORTH_ALMOST_FLAG = "test/area_bx/hub/seen_north_almost";
 const NORTH_COMPLETE_FLAG = "test/area_bx/hub/seen_north_complete";
@@ -14,7 +15,7 @@ const NORTH_TOTAL = 10;
 const WEST_TOTAL = NORTH_TOTAL + 6 + 1;
 
 func hasDialog(flag, count){
-	if(!getFlag(flag) && getFlag("test/area_bx/archival_unit_count") == count){
+	if(!getFlag(flag) && getFlag(COUNT_FLAG) == count){
 		freeze();
 		show();
 		return setFlag(flag, 1);
@@ -23,7 +24,7 @@ func hasDialog(flag, count){
 	return 0;
 }
 
-if(hasDialog(TERMINAL_FLAG, getFlag("test/area_bx/archival_unit_count"))){
+if(hasDialog(TERMINAL_FLAG, getFlag(COUNT_FLAG))){
 	enterHubTerminalDialog();
 	hide();
 	

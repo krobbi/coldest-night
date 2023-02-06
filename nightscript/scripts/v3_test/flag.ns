@@ -2,14 +2,17 @@
 # Flag Test
 # Test for setting and getting flags.
 
+const FLAG = "nightscript/v3/test/counter";
+
+func incrementFlag(){
+	return setFlag(FLAG, getFlag(FLAG) + 1);
+}
+
 freeze();
 show();
 
-const FLAG = "nightscript/v3/test/counter";
-const VALUE = getFlag(FLAG) + 1;
-setFlag(FLAG, VALUE);
-
-say(format("Counter: {0}", VALUE));
+var value = incrementFlag();
+say(format("Counter: {0}", value));
 
 hide();
 unfreeze();

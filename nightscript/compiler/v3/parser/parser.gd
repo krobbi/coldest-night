@@ -9,6 +9,7 @@ const BinExprASTNode: GDScript = preload("../ast/bin_expr_ast_node.gd")
 const BlockStmtASTNode: GDScript = preload("../ast/block_stmt_ast_node.gd")
 const BreakStmtASTNode: GDScript = preload("../ast/break_stmt_ast_node.gd")
 const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
+const ConstStmtASTNode: GDScript = preload("../ast/const_stmt_ast_node.gd")
 const ContinueStmtASTNode: GDScript = preload("../ast/continue_stmt_ast_node.gd")
 const DeclStmtASTNode: GDScript = preload("../ast/decl_stmt_ast_node.gd")
 const DoStmtASTNode: GDScript = preload("../ast/do_stmt_ast_node.gd")
@@ -423,9 +424,23 @@ func parse_decl_stmt(operator: int) -> ASTNode:
 	return end_span(DeclStmtASTNode.new(operator, identifier_expr, value_expr))
 
 
-# Parse a constant statement.
+# Parse a constant declaration statement.
 func parse_stmt_const() -> ASTNode:
-	return parse_decl_stmt(Token.KEYWORD_CONST)
+	begin_span()
+	expect(Token.KEYWORD_CONST)
+	var identifier_expr: ASTNode = parse_expr_primary_identifier()
+	
+	if not identifier_expr is IdentifierExprASTNode:
+		return abort_span(identifier_expr)
+	
+	expect(Token.EQUALS)
+	var value_expr: ASTNode = parse_expr()
+	
+	if not value_expr is ExprASTNode:
+		return abort_span(value_expr)
+	
+	expect_eos()
+	return end_span(ConstStmtASTNode.new(identifier_expr, value_expr))
 
 
 # Parse a variable statement.
