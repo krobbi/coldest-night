@@ -83,8 +83,6 @@ enum {
 	BIN_GE, # Binary greater than or equal to operator: `x >= y`
 	BIN_LT, # Binary less than operator: `x < y`
 	BIN_LE, # Binary less than or equal to operator: `x <= y`
-	BIN_AND, # Binary logical and operator: `x and y`
-	BIN_OR, # Binary logical or operator: `x or y`
 }
 
 enum {

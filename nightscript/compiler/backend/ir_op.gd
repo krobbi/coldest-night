@@ -38,8 +38,6 @@ enum {
 	BINARY_GREATER_EQUALS,
 	BINARY_LESS,
 	BINARY_LESS_EQUALS,
-	BINARY_AND,
-	BINARY_OR,
 	FORMAT_STRING_COUNT,
 	SHOW_DIALOG,
 	HIDE_DIALOG,
@@ -151,10 +149,6 @@ func _to_string() -> String:
 			return "binary_less;"
 		BINARY_LESS_EQUALS:
 			return "binary_less_equals;"
-		BINARY_AND:
-			return "binary_and;"
-		BINARY_OR:
-			return "binary_or;"
 		FORMAT_STRING_COUNT:
 			return "format_string %d;" % int_value_a
 		SHOW_DIALOG:

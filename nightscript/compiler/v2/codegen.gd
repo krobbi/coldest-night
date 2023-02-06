@@ -245,12 +245,6 @@ func fold_expression(node: ASTNode) -> ASTNode:
 		elif is_const and node.int_value == ASTNode.BIN_LE:
 			folded = left
 			folded.int_value = int(left.int_value <= right.int_value)
-		elif is_const and node.int_value == ASTNode.BIN_AND:
-			folded = left
-			folded.int_value = int(left.int_value != 0 and right.int_value != 0)
-		elif is_const and node.int_value == ASTNode.BIN_OR:
-			folded = left
-			folded.int_value = int(left.int_value != 0 or right.int_value != 0)
 	elif node.type == ASTNode.BOOL_EXPR:
 		var left: ASTNode = node.children[0]
 		var right: ASTNode = node.children[1]
@@ -679,10 +673,6 @@ func visit_bin_expr(node: ASTNode) -> void:
 			code.make_binary_less()
 		ASTNode.BIN_LE:
 			code.make_binary_less_equals()
-		ASTNode.BIN_AND:
-			code.make_binary_and()
-		ASTNode.BIN_OR:
-			code.make_binary_or()
 		_:
 			err(
 					"Codegen bug: Unimplemented visitor for binary operator type '%d'!"

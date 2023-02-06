@@ -296,16 +296,6 @@ func make_binary_less_equals() -> void:
 	make_op(IROp.BINARY_LESS_EQUALS)
 
 
-# Make a binary and IR operation in the current label.
-func make_binary_and() -> void:
-	make_op(IROp.BINARY_AND)
-
-
-# Make a binary or IR operation in the current label.
-func make_binary_or() -> void:
-	make_op(IROp.BINARY_OR)
-
-
 # Make a format string count IR operation in the current label.
 func make_format_string_count(count: int) -> void:
 	make_op_int(IROp.FORMAT_STRING_COUNT, count)

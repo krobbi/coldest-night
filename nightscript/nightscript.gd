@@ -171,14 +171,6 @@ class NightScriptVirtualMachine extends Reference:
 				var right: int = stack.pop_back()
 				var left: int = stack.pop_back()
 				stack.push_back(int(left <= right))
-			BINARY_AND:
-				var right: int = stack.pop_back()
-				var left: int = stack.pop_back()
-				stack.push_back(int(right != 0 and left != 0))
-			BINARY_OR:
-				var right: int = stack.pop_back()
-				var left: int = stack.pop_back()
-				stack.push_back(int(left != 0 or right != 0))
 			FORMAT_STRING:
 				var value_count: int = stack.pop_back()
 				var values: Array = []
@@ -310,26 +302,24 @@ enum {
 	BINARY_GREATER_EQUALS = 0x1a,
 	BINARY_LESS = 0x1b,
 	BINARY_LESS_EQUALS = 0x1c,
-	BINARY_AND = 0x1d,
-	BINARY_OR = 0x1e,
-	FORMAT_STRING = 0x1f,
-	SHOW_DIALOG = 0x20,
-	HIDE_DIALOG = 0x21,
-	CLEAR_DIALOG_NAME = 0x22,
-	DISPLAY_DIALOG_NAME = 0x23,
-	DISPLAY_DIALOG_MESSAGE = 0x24,
-	STORE_DIALOG_MENU_OPTION = 0x25,
-	SHOW_DIALOG_MENU = 0x26,
-	ACTOR_FACE_DIRECTION = 0x27,
-	ACTOR_FIND_PATH = 0x28,
-	RUN_ACTOR_PATHS = 0x29,
-	AWAIT_ACTOR_PATHS = 0x2a,
-	FREEZE_PLAYER = 0x2b,
-	UNFREEZE_PLAYER = 0x2c,
-	PAUSE_GAME = 0x2d,
-	UNPAUSE_GAME = 0x2e,
-	SAVE_GAME = 0x2f,
-	SAVE_CHECKPOINT = 0x30,
+	FORMAT_STRING = 0x1d,
+	SHOW_DIALOG = 0x1e,
+	HIDE_DIALOG = 0x1f,
+	CLEAR_DIALOG_NAME = 0x20,
+	DISPLAY_DIALOG_NAME = 0x21,
+	DISPLAY_DIALOG_MESSAGE = 0x22,
+	STORE_DIALOG_MENU_OPTION = 0x23,
+	SHOW_DIALOG_MENU = 0x24,
+	ACTOR_FACE_DIRECTION = 0x25,
+	ACTOR_FIND_PATH = 0x26,
+	RUN_ACTOR_PATHS = 0x27,
+	AWAIT_ACTOR_PATHS = 0x28,
+	FREEZE_PLAYER = 0x29,
+	UNFREEZE_PLAYER = 0x2a,
+	PAUSE_GAME = 0x2b,
+	UNPAUSE_GAME = 0x2c,
+	SAVE_GAME = 0x2d,
+	SAVE_CHECKPOINT = 0x2e,
 }
 
 const THREAD_LIMIT: int = 16

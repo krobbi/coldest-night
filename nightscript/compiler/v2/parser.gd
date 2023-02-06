@@ -431,13 +431,8 @@ func parse_expr_assignment() -> ASTNode:
 func parse_expr_logical_or() -> ASTNode:
 	var node: ASTNode = parse_expr_logical_and()
 	
-	while true:
-		if accept(Token.KEYWORD_OR):
-			node = make_bin_expr(ASTNode.BIN_OR, node, parse_expr_logical_and())
-		elif accept(Token.PIPE_PIPE):
-			node = make_bool_expr(ASTNode.BOOL_OR, node, parse_expr_logical_and())
-		else:
-			break
+	while accept(Token.KEYWORD_OR) or accept(Token.PIPE_PIPE):
+		node = make_bool_expr(ASTNode.BOOL_OR, node, parse_expr_logical_and())
 	
 	return node
 
@@ -446,13 +441,8 @@ func parse_expr_logical_or() -> ASTNode:
 func parse_expr_logical_and() -> ASTNode:
 	var node: ASTNode = parse_expr_logical_not()
 	
-	while true:
-		if accept(Token.KEYWORD_AND):
-			node = make_bin_expr(ASTNode.BIN_AND, node, parse_expr_logical_not())
-		elif accept(Token.AMPERSAND_AMPERSAND):
-			node = make_bool_expr(ASTNode.BOOL_AND, node, parse_expr_logical_not())
-		else:
-			break
+	while accept(Token.KEYWORD_AND) or accept(Token.AMPERSAND_AMPERSAND):
+		node = make_bool_expr(ASTNode.BOOL_AND, node, parse_expr_logical_not())
 	
 	return node
 
