@@ -759,14 +759,16 @@ func visit_format_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 		else:
 			code.make_push_string("{0}")
 			visit_node(argument_expr)
-			code.make_format_string_count(1)
+			code.make_push_int(1)
+			code.make_format_string()
 		
 		return
 	
 	for argument_expr in call_expr.argument_exprs:
 		visit_node(argument_expr)
 	
-	code.make_format_string_count(call_expr.argument_exprs.size() - 1)
+	code.make_push_int(call_expr.argument_exprs.size() - 1)
+	code.make_format_string()
 
 
 # Visit a call expression AST node with the name intrinsic.

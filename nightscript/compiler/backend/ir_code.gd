@@ -259,9 +259,9 @@ func make_binary_less_equals() -> void:
 	make_op(IROp.BINARY_LESS_EQUALS)
 
 
-# Make a format string count IR operation in the current label.
-func make_format_string_count(count: int) -> void:
-	make_op_int(IROp.FORMAT_STRING_COUNT, count)
+# Make a format string IR operation in the current label.
+func make_format_string() -> void:
+	make_op(IROp.FORMAT_STRING)
 
 
 # Make a show dialog IR operation in the current label.
