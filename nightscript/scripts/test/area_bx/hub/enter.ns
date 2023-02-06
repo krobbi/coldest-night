@@ -15,7 +15,7 @@ const NORTH_TOTAL = 10;
 const WEST_TOTAL = NORTH_TOTAL + 6 + 1;
 
 func hasDialog(flag, count){
-	if(!getFlag(flag) && getFlag(COUNT_FLAG) == count){
+	if !getFlag(flag) && getFlag(COUNT_FLAG) == count {
 		freeze();
 		show();
 		return setFlag(flag, 1);
@@ -24,7 +24,7 @@ func hasDialog(flag, count){
 	return 0;
 }
 
-if(hasDialog(TERMINAL_FLAG, getFlag(COUNT_FLAG))){
+if hasDialog(TERMINAL_FLAG, getFlag(COUNT_FLAG)) {
 	enterHubTerminalDialog();
 	hide();
 	
@@ -38,19 +38,19 @@ if(hasDialog(TERMINAL_FLAG, getFlag(COUNT_FLAG))){
 	enterHubTerminalReachedDialog();
 	hide();
 	unfreeze();
-} else if(hasDialog(NORTH_ALMOST_FLAG, NORTH_TOTAL - 1)){
+} else if hasDialog(NORTH_ALMOST_FLAG, NORTH_TOTAL - 1) {
 	enterHubNorthAlmostDialog();
 	hide();
 	unfreeze();
-} else if(hasDialog(NORTH_COMPLETE_FLAG, NORTH_TOTAL)){
+} else if hasDialog(NORTH_COMPLETE_FLAG, NORTH_TOTAL) {
 	enterHubNorthCompleteDialog();
 	hide();
 	unfreeze();
-} else if(hasDialog(WEST_ALMOST_FLAG, WEST_TOTAL - 1)){
+} else if hasDialog(WEST_ALMOST_FLAG, WEST_TOTAL - 1) {
 	enterHubWestAlmostDialog();
 	hide();
 	unfreeze();
-} else if(hasDialog(WEST_COMPLETE_FLAG, WEST_TOTAL)){
+} else if hasDialog(WEST_COMPLETE_FLAG, WEST_TOTAL) {
 	enterHubWestCompleteDialog();
 	hide();
 	unfreeze();

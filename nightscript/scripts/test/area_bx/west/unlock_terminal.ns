@@ -10,23 +10,23 @@ freeze();
 show();
 
 menu {
-	if(getFlag(FLAG)){
+	if getFlag(FLAG) {
 		unlockTerminalLockPromptDialog();
 		
-		option(unlockTerminalGetLockOption()){
+		option unlockTerminalGetLockOption() {
 			setFlag(FLAG, 0);
 			unlockTerminalLockedDialog();
 		}
 	} else {
 		unlockTerminalUnlockPromptDialog();
 		
-		option(unlockTerminalGetUnlockOption()){
+		option unlockTerminalGetUnlockOption() {
 			setFlag(FLAG, 1);
 			unlockTerminalUnlockedDialog();
 		}
 	}
 	
-	option(unlockTerminalGetCancelOption()){}
+	option unlockTerminalGetCancelOption() {}
 }
 
 hide();

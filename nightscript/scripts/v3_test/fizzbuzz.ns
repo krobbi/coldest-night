@@ -14,9 +14,9 @@ var max = OPTION_A;
 say("Run FizzBuzz up to...");
 
 menu {
-	option(format(OPTION_A)) max = OPTION_A;
-	option(format(OPTION_B)) max = OPTION_B;
-	option(format(OPTION_C)) max = OPTION_C;
+	option format(OPTION_A) max = OPTION_A;
+	option format(OPTION_B) max = OPTION_B;
+	option format(OPTION_C) max = OPTION_C;
 }
 
 say(format("Will run FizzBuzz up to {0}!", max));
@@ -29,19 +29,19 @@ var nextBuzz = BUZZ;
 
 var value = 0;
 
-while(value < max){
+while value < max {
 	value = value + 1;
 	
 	var hasFactors = 0;
 	var message = "";
 	
-	if(value == nextFizz){
+	if value == nextFizz {
 		hasFactors = 1;
 		nextFizz = nextFizz + FIZZ;
 		message = format("{0}Fizz", message);
 	}
 	
-	if(value == nextBuzz){
+	if value == nextBuzz {
 		hasFactors = 1;
 		nextBuzz = nextBuzz + BUZZ;
 		message = format("{0}Buzz", message);
@@ -49,7 +49,7 @@ while(value < max){
 	
 	name(format("{0}/{1}", value, max));
 	
-	if(hasFactors){
+	if hasFactors {
 		say(format("{0}!", message));
 	} else {
 		say(format(value));

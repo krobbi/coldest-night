@@ -16,11 +16,11 @@ stmt_func = (
 	stmt
 ) ;
 stmt_block = "{", { stmt }, "}" ;
-stmt_if = "if", expr_paren, stmt, [ "else", stmt ] ;
-stmt_while = "while", expr_paren, stmt ;
-stmt_do = "do", stmt, "while", expr_paren, eos ;
+stmt_if = "if", expr, stmt, [ "else", stmt ] ;
+stmt_while = "while", expr, stmt ;
+stmt_do = "do", stmt, "while", expr, eos ;
 stmt_menu = "menu", stmt ;
-stmt_option = "option", expr_paren, stmt ;
+stmt_option = "option", expr, stmt ;
 stmt_break = "break", eos ;
 stmt_continue = "continue", eos ;
 stmt_const = "const", expr_primary_identifier, "=", expr, eos ;

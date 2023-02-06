@@ -7,19 +7,19 @@ include "save_terminal_dialog";
 freeze();
 show();
 
-if(isRepeat()){
+if isRepeat() {
 	saveTerminalRepeatDialog();
 } else {
 	saveTerminalMainDialog();
 }
 
 menu {
-	option(saveTerminalGetSaveOption()){
+	option saveTerminalGetSaveOption() {
 		save();
 		saveTerminalSavedDialog();
 	}
 	
-	option(saveTerminalGetNoSaveOption()){}
+	option saveTerminalGetNoSaveOption() {}
 }
 
 hide();

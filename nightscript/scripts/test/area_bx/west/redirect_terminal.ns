@@ -12,12 +12,12 @@ show();
 redirectTerminalMainDialog();
 
 menu {
-	option(redirectTerminalGetRedirectOption()){
+	option redirectTerminalGetRedirectOption() {
 		setFlag(FLAG, !getFlag(FLAG));
 		redirectTerminalRedirectedDialog();
 	}
 	
-	option(redirectTerminalGetCancelOption()){}
+	option redirectTerminalGetCancelOption() {}
 }
 
 hide();

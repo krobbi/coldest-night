@@ -303,7 +303,7 @@ func parse_stmt_block() -> ASTNode:
 func parse_stmt_if() -> ASTNode:
 	begin_span()
 	expect(Token.KEYWORD_IF)
-	var expr: ASTNode = parse_expr_paren()
+	var expr: ASTNode = parse_expr()
 	
 	if not expr is ExprASTNode:
 		return abort_span(expr)
@@ -328,7 +328,7 @@ func parse_stmt_if() -> ASTNode:
 func parse_stmt_while() -> ASTNode:
 	begin_span()
 	expect(Token.KEYWORD_WHILE)
-	var expr: ASTNode = parse_expr_paren()
+	var expr: ASTNode = parse_expr()
 	
 	if not expr is ExprASTNode:
 		return abort_span(expr)
@@ -351,7 +351,7 @@ func parse_stmt_do() -> ASTNode:
 		return abort_span(stmt)
 	
 	expect(Token.KEYWORD_WHILE)
-	var expr: ASTNode = parse_expr_paren()
+	var expr: ASTNode = parse_expr()
 	
 	if not expr is ExprASTNode:
 		return abort_span(expr)
@@ -376,7 +376,7 @@ func parse_stmt_menu() -> ASTNode:
 func parse_stmt_option() -> ASTNode:
 	begin_span()
 	expect(Token.KEYWORD_OPTION)
-	var expr: ASTNode = parse_expr_paren()
+	var expr: ASTNode = parse_expr()
 	
 	if not expr is ExprASTNode:
 		return abort_span(expr)
