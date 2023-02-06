@@ -5,7 +5,7 @@ extends Reference
 # Save data are structures that represent the data that is stored in a save
 # file.
 
-signal flag_changed(namespace, key, value)
+signal flag_changed(flag, value)
 
 enum State {NEW_GAME, NORMAL, COMPLETED}
 
@@ -17,21 +17,15 @@ var stats: StatsSaveData = StatsSaveData.new()
 var flags: Dictionary = {}
 var scenes: Dictionary = {}
 
-# Set a flag from its namespace and key.
-func set_flag(namespace: String, key: String, value: int) -> void:
-	if not flags.has(namespace):
-		flags[namespace] = {}
-	
-	flags[namespace][key] = value
-	emit_signal("flag_changed", namespace, key, value)
+# Set a flag from its flag.
+func set_flag(flag: String, value: int) -> void:
+	flags[flag] = value
+	emit_signal("flag_changed", flag, value)
 
 
-# Get a flag from its namespace and key.
-func get_flag(namespace: String, key: String) -> int:
-	if not flags.has(namespace):
-		return 0
-	
-	return flags[namespace].get(key, 0)
+# Get a flag from its flag.
+func get_flag(flag: String) -> int:
+	return flags.get(flag, 0)
 
 
 # Clear the save data to empty values.

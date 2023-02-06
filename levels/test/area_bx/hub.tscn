@@ -40,8 +40,7 @@ __meta__ = {
 position = Vector2( -336, 0 )
 appearance_condition = 8
 extents = Vector2( 0, 64 )
-flag_namespace = "test"
-flag_key = "archival_unit_count"
+flag = "test/area_bx/archival_unit_count"
 compare_value = 10
 
 [node name="WallE" parent="Midground/LaserWalls" index="1" instance=ExtResource( 2 )]
@@ -51,8 +50,7 @@ extents = Vector2( 0, 64 )
 [node name="WallS" parent="Midground/LaserWalls" index="2" instance=ExtResource( 2 )]
 position = Vector2( 0, 344 )
 appearance_condition = 8
-flag_namespace = "test"
-flag_key = "archival_unit_count"
+flag = "test/area_bx/archival_unit_count"
 compare_value = 17
 
 [node name="Terminals" type="YSort" parent="Midground" index="2"]

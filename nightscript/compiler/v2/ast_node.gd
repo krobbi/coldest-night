@@ -7,7 +7,7 @@ extends Reference
 enum {
 	ERROR, # Syntax error.
 	IDENTIFIER, # User-defined name.
-	FLAG, # User-defined flag namespace and key: `x.y`
+	FLAG, # User-defined flag: `flag."y"`
 	INT, # Integer value.
 	STRING, # String value.
 	NOP_STMT, # No operation statement: `;`

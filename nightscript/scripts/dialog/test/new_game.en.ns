@@ -5,7 +5,7 @@
 meta is_cacheable = false
 meta is_pausable = false
 
-define pester_count = test.pester_count
+define pester_count = flag."test/pester_count"
 
 <!
 "Ryan":

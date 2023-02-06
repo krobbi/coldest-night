@@ -4,7 +4,7 @@
 
 include "redirect_terminal_dialog";
 
-const FLAG = "west_laser_state";
+const FLAG = "test/area_bx/west/barrier_state";
 
 freeze();
 show();
@@ -13,7 +13,7 @@ redirectTerminalMainDialog();
 
 menu {
 	option(redirectTerminalGetRedirectOption()){
-		setFlag("test", FLAG, !getFlag("test", FLAG));
+		setFlag(FLAG, !getFlag(FLAG));
 		redirectTerminalRedirectedDialog();
 	}
 	

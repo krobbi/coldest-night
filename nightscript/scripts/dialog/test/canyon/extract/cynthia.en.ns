@@ -2,7 +2,7 @@
 # Cynthia Introduction
 # Dialog shown at end of demo.
 
-define pester_count test.pester_count
+define pester_count = flag."test/pester_count"
 
 if IS_REPEAT {
 	exit

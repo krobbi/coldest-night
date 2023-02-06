@@ -13,8 +13,7 @@ enum {
 var identifier: String
 var type: int
 var int_value: int = 0
-var namespace_value: String = ""
-var key_value: String = ""
+var string_value: String = ""
 
 # Constructor. Sets the code generator symbol's identifier and type:
 func _init(identifier_val: String, type_val: int) -> void:

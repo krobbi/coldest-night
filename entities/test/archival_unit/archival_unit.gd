@@ -4,6 +4,8 @@ extends Area2D
 # An archival unit is a collectable test entity that is used to provide a win
 # condition for the minimum viable product demo.
 
+const FLAG: String = "test/area_bx/archival_unit_count"
+
 var _is_collected: bool = false
 
 # Run when the archival unit finishes entering the scene tree. Play the archival
@@ -20,7 +22,6 @@ func _on_area_entered(_area: Area2D) -> void:
 	
 	_is_collected = true
 	var save_data: SaveData = SaveManager.get_working_data()
-	save_data.set_flag(
-			"test", "archival_unit_count", save_data.get_flag("test", "archival_unit_count") + 1)
+	save_data.set_flag(FLAG, save_data.get_flag(FLAG) + 1)
 	EventBus.emit_floating_text_display_request("FLOATING_TEXT.TEST.ARCHIVAL_UNIT", position)
 	queue_free()

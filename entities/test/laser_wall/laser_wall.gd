@@ -11,8 +11,7 @@ enum AppearanceCondition {ALWAYS, NEVER, RELEASE, DEBUG, EQ, NE, GT, GE, LT, LE}
 
 export(AppearanceCondition) var appearance_condition: int = AppearanceCondition.ALWAYS
 export(Vector2) var extents: Vector2 = Vector2(64.0, 0.0)
-export(String) var flag_namespace: String = ""
-export(String) var flag_key: String
+export(String) var flag: String
 export(int) var compare_value: int
 
 var _save_data: SaveData = SaveManager.get_working_data()
@@ -38,7 +37,7 @@ func _ready() -> void:
 	line.points[0] = a
 	line.points[1] = b
 	
-	if _eval_appearance_condition(_save_data.get_flag(flag_namespace, flag_key)):
+	if _eval_appearance_condition(_save_data.get_flag(flag)):
 		show_wall()
 	else:
 		hide_wall()
@@ -95,8 +94,8 @@ func _eval_appearance_condition(value: int) -> bool:
 
 
 # Run when a flag is changed. Update whether the laser wall is shown.
-func _on_flag_changed(namespace: String, key: String, value: int) -> void:
-	if namespace != flag_namespace or key != flag_key:
+func _on_flag_changed(changed_flag: String, value: int) -> void:
+	if changed_flag != flag:
 		return
 	
 	if _eval_appearance_condition(value):

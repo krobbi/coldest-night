@@ -128,13 +128,11 @@ class NightScriptVirtualMachine extends Reference:
 				var offset: int = stack.pop_back()
 				stack[frame_pointer + offset] = stack[-1]
 			LOAD_FLAG:
-				var key: String = stack.pop_back()
-				var namespace: String = stack.pop_back()
-				stack.push_back(SaveManager.get_working_data().get_flag(namespace, key))
+				var flag: String = stack.pop_back()
+				stack.push_back(SaveManager.get_working_data().get_flag(flag))
 			STORE_FLAG:
-				var key: String = stack.pop_back()
-				var namespace: String = stack.pop_back()
-				SaveManager.get_working_data().set_flag(namespace, key, stack[-1])
+				var flag: String = stack.pop_back()
+				SaveManager.get_working_data().set_flag(flag, stack[-1])
 			UNARY_NEGATE:
 				stack.push_back(-stack.pop_back())
 			UNARY_NOT:
@@ -479,10 +477,10 @@ func _push_thread(program_key: String, thread_index: int) -> void:
 	if _is_caching and not _program_cache.has(program_key):
 		_program_cache[program_key] = bytecode
 	
+	var flag: String = "nightscript/is_repeat/%s" % program_key
 	var vm: NightScriptVirtualMachine = NightScriptVirtualMachine.new(
-			get_tree(),
-			SaveManager.get_working_data().get_flag("ns_repeat", program_key) != 0, bytecode)
-	SaveManager.get_working_data().set_flag("ns_repeat", program_key, 1)
+			get_tree(), SaveManager.get_working_data().get_flag(flag) != 0, bytecode)
+	SaveManager.get_working_data().set_flag(flag, 1)
 	
 	if vm.connect("push_machine", self, "_push_thread", [thread_index]) != OK:
 		if vm.is_connected("push_machine", self, "_push_thread"):

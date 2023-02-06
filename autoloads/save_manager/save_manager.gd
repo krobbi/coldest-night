@@ -175,14 +175,7 @@ func _validate_save_data_json(reader: JSONReader) -> void:
 		reader.invalidate()
 		return
 	
-	for namespace in reader.get_data().flags:
-		if(
-				namespace.empty() or "." in namespace
-				or not reader.has_dictionary("flags.%s" % namespace)):
+	for flag in reader.get_data().flags:
+		if flag.empty() or "." in flag or not reader.has_int("flags.%s" % flag):
 			reader.invalidate()
 			return
-		
-		for key in reader.get_data().flags[namespace]:
-			if key.empty() or "." in key or not reader.has_int("flags.%s.%s" % [namespace, key]):
-				reader.invalidate()
-				return

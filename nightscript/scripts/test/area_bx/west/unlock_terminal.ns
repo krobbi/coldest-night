@@ -4,24 +4,24 @@
 
 include "unlock_terminal_dialog";
 
-const FLAG = "west_unlocked";
+const FLAG = "test/area_bx/west/is_annex_unlocked";
 
 freeze();
 show();
 
 menu {
-	if(getFlag("test", FLAG)){
+	if(getFlag(FLAG)){
 		unlockTerminalLockPromptDialog();
 		
 		option(unlockTerminalGetLockOption()){
-			setFlag("test", FLAG, 0);
+			setFlag(FLAG, 0);
 			unlockTerminalLockedDialog();
 		}
 	} else {
 		unlockTerminalUnlockPromptDialog();
 		
 		option(unlockTerminalGetUnlockOption()){
-			setFlag("test", FLAG, 1);
+			setFlag(FLAG, 1);
 			unlockTerminalUnlockedDialog();
 		}
 	}

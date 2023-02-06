@@ -5,8 +5,9 @@
 freeze();
 show();
 
-const VALUE = getFlag("v3_test", "counter") + 1;
-setFlag("v3_test", "counter", VALUE);
+const FLAG = "nightscript/v3/test/counter";
+const VALUE = getFlag(FLAG) + 1;
+setFlag(FLAG, VALUE);
 
 say(format("Counter: {0}", VALUE));
 

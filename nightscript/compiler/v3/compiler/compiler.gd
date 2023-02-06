@@ -150,7 +150,7 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("face", "make_actor_face_direction", 2)
 	scope_stack.define_intrinsic("format", "*visit_format_intrinsic_call_expr", -1)
 	scope_stack.define_intrinsic("freeze", "make_freeze_player", 0)
-	scope_stack.define_intrinsic("getFlag", "=make_load_flag", 2)
+	scope_stack.define_intrinsic("getFlag", "=make_load_flag", 1)
 	scope_stack.define_intrinsic("hide", "make_hide_dialog", 0)
 	scope_stack.define_intrinsic("isRepeat", "=make_push_is_repeat", 0)
 	scope_stack.define_intrinsic("name", "*visit_name_intrinsic_call_expr", -1)
@@ -160,7 +160,7 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("runPaths", "make_run_actor_paths", 0)
 	scope_stack.define_intrinsic("save", "make_save_game", 0)
 	scope_stack.define_intrinsic("say", "make_display_dialog_message", 1)
-	scope_stack.define_intrinsic("setFlag", "*visit_set_flag_intrinsic_call_expr", 3)
+	scope_stack.define_intrinsic("setFlag", "*visit_set_flag_intrinsic_call_expr", 2)
 	scope_stack.define_intrinsic("show", "make_show_dialog", 0)
 	scope_stack.define_intrinsic("sleep", "make_sleep", 1)
 	scope_stack.define_intrinsic("unfreeze", "make_unfreeze_player", 0)
@@ -788,9 +788,9 @@ func visit_name_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 
 # Visit a call expression AST node with the set flag intrinsic.
 func visit_set_flag_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
-	if call_expr.argument_exprs.size() != 3:
+	if call_expr.argument_exprs.size() != 2:
 		logger.log_error(
-				"`%s` expects 3 arguments, got %d!"
+				"`%s` expects 2 arguments, got %d!"
 				% [call_expr.callee_expr.name, call_expr.argument_exprs.size()],
 				call_expr.span)
 		
@@ -801,9 +801,8 @@ func visit_set_flag_intrinsic_call_expr(call_expr: CallExprASTNode) -> void:
 		code.make_push_int(0)
 		return
 	
-	visit_node(call_expr.argument_exprs[2])
-	visit_node(call_expr.argument_exprs[0])
 	visit_node(call_expr.argument_exprs[1])
+	visit_node(call_expr.argument_exprs[0])
 	code.make_store_flag()
 
 

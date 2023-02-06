@@ -538,12 +538,14 @@ func parse_expr_primary() -> ASTNode:
 		var node: ASTNode = make_string(ASTNode.IDENTIFIER, previous.string_value)
 		
 		if accept(Token.DOT):
-			if not accept(Token.IDENTIFIER):
-				return make_error("Missing key in flag with namespace '%s'!" % node.string_value)
+			if node.string_value != "flag":
+				return make_error("Flags must begin with 'flag.'!")
+			
+			if not accept(Token.LITERAL_STRING):
+				return make_error("Missing flag!" % node.string_value)
 			
 			node = make_binary(
-					ASTNode.FLAG, node, make_string(ASTNode.IDENTIFIER, previous.string_value)
-			)
+					ASTNode.FLAG, node, make_string(ASTNode.STRING, previous.string_value))
 		
 		return node
 	elif accept(Token.LITERAL_INT):

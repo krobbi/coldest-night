@@ -226,19 +226,9 @@ func make_load_flag() -> void:
 	make_op(IROp.LOAD_FLAG)
 
 
-# Make a load flag namespace key IR operation in the current label.
-func make_load_flag_namespace_key(namespace: String, key: String) -> void:
-	make_op_str_str(IROp.LOAD_FLAG_NAMESPACE_KEY, namespace, key)
-
-
 # Make a store flag IR operation in the current label.
 func make_store_flag() -> void:
 	make_op(IROp.STORE_FLAG)
-
-
-# Make a store flag namespace key IR operation in the current label.
-func make_store_flag_namespace_key(namespace: String, key: String) -> void:
-	make_op_str_str(IROp.STORE_FLAG_NAMESPACE_KEY, namespace, key)
 
 
 # Make a unary negate IR operation in the current label.

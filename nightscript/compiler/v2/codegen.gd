@@ -106,12 +106,10 @@ func declare_int(identifier: String, value: int) -> void:
 	scopes[-1].symbols[identifier] = symbol
 
 
-# Declares a flag symbol in the current scope from its identifier, namespace,
-# and key:
-func declare_flag(identifier: String, namespace: String, key: String) -> void:
+# Declares a flag symbol in the current scope from its identifier and flag:
+func declare_flag(identifier: String, flag: String) -> void:
 	var symbol: CodegenSymbol = CodegenSymbol.new(identifier, CodegenSymbol.FLAG)
-	symbol.namespace_value = namespace
-	symbol.key_value = key
+	symbol.string_value = flag
 	scopes[-1].symbols[identifier] = symbol
 
 
@@ -331,7 +329,8 @@ func visit_identifier(node: ASTNode) -> void:
 		CodegenSymbol.INT:
 			code.make_push_int(symbol.int_value)
 		CodegenSymbol.FLAG:
-			code.make_load_flag_namespace_key(symbol.namespace_value, symbol.key_value)
+			code.make_push_string(symbol.string_value)
+			code.make_load_flag()
 		_:
 			err("Codegen bug: Unimplemented visitor for symbol type '%d'!" % symbol.type)
 			code.make_push_int(0) # Preserve stack size.
@@ -339,7 +338,8 @@ func visit_identifier(node: ASTNode) -> void:
 
 # Visits and evaluates a flag AST node:
 func visit_flag(node: ASTNode) -> void:
-	code.make_load_flag_namespace_key(node.children[0].string_value, node.children[1].string_value)
+	code.make_push_string(node.children[1].string_value)
+	code.make_load_flag()
 
 
 # Visits and evaluates an int AST node:
@@ -519,9 +519,7 @@ func visit_decl_stmt(node: ASTNode) -> void:
 	match node.int_value:
 		ASTNode.DECL_DEFINE:
 			if expr.type == ASTNode.FLAG:
-				declare_flag(
-						identifier, expr.children[0].string_value, expr.children[1].string_value
-				)
+				declare_flag(identifier, expr.children[1].string_value)
 				return
 			
 			expr = fold_expression(expr)
@@ -711,8 +709,8 @@ func visit_assign_expr(node: ASTNode) -> void:
 	
 	match target.type:
 		ASTNode.FLAG:
-			code.make_store_flag_namespace_key(
-					target.children[0].string_value, target.children[1].string_value)
+			code.make_push_string(target.children[1].string_value)
+			code.make_store_flag()
 		ASTNode.IDENTIFIER:
 			var symbol: CodegenSymbol = get_symbol(target.string_value)
 			
@@ -723,6 +721,7 @@ func visit_assign_expr(node: ASTNode) -> void:
 				)
 				return
 			
-			code.make_store_flag_namespace_key(symbol.namespace_value, symbol.key_value)
+			code.make_push_string(symbol.string_value)
+			code.make_store_flag()
 		_:
 			err("Cannot assign to a non-variable target!")
