@@ -18,7 +18,6 @@ const KEYWORDS: Dictionary = {
 	"break": Token.KEYWORD_BREAK,
 	"const": Token.KEYWORD_CONST,
 	"continue": Token.KEYWORD_CONTINUE,
-	"do": Token.KEYWORD_DO,
 	"else": Token.KEYWORD_ELSE,
 	"func": Token.KEYWORD_FUNC,
 	"if": Token.KEYWORD_IF,

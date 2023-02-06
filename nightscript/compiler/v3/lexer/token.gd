@@ -16,7 +16,6 @@ enum {
 	KEYWORD_BREAK, # `break`.
 	KEYWORD_CONST, # `const`.
 	KEYWORD_CONTINUE, # `continue`.
-	KEYWORD_DO, # `do`.
 	KEYWORD_ELSE, # `else`.
 	KEYWORD_FUNC, # `func`.
 	KEYWORD_IF, # `if`.
@@ -94,8 +93,6 @@ static func get_name(token_type: int) -> String:
 			return "`const`"
 		KEYWORD_CONTINUE:
 			return "`continue`"
-		KEYWORD_DO:
-			return "`do`"
 		KEYWORD_ELSE:
 			return "`else`"
 		KEYWORD_FUNC:

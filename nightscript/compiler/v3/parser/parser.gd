@@ -12,7 +12,6 @@ const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
 const ConstStmtASTNode: GDScript = preload("../ast/const_stmt_ast_node.gd")
 const ContinueStmtASTNode: GDScript = preload("../ast/continue_stmt_ast_node.gd")
 const DeclStmtASTNode: GDScript = preload("../ast/decl_stmt_ast_node.gd")
-const DoStmtASTNode: GDScript = preload("../ast/do_stmt_ast_node.gd")
 const ErrorASTNode: GDScript = preload("../ast/error_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const ExprStmtASTNode: GDScript = preload("../ast/expr_stmt_ast_node.gd")
@@ -208,8 +207,6 @@ func parse_stmt() -> ASTNode:
 		return abort_span(parse_stmt_if())
 	elif next.type == Token.KEYWORD_WHILE:
 		return abort_span(parse_stmt_while())
-	elif next.type == Token.KEYWORD_DO:
-		return abort_span(parse_stmt_do())
 	elif next.type == Token.KEYWORD_MENU:
 		return abort_span(parse_stmt_menu())
 	elif next.type == Token.KEYWORD_OPTION:
@@ -339,25 +336,6 @@ func parse_stmt_while() -> ASTNode:
 		return abort_span(stmt)
 	
 	return end_span(WhileStmtASTNode.new(expr, stmt))
-
-
-# Parse a do statement.
-func parse_stmt_do() -> ASTNode:
-	begin_span()
-	expect(Token.KEYWORD_DO)
-	var stmt: ASTNode = parse_stmt()
-	
-	if not stmt is StmtASTNode:
-		return abort_span(stmt)
-	
-	expect(Token.KEYWORD_WHILE)
-	var expr: ASTNode = parse_expr()
-	
-	if not expr is ExprASTNode:
-		return abort_span(expr)
-	
-	expect_eos()
-	return end_span(DoStmtASTNode.new(stmt, expr))
 
 
 # Parse a menu statement.

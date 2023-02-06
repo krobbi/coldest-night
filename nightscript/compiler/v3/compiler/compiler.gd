@@ -12,7 +12,6 @@ const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
 const ConstStmtASTNode: GDScript = preload("../ast/const_stmt_ast_node.gd")
 const ContinueStmtASTNode: GDScript = preload("../ast/continue_stmt_ast_node.gd")
 const DeclStmtASTNode: GDScript = preload("../ast/decl_stmt_ast_node.gd")
-const DoStmtASTNode: GDScript = preload("../ast/do_stmt_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const ExprStmtASTNode: GDScript = preload("../ast/expr_stmt_ast_node.gd")
 const Folder: GDScript = preload("folder.gd")
@@ -104,8 +103,6 @@ func visit_node(node: ASTNode) -> void:
 		visit_if_else_stmt(node)
 	elif node is WhileStmtASTNode:
 		visit_while_stmt(node)
-	elif node is DoStmtASTNode:
-		visit_do_stmt(node)
 	elif node is MenuStmtASTNode:
 		visit_menu_stmt(node)
 	elif node is OptionStmtASTNode:
@@ -387,55 +384,6 @@ func visit_while_stmt(while_stmt: WhileStmtASTNode) -> void:
 	code.set_label(end_label)
 
 
-# Visit a do statement AST node.
-func visit_do_stmt(do_stmt: DoStmtASTNode) -> void:
-	var expr: ExprASTNode = folder.fold_expr(do_stmt.expr)
-	
-	if expr is IntExprASTNode:
-		if expr.value != 0:
-			var end_label: String = code.insert_unique_label("do_forever_end")
-			var body_label: String = code.insert_unique_label("do_forever")
-			
-			scope_stack.push()
-			code.set_label(body_label)
-			scope_stack.define_label("break", end_label)
-			scope_stack.define_label("continue", body_label)
-			visit_node(do_stmt.stmt)
-			scope_stack.pop()
-			code.make_jump_label(body_label)
-			
-			code.set_label(end_label)
-		else:
-			var end_label: String = code.insert_unique_label("do_once_end")
-			
-			scope_stack.push()
-			scope_stack.define_label("break", end_label)
-			scope_stack.define_label("continue", end_label)
-			visit_node(do_stmt.stmt)
-			scope_stack.pop()
-			
-			code.set_label(end_label)
-		
-		return
-	
-	var end_label: String = code.insert_unique_label("do_end")
-	var condition_label: String = code.insert_unique_label("do_condition")
-	var body_label: String = code.insert_unique_label("do_body")
-	
-	scope_stack.push()
-	scope_stack.define_label("break", end_label)
-	scope_stack.define_label("continue", condition_label)
-	code.set_label(body_label)
-	visit_node(do_stmt.stmt)
-	scope_stack.pop()
-	
-	code.set_label(condition_label)
-	visit_node(expr)
-	code.make_jump_not_zero_label(body_label)
-	
-	code.set_label(end_label)
-
-
 # Visit a menu statement AST node.
 func visit_menu_stmt(menu_stmt: MenuStmtASTNode) -> void:
 	if scope_stack.has_label("menu"):
@@ -489,7 +437,7 @@ func visit_break_stmt(break_stmt: BreakStmtASTNode) -> void:
 	if scope_stack.has_label("break"):
 		scope_stack.jump_to_label("break")
 	else:
-		logger.log_error("Used `break` outside of a breakable statement!", break_stmt.span)
+		logger.log_error("Cannot use `break` outside of loop!", break_stmt.span)
 
 
 # Visit a continue statement AST node.
@@ -497,7 +445,7 @@ func visit_continue_stmt(continue_stmt: ContinueStmtASTNode) -> void:
 	if scope_stack.has_label("continue"):
 		scope_stack.jump_to_label("continue")
 	else:
-		logger.log_error("Used `continue` outside of a continuable statement!", continue_stmt.span)
+		logger.log_error("Cannot use `continue` outside of a loop!", continue_stmt.span)
 
 
 # Visit a constant declaration statement AST node.
