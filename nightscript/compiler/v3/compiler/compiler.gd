@@ -448,7 +448,7 @@ func visit_continue_stmt(continue_stmt: ContinueStmtASTNode) -> void:
 		logger.log_error("Cannot use `continue` outside of a loop!", continue_stmt.span)
 
 
-# Visit a constant declaration statement AST node.
+# Visit a constant statement AST node.
 func visit_const_stmt(const_stmt: ConstStmtASTNode) -> void:
 	var symbol: Symbol = scope_stack.get_symbol(const_stmt.identifier_expr.name)
 	var value_expr: ExprASTNode = folder.fold_expr(const_stmt.value_expr)

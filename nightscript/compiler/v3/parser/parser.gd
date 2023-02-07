@@ -402,7 +402,7 @@ func parse_decl_stmt(operator: int) -> ASTNode:
 	return end_span(DeclStmtASTNode.new(operator, identifier_expr, value_expr))
 
 
-# Parse a constant declaration statement.
+# Parse a constant statement.
 func parse_stmt_const() -> ASTNode:
 	begin_span()
 	expect(Token.KEYWORD_CONST)
