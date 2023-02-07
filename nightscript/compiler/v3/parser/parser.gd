@@ -11,7 +11,6 @@ const BreakStmtASTNode: GDScript = preload("../ast/break_stmt_ast_node.gd")
 const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
 const ConstStmtASTNode: GDScript = preload("../ast/const_stmt_ast_node.gd")
 const ContinueStmtASTNode: GDScript = preload("../ast/continue_stmt_ast_node.gd")
-const DeclStmtASTNode: GDScript = preload("../ast/decl_stmt_ast_node.gd")
 const ErrorASTNode: GDScript = preload("../ast/error_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const ExprStmtASTNode: GDScript = preload("../ast/expr_stmt_ast_node.gd")
@@ -33,6 +32,8 @@ const StmtASTNode: GDScript = preload("../ast/stmt_ast_node.gd")
 const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
 const Token: GDScript = preload("../lexer/token.gd")
 const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
+const VarExprStmtASTNode: GDScript = preload("../ast/var_expr_stmt_ast_node.gd")
+const VarStmtASTNode: GDScript = preload("../ast/var_stmt_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
 var logger: Logger
@@ -383,25 +384,6 @@ func parse_stmt_continue() -> ASTNode:
 	return end_span(ContinueStmtASTNode.new())
 
 
-# Parse a generic declaration statement.
-func parse_decl_stmt(operator: int) -> ASTNode:
-	begin_span()
-	expect(operator)
-	var identifier_expr: ASTNode = parse_expr_primary_identifier()
-	
-	if not identifier_expr is IdentifierExprASTNode:
-		return abort_span(identifier_expr)
-	
-	expect(Token.EQUALS)
-	var value_expr: ASTNode = parse_expr()
-	
-	if not value_expr is ExprASTNode:
-		return abort_span(value_expr)
-	
-	expect_eos()
-	return end_span(DeclStmtASTNode.new(operator, identifier_expr, value_expr))
-
-
 # Parse a constant statement.
 func parse_stmt_const() -> ASTNode:
 	begin_span()
@@ -423,7 +405,24 @@ func parse_stmt_const() -> ASTNode:
 
 # Parse a variable statement.
 func parse_stmt_var() -> ASTNode:
-	return parse_decl_stmt(Token.KEYWORD_VAR)
+	begin_span()
+	expect(Token.KEYWORD_VAR)
+	var identifier_expr: ASTNode = parse_expr_primary_identifier()
+	
+	if not identifier_expr is IdentifierExprASTNode:
+		return abort_span(identifier_expr)
+	
+	if accept_eos():
+		return end_span(VarStmtASTNode.new(identifier_expr))
+	
+	expect(Token.EQUALS)
+	var value_expr: ASTNode = parse_expr()
+	
+	if not value_expr is ExprASTNode:
+		return abort_span(value_expr)
+	
+	expect_eos()
+	return end_span(VarExprStmtASTNode.new(identifier_expr, value_expr))
 
 
 # Parse a return statement.

@@ -2,16 +2,19 @@
 # FizzBuzz Test
 # Run FizzBuzz up to a given number.
 
-freeze();
-show();
+const FIZZ = 3;
+const BUZZ = 5;
 
 const OPTION_A = 20;
 const OPTION_B = 50;
 const OPTION_C = 100;
 
-var max = OPTION_A;
+freeze();
+show();
 
 say("Run FizzBuzz up to...");
+
+var max;
 
 menu {
 	option format(OPTION_A) max = OPTION_A;
@@ -21,13 +24,9 @@ menu {
 
 say(format("Will run FizzBuzz up to {0}!", max));
 
-const FIZZ = 3;
-const BUZZ = 5;
-
+var value = 0;
 var next_fizz = FIZZ;
 var next_buzz = BUZZ;
-
-var value = 0;
 
 while value < max {
 	value = value + 1;

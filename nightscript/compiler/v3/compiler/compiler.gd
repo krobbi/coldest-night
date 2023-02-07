@@ -11,7 +11,6 @@ const BreakStmtASTNode: GDScript = preload("../ast/break_stmt_ast_node.gd")
 const CallExprASTNode: GDScript = preload("../ast/call_expr_ast_node.gd")
 const ConstStmtASTNode: GDScript = preload("../ast/const_stmt_ast_node.gd")
 const ContinueStmtASTNode: GDScript = preload("../ast/continue_stmt_ast_node.gd")
-const DeclStmtASTNode: GDScript = preload("../ast/decl_stmt_ast_node.gd")
 const ExprASTNode: GDScript = preload("../ast/expr_ast_node.gd")
 const ExprStmtASTNode: GDScript = preload("../ast/expr_stmt_ast_node.gd")
 const Folder: GDScript = preload("folder.gd")
@@ -33,6 +32,8 @@ const StrExprASTNode: GDScript = preload("../ast/str_expr_ast_node.gd")
 const Symbol: GDScript = preload("symbol.gd")
 const Token: GDScript = preload("../lexer/token.gd")
 const UnExprASTNode: GDScript = preload("../ast/un_expr_ast_node.gd")
+const VarExprStmtASTNode: GDScript = preload("../ast/var_expr_stmt_ast_node.gd")
+const VarStmtASTNode: GDScript = preload("../ast/var_stmt_ast_node.gd")
 const WhileStmtASTNode: GDScript = preload("../ast/while_stmt_ast_node.gd")
 
 var code: IRCode
@@ -113,8 +114,10 @@ func visit_node(node: ASTNode) -> void:
 		visit_continue_stmt(node)
 	elif node is ConstStmtASTNode:
 		visit_const_stmt(node)
-	elif node is DeclStmtASTNode:
-		visit_decl_stmt(node)
+	elif node is VarStmtASTNode:
+		visit_var_stmt(node)
+	elif node is VarExprStmtASTNode:
+		visit_var_expr_stmt(node)
 	elif node is ReturnStmtASTNode:
 		visit_return_stmt(node)
 	elif node is ReturnExprStmtASTNode:
@@ -472,48 +475,33 @@ func visit_const_stmt(const_stmt: ConstStmtASTNode) -> void:
 		code.make_drop()
 
 
-# Visit a declaration statement AST node.
-func visit_decl_stmt(decl_stmt: DeclStmtASTNode) -> void:
-	if scope_stack.has_label("menu"):
-		# A local declared between a menu statement and its option statements
-		# would be freed before an option is called, causing wildly buggy
-		# behavior, at least with this stack-based single-pass compiler. In some
-		# cases it may be possible to make some adjustments to allow this, but
-		# the most robust and consistent option is to just disable all
-		# declarations within this scope.
-		logger.log_error("Cannot declare a value directly inside of a menu!", decl_stmt.span)
-		return
-	
-	var symbol: Symbol = scope_stack.get_symbol(decl_stmt.identifier_expr.name)
-	var value_expr: ExprASTNode = folder.fold_expr(decl_stmt.value_expr)
+# Visit a variable statement AST node.
+func visit_var_stmt(var_stmt: VarStmtASTNode) -> void:
+	var symbol: Symbol = scope_stack.get_symbol(var_stmt.expr.name)
 	
 	if symbol.access != Symbol.UNDEFINED:
 		logger.log_error(
 				"`%s` is already defined in the current scope!" % symbol.identifier,
-				decl_stmt.identifier_expr.span)
-		visit_node(value_expr)
+				var_stmt.expr.span)
+		return
+	
+	code.make_push_int(0)
+	scope_stack.define_local(symbol.identifier, true)
+
+
+# Visit a variable expression statement AST node.
+func visit_var_expr_stmt(var_expr_stmt: VarExprStmtASTNode) -> void:
+	var symbol: Symbol = scope_stack.get_symbol(var_expr_stmt.identifier_expr.name)
+	visit_node(folder.fold_expr(var_expr_stmt.value_expr))
+	
+	if symbol.access != Symbol.UNDEFINED:
+		logger.log_error(
+				"`%s` is already defined in the current scope!" % symbol.identifier,
+				var_expr_stmt.identifier_expr.span)
 		code.make_drop()
 		return
 	
-	if decl_stmt.operator == Token.KEYWORD_CONST:
-		if value_expr is IntExprASTNode:
-			scope_stack.define_literal_int(symbol.identifier, value_expr.value, true)
-			return
-		elif value_expr is StrExprASTNode:
-			scope_stack.define_literal_str(symbol.identifier, value_expr.value, true)
-			return
-		
-		visit_node(value_expr)
-		scope_stack.define_local(symbol.identifier, false)
-	elif decl_stmt.operator == Token.KEYWORD_VAR:
-		visit_node(value_expr)
-		scope_stack.define_local(symbol.identifier, true)
-	else:
-		logger.log_error(
-				"Bug: No declaration for operator %s!" % Token.get_name(decl_stmt.operator),
-				decl_stmt.span)
-		visit_node(value_expr)
-		code.make_drop()
+	scope_stack.define_local(symbol.identifier, true)
 
 
 # Visit a return statement AST node.

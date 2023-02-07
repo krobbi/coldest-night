@@ -23,7 +23,7 @@ stmt_option = "option", expr, stmt ;
 stmt_break = "break", eos ;
 stmt_continue = "continue", eos ;
 stmt_const = "const", expr_primary_identifier, "=", expr, eos ;
-stmt_var = "var", expr_primary_identifier, "=", expr, eos ;
+stmt_var = "var", expr_primary_identifier, [ "=", expr ], eos ;
 stmt_return = "return", [ expr ], eos ;
 stmt_expr = expr, eos ;
 
