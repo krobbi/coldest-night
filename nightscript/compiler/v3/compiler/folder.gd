@@ -50,7 +50,7 @@ func fold_un_expr(un_expr: UnExprASTNode) -> ExprASTNode:
 	if not child_expr is IntExprASTNode:
 		return copy_span(un_expr, UnExprASTNode.new(un_expr.operator, child_expr))
 	
-	if un_expr.operator == Token.BANG:
+	if un_expr.operator == Token.KEYWORD_NOT:
 		return copy_span(un_expr, IntExprASTNode.new(int(child_expr.value == 0)))
 	elif un_expr.operator == Token.PLUS:
 		return copy_span(un_expr, child_expr)
@@ -74,10 +74,12 @@ func fold_bin_expr(bin_expr: BinExprASTNode) -> ExprASTNode:
 	if not lhs_expr is IntExprASTNode or not rhs_expr is IntExprASTNode:
 		return copy_span(bin_expr, BinExprASTNode.new(lhs_expr, bin_expr.operator, rhs_expr))
 	
-	if bin_expr.operator == Token.BANG_EQUALS:
-		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value != rhs_expr.value)))
-	elif bin_expr.operator == Token.AMPERSAND_AMPERSAND:
+	if bin_expr.operator == Token.KEYWORD_AND:
 		return copy_span(bin_expr, rhs_expr if lhs_expr.value != 0 else lhs_expr)
+	elif bin_expr.operator == Token.KEYWORD_OR:
+		return copy_span(bin_expr, lhs_expr if lhs_expr.value != 0 else rhs_expr)
+	elif bin_expr.operator == Token.BANG_EQUALS:
+		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value != rhs_expr.value)))
 	elif bin_expr.operator == Token.STAR:
 		return copy_span(bin_expr, IntExprASTNode.new(lhs_expr.value * rhs_expr.value))
 	elif bin_expr.operator == Token.PLUS:
@@ -94,8 +96,6 @@ func fold_bin_expr(bin_expr: BinExprASTNode) -> ExprASTNode:
 		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value > rhs_expr.value)))
 	elif bin_expr.operator == Token.GREATER_EQUALS:
 		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value >= rhs_expr.value)))
-	elif bin_expr.operator == Token.PIPE_PIPE:
-		return copy_span(bin_expr, lhs_expr if lhs_expr.value != 0 else rhs_expr)
 	
 	return copy_span(bin_expr, BinExprASTNode.new(lhs_expr, bin_expr.operator, rhs_expr))
 

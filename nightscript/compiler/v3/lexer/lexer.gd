@@ -15,6 +15,7 @@ const DEC_DIGITS: String = "0123456789"
 const HEX_DIGITS: String = "0123456789ABCDEFabcdef"
 const IDENTIFIER_CHARS: String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 const KEYWORDS: Dictionary = {
+	"and": Token.KEYWORD_AND,
 	"break": Token.KEYWORD_BREAK,
 	"const": Token.KEYWORD_CONST,
 	"continue": Token.KEYWORD_CONTINUE,
@@ -23,16 +24,16 @@ const KEYWORDS: Dictionary = {
 	"if": Token.KEYWORD_IF,
 	"include": Token.KEYWORD_INCLUDE,
 	"menu": Token.KEYWORD_MENU,
+	"not": Token.KEYWORD_NOT,
 	"option": Token.KEYWORD_OPTION,
+	"or": Token.KEYWORD_OR,
 	"return": Token.KEYWORD_RETURN,
 	"var": Token.KEYWORD_VAR,
 	"while": Token.KEYWORD_WHILE,
 }
 
 const OPERATORS: Dictionary = {
-	"!": Token.BANG,
 	"!=": Token.BANG_EQUALS,
-	"&&": Token.AMPERSAND_AMPERSAND,
 	"(": Token.PARENTHESIS_OPEN,
 	")": Token.PARENTHESIS_CLOSE,
 	"*": Token.STAR,
@@ -47,7 +48,6 @@ const OPERATORS: Dictionary = {
 	">": Token.GREATER,
 	">=": Token.GREATER_EQUALS,
 	"{": Token.BRACE_OPEN,
-	"||": Token.PIPE_PIPE,
 	"}": Token.BRACE_CLOSE,
 }
 

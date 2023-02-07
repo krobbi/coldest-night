@@ -526,25 +526,25 @@ func parse_expr_assignment() -> ASTNode:
 
 # Parse a logical or expression.
 func parse_expr_logical_or() -> ASTNode:
-	return parse_expr_bin("parse_expr_logical_and", [Token.PIPE_PIPE])
+	return parse_expr_bin("parse_expr_logical_and", [Token.KEYWORD_OR])
 
 
 # Parse a logical and expression.
 func parse_expr_logical_and() -> ASTNode:
-	return parse_expr_bin("parse_expr_not", [Token.AMPERSAND_AMPERSAND])
+	return parse_expr_bin("parse_expr_not", [Token.KEYWORD_AND])
 
 
 # Parse a not expression.
 func parse_expr_not() -> ASTNode:
 	begin_span()
 	
-	if accept(Token.BANG):
+	if accept(Token.KEYWORD_NOT):
 		var expr: ASTNode = parse_expr_not()
 		
 		if not expr is ExprASTNode:
 			return abort_span(expr)
 		
-		return end_span(UnExprASTNode.new(Token.BANG, expr))
+		return end_span(UnExprASTNode.new(Token.KEYWORD_NOT, expr))
 	
 	return abort_span(parse_expr_equality())
 

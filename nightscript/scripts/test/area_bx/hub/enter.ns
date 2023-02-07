@@ -15,13 +15,13 @@ const NORTH_TOTAL = 10;
 const WEST_TOTAL = NORTH_TOTAL + 6 + 1;
 
 func has_dialog(flag, count){
-	if !get_flag(flag) && get_flag(COUNT_FLAG) == count {
+	if not get_flag(flag) and get_flag(COUNT_FLAG) == count {
 		freeze();
 		show();
 		return set_flag(flag, 1);
+	} else {
+		return 0;
 	}
-	
-	return 0;
 }
 
 if has_dialog(TERMINAL_FLAG, get_flag(COUNT_FLAG)) {

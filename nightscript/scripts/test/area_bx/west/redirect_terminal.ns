@@ -13,7 +13,7 @@ main_dialog();
 
 menu {
 	option get_redirect_option() {
-		set_flag(FLAG, !get_flag(FLAG));
+		set_flag(FLAG, not get_flag(FLAG));
 		redirected_dialog();
 	}
 	

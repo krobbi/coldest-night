@@ -546,7 +546,7 @@ func visit_expr_stmt(expr_stmt: ExprStmtASTNode) -> void:
 func visit_un_expr(un_expr: UnExprASTNode) -> void:
 	visit_node(un_expr.expr)
 	
-	if un_expr.operator == Token.BANG:
+	if un_expr.operator == Token.KEYWORD_NOT:
 		code.make_unary_not()
 	elif un_expr.operator == Token.PLUS:
 		pass # Unary plus intentionally does nothing, this is not a bug.
@@ -560,12 +560,22 @@ func visit_un_expr(un_expr: UnExprASTNode) -> void:
 
 # Visit a binary expression AST node.
 func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
-	if bin_expr.operator == Token.AMPERSAND_AMPERSAND:
+	if bin_expr.operator == Token.KEYWORD_AND:
 		var end_label: String = code.insert_unique_label("and_end")
 		
 		visit_node(bin_expr.lhs_expr)
 		code.make_duplicate()
 		code.make_jump_zero_label(end_label)
+		code.make_drop()
+		visit_node(bin_expr.rhs_expr)
+		
+		code.set_label(end_label)
+	elif bin_expr.operator == Token.KEYWORD_OR:
+		var end_label: String = code.insert_unique_label("or_end")
+		
+		visit_node(bin_expr.lhs_expr)
+		code.make_duplicate()
+		code.make_jump_not_zero_label(end_label)
 		code.make_drop()
 		visit_node(bin_expr.rhs_expr)
 		
@@ -596,16 +606,6 @@ func visit_bin_expr(bin_expr: BinExprASTNode) -> void:
 		else:
 			logger.log_error(
 					"Bug: No mutator for access type %d!" % symbol.access, bin_expr.lhs_expr.span)
-	elif bin_expr.operator == Token.PIPE_PIPE:
-		var end_label: String = code.insert_unique_label("or_end")
-		
-		visit_node(bin_expr.lhs_expr)
-		code.make_duplicate()
-		code.make_jump_not_zero_label(end_label)
-		code.make_drop()
-		visit_node(bin_expr.rhs_expr)
-		
-		code.set_label(end_label)
 	else:
 		visit_node(bin_expr.lhs_expr)
 		visit_node(bin_expr.rhs_expr)

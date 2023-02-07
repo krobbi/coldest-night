@@ -13,6 +13,7 @@ enum {
 	LITERAL_INT, # Integer value.
 	LITERAL_STR, # String value.
 	IDENTIFIER, # Identifier.
+	KEYWORD_AND, # `and`.
 	KEYWORD_BREAK, # `break`.
 	KEYWORD_CONST, # `const`.
 	KEYWORD_CONTINUE, # `continue`.
@@ -21,13 +22,13 @@ enum {
 	KEYWORD_IF, # `if`.
 	KEYWORD_INCLUDE, # `include`.
 	KEYWORD_MENU, # `menu`.
+	KEYWORD_NOT, # `not`.
 	KEYWORD_OPTION, # `option`.
+	KEYWORD_OR, # `or`.
 	KEYWORD_RETURN, # `return`.
 	KEYWORD_VAR, # `var`.
 	KEYWORD_WHILE, # `while`.
-	BANG, # `!`.
 	BANG_EQUALS, # `!=`.
-	AMPERSAND_AMPERSAND, # `&&`.
 	PARENTHESIS_OPEN, # `(`.
 	PARENTHESIS_CLOSE, # `)`.
 	STAR, # `*`.
@@ -42,7 +43,6 @@ enum {
 	GREATER, # `>`.
 	GREATER_EQUALS, # `>=`.
 	BRACE_OPEN, # `{`.
-	PIPE_PIPE, # `||`.
 	BRACE_CLOSE, # `}`.
 }
 
@@ -87,6 +87,8 @@ static func get_name(token_type: int) -> String:
 			return "string"
 		IDENTIFIER:
 			return "identifier"
+		KEYWORD_AND:
+			return "`and`"
 		KEYWORD_BREAK:
 			return "`break`"
 		KEYWORD_CONST:
@@ -103,20 +105,20 @@ static func get_name(token_type: int) -> String:
 			return "`include`"
 		KEYWORD_MENU:
 			return "`menu`"
+		KEYWORD_NOT:
+			return "`not`"
 		KEYWORD_OPTION:
 			return "`option`"
+		KEYWORD_OR:
+			return "`or`"
 		KEYWORD_RETURN:
 			return "`return`"
 		KEYWORD_VAR:
 			return "`var`"
 		KEYWORD_WHILE:
 			return "`while`"
-		BANG:
-			return "`!`"
 		BANG_EQUALS:
 			return "`!=`"
-		AMPERSAND_AMPERSAND:
-			return "`&&`"
 		PARENTHESIS_OPEN:
 			return "`(`"
 		PARENTHESIS_CLOSE:
@@ -145,8 +147,6 @@ static func get_name(token_type: int) -> String:
 			return "`>=`"
 		BRACE_OPEN:
 			return "`{`"
-		PIPE_PIPE:
-			return "`||`"
 		BRACE_CLOSE:
 			return "`}`"
 	
