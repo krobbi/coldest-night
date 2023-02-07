@@ -88,6 +88,20 @@ func compile_ast(root: RootASTNode) -> void:
 	code.make_sleep()
 
 
+# Log an error and return `true` if an identifier AST node is already defined in
+# the current scope. Otherwise, return `false`.
+func err_identifier_already_defined(identifier_expr: IdentifierExprASTNode) -> bool:
+	var symbol: Symbol = scope_stack.get_symbol(identifier_expr.name)
+	
+	if symbol.access == Symbol.UNDEFINED:
+		return false
+	
+	logger.log_error(
+			"`%s` is already defined in the current scope!" % symbol.identifier,
+			identifier_expr.span)
+	return true
+
+
 # Visit an AST node.
 func visit_node(node: ASTNode) -> void:
 	if node is RootASTNode:
@@ -186,25 +200,20 @@ func visit_module(module: ModuleASTNode) -> void:
 
 # Visit a function statement AST node.
 func visit_func_stmt(func_stmt: FuncStmtASTNode) -> void:
-	var symbol: Symbol = scope_stack.get_symbol(func_stmt.identifier_expr.name)
-	var parent_label = code.get_label()
-	var body_label = code.append_unique_label("func_%s" % symbol.identifier)
+	var parent_label: String = code.get_label()
+	var body_label: String = code.append_unique_label("func_%s" % func_stmt.identifier_expr.name)
 	var argument_names: Array = []
 	
 	for argument_expr in func_stmt.argument_exprs:
-		if argument_expr.name in argument_names:
-			logger.log_error(
-					"Argument `%s` is already defined for `%s`!"
-					% [argument_expr.name, symbol.identifier], argument_expr.span)
-		else:
+		if not argument_expr.name in argument_names:
 			argument_names.push_back(argument_expr.name)
+		else:
+			logger.log_error(
+					"Cannot redeclare argument `%s` for `%s`!"
+					% [argument_expr.name, func_stmt.identifier_expr.name], argument_expr.span)
 	
-	if symbol.access == Symbol.UNDEFINED:
-		scope_stack.define_func(symbol.identifier, body_label, argument_names.size())
-	else:
-		logger.log_error(
-				"`%s` is already defined in the current scope!" % symbol.identifier,
-				func_stmt.identifier_expr.span)
+	if not err_identifier_already_defined(func_stmt.identifier_expr):
+		scope_stack.define_func(func_stmt.identifier_expr.name, body_label, argument_names.size())
 	
 	scope_stack.push() # Buffer scope to clear scope.
 	code.set_label(body_label)
@@ -214,18 +223,16 @@ func visit_func_stmt(func_stmt: FuncStmtASTNode) -> void:
 	scope_stack.undefine_label("menu")
 	scope_stack.undefine_locals()
 	
-	scope_stack.push() # Argument definition scope.
+	scope_stack.push() # Function body scope.
 	
 	for argument_name in argument_names:
 		scope_stack.define_local(argument_name, true)
 	
-	scope_stack.push() # Function body scope.
 	visit_node(func_stmt.stmt)
 	code.make_push_int(0)
 	code.make_return_from_function()
-	scope_stack.pop()
+	scope_stack.pop() # End function body scope.
 	
-	scope_stack.pop() # End argument definition scope.
 	scope_stack.pop() # End buffer scope.
 	
 	code.set_label(parent_label)
@@ -243,31 +250,15 @@ func visit_block_stmt(block_stmt: BlockStmtASTNode) -> void:
 
 # Visit an if statement AST node.
 func visit_if_stmt(if_stmt: IfStmtASTNode) -> void:
+	var end_label: String = code.insert_unique_label("if_end")
 	var expr: ExprASTNode = folder.fold_expr(if_stmt.expr)
 	
 	if expr is IntExprASTNode:
-		if expr.value != 0:
-			scope_stack.push()
-			visit_node(if_stmt.stmt)
-			scope_stack.pop()
-		else:
-			var parent_label: String = code.get_label()
-			var body_label: String = code.append_unique_label("if_unreachable")
-			
-			scope_stack.push()
-			code.set_label(body_label)
-			visit_node(if_stmt.stmt)
-			scope_stack.pop()
-			code.make_halt()
-			
-			code.set_label(parent_label)
-		
-		return
-	
-	var end_label: String = code.insert_unique_label("if_end")
-	
-	visit_node(expr)
-	code.make_jump_zero_label(end_label)
+		if expr.value == 0:
+			code.make_jump_label(end_label)
+	else:
+		visit_node(expr)
+		code.make_jump_zero_label(end_label)
 	
 	scope_stack.push()
 	visit_node(if_stmt.stmt)
@@ -278,47 +269,16 @@ func visit_if_stmt(if_stmt: IfStmtASTNode) -> void:
 
 # Visit an if-else statement AST node.
 func visit_if_else_stmt(if_else_stmt: IfElseStmtASTNode) -> void:
+	var end_label: String = code.insert_unique_label("if_else_end")
+	var else_label: String = code.insert_unique_label("if_else_else")
 	var expr: ExprASTNode = folder.fold_expr(if_else_stmt.expr)
 	
 	if expr is IntExprASTNode:
-		if expr.value != 0:
-			scope_stack.push()
-			visit_node(if_else_stmt.then_stmt)
-			scope_stack.pop()
-			
-			var parent_label: String = code.get_label()
-			var body_label: String = code.append_unique_label("if_else_unreachable_else")
-			
-			scope_stack.push()
-			code.set_label(body_label)
-			visit_node(if_else_stmt.else_stmt)
-			scope_stack.pop()
-			code.make_halt()
-			
-			code.set_label(parent_label)
-		else:
-			var parent_label: String = code.get_label()
-			var body_label: String = code.append_unique_label("if_else_unreachable_then")
-			
-			scope_stack.push()
-			code.set_label(body_label)
-			visit_node(if_else_stmt.then_stmt)
-			scope_stack.pop()
-			code.make_halt()
-			
-			code.set_label(parent_label)
-			
-			scope_stack.push()
-			visit_node(if_else_stmt.else_stmt)
-			scope_stack.pop()
-		
-		return
-	
-	var end_label: String = code.insert_unique_label("if_else_end")
-	var else_label: String = code.insert_unique_label("if_else_else")
-	
-	visit_node(expr)
-	code.make_jump_zero_label(else_label)
+		if expr.value == 0:
+			code.make_jump_label(else_label)
+	else:
+		visit_node(expr)
+		code.make_jump_zero_label(else_label)
 	
 	scope_stack.push()
 	visit_node(if_else_stmt.then_stmt)
@@ -335,47 +295,18 @@ func visit_if_else_stmt(if_else_stmt: IfElseStmtASTNode) -> void:
 
 # Visit a while statement AST node.
 func visit_while_stmt(while_stmt: WhileStmtASTNode) -> void:
-	var expr: ExprASTNode = folder.fold_expr(while_stmt.expr)
-	
-	if expr is IntExprASTNode:
-		if expr.value != 0:
-			var end_label: String = code.insert_unique_label("while_forever_end")
-			var body_label: String = code.insert_unique_label("while_forever")
-			
-			scope_stack.push()
-			code.set_label(body_label)
-			scope_stack.define_label("break", end_label)
-			scope_stack.define_label("continue", body_label)
-			visit_node(while_stmt.stmt)
-			scope_stack.pop()
-			code.make_jump_label(body_label)
-			
-			code.set_label(end_label)
-		else:
-			var parent_label: String = code.get_label()
-			var body_label: String = code.append_unique_label("while_unreachable")
-			
-			scope_stack.push()
-			code.set_label(body_label)
-			var end_label: String = code.insert_unique_label("while_unreachable_end")
-			scope_stack.define_label("break", end_label)
-			scope_stack.define_label("continue", end_label)
-			visit_node(while_stmt.stmt)
-			scope_stack.pop()
-			code.make_jump_label(end_label)
-			code.set_label(end_label)
-			code.make_halt()
-			
-			code.set_label(parent_label)
-		
-		return
-	
 	var end_label: String = code.insert_unique_label("while_end")
 	var condition_label: String = code.insert_unique_label("while_condition")
+	var expr: ExprASTNode = folder.fold_expr(while_stmt.expr)
 	
 	code.set_label(condition_label)
-	visit_node(expr)
-	code.make_jump_zero_label(end_label)
+	
+	if expr is IntExprASTNode:
+		if expr.value == 0:
+			code.make_jump_label(end_label)
+	else:
+		visit_node(expr)
+		code.make_jump_zero_label(end_label)
 	
 	scope_stack.push()
 	scope_stack.define_label("break", end_label)
@@ -389,37 +320,39 @@ func visit_while_stmt(while_stmt: WhileStmtASTNode) -> void:
 
 # Visit a menu statement AST node.
 func visit_menu_stmt(menu_stmt: MenuStmtASTNode) -> void:
-	if scope_stack.has_label("menu"):
-		logger.log_error("Cannot use `menu` directly inside of a menu!", menu_stmt.span)
-		return
-	
-	var end_label: String = code.insert_unique_label("menu_end")
-	
 	scope_stack.push()
-	scope_stack.define_label("menu", end_label)
 	scope_stack.undefine_label("break")
 	scope_stack.undefine_label("continue")
-	visit_node(menu_stmt.stmt)
-	scope_stack.pop()
-	code.make_show_dialog_menu()
 	
-	code.set_label(end_label)
+	if scope_stack.has_label("menu"):
+		logger.log_error("Cannot use `menu` directly inside of a menu!", menu_stmt.span)
+		visit_node(menu_stmt.stmt)
+		scope_stack.pop()
+	else:
+		var end_label: String = code.insert_unique_label("menu_end")
+		scope_stack.define_label("menu", end_label)
+		visit_node(menu_stmt.stmt)
+		scope_stack.pop()
+		code.make_show_dialog_menu()
+		
+		code.set_label(end_label)
 
 
 # Visit an option statement AST node.
 func visit_option_stmt(option_stmt: OptionStmtASTNode) -> void:
-	if not scope_stack.has_label("menu"):
-		logger.log_error("Cannot use `option` outside of a menu!", option_stmt.span)
-		return
-	
 	var parent_label: String = code.get_label()
 	var option_label: String = code.append_unique_label("option")
-	
 	visit_node(folder.fold_expr(option_stmt.expr))
-	code.make_store_dialog_menu_option_label(option_label)
 	
 	scope_stack.push() # Buffer scope to prevent dropping parent locals.
-	scope_stack.define_label("menu", scope_stack.get_label("menu"))
+	
+	if scope_stack.has_label("menu"):
+		code.make_store_dialog_menu_option_label(option_label)
+		scope_stack.define_label("menu", scope_stack.get_label("menu"))
+	else:
+		logger.log_error("Cannot use `option` outside of a menu!", option_stmt.span)
+		code.make_drop()
+		scope_stack.define_label("menu", parent_label)
 	
 	scope_stack.push() # Option body scope.
 	scope_stack.undefine_label("break")
@@ -453,75 +386,72 @@ func visit_continue_stmt(continue_stmt: ContinueStmtASTNode) -> void:
 
 # Visit a constant statement AST node.
 func visit_const_stmt(const_stmt: ConstStmtASTNode) -> void:
-	var symbol: Symbol = scope_stack.get_symbol(const_stmt.identifier_expr.name)
 	var value_expr: ExprASTNode = folder.fold_expr(const_stmt.value_expr)
 	
-	if symbol.access != Symbol.UNDEFINED:
-		logger.log_error(
-				"`%s` is already defined in the current scope!" % symbol.identifier,
-				const_stmt.identifier_expr.span)
-		visit_node(value_expr)
-		code.make_drop()
+	visit_node(value_expr)
+	code.make_drop()
+	
+	if err_identifier_already_defined(const_stmt.identifier_expr):
 		return
 	
 	if value_expr is IntExprASTNode:
-		scope_stack.define_literal_int(symbol.identifier, value_expr.value, false)
+		scope_stack.define_literal_int(const_stmt.identifier_expr.name, value_expr.value, false)
 	elif value_expr is StrExprASTNode:
-		scope_stack.define_literal_str(symbol.identifier, value_expr.value, false)
+		scope_stack.define_literal_str(const_stmt.identifier_expr.name, value_expr.value, false)
 	else:
 		logger.log_error(
-				"Constant `%s` expects a constant value!" % symbol.identifier, value_expr.span)
-		visit_node(value_expr)
-		code.make_drop()
+				"Cannot define constant `%s` with a non-constant value!"
+				% const_stmt.identifier_expr.name, value_expr.span)
 
 
 # Visit a variable statement AST node.
 func visit_var_stmt(var_stmt: VarStmtASTNode) -> void:
-	var symbol: Symbol = scope_stack.get_symbol(var_stmt.expr.name)
+	if scope_stack.has_label("menu"):
+		logger.log_error("Cannot declare a variable directly inside of a menu!", var_stmt.span)
+		return
 	
-	if symbol.access != Symbol.UNDEFINED:
-		logger.log_error(
-				"`%s` is already defined in the current scope!" % symbol.identifier,
-				var_stmt.expr.span)
+	if err_identifier_already_defined(var_stmt.expr):
 		return
 	
 	code.make_push_int(0)
-	scope_stack.define_local(symbol.identifier, true)
+	scope_stack.define_local(var_stmt.expr.name, true)
 
 
 # Visit a variable expression statement AST node.
 func visit_var_expr_stmt(var_expr_stmt: VarExprStmtASTNode) -> void:
-	var symbol: Symbol = scope_stack.get_symbol(var_expr_stmt.identifier_expr.name)
 	visit_node(folder.fold_expr(var_expr_stmt.value_expr))
 	
-	if symbol.access != Symbol.UNDEFINED:
-		logger.log_error(
-				"`%s` is already defined in the current scope!" % symbol.identifier,
-				var_expr_stmt.identifier_expr.span)
+	if scope_stack.has_label("menu"):
+		logger.log_error("Cannot declare a variable directly inside of a menu!", var_expr_stmt.span)
 		code.make_drop()
 		return
 	
-	scope_stack.define_local(symbol.identifier, true)
+	if err_identifier_already_defined(var_expr_stmt.identifier_expr):
+		code.make_drop()
+		return
+	
+	scope_stack.define_local(var_expr_stmt.identifier_expr.name, true)
 
 
 # Visit a return statement AST node.
 func visit_return_stmt(return_stmt: ReturnStmtASTNode) -> void:
-	if not scope_stack.has_label("func"):
+	if scope_stack.has_label("func"):
+		code.make_push_int(0)
+		code.make_return_from_function()
+	else:
 		logger.log_error("Cannot use `return` outside of a function!", return_stmt.span)
-		return
-	
-	code.make_push_int(0)
-	code.make_return_from_function()
+		code.make_halt()
 
 
 # Visit a return expression statement AST node.
 func visit_return_expr_stmt(return_expr_stmt: ReturnExprStmtASTNode) -> void:
-	if not scope_stack.has_label("func"):
-		logger.log_error("Cannot use `return` outside of a function!", return_expr_stmt.span)
-		return
-	
 	visit_node(folder.fold_expr(return_expr_stmt.expr))
-	code.make_return_from_function()
+	
+	if scope_stack.has_label("func"):
+		code.make_return_from_function()
+	else:
+		logger.log_error("Cannot use `return` outside of a function!", return_expr_stmt.span)
+		code.make_halt()
 
 
 # Visit an expression statement AST node.
