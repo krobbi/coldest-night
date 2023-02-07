@@ -4,14 +4,14 @@
 
 const FLAG = "nightscript/v3/test/counter";
 
-func incrementFlag(){
-	return setFlag(FLAG, getFlag(FLAG) + 1);
+func increment_flag(){
+	return set_flag(FLAG, get_flag(FLAG) + 1);
 }
 
 freeze();
 show();
 
-var value = incrementFlag();
+var value = increment_flag();
 say(format("Counter: {0}", value));
 
 hide();

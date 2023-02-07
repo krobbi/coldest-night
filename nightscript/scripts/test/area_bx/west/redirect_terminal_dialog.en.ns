@@ -2,18 +2,18 @@
 # Redirect Terminal Dialog
 # English dialog implementation for the redirect terminal in test/area_bx/west.
 
-func redirectTerminalGetRedirectOption(){
+func get_redirect_option(){
 	return "Redirect barriers";
 }
 
-func redirectTerminalGetCancelOption(){
+func get_cancel_option(){
 	return "Cancel";
 }
 
-func redirectTerminalMainDialog(){
+func main_dialog(){
 	say("Redirect barriers?");
 }
 
-func redirectTerminalRedirectedDialog(){
+func redirected_dialog(){
 	say("Barriers redirected!");
 }

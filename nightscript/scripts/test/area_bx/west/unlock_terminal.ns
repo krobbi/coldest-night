@@ -10,23 +10,23 @@ freeze();
 show();
 
 menu {
-	if getFlag(FLAG) {
-		unlockTerminalLockPromptDialog();
+	if get_flag(FLAG) {
+		lock_prompt_dialog();
 		
-		option unlockTerminalGetLockOption() {
-			setFlag(FLAG, 0);
-			unlockTerminalLockedDialog();
+		option get_lock_option() {
+			set_flag(FLAG, 0);
+			locked_dialog();
 		}
 	} else {
-		unlockTerminalUnlockPromptDialog();
+		unlock_prompt_dialog();
 		
-		option unlockTerminalGetUnlockOption() {
-			setFlag(FLAG, 1);
-			unlockTerminalUnlockedDialog();
+		option get_unlock_option() {
+			set_flag(FLAG, 1);
+			unlocked_dialog();
 		}
 	}
 	
-	option unlockTerminalGetCancelOption() {}
+	option get_cancel_option() {}
 }
 
 hide();

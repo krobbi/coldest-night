@@ -9,15 +9,15 @@ const FLAG = "test/area_bx/west/barrier_state";
 freeze();
 show();
 
-redirectTerminalMainDialog();
+main_dialog();
 
 menu {
-	option redirectTerminalGetRedirectOption() {
-		setFlag(FLAG, !getFlag(FLAG));
-		redirectTerminalRedirectedDialog();
+	option get_redirect_option() {
+		set_flag(FLAG, !get_flag(FLAG));
+		redirected_dialog();
 	}
 	
-	option redirectTerminalGetCancelOption() {}
+	option get_cancel_option() {}
 }
 
 hide();

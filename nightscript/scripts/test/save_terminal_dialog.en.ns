@@ -2,22 +2,22 @@
 # Save Terminal Dialog
 # English dialog implementation for save terminals.
 
-func saveTerminalGetSaveOption(){
+func get_save_option(){
 	return "Save progress";
 }
 
-func saveTerminalGetNoSaveOption(){
+func get_no_save_option(){
 	return "Do not save";
 }
 
-func saveTerminalMainDialog(){
+func main_dialog(){
 	say("It's a save terminal.{p=0.5} Do you want to save your progress?");
 }
 
-func saveTerminalRepeatDialog(){
+func repeat_dialog(){
 	say("Do you want to save your progress?");
 }
 
-func saveTerminalSavedDialog(){
+func saved_dialog(){
 	say("Your progress has been saved!");
 }

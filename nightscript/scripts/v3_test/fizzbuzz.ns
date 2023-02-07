@@ -24,32 +24,32 @@ say(format("Will run FizzBuzz up to {0}!", max));
 const FIZZ = 3;
 const BUZZ = 5;
 
-var nextFizz = FIZZ;
-var nextBuzz = BUZZ;
+var next_fizz = FIZZ;
+var next_buzz = BUZZ;
 
 var value = 0;
 
 while value < max {
 	value = value + 1;
 	
-	var hasFactors = 0;
+	var has_factors = 0;
 	var message = "";
 	
-	if value == nextFizz {
-		hasFactors = 1;
-		nextFizz = nextFizz + FIZZ;
+	if value == next_fizz {
+		has_factors = 1;
+		next_fizz = next_fizz + FIZZ;
 		message = format("{0}Fizz", message);
 	}
 	
-	if value == nextBuzz {
-		hasFactors = 1;
-		nextBuzz = nextBuzz + BUZZ;
+	if value == next_buzz {
+		has_factors = 1;
+		next_buzz = next_buzz + BUZZ;
 		message = format("{0}Buzz", message);
 	}
 	
 	name(format("{0}/{1}", value, max));
 	
-	if hasFactors {
+	if has_factors {
 		say(format("{0}!", message));
 	} else {
 		say(format(value));

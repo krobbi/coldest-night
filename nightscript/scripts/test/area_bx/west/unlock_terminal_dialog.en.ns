@@ -2,30 +2,30 @@
 # Unlock Terminal Dialog
 # English dialog implementation for the unlock terminal in test/area_bx/west.
 
-func unlockTerminalGetLockOption(){
+func get_lock_option(){
 	return "Lock annex";
 }
 
-func unlockTerminalGetUnlockOption(){
+func get_unlock_option(){
 	return "Unlock annex";
 }
 
-func unlockTerminalGetCancelOption(){
+func get_cancel_option(){
 	return "Cancel";
 }
 
-func unlockTerminalLockPromptDialog(){
+func lock_prompt_dialog(){
 	say("West annex is unlocked.{p=0.5}\nLock annex?");
 }
 
-func unlockTerminalUnlockPromptDialog(){
+func unlock_prompt_dialog(){
 	say("West annex is locked.{p=0.5}\nUnlock annex?");
 }
 
-func unlockTerminalLockedDialog(){
+func locked_dialog(){
 	say("Annex locked!");
 }
 
-func unlockTerminalUnlockedDialog(){
+func unlocked_dialog(){
 	say("Annex unlocked!");
 }

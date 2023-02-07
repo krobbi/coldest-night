@@ -2,24 +2,24 @@
 # Enter Hub Dialog
 # English dialog implementation for entering test/area_bx/hub.
 
-func enterHubTerminalDialog(){
+func terminal_dialog(){
 	name("Koby");
 	say("This seems to be some kind of hub area,{p=0.25} but things are much quieter than I thought.");
 	say("Anyway,{p=0.25} there should be a save terminal here,{p=0.25} next to the elevator.");
 }
 
-func enterHubTerminalReachedDialog(){
+func terminal_reached_dialog(){
 	name("Koby");
 	say("Be sure to use it,{p=0.25} you don't want to get caught out!");
 }
 
-func enterHubNorthAlmostDialog(){
+func north_almost_dialog(){
 	name("Koby");
 	say("It looks like you'll have to go back into the storage wing.");
 	say("I think you've missed an archival unit.");
 }
 
-func enterHubNorthCompleteDialog(){
+func north_complete_dialog(){
 	name("Koby");
 	say("That's all the archival units in the storage wing.");
 	say("I've put together a key from the data,{p=0.25} which should have opened the west wing.");
@@ -34,14 +34,14 @@ func enterHubNorthCompleteDialog(){
 	say("We better keep moving.");
 }
 
-func enterHubWestAlmostDialog(){
+func west_almost_dialog(){
 	name("Koby");
 	say("There's one more archival unit in the robotics lab.");
 	say("It might be in a small annex just past the end of the room,{p=0.25} which you'll need to unlock.");
 	say("Otherwise,{p=0.25} you'll just have to look again,{p=0.25} carefully.");
 }
 
-func enterHubWestCompleteDialog(){
+func west_complete_dialog(){
 	name("Koby");
 	say("That's all the data we needed!{p=0.5} You can make your way out now,{p=0.25} start heading south.");
 	say("There's a security checkpoint to the east,{p=0.25} but I can't get that open.");

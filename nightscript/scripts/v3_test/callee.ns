@@ -5,8 +5,8 @@
 
 path("carol", "CaB");
 path("dave", "DaB");
-runPaths();
-awaitPaths();
+run_paths();
+await_paths();
 
 sleep(1000);
 
@@ -17,8 +17,8 @@ sleep(1000);
 
 path("carol", "CaA");
 path("dave", "DaA");
-runPaths();
-awaitPaths();
+run_paths();
+await_paths();
 
 sleep(1000);
 

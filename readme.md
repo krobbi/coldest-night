@@ -107,8 +107,8 @@ include "cutscene_dialog"; # File extensions are omitted from includes.
 freeze(); # Freeze the player.
 show(); # Show the dialog box.
 
-name(getName()); # Call `getName` and display the returned value as a name.
-displayDialog(); # Call `displayDialog` and ignore any returned value.
+name(get_name()); # Call `get_name` and display the returned value as a name.
+display_dialog(); # Call `display_dialog` and ignore any returned value.
 
 hide(); # Hide the dialog box.
 unfreeze(); # Unfreeze the player.
@@ -118,11 +118,11 @@ unfreeze(); # Unfreeze the player.
 ```
 # NightScript Version 3.
 
-func getName(){
+func get_name(){
    return "John";
 }
 
-func displayDialog(){
+func display_dialog(){
    say("Hello, world!");
 }
 ```
@@ -131,11 +131,11 @@ func displayDialog(){
 ```
 # NightScript Version 3.
 
-func getName(){
+func get_name(){
    return "Jean";
 }
 
-func displayDialog(){
+func display_dialog(){
    say("Bonjour, le monde!");
 }
 ```

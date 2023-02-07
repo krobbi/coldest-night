@@ -4,7 +4,7 @@
 
 # Calling pause without this would cause a softlock unless another source
 # unpauses us.
-doNotPause();
+do_not_pause();
 
 freeze();
 show();

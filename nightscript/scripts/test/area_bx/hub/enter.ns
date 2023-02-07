@@ -14,44 +14,44 @@ const WEST_COMPLETE_FLAG = "test/area_bx/hub/seen_west_complete";
 const NORTH_TOTAL = 10;
 const WEST_TOTAL = NORTH_TOTAL + 6 + 1;
 
-func hasDialog(flag, count){
-	if !getFlag(flag) && getFlag(COUNT_FLAG) == count {
+func has_dialog(flag, count){
+	if !get_flag(flag) && get_flag(COUNT_FLAG) == count {
 		freeze();
 		show();
-		return setFlag(flag, 1);
+		return set_flag(flag, 1);
 	}
 	
 	return 0;
 }
 
-if hasDialog(TERMINAL_FLAG, getFlag(COUNT_FLAG)) {
-	enterHubTerminalDialog();
+if has_dialog(TERMINAL_FLAG, get_flag(COUNT_FLAG)) {
+	terminal_dialog();
 	hide();
 	
 	path("player", "Terminal");
-	runPaths();
-	awaitPaths();
+	run_paths();
+	await_paths();
 	face("player", -90);
 	sleep(1000);
 	
 	show();
-	enterHubTerminalReachedDialog();
+	terminal_reached_dialog();
 	hide();
 	unfreeze();
-} else if hasDialog(NORTH_ALMOST_FLAG, NORTH_TOTAL - 1) {
-	enterHubNorthAlmostDialog();
+} else if has_dialog(NORTH_ALMOST_FLAG, NORTH_TOTAL - 1) {
+	north_almost_dialog();
 	hide();
 	unfreeze();
-} else if hasDialog(NORTH_COMPLETE_FLAG, NORTH_TOTAL) {
-	enterHubNorthCompleteDialog();
+} else if has_dialog(NORTH_COMPLETE_FLAG, NORTH_TOTAL) {
+	north_complete_dialog();
 	hide();
 	unfreeze();
-} else if hasDialog(WEST_ALMOST_FLAG, WEST_TOTAL - 1) {
-	enterHubWestAlmostDialog();
+} else if has_dialog(WEST_ALMOST_FLAG, WEST_TOTAL - 1) {
+	west_almost_dialog();
 	hide();
 	unfreeze();
-} else if hasDialog(WEST_COMPLETE_FLAG, WEST_TOTAL) {
-	enterHubWestCompleteDialog();
+} else if has_dialog(WEST_COMPLETE_FLAG, WEST_TOTAL) {
+	west_complete_dialog();
 	hide();
 	unfreeze();
 }
