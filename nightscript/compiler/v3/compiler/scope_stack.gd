@@ -149,8 +149,8 @@ func undefine_label(key: String) -> void:
 
 
 # Undefine all symbols accessible from the current scope that are declared as
-# locals.
-func undefine_locals() -> void:
+# locals, optionally up to and including a scope where a label is defined.
+func undefine_locals(stop_label_key: String = "") -> void:
 	var scope: Scope = scopes[-1]
 	var seen_identifiers: Array = []
 	
@@ -159,6 +159,8 @@ func undefine_locals() -> void:
 		
 		if scope.symbols[identifier].is_local:
 			scope.symbols[identifier] = Symbol.new(identifier, Symbol.UNDEFINED)
+			scope.scope_local_count -= 1
+			scope.total_local_count -= 1
 	
 	for index in range(scopes.size() - 2, -1, -1):
 		var parent_scope: Scope = scopes[index]
@@ -171,9 +173,10 @@ func undefine_locals() -> void:
 			
 			if parent_scope.symbols[identifier].is_local:
 				scope.symbols[identifier] = Symbol.new(identifier, Symbol.UNDEFINED)
-	
-	scope.scope_local_count = 0
-	scope.total_local_count = 0
+				scope.total_local_count -= 1
+		
+		if not stop_label_key.empty() and parent_scope.labels.has(stop_label_key):
+			break
 
 
 # Drop all intermediate locals and jump to a scoped label from its key.

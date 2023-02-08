@@ -348,6 +348,7 @@ func visit_option_stmt(option_stmt: OptionStmtASTNode) -> void:
 	
 	if scope_stack.has_label("menu"):
 		code.make_store_dialog_menu_option_label(option_label)
+		scope_stack.undefine_locals("menu") # Drop locals declared in menu.
 		scope_stack.define_label("menu", scope_stack.get_label("menu"))
 	else:
 		logger.log_error("Cannot use `option` outside of a menu!", option_stmt.span)
@@ -406,31 +407,19 @@ func visit_const_stmt(const_stmt: ConstStmtASTNode) -> void:
 
 # Visit a variable statement AST node.
 func visit_var_stmt(var_stmt: VarStmtASTNode) -> void:
-	if scope_stack.has_label("menu"):
-		logger.log_error("Cannot declare a variable directly inside of a menu!", var_stmt.span)
-		return
-	
-	if err_identifier_already_defined(var_stmt.expr):
-		return
-	
-	code.make_push_int(0)
-	scope_stack.define_local(var_stmt.expr.name, true)
+	if not err_identifier_already_defined(var_stmt.expr):
+		code.make_push_int(0)
+		scope_stack.define_local(var_stmt.expr.name, true)
 
 
 # Visit a variable expression statement AST node.
 func visit_var_expr_stmt(var_expr_stmt: VarExprStmtASTNode) -> void:
 	visit_node(folder.fold_expr(var_expr_stmt.value_expr))
 	
-	if scope_stack.has_label("menu"):
-		logger.log_error("Cannot declare a variable directly inside of a menu!", var_expr_stmt.span)
+	if not err_identifier_already_defined(var_expr_stmt.identifier_expr):
+		scope_stack.define_local(var_expr_stmt.identifier_expr.name, true)
+	else:
 		code.make_drop()
-		return
-	
-	if err_identifier_already_defined(var_expr_stmt.identifier_expr):
-		code.make_drop()
-		return
-	
-	scope_stack.define_local(var_expr_stmt.identifier_expr.name, true)
 
 
 # Visit a return statement AST node.

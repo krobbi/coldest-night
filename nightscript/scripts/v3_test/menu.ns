@@ -1,0 +1,53 @@
+# NightScript Version 3.
+# Flag Test
+# Test for menus.
+
+freeze();
+show();
+
+# Variables declared outside of a menu statement can be used inside of options.
+var foo = 123;
+
+menu {
+	# Constants can be declared inside of a menu statement with no issues.
+	const COUNT = 3;
+	const MULTIPLIER = 2;
+	
+	# Variables can also be declared inside of a menu statement, however...
+	var counter = 0;
+	
+	while counter < COUNT {
+		counter = counter + 1;
+		var multiple = counter * MULTIPLIER;
+		
+		option format("{0} * {1} = {2}", counter, MULTIPLIER, multiple) {
+			say(format(foo)); # Should say `123`.
+			say(format(COUNT)); # Should say `3`.
+			
+			# ...they cannot be used in options. The following lines would cause
+			# an error.
+			#say(format(counter));
+			#say(format(multiple));
+			
+			###
+			This is an effect of how local variables are stored on the stack.
+			They are dropped at the end of the menu statement before jumping to
+			an option. Despite the apparent structure of the script, any local
+			variables declared in the menu statement are no longer in memory by
+			the time the option is jumped to.
+			
+			A transparent solution to this would be to create a snapshot of all
+			the relevant local variables at runtime when an option is stored,
+			and push them back to the stack when the option is jumped to. This
+			is under serious consideration, but is not yet implemented.
+			###
+			
+			# Let's just quickly test that variables are counted correctly.
+			var bar = 456;
+			say(format(bar)); # Should say `456`.
+		}
+	}
+}
+
+hide();
+unfreeze();
