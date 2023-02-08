@@ -40,8 +40,9 @@ enum {
 	CLEAR_DIALOG_NAME,
 	DISPLAY_DIALOG_NAME,
 	DISPLAY_DIALOG_MESSAGE,
+	BEGIN_DIALOG_MENU,
 	STORE_DIALOG_MENU_OPTION_LABEL,
-	SHOW_DIALOG_MENU,
+	END_DIALOG_MENU,
 	ACTOR_FACE_DIRECTION,
 	ACTOR_FIND_PATH,
 	RUN_ACTOR_PATHS,
@@ -143,10 +144,12 @@ func _to_string() -> String:
 			return "display_dialog_name;"
 		DISPLAY_DIALOG_MESSAGE:
 			return "display_dialog_message;"
+		BEGIN_DIALOG_MENU:
+			return "begin_dialog_menu;"
 		STORE_DIALOG_MENU_OPTION_LABEL:
 			return "store_dialog_menu_option %s;" % str_value
-		SHOW_DIALOG_MENU:
-			return "show_dialog_menu;"
+		END_DIALOG_MENU:
+			return "end_dialog_menu;"
 		ACTOR_FACE_DIRECTION:
 			return "actor_face_direction;"
 		ACTOR_FIND_PATH:

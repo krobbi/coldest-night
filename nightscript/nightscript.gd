@@ -4,6 +4,29 @@ extends Node
 # NightScript Component
 # A NightScript component is a component that handles NightScript functionality.
 
+class NightScriptDialogMenuOption extends Reference:
+	
+	# NightScript Dialog Menu Option
+	# A NightScript dialog menu option is a structure used by a NightScript
+	# virtual machine that represents a dialog menu option.
+	
+	var pointer: int
+	var text: String
+	
+	func _init(pointer_val: int, text_val: String) -> void:
+		pointer = pointer_val
+		text = text_val
+
+
+class NightScriptDialogMenu extends Reference:
+	
+	# NightScript Dialog Menu
+	# A NightScript dialog menu is a structure used by a NightScript virtual
+	# machine that represents a dialog menu.
+	
+	var options: Array = []
+
+
 class NightScriptVirtualMachine extends Reference:
 	
 	# NightScript Virtual Machine
@@ -21,8 +44,7 @@ class NightScriptVirtualMachine extends Reference:
 	var memory: StreamPeerBuffer = StreamPeerBuffer.new()
 	var stack: Array = []
 	var frame_pointer: int = 0
-	var option_pointers: Array = []
-	var option_texts: Array = []
+	var menu_stack: Array = []
 	var pathing_actors: Array = []
 	var sleep_timer: float = 0.0
 	
@@ -58,12 +80,17 @@ class NightScriptVirtualMachine extends Reference:
 		return null
 	
 	
+	# Crash the NightScript virtual machine.
+	func crash() -> void:
+		is_awaiting = true
+		emit_signal("pop_machine")
+	
+	
 	# Step the NightScript virtual machine.
 	func step() -> void:
 		match memory.get_u8():
 			HALT:
-				is_awaiting = true
-				emit_signal("pop_machine")
+				crash()
 			RUN_PROGRAM:
 				EventBus.emit_nightscript_run_program_request(stack.pop_back())
 			CALL_PROGRAM:
@@ -93,24 +120,18 @@ class NightScriptVirtualMachine extends Reference:
 				
 				stack.push_back(memory.get_position())
 				stack.push_back(frame_pointer)
-				
 				memory.seek(call_address)
 				frame_pointer = stack.size()
-				
-				for argument in arguments:
-					stack.push_back(argument)
+				stack.append_array(arguments)
 			RETURN_FROM_FUNCTION:
-				if frame_pointer <= 0:
-					is_awaiting = true
-					emit_signal("pop_machine")
-					return
-				
-				var return_value = stack.pop_back()
-				stack.resize(frame_pointer)
-				
-				frame_pointer = stack.pop_back()
-				memory.seek(stack.pop_back())
-				stack.push_back(return_value)
+				if frame_pointer > 0:
+					var return_value = stack.pop_back()
+					stack.resize(frame_pointer)
+					frame_pointer = stack.pop_back()
+					memory.seek(stack.pop_back())
+					stack.push_back(return_value)
+				else:
+					crash()
 			DROP:
 				stack.remove(stack.size() - 1)
 			DUPLICATE:
@@ -191,21 +212,28 @@ class NightScriptVirtualMachine extends Reference:
 				EventBus.subscribe(
 						"dialog_message_finished", self, "end_await", [], CONNECT_ONESHOT)
 				EventBus.emit_dialog_display_message_request(stack.pop_back())
+			BEGIN_DIALOG_MENU:
+				menu_stack.push_back(NightScriptDialogMenu.new())
 			STORE_DIALOG_MENU_OPTION:
-				var pointer: int = stack.pop_back()
-				var text: String = stack.pop_back()
-				option_pointers.push_back(pointer)
-				option_texts.push_back(text)
-			SHOW_DIALOG_MENU:
-				is_awaiting = true
-				
-				if option_pointers.empty():
-					emit_signal("pop_machine")
-					return
-				
-				EventBus.subscribe(
-						"dialog_option_pressed", self, "select_option", [], CONNECT_ONESHOT)
-				EventBus.emit_dialog_display_options_request(PoolStringArray(option_texts))
+				if not menu_stack.empty():
+					var pointer: int = stack.pop_back()
+					var text: String = stack.pop_back()
+					menu_stack[-1].options.push_back(NightScriptDialogMenuOption.new(pointer, text))
+				else:
+					crash()
+			END_DIALOG_MENU:
+				if not menu_stack.empty():
+					is_awaiting = true
+					EventBus.subscribe(
+							"dialog_option_pressed", self, "select_option", [], CONNECT_ONESHOT)
+					var option_texts: PoolStringArray = PoolStringArray()
+					
+					for option in menu_stack[-1].options:
+						option_texts.push_back(option.text)
+					
+					EventBus.emit_dialog_display_options_request(option_texts)
+				else:
+					crash()
 			ACTOR_FACE_DIRECTION:
 				var degrees: int = stack.pop_back()
 				var key: String = stack.pop_back()
@@ -255,17 +283,19 @@ class NightScriptVirtualMachine extends Reference:
 	
 	# Select a dialog option.
 	func select_option(index: int) -> void:
-		if not is_awaiting or option_pointers.empty():
-			emit_signal("pop_machine")
-			return
-		
-		if index < 0 or index >= option_pointers.size():
-			index = 0
-		
-		memory.seek(option_pointers[index])
-		option_pointers.clear()
-		option_texts.clear()
-		is_awaiting = false
+		if is_awaiting and not menu_stack.empty():
+			var menu: NightScriptDialogMenu = menu_stack.pop_back()
+			
+			if not menu.options.empty():
+				if index < 0 or index >= menu.options.size():
+					index = 0
+				
+				memory.seek(menu.options[index].pointer)
+				is_awaiting = false
+			else:
+				crash()
+		else:
+			crash()
 
 
 signal thread_joined
@@ -306,18 +336,19 @@ enum {
 	CLEAR_DIALOG_NAME = 0x20,
 	DISPLAY_DIALOG_NAME = 0x21,
 	DISPLAY_DIALOG_MESSAGE = 0x22,
-	STORE_DIALOG_MENU_OPTION = 0x23,
-	SHOW_DIALOG_MENU = 0x24,
-	ACTOR_FACE_DIRECTION = 0x25,
-	ACTOR_FIND_PATH = 0x26,
-	RUN_ACTOR_PATHS = 0x27,
-	AWAIT_ACTOR_PATHS = 0x28,
-	FREEZE_PLAYER = 0x29,
-	UNFREEZE_PLAYER = 0x2a,
-	PAUSE_GAME = 0x2b,
-	UNPAUSE_GAME = 0x2c,
-	SAVE_GAME = 0x2d,
-	SAVE_CHECKPOINT = 0x2e,
+	BEGIN_DIALOG_MENU = 0x23,
+	STORE_DIALOG_MENU_OPTION = 0x24,
+	END_DIALOG_MENU = 0x25,
+	ACTOR_FACE_DIRECTION = 0x26,
+	ACTOR_FIND_PATH = 0x27,
+	RUN_ACTOR_PATHS = 0x28,
+	AWAIT_ACTOR_PATHS = 0x29,
+	FREEZE_PLAYER = 0x2a,
+	UNFREEZE_PLAYER = 0x2b,
+	PAUSE_GAME = 0x2c,
+	UNPAUSE_GAME = 0x2d,
+	SAVE_GAME = 0x2e,
+	SAVE_CHECKPOINT = 0x2f,
 }
 
 const THREAD_LIMIT: int = 16

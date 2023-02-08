@@ -331,9 +331,10 @@ func visit_menu_stmt(menu_stmt: MenuStmtASTNode) -> void:
 	else:
 		var end_label: String = code.insert_unique_label("menu_end")
 		scope_stack.define_label("menu", end_label)
+		code.make_begin_dialog_menu()
 		visit_node(menu_stmt.stmt)
 		scope_stack.pop()
-		code.make_show_dialog_menu()
+		code.make_end_dialog_menu()
 		
 		code.set_label(end_label)
 

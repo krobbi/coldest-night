@@ -289,14 +289,19 @@ func make_display_dialog_message() -> void:
 	make_op(IROp.DISPLAY_DIALOG_MESSAGE)
 
 
+# Make a begin dialog menu IR operation in the current label.
+func make_begin_dialog_menu() -> void:
+	make_op(IROp.BEGIN_DIALOG_MENU)
+
+
 # Make a store dialog menu option label IR operation in the current label.
 func make_store_dialog_menu_option_label(label: String) -> void:
 	make_op_str(IROp.STORE_DIALOG_MENU_OPTION_LABEL, label)
 
 
-# Make a show dialog menu IR operation in the current label.
-func make_show_dialog_menu() -> void:
-	make_op(IROp.SHOW_DIALOG_MENU)
+# Make an end dialog menu IR operation in the current label.
+func make_end_dialog_menu() -> void:
+	make_op(IROp.END_DIALOG_MENU)
 
 
 # Make an actor face direction IR operation in the current label.

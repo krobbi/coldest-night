@@ -446,12 +446,13 @@ func visit_menu_stmt(node: ASTNode) -> void:
 	var show_label: String = code.insert_unique_label("menu_show")
 	
 	push_scope({"break": show_label, "continue": "", "menu": end_label})
+	code.make_begin_dialog_menu()
 	visit_node(node.children[0])
 	code.make_jump_label(show_label)
 	pop_scope()
 	
 	code.set_label(show_label)
-	code.make_show_dialog_menu()
+	code.make_end_dialog_menu()
 	
 	code.set_label(end_label)
 
