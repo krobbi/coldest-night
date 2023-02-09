@@ -171,18 +171,6 @@ class App:
         return False
     
     
-    def display_godot_info(self) -> bool:
-        """
-        Display verbose information about Godot Engine and return
-        whether no errors occured.
-        """
-        
-        if not self.validate_godot():
-            return False
-        
-        return self.run_godot("-v -q")
-    
-    
     def list_all_channels(self) -> bool:
         """ List all channels and return whether no errors occured. """
         
@@ -266,7 +254,6 @@ def print_usage() -> None:
     
     print("Usage:")
     print("  build help             - Display a list of commands.")
-    print("  build info             - Display information about Godot Engine.")
     print("  build list             - List all channels.")
     print("  build clean            - Clean all channels' build output.")
     print("  build clean <channel>  - Clean a single channel's build output.")
@@ -286,8 +273,6 @@ def run_app(args: list[str]) -> bool:
         if args[0] == "help":
             print_usage()
             return True
-        elif args[0] == "info":
-            return app.display_godot_info()
         elif args[0] == "list":
             return app.list_all_channels()
         elif args[0] == "clean":
