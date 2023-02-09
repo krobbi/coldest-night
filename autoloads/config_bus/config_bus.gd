@@ -18,6 +18,7 @@ var _data: Dictionary = {
 	"controls.pause_mapping": "auto",
 	"controls.toggle_fullscreen_mapping": "auto",
 	"accessibility.font": "coldnight",
+	"accessibility.font_size": 20,
 	"accessibility.reduced_motion": false,
 	"accessibility.tooltips": true,
 	"accessibility.never_game_over": false,
@@ -43,13 +44,14 @@ var _data: Dictionary = {
 
 # Set a configuration value from its configuration key.
 func set_value(config_key: String, value) -> void:
-	if(
-			not _data.has(config_key)
-			or typeof(_data[config_key]) == typeof(value) and _data[config_key] == value):
+	if not _data.has(config_key):
 		return
 	
-	_data[config_key] = value
-	_should_save = true
+	if typeof(_data[config_key]) != typeof(value) or _data[config_key] != value:
+		_data[config_key] = value
+		_should_save = true
+	else:
+		return
 	
 	for i in range(_connections.size() - 1, -1, -1):
 		var connection: ConfigConnection = _connections[i]

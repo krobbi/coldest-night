@@ -30,7 +30,7 @@ onready var _button: Button = $Content/Button
 # Run when the option menu row finishes entering the scene tree. Set the
 # option's values and text.
 func _ready() -> void:
-	set_option_source(option_source)
+	refresh_options()
 	set_options(options)
 	set_text(text)
 
@@ -122,6 +122,11 @@ func get_value(default = null):
 		return _option_values[_selected_option]
 	else:
 		return default
+
+
+# Refresh the option's options.
+func refresh_options() -> void:
+	set_option_source(option_source)
 
 
 # Select an option from its index and emits the value_changed signal.

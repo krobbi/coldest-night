@@ -27,7 +27,8 @@ var _custom_fonts: Dictionary = {}
 # Run when the display manager enters the scene tree. Subscribe the display
 # manager to the configuration bus.
 func _ready() -> void:
-	ConfigBus.subscribe_node_string("accessibility.font", self, "_on_font_changed")
+	ConfigBus.subscribe_node_string("accessibility.font", self, "_set_font")
+	ConfigBus.subscribe_node_int("accessibility.font_size", self, "_on_font_size_changed")
 	ConfigBus.subscribe_node_bool("display.fullscreen", self, "_on_fullscreen_changed")
 	ConfigBus.subscribe_node_bool("display.vsync", self, "_on_vsync_changed")
 	ConfigBus.subscribe_node_bool("display.pixel_snap", self, "_on_pixel_snap_changed")
@@ -107,13 +108,25 @@ func refresh_custom_fonts() -> void:
 		
 		if ResourceLoader.exists(path, "DynamicFontData"):
 			var font: DynamicFont = DynamicFont.new()
-			font.size = 20
+			font.size = ConfigBus.get_int("accessibility.font_size", 20)
 			font.font_data = load(path)
 			_custom_fonts[path] = font
 		
 		file_name = dir.get_next()
 	
 	dir.list_dir_end()
+
+
+# Set the font.
+func _set_font(value: String) -> void:
+	var font: DynamicFont = _load_font(value)
+	
+	if not font:
+		ConfigBus.set_string("accessibility.font", "coldnight")
+		return
+	
+	for theme in _text_themes:
+		theme.default_font = font
 
 
 # Set the window scale.
@@ -166,7 +179,7 @@ func _load_font(config_key: String) -> DynamicFont:
 		
 		if ResourceLoader.exists(config_key, "DynamicFontData"):
 			var font: DynamicFont = DynamicFont.new()
-			font.size = 20
+			font.size = ConfigBus.get_int("accessibility.font_size", 20)
 			font.font_data = load(config_key)
 			_custom_fonts[config_key] = font
 			return font
@@ -198,16 +211,19 @@ func _apply_pixel_perfect() -> void:
 	VisualServer.black_bars_set_margins(margin_l, margin_t, margin_r, margin_b)
 
 
-# Run when the font changes in the configuration bus. Change the font.
-func _on_font_changed(value: String) -> void:
-	var font: DynamicFont = _load_font(value)
+# Run when the font size changes in the configuration bus. Change the size of
+# custom fonts.
+func _on_font_size_changed(value: int) -> void:
+	if value < 15:
+		value = 15
+	elif value > 25:
+		value = 25
 	
-	if not font:
-		ConfigBus.set_string("accessibility.font", "coldnight")
-		return
+	for path in _custom_fonts:
+		_custom_fonts[path].size = value
 	
-	for theme in _text_themes:
-		theme.default_font = font
+	_set_font(ConfigBus.get_string("accessibility.font", "coldnight"))
+	ConfigBus.set_int("accessibility.font_size", value) # Round to int.
 
 
 # Run when the fullscreen state changes in the configuration bus. Set whether
