@@ -13,6 +13,7 @@ func _ready() -> void:
 	ConfigBus.broadcast()
 	SaveManager.select_slot(0)
 	SaveManager.load_file()
+	DisplayManager.refresh_custom_fonts()
 
 
 # Run when the global context exits the scene tree. Destruct the game.

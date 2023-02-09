@@ -4,6 +4,8 @@ extends Node
 # The display manager is an autoload scene that controls the state of the
 # display. It can be accessed from any script by using `DisplayManager`.
 
+const FONTS_DIR: String = "user://fonts/"
+
 var _resolution: Vector2 = Vector2(
 		max(1.0, float(ProjectSettings.get_setting("display/window/size/width"))),
 		max(1.0, float(ProjectSettings.get_setting("display/window/size/height"))))
@@ -19,6 +21,8 @@ var _text_themes: Array = [
 	load("res://resources/themes/menu_row.tres"),
 	load("res://resources/themes/popup_text.tres"),
 ]
+
+var _custom_fonts: Dictionary = {}
 
 # Run when the display manager enters the scene tree. Subscribe the display
 # manager to the configuration bus.
@@ -51,10 +55,19 @@ func get_max_window_scale() -> int:
 
 # Get a dictionary of font options.
 func get_font_options() -> Dictionary:
-	return {
+	var font_options: Dictionary = {
 		"OPTION.ACCESSIBILITY.FONT.COLDNIGHT": "coldnight",
 		"OPTION.ACCESSIBILITY.FONT.ATKINSON_HYPERLEGIBLE": "atkinson_hyperlegible",
 	}
+	
+	var counter: int = 0
+	
+	for custom_font in _custom_fonts:
+		counter += 1
+		font_options[
+				tr("OPTION.ACCESSIBILITY.FONT.CUSTOM").format({"counter": counter})] = custom_font
+	
+	return font_options
 
 
 # Get a dictionary of window scale options.
@@ -74,6 +87,33 @@ func get_scale_mode_options() -> Dictionary:
 		"OPTION.DISPLAY.SCALE_MODE.ASPECT": "aspect",
 		"OPTION.DISPLAY.SCALE_MODE.PIXEL": "pixel",
 	}
+
+
+# Refresh the list of custom fonts.
+func refresh_custom_fonts() -> void:
+	_custom_fonts.clear()
+	var dir: Directory = Directory.new()
+	
+	if not dir.dir_exists(FONTS_DIR) and dir.make_dir(FONTS_DIR) != OK or dir.open(FONTS_DIR) != OK:
+		return
+	elif dir.list_dir_begin(true) != OK:
+		dir.list_dir_end()
+		return
+	
+	var file_name: String = dir.get_next()
+	
+	while not file_name.empty():
+		var path: String = FONTS_DIR.plus_file(file_name)
+		
+		if ResourceLoader.exists(path, "DynamicFontData"):
+			var font: DynamicFont = DynamicFont.new()
+			font.size = 20
+			font.font_data = load(path)
+			_custom_fonts[path] = font
+		
+		file_name = dir.get_next()
+	
+	dir.list_dir_end()
 
 
 # Set the window scale.
@@ -117,6 +157,28 @@ func _get_max_window_scale(margin_min: float, margin_scale: float) -> int:
 	return int(max(1.0, min(max_scales.x, max_scales.y)))
 
 
+# Load a dynamic font from its config key. Return `null` if the dynamic font
+# cannot be loaded.
+func _load_font(config_key: String) -> DynamicFont:
+	if config_key.begins_with("user://"):
+		if _custom_fonts.has(config_key):
+			return _custom_fonts[config_key]
+		
+		if ResourceLoader.exists(config_key, "DynamicFontData"):
+			var font: DynamicFont = DynamicFont.new()
+			font.size = 20
+			font.font_data = load(config_key)
+			_custom_fonts[config_key] = font
+			return font
+	else:
+		var path: String = "res://resources/fonts/%s.tres" % config_key
+		
+		if ResourceLoader.exists(path, "DynamicFont"):
+			return load(path) as DynamicFont
+	
+	return null
+
+
 # Apply the pixel-perfect scale mode to the display.
 func _apply_pixel_perfect() -> void:
 	var window_size: Vector2 = OS.window_size
@@ -138,13 +200,11 @@ func _apply_pixel_perfect() -> void:
 
 # Run when the font changes in the configuration bus. Change the font.
 func _on_font_changed(value: String) -> void:
-	var path: String = "res://resources/fonts/%s.tres" % value
+	var font: DynamicFont = _load_font(value)
 	
-	if value != "coldnight" and not ResourceLoader.exists(path, "DynamicFont"):
+	if not font:
 		ConfigBus.set_string("accessibility.font", "coldnight")
 		return
-	
-	var font: DynamicFont = load(path)
 	
 	for theme in _text_themes:
 		theme.default_font = font
