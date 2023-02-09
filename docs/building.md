@@ -87,6 +87,7 @@ available from the root directory of the repository:
 
 ```
 build help             - Display a list of commands.
+build info             - Display information about Godot Engine.
 build list             - List all channels.
 build clean            - Clean all channels' build output.
 build clean <channel>  - Clean a single channel's build output.
