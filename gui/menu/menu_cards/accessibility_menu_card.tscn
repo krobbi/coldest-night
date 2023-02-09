@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://gui/menu/menu_rows/config_option_menu_row.tscn" type="PackedScene" id=4]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=5]
 [ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=6]
+[ext_resource path="res://resources/textures/gui/icons/font.png" type="Texture" id=7]
 
 [node name="AccessibilityMenuCard" instance=ExtResource( 1 )]
 
@@ -26,12 +27,12 @@ margin_right = 528.0
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
 margin_bottom = 320.0
 
-[node name="FontOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 4 )]
+[node name="ButtonMenuRow" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
 anchor_right = 0.0
 margin_right = 512.0
-option_source = 1
-text = ""
-config = "accessibility.font"
+tooltip = "TOOLTIP.BUTTON.FONT_SETTINGS"
+text = "BUTTON.FONT_SETTINGS"
+icon = ExtResource( 7 )
 
 [node name="ReducedMotionCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
 anchor_right = 0.0
@@ -113,4 +114,5 @@ press_sound = 2
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]
 margin_right = 528.0
 
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/ButtonMenuRow" to="." method="request_push" binds= [ "font" ]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]
