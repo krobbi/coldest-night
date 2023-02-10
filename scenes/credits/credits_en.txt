@@ -10,9 +10,9 @@ Game engine
 https://godotengine.org
 
 ## Copyright Holders
+Godot Engine contributors
 Juan Linietsky
 Ariel Manzur
-Godot Engine contributors
 
 # Aseprite
 Animated sprite editor & pixel art tool
@@ -46,8 +46,8 @@ Vadim (YellowAfterlife)
 PNG to ICNS converter
 https://www.npmjs.com/package/make-icns
 
-## Author
-Vu Dang Khoa Chiem (Doudou8)
+## Lead Developer
+Dang Khoa Chiem (Doudou8)
 
 # Atkinson Hyperlegible Font
 Legible font

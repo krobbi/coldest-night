@@ -5,7 +5,7 @@ __Copyright &copy; 2021-2023 Chris Roberts__ (Krobbizoid).
 _All rights reserved._
 
 # End User License Agreement
-By running the packaged executable file, you accept the following:
+By running the packaged executable file (the game), you accept the following:
 
 * You agree to the terms of the
 [Krobbizoid Game License](https://krobbi.github.io/license/2021/2023/kgl.txt)
@@ -51,14 +51,15 @@ THE SOFTWARE.
 ```
 
 # Godot Engine
-Coldest Night uses Godot Engine, which is copyright &copy; 2007-2023 Juan
-Linietsky, Ariel Manzur, copyright &copy; 2014-2023 Godot Engine contributors,
-and released under the MIT License.  
+Coldest Night uses Godot Engine, which is copyright &copy; 2014-present
+[Godot Engine contributors](https://github.com/godotengine/godot/blob/master/AUTHORS.md),
+copyright &copy; 2007-2014 Juan Linietsky, Ariel Manzur and released under the
+MIT License.  
 https://godotengine.org/license
 
 ```
-Copyright (c) 2007-2023 Juan Linietsky, Ariel Manzur.
-Copyright (c) 2014-2023 Godot Engine contributors.
+Copyright (c) 2014-present Godot Engine contributors.
+Copyright (c) 2007-2014 Juan Linietsky, Ariel Manzur.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -18,9 +18,9 @@ Chris Roberts (Krobbizoid)
 
 ### Copyright Holders
 ```
+Godot Engine contributors
 Juan Linietsky
 Ariel Manzur
-Godot Engine contributors
 ```
 
 ## Aseprite
@@ -58,9 +58,9 @@ Vadim (YellowAfterlife)
 ## make-icns
 [PNG to ICNS converter](https://www.npmjs.com/package/make-icns).
 
-### Author
+### Lead Developer
 ```
-Vu Dang Khoa Chiem (Doudou8)
+Dang Khoa Chiem (Doudou8)
 ```
 
 ## Atkinson Hyperlegible Font
