@@ -1,5 +1,5 @@
 ![Coldest Night logo.](docs/header.png)  
-_Space is lonely. A stealth-focused RPG in Godot Engine._  
+_Space is lonely. A prototype stealth game._  
 __Version 0.7.0__  
 __Copyright &copy; 2021-2023 Chris Roberts__ (Krobbizoid).  
 _All rights reserved._
@@ -18,10 +18,10 @@ _All rights reserved._
 7. [License](#license)
 
 # Coldest Night
-Coldest Night is a stealth-focused RPG being developed in
-[Godot Engine](https://godotengine.org). The game is in development and may not
-represent the quality of the final product. Significant changes may occur
-between versions.
+Coldest Night is a stealth game being developed in
+[Godot Engine](https://godotengine.org). The game is in a prototype stage and
+may not represent its final quality. Significant changes may occur between
+versions.
 
 # Running
 Pre-built demo versions of the game can be found on the
