@@ -1,53 +1,107 @@
 # NightScript Version 3.
 # Flag Test
-# Test for menus.
+# Test for constants and variables in menus.
+
+func test_eq(test_name, test, control){
+	if test == control {
+		say(format("Test `{0}` passed! ({1}.)", test_name, control));
+	} else {
+		say(format("Test `{0}` failed!\nExpected {1}, got {2}.", test_name, control, test));
+	}
+}
 
 freeze();
 show();
 
-# Variables declared outside of a menu statement can be used inside of options.
-var foo = 123;
+var var_a = 100;
+var var_b = 200;
+var var_c = 300;
+
+test_eq("pre_var_a", var_a, 100);
+test_eq("pre_var_b", var_b, 200);
+test_eq("pre_var_c", var_c, 300);
 
 menu {
-	# Constants can be declared inside of a menu statement with no issues.
-	const COUNT = 3;
-	const MULTIPLIER = 2;
+	const MAX = 10;
+	const MAGIC = 5;
 	
-	# Variables can also be declared inside of a menu statement, however...
+	var dummy_foo = 0xf00;
 	var counter = 0;
+	var dummy_bar = 0xbaa;
 	
-	while counter < COUNT {
+	while counter < MAX {
 		counter = counter + 1;
-		var multiple = counter * MULTIPLIER;
 		
-		option format("{0} * {1} = {2}", counter, MULTIPLIER, multiple) {
-			say(format(foo)); # Should say `123`.
-			say(format(COUNT)); # Should say `3`.
+		if counter == MAGIC {
+			var dummy_baz = 54321;
+			var mul_counter = counter * MAX; # Should be 50.
+			var dummy_qux = 12345;
 			
-			# ...they cannot be used in options. The following lines would cause
-			# an error.
-			#say(format(counter));
-			#say(format(multiple));
+			option "Fail test" {
+				var dummy_a = 111;
+				var dummy_b = 222;
+				var dummy_c = 333;
+				
+				test_eq("test_failer_a", 1, 0);
+			}
 			
-			###
-			This is an effect of how local variables are stored on the stack.
-			They are dropped at the end of the menu statement before jumping to
-			an option. Despite the apparent structure of the script, any local
-			variables declared in the menu statement are no longer in memory by
-			the time the option is jumped to.
+			var dummy_d = 444;
+			var dummy_e = 555;
 			
-			A transparent solution to this would be to create a snapshot of all
-			the relevant local variables at runtime when an option is stored,
-			and push them back to the stack when the option is jumped to. This
-			is under serious consideration, but is not yet implemented.
-			###
+			option "Run test" {
+				var var_d = 400;
+				var var_e = 500;
+				var var_f = 600;
+				
+				test_eq("option_var_a", var_a, 100);
+				test_eq("option_var_b", var_b, 800); # See below.
+				test_eq("option_var_c", var_c, 300);
+				test_eq("option_var_d", var_d, 400);
+				test_eq("option_var_e", var_e, 500);
+				test_eq("option_var_f", var_f, 600);
+				test_eq("option_counter", counter, 5);
+				test_eq("option_mul_counter", mul_counter, 50);
+				
+				test_eq("option_const_max", MAX, 10);
+				test_eq("option_const_magic", MAGIC, 5);
+				
+				# Variables declared in an option's menu scope are as copied by
+				# value when the option is reached at runtime, but variables
+				# declared outside of the scope are not.
+				var_b = var_b + counter + mul_counter; # Should be 800 + 5 + 50.
+			}
 			
-			# Let's just quickly test that variables are counted correctly.
-			var bar = 456;
-			say(format(bar)); # Should say `456`.
+			var dummy_f = 666;
+			var dummy_g = 777;
+			
+			option "Fail test" {
+				var dummy_h = 888;
+				
+				test_eq("test_failer_b", 1, 0);
+			}
+			
+			test_eq("post_option_counter", counter, 5);
+			test_eq("post_option_mul_counter", mul_counter, 50);
 		}
+	}
+	
+	var_b = 800; # This gives us the 800 value from before.
+	
+	test_eq("menu_counter", counter, 10);
+}
+
+test_eq("post_var_a", var_a, 100);
+test_eq("post_var_b", var_b, 855);
+test_eq("post_var_c", var_c, 300);
+
+var my_var = 1337;
+
+menu {
+	option "Test 2" {
 	}
 }
 
-hide();
+test_eq("final_test", my_var, 1337);
+
 unfreeze();
+hide();

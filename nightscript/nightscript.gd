@@ -12,6 +12,7 @@ class NightScriptDialogMenuOption extends Reference:
 	
 	var pointer: int
 	var text: String
+	var stack_snapshot: Array = []
 	
 	func _init(pointer_val: int, text_val: String) -> void:
 		pointer = pointer_val
@@ -218,7 +219,13 @@ class NightScriptVirtualMachine extends Reference:
 				if not menu_stack.empty():
 					var pointer: int = stack.pop_back()
 					var text: String = stack.pop_back()
-					menu_stack[-1].options.push_back(NightScriptDialogMenuOption.new(pointer, text))
+					var option: NightScriptDialogMenuOption = NightScriptDialogMenuOption.new(pointer, text)
+					var stack_snapshot_size: int = stack.pop_back()
+					
+					for i in range(stack.size() - stack_snapshot_size, stack.size()):
+						option.stack_snapshot.push_back(stack[i])
+					
+					menu_stack[-1].options.push_back(option)
 				else:
 					crash()
 			END_DIALOG_MENU:
@@ -290,7 +297,9 @@ class NightScriptVirtualMachine extends Reference:
 				if index < 0 or index >= menu.options.size():
 					index = 0
 				
-				memory.seek(menu.options[index].pointer)
+				var option: NightScriptDialogMenuOption = menu.options[index]
+				memory.seek(option.pointer)
+				stack.append_array(option.stack_snapshot)
 				is_awaiting = false
 			else:
 				crash()

@@ -362,24 +362,21 @@ func visit_option_stmt(option_stmt: OptionStmtASTNode) -> void:
 		code.set_label(parent_label)
 		return
 	
+	# Copy local variables defined since the menu so we can use them.
+	code.make_push_int(scope_stack.get_locals_since_label("menu"))
 	visit_node(folder.fold_expr(option_stmt.expr))
 	code.make_store_dialog_menu_option_label(option_label)
 	
-	scope_stack.push() # Buffer scope to prevent dropping parent locals.
-	scope_stack.undefine_locals("menu") # Invalidate variables declared in menu.
-	scope_stack.define_label("menu", scope_stack.get_label("menu"))
-	
-	scope_stack.push() # Option body scope.
+	scope_stack.push()
 	scope_stack.undefine_label("break")
 	scope_stack.undefine_label("continue")
 	scope_stack.undefine_label("menu")
 	code.set_label(option_label)
 	visit_node(option_stmt.stmt)
-	scope_stack.pop() # End option body scope.
+	scope_stack.pop()
 	
+	# Jumping to the scoped menu label will drop the copied local variables.
 	scope_stack.jump_to_label("menu")
-	scope_stack.pop() # End buffer scope.
-	
 	code.set_label(parent_label)
 
 

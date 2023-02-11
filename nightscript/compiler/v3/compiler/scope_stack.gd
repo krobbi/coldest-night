@@ -39,6 +39,26 @@ func get_symbol(identifier: String) -> Symbol:
 	return Symbol.new(identifier, Symbol.UNDEFINED)
 
 
+# Get the number of locals that have been defined since a scoped label was
+# defined from its key.
+func get_locals_since_label(key: String) -> int:
+	var local_count: int = 0
+	
+	for i in range(scopes.size() - 1, -1, -1):
+		var scope: Scope = scopes[i]
+		local_count += scope.scope_local_count
+		
+		if scope.labels.has(key):
+			var label: String = scope.labels[key]
+			
+			if label.empty():
+				return 0
+			
+			return local_count
+	
+	return 0
+
+
 # Return whether a scoped label is defined in the current scope from its key.
 func has_label(key: String) -> bool:
 	for i in range(scopes.size() - 1, -1, -1):
@@ -149,8 +169,8 @@ func undefine_label(key: String) -> void:
 
 
 # Undefine all symbols accessible from the current scope that are declared as
-# locals, optionally up to and including a scope where a label is defined.
-func undefine_locals(stop_label_key: String = "") -> void:
+# locals.
+func undefine_locals() -> void:
 	var scope: Scope = scopes[-1]
 	var seen_identifiers: Array = []
 	
@@ -159,8 +179,6 @@ func undefine_locals(stop_label_key: String = "") -> void:
 		
 		if scope.symbols[identifier].is_local:
 			scope.symbols[identifier] = Symbol.new(identifier, Symbol.UNDEFINED)
-			scope.scope_local_count -= 1
-			scope.total_local_count -= 1
 	
 	for index in range(scopes.size() - 2, -1, -1):
 		var parent_scope: Scope = scopes[index]
@@ -173,28 +191,15 @@ func undefine_locals(stop_label_key: String = "") -> void:
 			
 			if parent_scope.symbols[identifier].is_local:
 				scope.symbols[identifier] = Symbol.new(identifier, Symbol.UNDEFINED)
-				scope.total_local_count -= 1
-		
-		if not stop_label_key.empty() and parent_scope.labels.has(stop_label_key):
-			break
+	
+	scope.scope_local_count = 0
+	scope.total_local_count = 0
 
 
 # Drop all intermediate locals and jump to a scoped label from its key.
 func jump_to_label(key: String) -> void:
-	var local_count: int = 0
-	
-	for i in range(scopes.size() - 1, -1, -1):
-		var scope: Scope = scopes[i]
-		local_count += scope.scope_local_count
+	if has_label(key):
+		for _i in range(get_locals_since_label(key)):
+			code.make_drop()
 		
-		if scope.labels.has(key):
-			var label: String = scope.labels[key]
-			
-			if label.empty():
-				return
-			
-			for _j in range(local_count):
-				code.make_drop()
-			
-			code.make_jump_label(label)
-			return
+		code.make_jump_label(get_label(key))

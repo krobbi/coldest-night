@@ -469,6 +469,7 @@ func visit_option_stmt(node: ASTNode) -> void:
 	var end_label: String = code.insert_unique_label("option_end")
 	var body_label: String = code.insert_unique_label("option_body")
 	
+	code.make_push_int(0) # Don't create stack snapshot.
 	code.make_push_string(node.children[0].string_value)
 	code.make_store_dialog_menu_option_label(body_label)
 	code.make_jump_label(end_label)
