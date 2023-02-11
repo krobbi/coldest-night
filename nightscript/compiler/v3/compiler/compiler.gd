@@ -343,18 +343,31 @@ func visit_menu_stmt(menu_stmt: MenuStmtASTNode) -> void:
 func visit_option_stmt(option_stmt: OptionStmtASTNode) -> void:
 	var parent_label: String = code.get_label()
 	var option_label: String = code.append_unique_label("option")
+	
+	if not scope_stack.has_label("menu"):
+		logger.log_error("Cannot use `option` outside of a menu!", option_stmt.span)
+		
+		visit_node(folder.fold_expr(option_stmt.expr))
+		code.make_drop()
+		
+		scope_stack.push()
+		scope_stack.undefine_label("break")
+		scope_stack.undefine_label("continue")
+		scope_stack.undefine_label("menu")
+		code.set_label(option_label)
+		visit_node(option_stmt.stmt)
+		code.make_halt()
+		scope_stack.pop()
+		
+		code.set_label(parent_label)
+		return
+	
 	visit_node(folder.fold_expr(option_stmt.expr))
+	code.make_store_dialog_menu_option_label(option_label)
 	
 	scope_stack.push() # Buffer scope to prevent dropping parent locals.
-	
-	if scope_stack.has_label("menu"):
-		code.make_store_dialog_menu_option_label(option_label)
-		scope_stack.undefine_locals("menu") # Drop locals declared in menu.
-		scope_stack.define_label("menu", scope_stack.get_label("menu"))
-	else:
-		logger.log_error("Cannot use `option` outside of a menu!", option_stmt.span)
-		code.make_drop()
-		scope_stack.define_label("menu", parent_label)
+	scope_stack.undefine_locals("menu") # Invalidate variables declared in menu.
+	scope_stack.define_label("menu", scope_stack.get_label("menu"))
 	
 	scope_stack.push() # Option body scope.
 	scope_stack.undefine_label("break")
