@@ -1,6 +1,6 @@
 # NightScript Version 3.
-# Flag Test
-# Test for constants and variables in menus.
+# Menu Test
+# Test for variables in menus.
 
 func test_eq(test_name, test, control){
 	if test == control {
@@ -13,95 +13,56 @@ func test_eq(test_name, test, control){
 freeze();
 show();
 
-var var_a = 100;
-var var_b = 200;
-var var_c = 300;
-
-test_eq("pre_var_a", var_a, 100);
-test_eq("pre_var_b", var_b, 200);
-test_eq("pre_var_c", var_c, 300);
+var test_a = 100;
+var test_b = 200;
 
 menu {
-	const MAX = 10;
-	const MAGIC = 5;
+	option "Foo" {}
 	
-	var dummy_foo = 0xf00;
-	var counter = 0;
-	var dummy_bar = 0xbaa;
+	var outer_var = 123456;
+	var value;
 	
-	while counter < MAX {
-		counter = counter + 1;
+	menu {
+		var i = 0;
 		
-		if counter == MAGIC {
-			var dummy_baz = 54321;
-			var mul_counter = counter * MAX; # Should be 50.
-			var dummy_qux = 12345;
+		while i < 3 {
+			var j = 1337;
+			i = i + 1;
 			
-			option "Fail test" {
-				var dummy_a = 111;
-				var dummy_b = 222;
-				var dummy_c = 333;
+			say(format("Loop test {0} of 3", i));
+			test_eq("nested_menu_pre_j", j, 1337);
+			
+			option format("Use value {0}", i) {
+				var k = 9001;
+				value = i;
 				
-				test_eq("test_failer_a", 1, 0);
+				test_eq("nested_option_test_a", test_a, 100);
+				test_eq("nested_option_test_b", test_b, 200);
+				test_eq("nested_option_outer_var", outer_var, 123456);
+				test_eq("nested_option_j", j, 1337);
+				test_eq("nested_option_k", k, 9001);
 			}
 			
-			var dummy_d = 444;
-			var dummy_e = 555;
-			
-			option "Run test" {
-				var var_d = 400;
-				var var_e = 500;
-				var var_f = 600;
-				
-				test_eq("option_var_a", var_a, 100);
-				test_eq("option_var_b", var_b, 800); # See below.
-				test_eq("option_var_c", var_c, 300);
-				test_eq("option_var_d", var_d, 400);
-				test_eq("option_var_e", var_e, 500);
-				test_eq("option_var_f", var_f, 600);
-				test_eq("option_counter", counter, 5);
-				test_eq("option_mul_counter", mul_counter, 50);
-				
-				test_eq("option_const_max", MAX, 10);
-				test_eq("option_const_magic", MAGIC, 5);
-				
-				# Variables declared in an option's menu scope are as copied by
-				# value when the option is reached at runtime, but variables
-				# declared outside of the scope are not.
-				var_b = var_b + counter + mul_counter; # Should be 800 + 5 + 50.
-			}
-			
-			var dummy_f = 666;
-			var dummy_g = 777;
-			
-			option "Fail test" {
-				var dummy_h = 888;
-				
-				test_eq("test_failer_b", 1, 0);
-			}
-			
-			test_eq("post_option_counter", counter, 5);
-			test_eq("post_option_mul_counter", mul_counter, 50);
+			test_eq("nested_menu_post_j", j, 1337);
 		}
+		
+		test_eq("nested_menu_outer_var", outer_var, 123456);
+		test_eq("nested_menu_i", i, 3);
 	}
 	
-	var_b = 800; # This gives us the 800 value from before.
-	
-	test_eq("menu_counter", counter, 10);
-}
-
-test_eq("post_var_a", var_a, 100);
-test_eq("post_var_b", var_b, 855);
-test_eq("post_var_c", var_c, 300);
-
-var my_var = 1337;
-
-menu {
-	option "Test 2" {
+	option format("Bar {0}", value) {
+		test_eq("bar_test_a", test_a, 100);
+		test_eq("bar_test_b", test_b, 200);
+		test_eq("bar_outer_var", outer_var, 123456);
 	}
+	
+	test_eq("menu_test_a", test_a, 100);
+	test_eq("menu_test_b", test_b, 200);
+	test_eq("menu_outer_var", outer_var, 123456);
 }
 
-test_eq("final_test", my_var, 1337);
+test_eq("post_test_a", test_a, 100);
+test_eq("post_test_b", test_b, 200);
 
 unfreeze();
 hide();

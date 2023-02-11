@@ -320,23 +320,18 @@ func visit_while_stmt(while_stmt: WhileStmtASTNode) -> void:
 
 # Visit a menu statement AST node.
 func visit_menu_stmt(menu_stmt: MenuStmtASTNode) -> void:
+	var end_label: String = code.insert_unique_label("menu_end")
+	
 	scope_stack.push()
+	scope_stack.define_label("menu", end_label)
 	scope_stack.undefine_label("break")
 	scope_stack.undefine_label("continue")
+	code.make_begin_dialog_menu()
+	visit_node(menu_stmt.stmt)
+	scope_stack.pop()
 	
-	if scope_stack.has_label("menu"):
-		logger.log_error("Cannot use `menu` directly inside of a menu!", menu_stmt.span)
-		visit_node(menu_stmt.stmt)
-		scope_stack.pop()
-	else:
-		var end_label: String = code.insert_unique_label("menu_end")
-		scope_stack.define_label("menu", end_label)
-		code.make_begin_dialog_menu()
-		visit_node(menu_stmt.stmt)
-		scope_stack.pop()
-		code.make_end_dialog_menu()
-		
-		code.set_label(end_label)
+	code.make_end_dialog_menu()
+	code.set_label(end_label)
 
 
 # Visit an option statement AST node.
