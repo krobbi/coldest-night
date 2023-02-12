@@ -11,16 +11,16 @@ show();
 
 # The call and run functions take an absolute key and not an include path.
 # Putting this string in an include would try to load a program from
-# "v3_test/v3_test/callee".
+# "test/area_bx/north_annex/test/area_bx/north_annex/callee".
 say("Calling a program...");
-call("v3_test/callee");
+call("test/area_bx/north_annex/callee");
 
 name("When using call...");
 say("Control flow stops until the called program finishes.");
 name();
 
 say("Running a program...");
-run("v3_test/callee");
+run("test/area_bx/north_annex/callee");
 
 name("When using run...");
 say("The called program runs in parallel and control flow continues.");

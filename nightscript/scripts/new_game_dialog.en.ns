@@ -1,0 +1,21 @@
+# NightScript Version 3.
+# New Game Dialog
+# English dialog implementation for the new game script.
+
+func main_dialog(){
+	name("'The Developer'");
+	say("Much of the dialog has been cut for brevity,{p=0.25} or because I wasn't too happy with it.");
+	say("I hope you enjoy the demo!");
+	
+	name();
+	say("{s=0.1}...");
+	
+	name("???");
+	say("-So yeah that's basically all we need to do.");
+	say("Recover some data from these 'archival units'.{p=0.5} I think you'll know when you see one.");
+	say("And then we just need to get out of there,{p=0.25} without getting caught of course.");
+	say("Are you sure you can handle this?");
+	
+	name();
+	say("{s=0.1}...");
+}

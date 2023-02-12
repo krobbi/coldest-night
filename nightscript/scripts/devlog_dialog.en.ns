@@ -22,7 +22,7 @@ func main_dialog(){
 	say("You relax,{p=0.25} but suddenly a figure appears,{p=0.25} half-materialized.");
 	say("Although this seems very unusual,{p=0.25} it doesn't shock you.");
 	
-	name("???");
+	name("'The Developer'");
 	say("Hey.{p=0.5} I'm back again.");
 	say("I know you're not here for my ramblings, So I'll just get on with it.");
 	

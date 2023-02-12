@@ -23,7 +23,7 @@ func create_frontend(source: String) -> Frontend:
 	elif stripped_source.begins_with("# NightScript Version 3."):
 		return preload("v3/frontend_v3.gd").new(code)
 	
-	return preload("v2/frontend_v2.gd").new(code)
+	return preload("v3/frontend_v3.gd").new(code)
 
 
 # Assemble IR code to NightScript bytecode.

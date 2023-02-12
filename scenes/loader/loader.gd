@@ -14,7 +14,7 @@ func _ready() -> void:
 	match _save_data.state:
 		SaveData.State.NEW_GAME:
 			AudioManager.play_music("briefing")
-			EventBus.emit_nightscript_run_program_request("dialog/test/new_game")
+			EventBus.emit_nightscript_run_program_request("new_game")
 		SaveData.State.COMPLETED:
 			Global.change_scene("results")
 		SaveData.State.NORMAL, _:
