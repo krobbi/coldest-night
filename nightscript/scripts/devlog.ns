@@ -1,0 +1,22 @@
+# NightScript Version 3.
+# Devlog
+# Devlog dialog for Coldest Night.
+
+include "devlog_dialog";
+
+do_not_pause();
+
+show();
+leave_prompt_dialog();
+
+menu {
+	option get_leave_option() {
+		leave_dialog();
+	}
+	
+	option get_no_leave_option() {
+		main_dialog();
+	}
+}
+
+hide();

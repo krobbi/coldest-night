@@ -1,0 +1,35 @@
+# NightScript Version 3.
+# Devlog Dialog
+# English dialog implementation for the devlog dialog.
+
+func get_leave_option(){
+	return "Yes";
+}
+
+func get_no_leave_option(){
+	return "No";
+}
+
+func leave_prompt_dialog(){
+	say("It's getting dark.{p=0.5} Do you want to leave?");
+}
+
+func leave_dialog(){
+	say("It's getting cold too.{p=0.5} You best be going.");
+}
+
+func main_dialog(){
+	say("You relax,{p=0.25} but suddenly a figure appears,{p=0.25} half-materialized.");
+	say("Although this seems very unusual,{p=0.25} it doesn't shock you.");
+	
+	name("???");
+	say("Hey.{p=0.5} I'm back again.");
+	say("I know you're not here for my ramblings, So I'll just get on with it.");
+	
+	say("I haven't written a devlog yet.{p=0.5} You'll need to wait for the update to release.");
+	say("I'm aiming to tidy up my code and scale back my premature optimization,{p=0.25} particularly in the build process.");
+	say("I can give you more details soon.");
+	
+	say("That's all for now.{p=0.5} I hope to see you again soon.");
+	say("Goodbye,{p=0.25} and thanks for playing!");
+}
