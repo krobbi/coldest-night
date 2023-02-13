@@ -11,8 +11,8 @@ var _is_changing_scene: bool = false
 func _ready() -> void:
 	ConfigBus.load_file()
 	ConfigBus.broadcast()
-	SaveManager.select_slot(0)
 	SaveManager.load_file()
+	SaveManager.pull_from_slot()
 	DisplayManager.refresh_custom_fonts()
 
 

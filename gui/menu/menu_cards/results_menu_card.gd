@@ -32,5 +32,6 @@ func _on_continue_button_pressed() -> void:
 		Global.change_scene("menu")
 	else:
 		_save_data.state = SaveData.State.COMPLETED
+		SaveManager.push_to_slot()
 		SaveManager.save_file()
 		Global.change_scene("credits")

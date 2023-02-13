@@ -77,5 +77,5 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	_player.state_machine.change_state(_player.get_moving_state())
 	_player.enable_triggers()
 	
-	SaveManager.save_checkpoint()
+	SaveManager.push_to_checkpoint()
 	EventBus.emit_fade_in_request()

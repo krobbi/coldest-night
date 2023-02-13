@@ -24,5 +24,11 @@ func _ready() -> void:
 # Set the current working save data's state to normal and change to the
 # overworld scene.
 func _load_normal() -> void:
+	var is_new_game: bool = _save_data.state == SaveData.State.NEW_GAME
 	_save_data.state = SaveData.State.NORMAL
+	
+	if is_new_game:
+		SaveManager.push_to_slot()
+		SaveManager.save_file()
+	
 	Global.change_scene("overworld", true, false)

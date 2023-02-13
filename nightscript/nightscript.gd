@@ -280,7 +280,7 @@ class NightScriptVirtualMachine extends Reference:
 			SAVE_GAME:
 				SaveManager.save_game()
 			SAVE_CHECKPOINT:
-				SaveManager.save_checkpoint()
+				SaveManager.push_to_checkpoint()
 	
 	
 	# End the awaiting state.

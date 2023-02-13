@@ -9,13 +9,18 @@ signal flag_changed(flag, value)
 
 enum State {NEW_GAME, NORMAL, COMPLETED}
 
-var state: int = State.NEW_GAME
+var state: int
 var level: String
-var position: Vector2 = Vector2.ZERO
-var angle: float = 0.0
+var position: Vector2
+var angle: float
 var stats: StatsSaveData = StatsSaveData.new()
 var flags: Dictionary = {}
 var scenes: Dictionary = {}
+
+# Clear the save data.
+func _init() -> void:
+	clear()
+
 
 # Set a flag from its flag.
 func set_flag(flag: String, value: int) -> void:
@@ -28,22 +33,15 @@ func get_flag(flag: String) -> int:
 	return flags.get(flag, 0)
 
 
-# Clear the save data to empty values.
+# Clear the save data to a new game.
 func clear() -> void:
 	state = State.NEW_GAME
-	level = ""
-	position = Vector2.ZERO
+	level = "test/area_bx/north"
+	position = Vector2(-368.0, -496.0)
 	angle = 0.0
 	stats.clear()
 	flags.clear()
 	scenes.clear()
-
-
-# Clear the save data to preset values for a new game.
-func preset_new_game() -> void:
-	clear()
-	level = "test/area_bx/north"
-	position = Vector2(-368.0, -496.0)
 
 
 # Serialize the save data's state to a string.

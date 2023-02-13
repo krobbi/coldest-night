@@ -6,121 +6,61 @@ extends Node
 
 const FORMAT_NAME: String = "krobbizoid.coldest-night.save"
 const FORMAT_VERSION: int = 1
-const SLOT_COUNT: int = 1
 const SAVES_DIR: String = "user://saves/"
+const FILE_PATH: String = "%ssave_1.json" % SAVES_DIR
 
-var _working_data: SaveData = SaveData.new()
+var _slot_data: SaveData = SaveData.new()
 var _checkpoint_data: SaveData = SaveData.new()
-var _slots: Array = []
-var _selected_slot: int = 0
-
-# Run when the save manager enters the scene tree. Populate the save manager's
-# slots.
-func _ready() -> void:
-	_slots.resize(SLOT_COUNT)
-	
-	for i in range(SLOT_COUNT):
-		_slots[i] = SaveData.new()
-
+var _working_data: SaveData = SaveData.new()
 
 # Get the current working save data.
 func get_working_data() -> SaveData:
 	return _working_data
 
 
-# Select a slot from its slot index.
-func select_slot(slot_index: int) -> void:
-	if _selected_slot != slot_index and slot_index >= 0 and slot_index < SLOT_COUNT:
-		_selected_slot = slot_index
-		_copy_save_data(_slots[_selected_slot], _working_data, true)
-		_copy_save_data(_working_data, _checkpoint_data, true)
-
-
-# Load the current working save data from the checkpoint.
-func load_checkpoint() -> void:
-	_copy_save_data(_checkpoint_data, _working_data, false)
-
-
-# Load the current working save data from the selected slot's file.
-func load_file() -> void:
-	_load_file(_slots[_selected_slot], _selected_slot)
-	_copy_save_data(_slots[_selected_slot], _working_data, true)
-	_copy_save_data(_working_data, _checkpoint_data, true)
-
-
-# Load the current working save data from the selected slot.
-func load_slot() -> void:
-	_copy_save_data(_slots[_selected_slot], _working_data, true)
-	_copy_save_data(_working_data, _checkpoint_data, true)
-
-
-# Load the current working save data from the selected slot without overwriting
-# its statistics save data.
-func load_slot_checkpoint() -> void:
-	_copy_save_data(_slots[_selected_slot], _working_data, false)
-	_copy_save_data(_working_data, _checkpoint_data, true)
-
-
-# Save the current working save data to the checkpoint.
-func save_checkpoint() -> void:
-	_copy_save_data(_working_data, _checkpoint_data, true)
-
-
-# Save the current working data to the selected slot's file.
-func save_file() -> void:
-	_copy_save_data(_working_data, _checkpoint_data, true)
-	_copy_save_data(_working_data, _slots[_selected_slot], true)
-	_save_file(_slots[_selected_slot], _selected_slot)
-
-
-# Save the current game state to the selected slot's file.
+# Save the state of the game and save current working save data to the slot save
+# data's file.
 func save_game() -> void:
 	EventBus.emit_save_state_request()
-	_copy_save_data(_working_data, _checkpoint_data, true)
-	_copy_save_data(_working_data, _slots[_selected_slot], true)
-	_save_file(_slots[_selected_slot], _selected_slot)
+	push_to_slot()
+	save_file()
 
 
-# Save a new game save file to the selected slot's file.
-func save_new_game() -> void:
-	_working_data.preset_new_game()
-	_copy_save_data(_working_data, _checkpoint_data, true)
-	_copy_save_data(_working_data, _slots[_selected_slot], true)
-	_save_file(_slots[_selected_slot], _selected_slot)
-
-
-# Get a slot's path from its slot index.
-func _get_slot_path(slot_index: int) -> String:
-	return "%ssave_%d.json" % [SAVES_DIR, slot_index + 1]
-
-
-# Get save data serialized to a string.
-func _get_data_string(save_data: SaveData) -> String:
-	if ConfigBus.get_bool("advanced.readable_saves"):
-		return "%s\n" % JSON.print(save_data.serialize(), "\t")
+# Save the slot save data to its file.
+func save_file() -> void:
+	var dir: Directory = Directory.new()
 	
-	return JSON.print(save_data.serialize())
-
-
-# Copy source save data to target save data by value.
-func _copy_save_data(source: SaveData, target: SaveData, copy_stats: bool) -> void:
-	var original_stats: Dictionary = target.stats.serialize()
-	target.deserialize(source.serialize())
-	
-	if not copy_stats:
-		target.stats.deserialize(original_stats)
-
-
-# Load save data from its file from a slot index.
-func _load_file(save_data: SaveData, slot_index: int) -> void:
-	var file: File = File.new()
-	var path: String = _get_slot_path(slot_index)
-	save_data.preset_new_game()
-	
-	if not file.file_exists(path):
+	if not dir.dir_exists(SAVES_DIR) and dir.make_dir(SAVES_DIR) != OK:
 		return
 	
-	if file.open(path, File.READ) != OK:
+	var file: File = File.new()
+	
+	if file.open(FILE_PATH, File.WRITE) != OK:
+		if file.is_open():
+			file.close()
+		
+		return
+	
+	var data_string: String
+	
+	if ConfigBus.get_bool("advanced.readable_saves"):
+		data_string = "%s\n" % JSON.print(_slot_data.serialize(), "\t")
+	else:
+		data_string = JSON.print(_slot_data.serialize())
+	
+	file.store_string(data_string)
+	file.close()
+
+
+# Load the slot save data from its file.
+func load_file() -> void:
+	_slot_data.clear()
+	var file: File = File.new()
+	
+	if not file.file_exists(FILE_PATH):
+		return
+	
+	if file.open(FILE_PATH, File.READ) != OK:
 		if file.is_open():
 			file.close()
 		
@@ -130,29 +70,35 @@ func _load_file(save_data: SaveData, slot_index: int) -> void:
 	file.close()
 	_validate_save_data_json(reader)
 	
-	if not reader.is_valid():
-		return
-	
-	save_data.deserialize(reader.get_data())
+	if reader.is_valid():
+		_slot_data.deserialize(reader.get_data())
 
 
-# Save save data to its file from a slot index.
-func _save_file(save_data: SaveData, slot_index: int) -> void:
-	var dir: Directory = Directory.new()
-	
-	if not dir.dir_exists(SAVES_DIR) and dir.make_dir(SAVES_DIR) != OK:
-		return
-	
-	var file: File = File.new()
-	
-	if file.open(_get_slot_path(slot_index), File.WRITE) != OK:
-		if file.is_open():
-			file.close()
-		
-		return
-	
-	file.store_string(_get_data_string(save_data))
-	file.close()
+# Push the current working save data to the slot save data.
+func push_to_slot() -> void:
+	var data: Dictionary = _working_data.serialize()
+	_checkpoint_data.deserialize(data)
+	_slot_data.deserialize(data)
+
+
+# Pull the current working save data from the slot save data.
+func pull_from_slot() -> void:
+	var data: Dictionary = _slot_data.serialize()
+	_checkpoint_data.deserialize(data)
+	_working_data.deserialize(data)
+
+
+# Push the current working save data to the checkpoint save data.
+func push_to_checkpoint() -> void:
+	_checkpoint_data.deserialize(_working_data.serialize())
+
+
+# Pull the current working save data from the checkpoint save data without
+# reverting its statistics save data.
+func pull_from_checkpoint() -> void:
+	var stats_data: Dictionary = _working_data.stats.serialize()
+	_working_data.deserialize(_checkpoint_data.serialize())
+	_working_data.stats.deserialize(stats_data)
 
 
 # Validate save data JSON from a JSON reader.

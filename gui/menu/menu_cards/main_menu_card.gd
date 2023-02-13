@@ -4,21 +4,22 @@ extends MenuCard
 # The main menu card is a menu card that contains the main menu and its
 # functionality.
 
-# Run when the continue game button is pressed. Load the selected save slot and
+# Run when the continue game button is pressed. Pull from the slot save data and
 # change to the loader scene.
 func _on_continue_game_button_pressed() -> void:
-	SaveManager.load_slot()
+	SaveManager.pull_from_slot()
 	Global.change_scene("loader")
 
 
-# Run when the new game button is pressed. Save a new game and change to the
-# loader scene.
+# Run when the new game button is pressed. Clear the current working save data,
+# push it to the slot save data, and change to the loader scene.
 func _on_new_game_button_pressed() -> void:
-	SaveManager.save_new_game()
+	SaveManager.get_working_data().clear()
+	SaveManager.push_to_slot()
 	Global.change_scene("loader")
 
 
-# Runs when the credits button is pressed. Change to the credits scene.
+# Run when the credits button is pressed. Change to the credits scene.
 func _on_credits_button_pressed() -> void:
 	Global.change_scene("credits")
 
