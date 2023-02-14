@@ -74,25 +74,8 @@ func get_next_token() -> Token:
 		
 		return create_token(Token.WHITESPACE)
 	elif accept("#"):
-		if peek(0) != "#" or peek(1) != "#":
-			while not is_eof() and peek(0) != "\n":
-				advance(1)
-			
-			return create_token(Token.WHITESPACE)
-		
-		advance(2)
-		var has_seen_terminator: bool = false
-		
-		while not is_eof():
-			if peek(0) == "#" and peek(1) == "#" and peek(2) == "#":
-				advance(3)
-				has_seen_terminator = true
-				break
-			
+		while not is_eof() and peek(0) != "\n":
 			advance(1)
-		
-		if not has_seen_terminator:
-			logger.log_error("Unterminated block comment!", span)
 		
 		return create_token(Token.WHITESPACE)
 	elif consume(DEC_DIGITS):
