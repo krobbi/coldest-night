@@ -64,10 +64,7 @@ func advance() -> void:
 	current = next
 	next = lexer.get_next_token()
 	
-	while next.type == Token.ERROR or next.type == Token.WHITESPACE:
-		if next.type == Token.ERROR:
-			logger.log_error(next.str_value, next.span)
-		
+	while next.type in [Token.ERROR, Token.WHITESPACE]:
 		next = lexer.get_next_token()
 
 

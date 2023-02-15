@@ -260,9 +260,11 @@ func create_str_token(type: int, value: String) -> Token:
 	return token
 
 
-# Create a new error token from its message.
+# Create and log a new error token from its message.
 func create_error_token(message: String) -> Token:
-	return create_str_token(Token.ERROR, message)
+	var token: Token = create_str_token(Token.ERROR, message)
+	logger.log_error(token.str_value, token.span)
+	return token
 
 
 # Peek and return the character at an offset from the next character. Return an
