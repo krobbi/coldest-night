@@ -68,8 +68,10 @@ func get_next_token() -> Token:
 	
 	if is_eof():
 		return create_token(Token.EOF)
+	elif accept("\n"):
+		return create_token(Token.LINE_BREAK)
 	elif is_whitespace():
-		while not is_eof() and is_whitespace():
+		while not is_eof() and is_whitespace() and peek(0) != "\n":
 			advance(1)
 		
 		return create_token(Token.WHITESPACE)
@@ -77,7 +79,7 @@ func get_next_token() -> Token:
 		while not is_eof() and peek(0) != "\n":
 			advance(1)
 		
-		return create_token(Token.WHITESPACE)
+		return create_str_token(Token.COMMENT, lexeme.substr(1).strip_edges())
 	elif consume(DEC_DIGITS):
 		var base: int = 10
 		var digits: String = DEC_DIGITS

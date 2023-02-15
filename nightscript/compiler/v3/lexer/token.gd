@@ -9,7 +9,9 @@ const Span: GDScript = preload("../logger/span.gd")
 enum {
 	EOF, # End of file.
 	ERROR, # Syntax error. (Skipped by parser.)
-	WHITESPACE, # Whitespace or comment. (Skipped by parser.)
+	WHITESPACE, # Whitespace. (Skipped by parser.)
+	COMMENT, # Comment. (Skipped by parser.)
+	LINE_BREAK, # `\n`. (Skipped by parser.)
 	LITERAL_INT, # Integer value.
 	LITERAL_STR, # String value.
 	IDENTIFIER, # Identifier.
@@ -66,7 +68,7 @@ func _to_string() -> String:
 			result = "%s `%s`" % [result, str_value]
 		LITERAL_INT:
 			result = "%s `%d`" % [result, int_value]
-		LITERAL_STR:
+		COMMENT, LITERAL_STR:
 			result = "%s `%s`" % [result, str_value.c_escape()]
 	
 	return "%s (%s)" % [result, span]
@@ -81,6 +83,10 @@ static func get_name(token_type: int) -> String:
 			return "syntax error"
 		WHITESPACE:
 			return "whitespace"
+		COMMENT:
+			return "comment"
+		LINE_BREAK:
+			return "line break"
 		LITERAL_INT:
 			return "integer"
 		LITERAL_STR:

@@ -64,7 +64,7 @@ func advance() -> void:
 	current = next
 	next = lexer.get_next_token()
 	
-	while next.type in [Token.ERROR, Token.WHITESPACE]:
+	while next.type in [Token.ERROR, Token.WHITESPACE, Token.COMMENT, Token.LINE_BREAK]:
 		next = lexer.get_next_token()
 
 
