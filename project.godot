@@ -219,7 +219,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Coldest Night"
-config/description="Space is lonely."
+config/description="A prototype stealth game."
 run/main_scene="res://scenes/menu/menu.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="krobbizoid/coldest_night"

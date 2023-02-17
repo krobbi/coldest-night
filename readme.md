@@ -1,5 +1,5 @@
 ![Coldest Night logo.](docs/header.png)  
-_Space is lonely. A prototype stealth game._  
+_A prototype stealth game._  
 __Version 0.7.0__  
 __Copyright &copy; 2021-2023 Chris Roberts__ (Krobbizoid).  
 _All rights reserved._
