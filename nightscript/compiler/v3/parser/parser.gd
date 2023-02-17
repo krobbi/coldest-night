@@ -62,10 +62,7 @@ func create_error(message: String) -> ErrorASTNode:
 # Advance to the next valid token.
 func advance() -> void:
 	current = next
-	next = lexer.get_next_token()
-	
-	while next.type in [Token.ERROR, Token.WHITESPACE, Token.COMMENT, Token.LINE_BREAK]:
-		next = lexer.get_next_token()
+	next = lexer.get_next_valid_token()
 
 
 # Advance to the next valid token and return true if its type matches a type.

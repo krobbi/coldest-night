@@ -68,18 +68,16 @@ func get_next_token() -> Token:
 	
 	if is_eof():
 		return create_token(Token.EOF)
-	elif accept("\n"):
-		return create_token(Token.LINE_BREAK)
 	elif is_whitespace():
-		while not is_eof() and is_whitespace() and peek(0) != "\n":
+		while not is_eof() and is_whitespace():
 			advance(1)
 		
-		return create_token(Token.WHITESPACE)
+		return create_token(Token.INVALID)
 	elif accept("#"):
 		while not is_eof() and peek(0) != "\n":
 			advance(1)
 		
-		return create_str_token(Token.COMMENT, lexeme.substr(1).strip_edges())
+		return create_token(Token.INVALID)
 	elif consume(DEC_DIGITS):
 		var base: int = 10
 		var digits: String = DEC_DIGITS
@@ -215,15 +213,28 @@ func get_next_token() -> Token:
 			for operator in OPERATORS:
 				if operator.begins_with(substring):
 					advance(length)
-					return create_error_token(
-							"Illegal operator `%s`! Did you mean `%s`?" % [substring, operator])
+					logger.log_error(
+							"Illegal operator `%s`! Did you mean `%s`?"
+							% [substring, operator], span)
+					return create_token(Token.INVALID)
 	
 	if not lexeme.empty():
-		return create_error_token(
-				"Bug: Lexer fell through after accepting `%s`!" % lexeme.c_escape())
+		logger.log_error("Bug: Lexer fell through after accepting `%s`!" % lexeme.c_escape(), span)
+		return create_token(Token.INVALID)
 	
 	advance(1)
-	return create_error_token("Illegal character `%s`!" % lexeme.c_escape())
+	logger.log_error("Illegal character `%s`!" % lexeme.c_escape(), span)
+	return create_token(Token.INVALID)
+
+
+# Get the next valid token from the token stream.
+func get_next_valid_token() -> Token:
+	var token: Token = get_next_token()
+	
+	while token.type == Token.INVALID:
+		token = get_next_token()
+	
+	return token
 
 
 # Return whether the next character is out of bounds.
@@ -259,13 +270,6 @@ func create_int_token(type: int, value: int) -> Token:
 func create_str_token(type: int, value: String) -> Token:
 	var token: Token = create_token(type)
 	token.str_value = value
-	return token
-
-
-# Create and log a new error token from its message.
-func create_error_token(message: String) -> Token:
-	var token: Token = create_str_token(Token.ERROR, message)
-	logger.log_error(token.str_value, token.span)
 	return token
 
 
