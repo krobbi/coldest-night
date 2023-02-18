@@ -82,6 +82,21 @@ func fold_bin_expr(bin_expr: BinExprASTNode) -> ExprASTNode:
 			return pop_span(rhs_expr if lhs_expr.value != 0 else lhs_expr)
 		elif bin_expr.operator == Token.KEYWORD_OR:
 			return pop_span(lhs_expr if lhs_expr.value != 0 else rhs_expr)
+		elif bin_expr.operator == Token.STAR and lhs_expr.value == 1:
+			return pop_span(rhs_expr)
+		elif bin_expr.operator == Token.PLUS and lhs_expr.value == 0:
+			return pop_span(rhs_expr)
+		elif bin_expr.operator == Token.MINUS and lhs_expr.value == 0:
+			return pop_span(fold_expr(UnExprASTNode.new(Token.MINUS, rhs_expr)))
+	elif rhs_expr is IntExprASTNode:
+		if bin_expr.operator == Token.KEYWORD_OR and rhs_expr.value == 0:
+			return pop_span(lhs_expr)
+		elif bin_expr.operator == Token.STAR and rhs_expr.value == 1:
+			return pop_span(lhs_expr)
+		elif bin_expr.operator == Token.PLUS and rhs_expr.value == 0:
+			return pop_span(lhs_expr)
+		elif bin_expr.operator == Token.MINUS and rhs_expr.value == 0:
+			return pop_span(lhs_expr)
 	
 	if not lhs_expr is IntExprASTNode or not rhs_expr is IntExprASTNode:
 		return pop_span(BinExprASTNode.new(lhs_expr, bin_expr.operator, rhs_expr))
