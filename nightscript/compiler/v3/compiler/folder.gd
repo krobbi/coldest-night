@@ -56,6 +56,20 @@ func fold_un_expr(un_expr: UnExprASTNode) -> ExprASTNode:
 	if un_expr.operator == Token.PLUS:
 		return pop_span(child_expr)
 	
+	if child_expr is UnExprASTNode:
+		var grandchild_expr: ExprASTNode = fold_expr(child_expr.expr)
+		
+		if un_expr.operator == Token.KEYWORD_NOT and child_expr.operator == Token.KEYWORD_NOT:
+			if grandchild_expr is UnExprASTNode and grandchild_expr.operator == Token.KEYWORD_NOT:
+				# Triple negative can become single negative.
+				return pop_span(
+						fold_expr(UnExprASTNode.new(Token.KEYWORD_NOT, grandchild_expr.expr)))
+		if un_expr.operator == Token.KEYWORD_NOT and child_expr.operator == Token.MINUS:
+			# Negation preserves nonzeroness.
+			return pop_span(fold_expr(UnExprASTNode.new(Token.KEYWORD_NOT, grandchild_expr)))
+		if un_expr.operator == Token.MINUS and child_expr.operator == Token.MINUS:
+			return pop_span(grandchild_expr)
+	
 	if not child_expr is IntExprASTNode:
 		return pop_span(UnExprASTNode.new(un_expr.operator, child_expr))
 	
