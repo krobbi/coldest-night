@@ -53,13 +53,14 @@ func fold_un_expr(un_expr: UnExprASTNode) -> ExprASTNode:
 	push_span(un_expr)
 	var child_expr: ExprASTNode = fold_expr(un_expr.expr)
 	
+	if un_expr.operator == Token.PLUS:
+		return pop_span(child_expr)
+	
 	if not child_expr is IntExprASTNode:
 		return pop_span(UnExprASTNode.new(un_expr.operator, child_expr))
 	
 	if un_expr.operator == Token.KEYWORD_NOT:
 		return pop_span(IntExprASTNode.new(int(child_expr.value == 0)))
-	elif un_expr.operator == Token.PLUS:
-		return pop_span(child_expr)
 	elif un_expr.operator == Token.MINUS:
 		return pop_span(IntExprASTNode.new(-child_expr.value))
 	
