@@ -71,14 +71,16 @@ func fold_bin_expr(bin_expr: BinExprASTNode) -> ExprASTNode:
 	
 	var lhs_expr: ExprASTNode = fold_expr(bin_expr.lhs_expr)
 	
+	if lhs_expr is IntExprASTNode:
+		if bin_expr.operator == Token.KEYWORD_AND:
+			return copy_span(bin_expr, rhs_expr if lhs_expr.value != 0 else lhs_expr)
+		elif bin_expr.operator == Token.KEYWORD_OR:
+			return copy_span(bin_expr, lhs_expr if lhs_expr.value != 0 else rhs_expr)
+	
 	if not lhs_expr is IntExprASTNode or not rhs_expr is IntExprASTNode:
 		return copy_span(bin_expr, BinExprASTNode.new(lhs_expr, bin_expr.operator, rhs_expr))
 	
-	if bin_expr.operator == Token.KEYWORD_AND:
-		return copy_span(bin_expr, rhs_expr if lhs_expr.value != 0 else lhs_expr)
-	elif bin_expr.operator == Token.KEYWORD_OR:
-		return copy_span(bin_expr, lhs_expr if lhs_expr.value != 0 else rhs_expr)
-	elif bin_expr.operator == Token.BANG_EQUALS:
+	if bin_expr.operator == Token.BANG_EQUALS:
 		return copy_span(bin_expr, IntExprASTNode.new(int(lhs_expr.value != rhs_expr.value)))
 	elif bin_expr.operator == Token.STAR:
 		return copy_span(bin_expr, IntExprASTNode.new(lhs_expr.value * rhs_expr.value))
