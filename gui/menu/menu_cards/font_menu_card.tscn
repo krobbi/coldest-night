@@ -18,14 +18,14 @@ text = "HEADING.FONT_SETTINGS"
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
 margin_bottom = 176.0
 
-[node name="FontOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
+[node name="FamilyOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_right = 512.0
 option_source = 1
 text = ""
-config = "accessibility.font"
+config = "font.family"
 
-[node name="FontSizeSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 5 )]
+[node name="SizeSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 5 )]
 anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
@@ -35,7 +35,7 @@ min_value = 15.0
 max_value = 25.0
 step = 1.0
 text = ""
-config = "accessibility.font_size"
+config = "font.size"
 
 [node name="OpenCustomFontsDirectoryButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 3 )]
 anchor_right = 0.0

@@ -27,13 +27,13 @@ var _custom_fonts: Dictionary = {}
 # Run when the display manager enters the scene tree. Subscribe the display
 # manager to the configuration bus.
 func _ready() -> void:
-	ConfigBus.subscribe_node_string("accessibility.font", self, "_set_font")
-	ConfigBus.subscribe_node_int("accessibility.font_size", self, "_on_font_size_changed")
 	ConfigBus.subscribe_node_bool("display.fullscreen", self, "_on_fullscreen_changed")
 	ConfigBus.subscribe_node_bool("display.vsync", self, "_on_vsync_changed")
 	ConfigBus.subscribe_node_bool("display.pixel_snap", self, "_on_pixel_snap_changed")
 	ConfigBus.subscribe_node_int("display.window_scale", self, "_set_window_scale")
 	ConfigBus.subscribe_node_string("display.scale_mode", self, "_on_scale_mode_changed")
+	ConfigBus.subscribe_node_string("font.family", self, "_set_font_family")
+	ConfigBus.subscribe_node_int("font.size", self, "_on_font_size_changed")
 
 
 # Run when the display manager receives an input event. Handle controls for
@@ -57,16 +57,15 @@ func get_max_window_scale() -> int:
 # Get a dictionary of font options.
 func get_font_options() -> Dictionary:
 	var font_options: Dictionary = {
-		"OPTION.ACCESSIBILITY.FONT.COLDNIGHT": "coldnight",
-		"OPTION.ACCESSIBILITY.FONT.ATKINSON_HYPERLEGIBLE": "atkinson_hyperlegible",
+		"OPTION.FONT.FAMILY.COLDNIGHT": "coldnight",
+		"OPTION.FONT.FAMILY.ATKINSON_HYPERLEGIBLE": "atkinson_hyperlegible",
 	}
 	
 	var counter: int = 0
 	
 	for custom_font in _custom_fonts:
 		counter += 1
-		font_options[
-				tr("OPTION.ACCESSIBILITY.FONT.CUSTOM").format({"counter": counter})] = custom_font
+		font_options[tr("OPTION.FONT.FAMILY.CUSTOM").format({"counter": counter})] = custom_font
 	
 	return font_options
 
@@ -108,7 +107,7 @@ func refresh_custom_fonts() -> void:
 		
 		if ResourceLoader.exists(path, "DynamicFontData"):
 			var font: DynamicFont = DynamicFont.new()
-			font.size = ConfigBus.get_int("accessibility.font_size", 20)
+			font.size = ConfigBus.get_int("font.size", 20)
 			font.font_data = load(path)
 			_custom_fonts[path] = font
 		
@@ -117,12 +116,12 @@ func refresh_custom_fonts() -> void:
 	dir.list_dir_end()
 
 
-# Set the font.
-func _set_font(value: String) -> void:
+# Set the font family.
+func _set_font_family(value: String) -> void:
 	var font: DynamicFont = _load_font(value)
 	
 	if not font:
-		ConfigBus.set_string("accessibility.font", "coldnight")
+		ConfigBus.set_string("font.family", "coldnight")
 		return
 	
 	for theme in _text_themes:
@@ -173,13 +172,13 @@ func _get_max_window_scale(margin_min: float, margin_scale: float) -> int:
 # Load a dynamic font from its config key. Return `null` if the dynamic font
 # cannot be loaded.
 func _load_font(config_key: String) -> DynamicFont:
-	if config_key.begins_with("user://"):
+	if config_key.begins_with(FONTS_DIR):
 		if _custom_fonts.has(config_key):
 			return _custom_fonts[config_key]
 		
 		if ResourceLoader.exists(config_key, "DynamicFontData"):
 			var font: DynamicFont = DynamicFont.new()
-			font.size = ConfigBus.get_int("accessibility.font_size", 20)
+			font.size = ConfigBus.get_int("font.size", 20)
 			font.font_data = load(config_key)
 			_custom_fonts[config_key] = font
 			return font
@@ -222,8 +221,8 @@ func _on_font_size_changed(value: int) -> void:
 	for path in _custom_fonts:
 		_custom_fonts[path].size = value
 	
-	_set_font(ConfigBus.get_string("accessibility.font", "coldnight"))
-	ConfigBus.set_int("accessibility.font_size", value) # Round to int.
+	_set_font_family(ConfigBus.get_string("font.family", "coldnight"))
+	ConfigBus.set_int("font.size", value) # Round to int.
 
 
 # Run when the fullscreen state changes in the configuration bus. Set whether
