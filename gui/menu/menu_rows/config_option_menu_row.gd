@@ -30,7 +30,6 @@ func set_config(value: String) -> void:
 	config = value
 	
 	if _button:
-		set_value(ConfigBus.get_value(config), true)
 		ConfigBus.subscribe(config, self, "set_value", TYPE_NIL, [true])
 	
 	set_text("OPTION.%s" % config.to_upper())

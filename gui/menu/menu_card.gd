@@ -21,7 +21,6 @@ onready var _tooltip_timer: Timer = $TooltipTimer
 func _ready() -> void:
 	if _tooltip_label_path and get_node(_tooltip_label_path) is Label:
 		_tooltip_label = get_node(_tooltip_label_path)
-		_tooltip_label.visible = ConfigBus.get_bool("accessibility.tooltips")
 		ConfigBus.subscribe_node_bool("accessibility.tooltips", _tooltip_label, "set_visible")
 		EventBus.subscribe_node("tooltip_display_request", self, "display_tooltip")
 

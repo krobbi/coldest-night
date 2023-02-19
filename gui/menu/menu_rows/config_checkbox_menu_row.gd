@@ -29,7 +29,6 @@ func set_config(value: String) -> void:
 	config = value
 	
 	if _checkbox:
-		set_pressed_no_signal(ConfigBus.get_bool(config, is_pressed))
 		ConfigBus.subscribe_bool(config, self, "set_pressed_no_signal")
 	
 	set_text("CHECKBOX.%s" % config.to_upper())

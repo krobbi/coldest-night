@@ -43,6 +43,18 @@ var _data: Dictionary = {
 	"debug.optimize_nightscript": false,
 }
 
+# Run when the configuration bus enters the scene tree. Load the configuration
+# bus.
+func _ready() -> void:
+	load_file()
+
+
+# Run when the configuration bus exits the scene tree. Save the configuration
+# bus.
+func _exit_tree() -> void:
+	save_file()
+
+
 # Set a configuration value from its configuration key.
 func set_value(config_key: String, value) -> void:
 	if not _data.has(config_key):
@@ -117,7 +129,10 @@ func subscribe(
 		return
 	
 	unsubscribe(config_key, target, method)
-	_connections.push_back(ConfigConnection.new(config_key, target, method, cast_type, binds))
+	var connection: ConfigConnection = ConfigConnection.new(
+			config_key, target, method, cast_type, binds)
+	_connections.push_back(connection)
+	connection.emit(_data.get(config_key))
 
 
 # Subscribe a target to a bool configuration event.
@@ -186,16 +201,6 @@ func unsubscribe(config_key: String, target: Object, method: String) -> void:
 		
 		if connection.has_signature(config_key, target, method):
 			connection.sever()
-		
-		if connection.is_severed():
-			_connections.remove(i)
-
-
-# Emit all configuration events.
-func broadcast() -> void:
-	for i in range(_connections.size() - 1, -1, -1):
-		var connection: ConfigConnection = _connections[i]
-		connection.emit(_data.get(connection.get_config_key()))
 		
 		if connection.is_severed():
 			_connections.remove(i)

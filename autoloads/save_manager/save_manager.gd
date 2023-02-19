@@ -13,6 +13,12 @@ var _slot_data: SaveData = SaveData.new()
 var _checkpoint_data: SaveData = SaveData.new()
 var _working_data: SaveData = SaveData.new()
 
+# Run when the save manager enters the scene tree. Load the save data.
+func _ready() -> void:
+	load_file()
+	pull_from_slot()
+
+
 # Get the current working save data.
 func get_working_data() -> SaveData:
 	return _working_data

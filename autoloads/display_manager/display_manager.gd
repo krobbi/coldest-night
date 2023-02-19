@@ -25,7 +25,7 @@ var _text_themes: Array = [
 var _custom_fonts: Dictionary = {}
 
 # Run when the display manager enters the scene tree. Subscribe the display
-# manager to the configuration bus.
+# manager to the configuration bus and refresh the custom fonts.
 func _ready() -> void:
 	ConfigBus.subscribe_node_bool("display.fullscreen", self, "_on_fullscreen_changed")
 	ConfigBus.subscribe_node_bool("display.vsync", self, "_on_vsync_changed")
@@ -34,6 +34,7 @@ func _ready() -> void:
 	ConfigBus.subscribe_node_string("display.scale_mode", self, "_on_scale_mode_changed")
 	ConfigBus.subscribe_node_string("font.family", self, "_set_font_family")
 	ConfigBus.subscribe_node_int("font.size", self, "_on_font_size_changed")
+	refresh_custom_fonts()
 
 
 # Run when the display manager receives an input event. Handle controls for

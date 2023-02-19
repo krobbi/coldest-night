@@ -30,7 +30,6 @@ func set_config(value: String) -> void:
 	config = value
 	
 	if _slider:
-		set_value_no_signal(ConfigBus.get_float(config, slider_value))
 		ConfigBus.subscribe_float(config, self, "set_value_no_signal")
 	
 	set_text("SLIDER.%s" % config.to_upper())

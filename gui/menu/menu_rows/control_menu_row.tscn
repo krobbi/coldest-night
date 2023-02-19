@@ -20,6 +20,7 @@ draw_center = false
 [node name="ControlMenuRow" groups=["control_menu_rows"] instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 focus_node_path = NodePath("Content/Button")
+_action = ""
 
 [node name="Label" type="Label" parent="Content" index="0"]
 anchor_bottom = 1.0
@@ -55,7 +56,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="InputTimer" type="Timer" parent="." index="4"]
+[node name="InputTimer" type="Timer" parent="." index="3"]
 wait_time = 8.0
 one_shot = true
 

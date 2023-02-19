@@ -6,21 +6,6 @@ extends Node
 
 var _is_changing_scene: bool = false
 
-# Run when the global context finishes entering the scene tree. Initialize the
-# game.
-func _ready() -> void:
-	ConfigBus.load_file()
-	ConfigBus.broadcast()
-	SaveManager.load_file()
-	SaveManager.pull_from_slot()
-	DisplayManager.refresh_custom_fonts()
-
-
-# Run when the global context exits the scene tree. Destruct the game.
-func _exit_tree() -> void:
-	ConfigBus.save_file()
-
-
 # Change the current scene from its scene key.
 func change_scene(scene_key: String, fade_out: bool = true, fade_in: bool = true) -> void:
 	if _is_changing_scene:
