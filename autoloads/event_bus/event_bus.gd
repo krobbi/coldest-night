@@ -19,11 +19,6 @@ signal nightscript_stop_programs_request()
 signal nightscript_cache_program_request(program_key)
 signal nightscript_flush_cache_request()
 
-signal fade_in_request()
-signal fade_out_request()
-signal faded_in()
-signal faded_out()
-
 signal floating_text_display_request(text, world_pos)
 signal subtitle_display_request(message)
 signal tooltip_display_request(message)
@@ -132,26 +127,6 @@ func emit_nightscript_cache_program_request(program_key: String) -> void:
 # Emit a NightScript flush cache request event.
 func emit_nightscript_flush_cache_request() -> void:
 	emit_signal("nightscript_flush_cache_request")
-
-
-# Emit a fade in request event.
-func emit_fade_in_request() -> void:
-	emit_signal("fade_in_request")
-
-
-# Emit a fade out request event.
-func emit_fade_out_request() -> void:
-	emit_signal("fade_out_request")
-
-
-# Emit a faded in event.
-func emit_faded_in() -> void:
-	emit_signal("faded_in")
-
-
-# Emit a faded out event.
-func emit_faded_out() -> void:
-	emit_signal("faded_out")
 
 
 # Emit a floating text display request event.

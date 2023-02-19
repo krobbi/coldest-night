@@ -47,8 +47,8 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	EventBus.emit_radar_camera_unfollow_anchor_request()
 	
 	if current_level:
-		EventBus.emit_fade_out_request()
-		yield(EventBus, "faded_out")
+		SceneManager.fade_out()
+		yield(SceneManager, "faded_out")
 		
 		current_level.save_state()
 		
@@ -78,4 +78,4 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	_player.enable_triggers()
 	
 	SaveManager.push_to_checkpoint()
-	EventBus.emit_fade_in_request()
+	SceneManager.fade_in()

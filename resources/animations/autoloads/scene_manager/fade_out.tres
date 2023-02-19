@@ -5,7 +5,7 @@ resource_name = "fade_out"
 length = 0.2
 step = 0.2
 tracks/0/type = "value"
-tracks/0/path = NodePath(".:visible")
+tracks/0/path = NodePath("FadeRect:visible")
 tracks/0/interp = 0
 tracks/0/loop_wrap = false
 tracks/0/imported = false
@@ -17,7 +17,7 @@ tracks/0/keys = {
 "values": [ true ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath(".:color")
+tracks/1/path = NodePath("FadeRect:color")
 tracks/1/interp = 2
 tracks/1/loop_wrap = false
 tracks/1/imported = false

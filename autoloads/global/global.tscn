@@ -1,13 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://autoloads/global/global.gd" type="Script" id=1]
-[ext_resource path="res://gui/fade_transition/fade_transition.tscn" type="PackedScene" id=2]
 
 [node name="Global" type="Node"]
 pause_mode = 2
 script = ExtResource( 1 )
-
-[node name="TopLayer" type="CanvasLayer" parent="."]
-layer = 2
-
-[node name="FadeTransition" parent="TopLayer" instance=ExtResource( 2 )]
