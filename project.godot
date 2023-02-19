@@ -19,11 +19,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/menu/menu_rows/checkbox_menu_row.gd"
 }, {
-"base": "ColorRect",
-"class": "ColorGrader",
-"language": "GDScript",
-"path": "res://gui/color_grader/color_grader.gd"
-}, {
 "base": "Reference",
 "class": "ConfigConnection",
 "language": "GDScript",
@@ -182,7 +177,6 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Actor": "",
 "CheckboxMenuRow": "",
-"ColorGrader": "",
 "ConfigConnection": "",
 "Dialog": "",
 "DialogTagParser": "",
@@ -243,6 +237,7 @@ DisplayManager="*res://autoloads/display_manager/display_manager.tscn"
 InputManager="*res://autoloads/input_manager/input_manager.tscn"
 LangManager="*res://autoloads/lang_manager/lang_manager.tscn"
 SaveManager="*res://autoloads/save_manager/save_manager.tscn"
+ShaderManager="*res://autoloads/shader_manager/shader_manager.tscn"
 Global="*res://autoloads/global/global.tscn"
 
 [display]

@@ -61,7 +61,7 @@ func set_option_source(value: int) -> void:
 		OptionSource.ACCESSIBILITY_FONT:
 			set_options(DisplayManager.get_font_options())
 		OptionSource.ACCESSIBILITY_COLOR_GRADING:
-			set_options(ColorGrader.get_grading_options())
+			set_options(ShaderManager.get_color_grading_options())
 		OptionSource.DISPLAY_WINDOW_SCALE:
 			set_options(DisplayManager.get_window_scale_options())
 		OptionSource.DISPLAY_SCALE_MODE:
