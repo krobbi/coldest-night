@@ -13,7 +13,7 @@ text = "HEADING.RADAR_SETTINGS"
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
 margin_bottom = 104.0
 
-[node name="RadarScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 4 )]
+[node name="ScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_right = 512.0
 slider_value = 1.0
@@ -21,9 +21,9 @@ min_value = 1.0
 max_value = 3.0
 step = 0.25
 text = ""
-config = "accessibility.radar_scale"
+config = "radar.scale"
 
-[node name="RadarOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 4 )]
+[node name="BackgroundOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
@@ -33,7 +33,7 @@ min_value = 0.0
 max_value = 100.0
 step = 10.0
 text = ""
-config = "accessibility.radar_opacity"
+config = "radar.background_opacity"
 
 [node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
 anchor_right = 0.0
