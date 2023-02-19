@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=2]
 [ext_resource path="res://gui/menu/menu_rows/config_option_menu_row.tscn" type="PackedScene" id=3]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=4]
 [ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=5]
+[ext_resource path="res://resources/textures/gui/icons/font.png" type="Texture" id=6]
 
 [node name="DisplayMenuCard" instance=ExtResource( 1 )]
 
@@ -23,59 +24,68 @@ margin_right = 528.0
 margin_right = 528.0
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 248.0
+margin_bottom = 284.0
 
-[node name="FullscreenCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 2 )]
+[node name="FontSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_right = 512.0
-config = "display.fullscreen"
+tooltip = "TOOLTIP.BUTTON.FONT_SETTINGS"
+text = "BUTTON.FONT_SETTINGS"
+icon = ExtResource( 6 )
 
-[node name="VsyncCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
+[node name="FullscreenCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
 margin_bottom = 68.0
-is_pressed = true
-config = "display.vsync"
+config = "display.fullscreen"
 
-[node name="PixelSnapCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
+[node name="VsyncCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_top = 72.0
 margin_right = 512.0
 margin_bottom = 104.0
-config = "display.pixel_snap"
+is_pressed = true
+config = "display.vsync"
 
-[node name="WindowScaleOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 3 )]
+[node name="PixelSnapCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_top = 108.0
 margin_right = 512.0
 margin_bottom = 140.0
-option_source = 3
-text = ""
-config = "display.window_scale"
+config = "display.pixel_snap"
 
-[node name="ScaleModeOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 3 )]
+[node name="WindowScaleOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 144.0
 margin_right = 512.0
 margin_bottom = 176.0
-option_source = 4
+option_source = 3
 text = ""
-config = "display.scale_mode"
+config = "display.window_scale"
 
-[node name="DisplayBarksCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 2 )]
+[node name="ScaleModeOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 180.0
 margin_right = 512.0
 margin_bottom = 212.0
-is_pressed = true
-config = "display.display_barks"
+option_source = 4
+text = ""
+config = "display.scale_mode"
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 4 )]
+[node name="DisplayBarksCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_top = 216.0
 margin_right = 512.0
 margin_bottom = 248.0
+is_pressed = true
+config = "display.display_barks"
+
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 4 )]
+anchor_right = 0.0
+margin_top = 252.0
+margin_right = 512.0
+margin_bottom = 284.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.TO_SETTINGS"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 5 )
@@ -84,4 +94,5 @@ press_sound = 2
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]
 margin_right = 528.0
 
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/FontSettingsButton" to="." method="request_push" binds= [ "font" ]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]
