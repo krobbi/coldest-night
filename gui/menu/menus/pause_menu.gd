@@ -4,7 +4,6 @@ extends ColorRect
 # The pause menu is a menu that is displayed when the game is paused.
 
 var _is_open: bool = false
-var _opacity: float = 80.0
 
 onready var _menu_stack: MenuStack = $MenuStack
 
@@ -12,19 +11,20 @@ onready var _menu_stack: MenuStack = $MenuStack
 # opacity and subscribe the pause menu to the configuration bus and event bus.
 func _ready() -> void:
 	_set_opacity(ConfigBus.get_float("accessibility.pause_opacity"))
-	EventBus.subscribe_node("pause_game_request", self, "_open_menu")
 	ConfigBus.subscribe_node_float("accessibility.pause_opacity", self, "_set_opacity")
+	EventBus.subscribe_node("pause_game_request", self, "_open_menu")
 
 
 # Set the pause menu's opacity.
 func _set_opacity(value: float) -> void:
-	if value < 0.0:
-		value = 0.0
-	elif value > 100.0 or is_inf(value) or is_nan(value):
-		value = 100.0
+	if value < 30.0:
+		ConfigBus.set_float("accessibility.pause_opacity", 30.0)
+		return
+	elif value > 100.0:
+		ConfigBus.set_float("accessibility.pause_opacity", 100.0)
+		return
 	
-	_opacity = value
-	color.a = _opacity * 0.01
+	color.a = value * 0.01
 
 
 # Open the pause menu.

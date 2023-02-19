@@ -12,10 +12,7 @@ const LaserWallRenderer: PackedScene = preload(
 		"res://gui/radar/radar_laser_wall_renderer/radar_laser_wall_renderer.tscn")
 
 const RESOLUTION: Vector2 = Vector2(128.0, 96.0)
-const MAX_DISPLAY_SCALE: float = 3.0
 
-var _display_scale: float = 1.0
-var _display_opacity: float = 0.5
 var _vision_area_renderers: Array = []
 var _actor_renderers: Array = []
 var _laser_wall_renderers: Array = []
@@ -37,10 +34,10 @@ onready var _walls_renderer: RadarSegmentRenderer = $Viewport/Foreground/Walls
 # radar display to the configuration bus and event bus.
 func _ready() -> void:
 	set_process(false)
-	set_display_scale(ConfigBus.get_float("radar.scale"))
-	set_display_opacity(ConfigBus.get_float("radar.background_opacity"))
-	ConfigBus.subscribe_node_float("radar.scale", self, "set_display_scale")
-	ConfigBus.subscribe_node_float("radar.background_opacity", self ,"set_display_opacity")
+	_set_display_scale(ConfigBus.get_float("radar.scale"))
+	_set_background_opacity(ConfigBus.get_float("radar.background_opacity"))
+	ConfigBus.subscribe_node_float("radar.scale", self, "_set_display_scale")
+	ConfigBus.subscribe_node_float("radar.background_opacity", self ,"_set_background_opacity")
 	EventBus.subscribe_node("radar_clear_request", self, "clear")
 	EventBus.subscribe_node("radar_render_node_request", self, "render_node")
 	EventBus.subscribe_node("radar_referesh_entities_request", self, "refresh_entities")
@@ -52,34 +49,6 @@ func _ready() -> void:
 # camera anchor.
 func _process(_delta: float) -> void:
 	camera.position = _camera_anchor.position
-
-
-# Set the radar display's display scale.
-func set_display_scale(value: float) -> void:
-	if value < 1.0 or is_nan(value):
-		value = 1.0
-	elif value > MAX_DISPLAY_SCALE or is_inf(value):
-		value = MAX_DISPLAY_SCALE
-	
-	_display_scale = value
-	yield(get_tree(), "idle_frame")
-	_viewport.size = RESOLUTION * _display_scale
-	rect_size = RESOLUTION * _display_scale
-	rect_position.x = 624.0 - rect_size.x
-	camera.zoom = Vector2(8.0, 8.0) / _display_scale
-	ConfigBus.set_float("radar.scale", _display_scale)
-
-
-# Set the radar display's display opacity.
-func set_display_opacity(value: float) -> void:
-	if value < 0.0:
-		value = 0.0
-	elif value > 100.0 or is_inf(value) or is_nan(value):
-		value = 100.0
-	
-	_display_opacity = value
-	_background_polygon.color.a = _display_opacity * 0.01
-	ConfigBus.set_float("radar.background_opacity", _display_opacity)
 
 
 # Refresh all rendered entities on the radar display.
@@ -209,6 +178,33 @@ func camera_unfollow_anchor() -> void:
 	set_process(false)
 	camera.position = _camera_anchor.position
 	_camera_anchor = null
+
+
+# Set the radar display's scale.
+func _set_display_scale(value: float) -> void:
+	if value < 1.0:
+		ConfigBus.set_float("radar.scale", 1.0)
+		return
+	elif value > 3.0:
+		ConfigBus.set_float("radar.scale", 3.0)
+		return
+	
+	_viewport.size = RESOLUTION * value
+	rect_size = RESOLUTION * value
+	rect_position.x = 624.0 - rect_size.x
+	camera.zoom = Vector2(8.0, 8.0) / value
+
+
+# Set the radar display's background opacity.
+func _set_background_opacity(value: float) -> void:
+	if value < 0.0:
+		ConfigBus.set_float("radar.background_opacity", 0.0)
+		return
+	elif value > 100.0:
+		ConfigBus.set_float("radar.background_opacity", 100.0)
+		return
+	
+	_background_polygon.color.a = value * 0.01
 
 
 # Recursively collect polygons from a node and its children.

@@ -52,7 +52,7 @@ func emit(value) -> void:
 		return
 	
 	var args: Array = _binds.duplicate()
-	args.insert(0, cast(value, _cast_type))
+	args.insert(0, _cast(value, _cast_type))
 	_target.callv(_method, args)
 
 
@@ -62,7 +62,7 @@ func sever() -> void:
 
 
 # Cast a variable-type value to a type.
-static func cast(value, type: int):
+func _cast(value, type: int):
 	match type:
 		TYPE_BOOL:
 			return cast_bool(value)
@@ -72,24 +72,42 @@ static func cast(value, type: int):
 			return cast_float(value)
 		TYPE_STRING:
 			return cast_string(value)
-		_:
-			return value
+	
+	return value
 
 
 # Cast a variable-type value to a bool.
 static func cast_bool(value) -> bool:
+	match typeof(value):
+		TYPE_BOOL:
+			return value
+		TYPE_INT:
+			return value != 0
+		TYPE_REAL:
+			if is_inf(value) or is_nan(value):
+				return false
+			
+			return value > 0.0 or value < -0.0
+		TYPE_STRING:
+			return not value.empty()
+	
 	return true if value else false
 
 
 # Cast a variable-type value to an int.
 static func cast_int(value) -> int:
 	match typeof(value):
-		TYPE_BOOL, TYPE_REAL, TYPE_STRING:
+		TYPE_BOOL, TYPE_STRING:
 			return int(value)
 		TYPE_INT:
 			return value
-		_:
-			return 0
+		TYPE_REAL:
+			if is_inf(value) or is_nan(value):
+				return 0
+			
+			return int(value)
+	
+	return 0
 
 
 # Cast a variable-type value to a float.
@@ -98,17 +116,25 @@ static func cast_float(value) -> float:
 		TYPE_BOOL, TYPE_INT, TYPE_STRING:
 			return float(value)
 		TYPE_REAL:
+			if is_inf(value) or is_nan(value):
+				return 0.0
+			
 			return value
-		_:
-			return 0.0
+	
+	return 0.0
 
 
 # Cast a variable-type value to a string.
 static func cast_string(value) -> String:
 	match typeof(value):
-		TYPE_BOOL, TYPE_INT, TYPE_REAL:
+		TYPE_BOOL, TYPE_INT:
+			return String(value)
+		TYPE_REAL:
+			if is_inf(value) or is_nan(value):
+				return "0.0"
+			
 			return String(value)
 		TYPE_STRING:
 			return value
-		_:
-			return ""
+	
+	return ""

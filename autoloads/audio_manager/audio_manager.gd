@@ -84,7 +84,7 @@ func _on_volume_changed(value: float, bus_key: String) -> void:
 	if value < 0.0:
 		ConfigBus.set_float("audio.%s_volume" % bus_key, 0.0)
 		return
-	elif value > 100.0 or is_inf(value) or is_nan(value):
+	elif value > 100.0:
 		ConfigBus.set_float("audio.%s_volume" % bus_key, 100.0)
 		return
 	
