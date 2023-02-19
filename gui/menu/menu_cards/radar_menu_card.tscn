@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=2]
 [ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=3]
 [ext_resource path="res://gui/menu/menu_rows/config_slider_menu_row.tscn" type="PackedScene" id=4]
+[ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=5]
 
 [node name="RadarMenuCard" instance=ExtResource( 1 )]
 
@@ -11,11 +12,19 @@
 text = "HEADING.RADAR_SETTINGS"
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 104.0
+margin_bottom = 140.0
 
-[node name="ScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 4 )]
+[node name="VisibleCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
 anchor_right = 0.0
 margin_right = 512.0
+is_pressed = true
+config = "radar.visible"
+
+[node name="ScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 4 )]
+anchor_right = 0.0
+margin_top = 36.0
+margin_right = 512.0
+margin_bottom = 68.0
 slider_value = 1.0
 min_value = 1.0
 max_value = 3.0
@@ -23,11 +32,11 @@ step = 0.25
 text = ""
 config = "radar.scale"
 
-[node name="BackgroundOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 4 )]
+[node name="BackgroundOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 4 )]
 anchor_right = 0.0
-margin_top = 36.0
+margin_top = 72.0
 margin_right = 512.0
-margin_bottom = 68.0
+margin_bottom = 104.0
 slider_value = 50.0
 min_value = 0.0
 max_value = 100.0
@@ -35,11 +44,11 @@ step = 10.0
 text = ""
 config = "radar.background_opacity"
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]
 anchor_right = 0.0
-margin_top = 72.0
+margin_top = 108.0
 margin_right = 512.0
-margin_bottom = 104.0
+margin_bottom = 140.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.FROM_RADAR"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 3 )

@@ -34,8 +34,10 @@ onready var _walls_renderer: RadarSegmentRenderer = $Viewport/Foreground/Walls
 # radar display to the configuration bus and event bus.
 func _ready() -> void:
 	set_process(false)
+	visible = ConfigBus.get_bool("radar.visible")
 	_set_display_scale(ConfigBus.get_float("radar.scale"))
 	_set_background_opacity(ConfigBus.get_float("radar.background_opacity"))
+	ConfigBus.subscribe_node_bool("radar.visible", self, "set_visible")
 	ConfigBus.subscribe_node_float("radar.scale", self, "_set_display_scale")
 	ConfigBus.subscribe_node_float("radar.background_opacity", self ,"_set_background_opacity")
 	EventBus.subscribe_node("radar_clear_request", self, "clear")

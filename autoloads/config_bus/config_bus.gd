@@ -35,6 +35,7 @@ var _data: Dictionary = {
 	"font.family": "coldnight",
 	"font.size": 20,
 	"language.locale": "auto",
+	"radar.visible": true,
 	"radar.scale": 1.0,
 	"radar.background_opacity": 50.0,
 	"advanced.show_advanced": false,
