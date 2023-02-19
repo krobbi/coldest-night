@@ -25,7 +25,7 @@ margin_right = 528.0
 margin_right = 528.0
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 320.0
+margin_bottom = 284.0
 
 [node name="FontSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 4 )]
 anchor_right = 0.0
@@ -83,19 +83,11 @@ option_source = 4
 text = ""
 config = "display.scale_mode"
 
-[node name="DisplayBarksCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 2 )]
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_top = 252.0
 margin_right = 512.0
 margin_bottom = 284.0
-is_pressed = true
-config = "display.display_barks"
-
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 288.0
-margin_right = 512.0
-margin_bottom = 320.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.TO_SETTINGS"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 5 )
