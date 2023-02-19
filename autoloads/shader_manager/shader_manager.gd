@@ -27,7 +27,7 @@ func get_color_grading_options() -> Dictionary:
 	}
 
 
-# Run when the color grading changes.
+# Run when the color grading changes. Set or clear the color grading shader.
 func _on_color_grading_changed(value: String) -> void:
 	if value == "none":
 		_color_grading_rect.hide()
