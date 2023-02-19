@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=5]
 [ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=6]
 [ext_resource path="res://resources/textures/gui/icons/font.png" type="Texture" id=7]
+[ext_resource path="res://resources/textures/gui/icons/radar.png" type="Texture" id=8]
 
 [node name="AccessibilityMenuCard" instance=ExtResource( 1 )]
 
@@ -25,87 +26,72 @@ margin_right = 528.0
 margin_right = 528.0
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 320.0
+margin_bottom = 284.0
 
-[node name="ButtonMenuRow" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
+[node name="FontSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
 anchor_right = 0.0
 margin_right = 512.0
 tooltip = "TOOLTIP.BUTTON.FONT_SETTINGS"
 text = "BUTTON.FONT_SETTINGS"
 icon = ExtResource( 7 )
 
-[node name="ReducedMotionCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 2 )]
+[node name="RadarSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 5 )]
 anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
 margin_bottom = 68.0
-config = "accessibility.reduced_motion"
+tooltip = "TOOLTIP.BUTTON.RADAR_SETTINGS"
+text = "BUTTON.RADAR_SETTINGS"
+icon = ExtResource( 8 )
 
-[node name="TooltipsCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
+[node name="ReducedMotionCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_top = 72.0
 margin_right = 512.0
 margin_bottom = 104.0
-is_pressed = true
-config = "accessibility.tooltips"
+config = "accessibility.reduced_motion"
 
-[node name="NeverGameOverCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]
+[node name="TooltipsCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_top = 108.0
 margin_right = 512.0
 margin_bottom = 140.0
-config = "accessibility.never_game_over"
+is_pressed = true
+config = "accessibility.tooltips"
 
-[node name="RadarScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 3 )]
+[node name="NeverGameOverCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_top = 144.0
 margin_right = 512.0
 margin_bottom = 176.0
-slider_value = 1.0
-min_value = 1.0
-max_value = 3.0
-step = 0.25
-text = ""
-config = "accessibility.radar_scale"
+config = "accessibility.never_game_over"
 
-[node name="RadarOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 3 )]
+[node name="PauseOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 180.0
 margin_right = 512.0
 margin_bottom = 212.0
-slider_value = 50.0
-min_value = 0.0
+slider_value = 80.0
+min_value = 30.0
 max_value = 100.0
-step = 5.0
+step = 10.0
 text = ""
-config = "accessibility.radar_opacity"
+config = "accessibility.pause_opacity"
 
-[node name="PauseOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 3 )]
+[node name="ColorGradingOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_top = 216.0
 margin_right = 512.0
 margin_bottom = 248.0
-slider_value = 80.0
-min_value = 30.0
-max_value = 100.0
-step = 5.0
-text = ""
-config = "accessibility.pause_opacity"
-
-[node name="ColorGradingOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 252.0
-margin_right = 512.0
-margin_bottom = 284.0
 option_source = 2
 text = ""
 config = "accessibility.color_grading"
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 5 )]
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 5 )]
 anchor_right = 0.0
-margin_top = 288.0
+margin_top = 252.0
 margin_right = 512.0
-margin_bottom = 320.0
+margin_bottom = 284.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.TO_SETTINGS"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 6 )
@@ -114,5 +100,6 @@ press_sound = 2
 [node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]
 margin_right = 528.0
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/ButtonMenuRow" to="." method="request_push" binds= [ "font" ]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/FontSettingsButton" to="." method="request_push" binds= [ "font" ]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/RadarSettingsButton" to="." method="request_push" binds= [ "radar" ]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]
