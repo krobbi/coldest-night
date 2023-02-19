@@ -5,33 +5,31 @@ extends ColorRect
 # A color grader is a GUI element that applies a color grading shader to all
 # canvas items under it.
 
-var grading: String = "none" setget set_grading
-
 # Run when the color grader enters the scene tree. Subscribe the color grader to
 # the configuration bus.
 func _ready() -> void:
-	ConfigBus.subscribe_node_string("accessibility.color_grading", self, "set_grading")
+	ConfigBus.subscribe_node_string(
+			"accessibility.color_grading", self, "_on_color_grading_changed")
 
 
-# Sets the color grader's grading:
-func set_grading(value: String) -> void:
-	if grading == value:
-		return
-	
-	var path: String = "res://resources/shaders/post/%s.gdshader" % value
-	
-	if value == "none" or not ResourceLoader.exists(path, "Shader"):
-		grading = "none"
+# Run when the color grading changes.
+func _on_color_grading_changed(value: String) -> void:
+	if value == "none":
 		hide()
 		material.shader = null
 		return
 	
-	grading = value
+	var path: String = "res://resources/shaders/gui/color_grader/%s.gdshader" % value
+	
+	if not ResourceLoader.exists(path, "Shader"):
+		ConfigBus.set_string("accessibility.color_grading", "none")
+		return
+	
 	material.shader = load(path)
 	show()
 
 
-# Gets a dictionary of color grading options:
+# Get a dictionary of color grading options.
 static func get_grading_options() -> Dictionary:
 	return {
 		"OPTION.ACCESSIBILITY.COLOR_GRADING.NONE": "none",
