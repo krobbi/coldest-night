@@ -18,6 +18,9 @@ script = ExtResource( 2 )
 _is_manually_poppable = false
 _menu_list_path = NodePath("CenterContainer/VBoxContainer/MenuList")
 _tooltip_label_path = NodePath("TooltipLabel")
+_loader_scene_path = "res://scenes/loader/loader.tscn"
+_credits_scene_path = "res://scenes/credits/credits.tscn"
+_devlog_scene_path = "res://scenes/devlog/devlog.tscn"
 
 [node name="TooltipLabel" type="Label" parent="." index="1"]
 anchor_top = 1.0
