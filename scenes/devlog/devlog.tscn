@@ -32,6 +32,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_lock_": true
 }
+_exit_scene_path = "res://scenes/menu/menu.tscn"
 
 [node name="NightScript" parent="." instance=ExtResource( 2 )]
 

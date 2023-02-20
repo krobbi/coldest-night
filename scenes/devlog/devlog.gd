@@ -3,6 +3,8 @@ extends Control
 # Devlog Scene
 # The devlog scene is a scene that runs the devlog dialog.
 
+export(String, FILE, "*.tscn") var _exit_scene_path: String
+
 var _has_shown_silhouette: bool = false
 
 # Run when the dialog scene is entered. Play background music, subscribe the
@@ -29,6 +31,6 @@ func _on_dialog_option_pressed(index: int) -> void:
 	tween.tween_property($SilhouetteRect, "rect_position:x", 400.0, 3.0)
 
 
-# Run when the devlog dialog finishes. Return to the menu scene.
+# Run when the devlog dialog finishes. Exit the devlog scene.
 func _on_nightscript_thread_joined() -> void:
-	Global.change_scene("menu")
+	SceneManager.change_scene(_exit_scene_path)
