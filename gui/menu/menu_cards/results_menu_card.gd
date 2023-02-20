@@ -4,6 +4,9 @@ extends MenuCard
 # The results menu card is a fixed menu card that is the root menu card of the
 # results scene.
 
+export(String, FILE, "*.tscn") var _just_completed_scene_path: String
+export(String, FILE, "*.tscn") var _already_completed_scene_path: String
+
 var _save_data: SaveData = SaveManager.get_working_data()
 var _is_continuing: bool = false
 
@@ -20,8 +23,8 @@ func _ready() -> void:
 
 
 # Run when the continue button is pressed. Complete and save the current working
-# save data and change to the credits scene if the current working save data was
-# just completed. Otherwise, change to the menu scene.
+# save data and change to the just completed scene if the current working save
+# data was just completed. Otherwise, change to the already completed scene.
 func _on_continue_button_pressed() -> void:
 	if _is_continuing:
 		return
@@ -29,9 +32,9 @@ func _on_continue_button_pressed() -> void:
 	_is_continuing = true
 	
 	if _save_data.state == SaveData.State.COMPLETED:
-		Global.change_scene("menu")
+		SceneManager.change_scene(_already_completed_scene_path)
 	else:
 		_save_data.state = SaveData.State.COMPLETED
 		SaveManager.push_to_slot()
 		SaveManager.save_file()
-		Global.change_scene("credits")
+		SceneManager.change_scene(_just_completed_scene_path)

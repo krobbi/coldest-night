@@ -8,6 +8,8 @@
 [node name="ResultsMenuCard" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 _is_manually_poppable = false
+_just_completed_scene_path = "res://scenes/credits/credits.tscn"
+_already_completed_scene_path = "res://scenes/menu/menu.tscn"
 
 [node name="VBoxContainer" parent="CenterContainer" index="0"]
 margin_top = 123.0
