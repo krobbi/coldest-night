@@ -22,6 +22,7 @@ var _data: Dictionary = {
 	"accessibility.tooltips": true,
 	"accessibility.never_game_over": false,
 	"accessibility.pause_opacity": 80.0,
+	"accessibility.contrast_boost": 0.0,
 	"accessibility.color_grading": "none",
 	"audio.mute": false,
 	"audio.master_volume": 100.0,

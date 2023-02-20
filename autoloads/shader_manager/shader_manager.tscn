@@ -1,6 +1,11 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://autoloads/shader_manager/shader_manager.gd" type="Script" id=1]
+[ext_resource path="res://resources/shaders/autoloads/shader_manager/contrast_boost.gdshader" type="Shader" id=2]
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 2 )
+shader_param/magnitude = 1.0
 
 [sub_resource type="ShaderMaterial" id=1]
 
@@ -9,8 +14,32 @@ pause_mode = 2
 layer = 3
 script = ExtResource( 1 )
 
-[node name="ColorGradingRect" type="ColorRect" parent="."]
+[node name="ContrastBoostBuffer" type="BackBufferCopy" parent="."]
 visible = false
+copy_mode = 2
+rect = Rect2( 0, 0, 640, 360 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="ContrastBoostRect" type="ColorRect" parent="ContrastBoostBuffer"]
+material = SubResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="ColorGradingBuffer" type="BackBufferCopy" parent="."]
+visible = false
+copy_mode = 2
+rect = Rect2( 0, 0, 640, 360 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="ColorGradingRect" type="ColorRect" parent="ColorGradingBuffer"]
 material = SubResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0

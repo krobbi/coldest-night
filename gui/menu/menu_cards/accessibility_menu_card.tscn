@@ -26,7 +26,7 @@ margin_right = 528.0
 margin_right = 528.0
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 320.0
+margin_bottom = 356.0
 
 [node name="FontSettingsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
 anchor_right = 0.0
@@ -86,20 +86,32 @@ step = 10.0
 text = ""
 config = "accessibility.pause_opacity"
 
-[node name="ColorGradingOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 4 )]
+[node name="ContrastBoostSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 3 )]
 anchor_right = 0.0
 margin_top = 252.0
 margin_right = 512.0
 margin_bottom = 284.0
-option_source = 2
+slider_value = 0.0
+min_value = 0.0
+max_value = 150.0
+step = 10.0
 text = ""
-config = "accessibility.color_grading"
+config = "accessibility.contrast_boost"
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 5 )]
+[node name="ColorGradingOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_top = 288.0
 margin_right = 512.0
 margin_bottom = 320.0
+option_source = 2
+text = ""
+config = "accessibility.color_grading"
+
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="9" instance=ExtResource( 5 )]
+anchor_right = 0.0
+margin_top = 324.0
+margin_right = 512.0
+margin_bottom = 356.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.TO_SETTINGS"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 6 )
