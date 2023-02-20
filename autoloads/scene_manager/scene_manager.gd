@@ -11,6 +11,7 @@ signal faded_out
 enum {FADED_IN, FADED_OUT, FADING_IN, FADING_OUT}
 
 var _fade_state: int = FADED_IN
+var _is_changing_scene: bool = false
 
 onready var _animation_player: AnimationPlayer = $AnimationPlayer
 
@@ -50,3 +51,21 @@ func fade_out() -> void:
 	yield(get_tree(), "idle_frame")
 	_fade_state = FADED_OUT
 	emit_signal("faded_out")
+
+
+# Change the scene to a path.
+func change_scene(path: String, has_fade_out: bool = true, has_fade_in: bool = true) -> void:
+	if _is_changing_scene:
+		return
+	
+	_is_changing_scene = true
+	
+	if has_fade_out:
+		fade_out()
+		yield(self, "faded_out")
+	
+	get_tree().change_scene(path) # warning-ignore: RETURN_VALUE_DISCARDED
+	_is_changing_scene = false
+	
+	if has_fade_in:
+		fade_in()
