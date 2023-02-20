@@ -6,6 +6,8 @@ extends Control
 const CREDITS_PATH: String = "res://scenes/credits/credits_%s.txt"
 const SPEED: float = 30.0
 
+export(String, FILE, "*.tscn") var _exit_scene_path: String
+
 var _is_exiting: bool = false
 
 onready var _credits_label: RichTextLabel = $CreditsLabel
@@ -33,14 +35,14 @@ func _ready() -> void:
 
 
 # Run when the credits scene receives an input event. Handle controls for
-# quitting to the menu scene.
+# skipping the credits.
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		_exit_credits()
 
 
-# Run on every frame. Scroll the credits camera down and quit to the title
-# screen scene if the credits are finished.
+# Run on every frame. Scroll the credits camera down and exit the credits scene
+# if the credits are finished.
 func _process(delta: float) -> void:
 	_credits_camera.position.y += SPEED * delta
 	
@@ -78,4 +80,4 @@ func _exit_credits() -> void:
 		return
 	
 	_is_exiting = true
-	Global.change_scene("menu")
+	SceneManager.change_scene(_exit_scene_path)
