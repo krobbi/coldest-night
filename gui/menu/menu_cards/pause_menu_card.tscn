@@ -11,6 +11,7 @@
 
 [node name="PauseMenuCard" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
+_loader_scene_path = "res://scenes/loader/loader.tscn"
 
 [node name="VBoxContainer" parent="CenterContainer" index="0"]
 margin_top = 55.0
