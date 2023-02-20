@@ -9,6 +9,8 @@
 [node name="GameOverMenuCard" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 _is_manually_poppable = false
+_retry_scene_path = "res://scenes/loader/loader.tscn"
+_quit_scene_path = "res://scenes/menu/menu.tscn"
 
 [node name="VBoxContainer" parent="CenterContainer" index="0"]
 margin_top = 127.0
