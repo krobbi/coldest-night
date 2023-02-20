@@ -14,6 +14,8 @@ __meta__ = {
 "_edit_lock_": true,
 "_edit_use_anchors_": false
 }
+_normal_scene_path = "res://scenes/overworld/overworld.tscn"
+_completed_scene_path = "res://scenes/results/results.tscn"
 
 [node name="NightScript" parent="." instance=ExtResource( 3 )]
 
