@@ -40,6 +40,7 @@ var _data: Dictionary = {
 	"radar.background_opacity": 50.0,
 	"advanced.show_advanced": false,
 	"advanced.readable_saves": false,
+	"debug.show_state_labels": false,
 	"debug.optimize_nightscript": false,
 }
 
