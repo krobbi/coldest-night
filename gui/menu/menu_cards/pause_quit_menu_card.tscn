@@ -8,6 +8,7 @@
 
 [node name="PauseQuitMenuCard" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
+_quit_scene_path = "res://scenes/menu/menu.tscn"
 
 [node name="VBoxContainer" parent="CenterContainer" index="0"]
 margin_top = 127.0
