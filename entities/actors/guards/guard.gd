@@ -41,11 +41,7 @@ func get_target() -> Node2D:
 
 # Get whether the guard is willing to investigate something.
 func is_idle() -> bool:
-	match state_machine.get_state_name():
-		"Pathing", "Looking", "Investigating":
-			return true
-		_:
-			return false
+	return state_machine.get_state_name() in ["Pathing", "Patrolling", "Looking", "Investigating"]
 
 
 # Investigate a torus shape around a world position.
