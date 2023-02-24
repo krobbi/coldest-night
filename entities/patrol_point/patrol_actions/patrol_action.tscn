@@ -2,5 +2,5 @@
 
 [ext_resource path="res://entities/patrol_point/patrol_actions/patrol_action.gd" type="Script" id=1]
 
-[node name="PatrolAction" type="Node"]
+[node name="PatrolAction" type="Node" groups=["patrol_actions"]]
 script = ExtResource( 1 )

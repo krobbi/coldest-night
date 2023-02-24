@@ -32,7 +32,7 @@ func tick(delta: float) -> State:
 	
 	_actor.follow_nav_path(_speed, _acceleration, _friction, delta)
 	
-	if _actor.global_position.distance_to(_patrol_point.global_position) > 8.0:
+	if _actor.global_position.distance_to(_patrol_point.global_position) > 16.0:
 		if not _actor.is_pathing():
 			_actor.find_nav_path(_patrol_point.global_position)
 			_actor.run_nav_path()
