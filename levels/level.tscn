@@ -65,6 +65,11 @@ __meta__ = {
 "_edit_lock_": true
 }
 
+[node name="PatrolNodes" type="Node2D" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
+
 [node name="Points" type="Node2D" parent="."]
 __meta__ = {
 "_edit_lock_": true

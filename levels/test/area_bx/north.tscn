@@ -378,11 +378,11 @@ position = Vector2( 272, 656 )
 [node name="PSuE" type="Position2D" parent="Points" index="30"]
 position = Vector2( 176, 560 )
 
-[node name="Origin" parent="." index="8"]
+[node name="Origin" parent="." index="9"]
 position = Vector2( 0, 16 )
 
-[node name="TopLeft" parent="." index="9"]
+[node name="TopLeft" parent="." index="10"]
 position = Vector2( -480, -736 )
 
-[node name="BottomRight" parent="." index="10"]
+[node name="BottomRight" parent="." index="11"]
 position = Vector2( 480, 768 )
