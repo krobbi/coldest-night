@@ -25,6 +25,7 @@ _main_state_path = NodePath("Patrolling")
 script = ExtResource( 10 )
 _fallback_state_path = NodePath("../Pathing")
 _actor_path = NodePath("../..")
+_smooth_pivot_path = NodePath("../../SmoothPivot")
 
 [node name="Chasing" type="Node" parent="StateMachine" index="2"]
 script = ExtResource( 5 )

@@ -5,6 +5,8 @@ extends Node
 # A patrol action is a component of a patrol point that represents an action to
 # be performed when a patrolling entity reaches a patrol point.
 
+signal message_sent(name, arguments)
+
 var _has_patrol_point: bool = false
 var _has_next_patrol_action: bool = false
 var _patrol_point: PatrolPoint = null
@@ -58,6 +60,11 @@ func get_next_patrol_action() -> PatrolAction:
 	
 	_has_next_patrol_action = true
 	return _next_patrol_action
+
+
+# Send a message from the patrol action.
+func send_message(name: String, arguments: Array) -> void:
+	emit_signal("message_sent", name, arguments)
 
 
 # Run when the patrol action begins.
