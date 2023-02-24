@@ -53,12 +53,14 @@ func tick(delta: float) -> State:
 		_actor.run_nav_path()
 		return self
 	
+	_patrol_point.occupy()
 	var next_action: PatrolAction = _patrol_action.tick(delta)
 	
 	if not next_action:
 		return _fallback_state
 	elif next_action != _patrol_action:
 		_patrol_action.end()
+		_patrol_point.unoccupy()
 		
 		if _patrol_action.is_connected("message_sent", self, "_handle_message"):
 			_patrol_action.disconnect("message_sent", self, "_handle_message")
@@ -73,6 +75,13 @@ func tick(delta: float) -> State:
 		_patrol_action.begin()
 	
 	return self
+
+
+# Run when the patrolling state is exited. Unoccupy the patrol point if it
+# exists.
+func exit() -> void:
+	if _patrol_point:
+		_patrol_point.unoccupy()
 
 
 # Handle a message from a patrol action.
