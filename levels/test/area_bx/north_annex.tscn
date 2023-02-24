@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://levels/test/area_bx.tscn" type="PackedScene" id=1]
 [ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=2]
@@ -8,6 +8,8 @@
 [ext_resource path="res://entities/test/control_terminal/control_terminal.tscn" type="PackedScene" id=6]
 [ext_resource path="res://entities/test/laser_wall/laser_wall.tscn" type="PackedScene" id=7]
 [ext_resource path="res://entities/actors/guards/guard.tscn" type="PackedScene" id=8]
+[ext_resource path="res://entities/patrol_point/patrol_point.tscn" type="PackedScene" id=9]
+[ext_resource path="res://entities/patrol_point/patrol_actions/go_to_patrol_action/go_to_patrol_action.tscn" type="PackedScene" id=10]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 128, 80 )
@@ -40,6 +42,7 @@ start_facing = 1
 [node name="Eve" parent="Midground/Actors" index="2" instance=ExtResource( 8 )]
 position = Vector2( -112, -112 )
 actor_key = "eve"
+_main_patrol_action_path = NodePath("../../../PatrolPoints/EveNorthWest/GoToPatrolAction")
 
 [node name="LaserWalls" type="YSort" parent="Midground" index="2"]
 
@@ -125,6 +128,30 @@ _is_relative_x = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitS" index="0"]
 shape = SubResource( 1 )
+
+[node name="EveNorthWest" parent="PatrolPoints" index="0" instance=ExtResource( 9 )]
+position = Vector2( -112, -112 )
+
+[node name="GoToPatrolAction" parent="PatrolPoints/EveNorthWest" index="0" instance=ExtResource( 10 )]
+_target_patrol_action_path = NodePath("../../EveNorthEast/GoToPatrolAction")
+
+[node name="EveNorthEast" parent="PatrolPoints" index="1" instance=ExtResource( 9 )]
+position = Vector2( 112, -112 )
+
+[node name="GoToPatrolAction" parent="PatrolPoints/EveNorthEast" index="0" instance=ExtResource( 10 )]
+_target_patrol_action_path = NodePath("../../EveSouthEast/GoToPatrolAction")
+
+[node name="EveSouthWest" parent="PatrolPoints" index="2" instance=ExtResource( 9 )]
+position = Vector2( -112, -80 )
+
+[node name="GoToPatrolAction" parent="PatrolPoints/EveSouthWest" index="0" instance=ExtResource( 10 )]
+_target_patrol_action_path = NodePath("../../EveNorthWest/GoToPatrolAction")
+
+[node name="EveSouthEast" parent="PatrolPoints" index="3" instance=ExtResource( 9 )]
+position = Vector2( 112, -80 )
+
+[node name="GoToPatrolAction" parent="PatrolPoints/EveSouthEast" index="0" instance=ExtResource( 10 )]
+_target_patrol_action_path = NodePath("../../EveSouthWest/GoToPatrolAction")
 
 [node name="EntranceN" type="Position2D" parent="Points" index="0"]
 position = Vector2( 0, -304 )

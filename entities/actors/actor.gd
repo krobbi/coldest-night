@@ -13,6 +13,8 @@ enum RadarDisplay {NONE, PLAYER, IDLE, GUARD}
 export(String) var actor_key: String
 export(float) var animation_threshold: float = 40.0
 export(RadarDisplay) var radar_display: int = RadarDisplay.GUARD setget set_radar_display
+
+export(NodePath) var _main_patrol_action_path: NodePath
 export(float) var _repel_speed: float = 180.0
 export(float) var _repel_force: float = 900.0
 
@@ -73,6 +75,15 @@ func set_radar_display(value: int) -> void:
 		RadarDisplay.NONE, RadarDisplay.PLAYER, RadarDisplay.IDLE, RadarDisplay.GUARD:
 			radar_display = value
 			emit_signal("radar_display_changed", radar_display)
+
+
+# Get the actor's main patrol action if it is specified. Otherwise, return
+# `null`.
+func get_main_patrol_action() -> PatrolAction:
+	if _main_patrol_action_path:
+		return get_node(_main_patrol_action_path) as PatrolAction
+	else:
+		return null
 
 
 # Get the actor's camera anchor.

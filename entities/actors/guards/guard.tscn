@@ -24,6 +24,7 @@ _main_state_path = NodePath("Patrolling")
 [node name="Patrolling" type="Node" parent="StateMachine" index="1"]
 script = ExtResource( 10 )
 _fallback_state_path = NodePath("../Pathing")
+_actor_path = NodePath("../..")
 
 [node name="Chasing" type="Node" parent="StateMachine" index="2"]
 script = ExtResource( 5 )

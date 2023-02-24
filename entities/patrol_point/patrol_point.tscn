@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://entities/patrol_point/patrol_point.gd" type="Script" id=1]
+
+[node name="PatrolPoint" type="Position2D"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 16.0
+}
