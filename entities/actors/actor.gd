@@ -14,7 +14,7 @@ export(String) var actor_key: String
 export(float) var animation_threshold: float = 40.0
 export(RadarDisplay) var radar_display: int = RadarDisplay.GUARD setget set_radar_display
 
-export(NodePath) var _main_patrol_action_path: NodePath
+export(NodePath) var _main_patrol_action_parent_path: NodePath
 export(float) var _repel_speed: float = 180.0
 export(float) var _repel_force: float = 900.0
 
@@ -80,10 +80,10 @@ func set_radar_display(value: int) -> void:
 # Get the actor's main patrol action if it is specified. Otherwise, return
 # `null`.
 func get_main_patrol_action() -> PatrolAction:
-	if _main_patrol_action_path:
-		return get_node(_main_patrol_action_path) as PatrolAction
-	else:
+	if not _main_patrol_action_parent_path:
 		return null
+	
+	return get_node(_main_patrol_action_parent_path).get_child(0) as PatrolAction
 
 
 # Get the actor's camera anchor.

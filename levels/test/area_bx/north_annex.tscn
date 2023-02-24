@@ -33,19 +33,19 @@ __meta__ = {
 [node name="Carol" parent="Midground/Actors" index="0" instance=ExtResource( 8 )]
 position = Vector2( -224, -128 )
 actor_key = "carol"
-_main_patrol_action_path = NodePath("../../../PatrolPoints/CarolNorth/FacePatrolAction")
+_main_patrol_action_parent_path = NodePath("../../../PatrolPoints/CarolNorth")
 start_facing = 1
 
 [node name="Dave" parent="Midground/Actors" index="1" instance=ExtResource( 8 )]
 position = Vector2( 224, -128 )
 actor_key = "dave"
-_main_patrol_action_path = NodePath("../../../PatrolPoints/DaveNorth/FacePatrolAction")
+_main_patrol_action_parent_path = NodePath("../../../PatrolPoints/DaveNorth")
 start_facing = 1
 
 [node name="Eve" parent="Midground/Actors" index="2" instance=ExtResource( 8 )]
 position = Vector2( -112, -112 )
 actor_key = "eve"
-_main_patrol_action_path = NodePath("../../../PatrolPoints/EveNorthWest/FacePatrolAction")
+_main_patrol_action_parent_path = NodePath("../../../PatrolPoints/EveNorthWest")
 
 [node name="LaserWalls" type="YSort" parent="Midground" index="2"]
 
@@ -136,7 +136,7 @@ _angle = 90.0
 _test_patrol_point_path = NodePath("../../EveSouthWest")
 
 [node name="GoToPatrolAction" parent="PatrolPoints/CarolNorth" index="2" instance=ExtResource( 10 )]
-_target_patrol_action_path = NodePath("../../CarolSouth/FacePatrolAction")
+_target_patrol_action_parent_path = NodePath("../../CarolSouth")
 
 [node name="CarolSouth" parent="PatrolPoints" index="1" instance=ExtResource( 9 )]
 position = Vector2( -224, 128 )
@@ -151,7 +151,7 @@ _test_patrol_point_path = NodePath("../../DaveSouth")
 _wait_duration = 4.0
 
 [node name="GoToPatrolAction" parent="PatrolPoints/CarolSouth" index="3" instance=ExtResource( 10 )]
-_target_patrol_action_path = NodePath("../../DaveNorth/FacePatrolAction")
+_target_patrol_action_parent_path = NodePath("../../DaveNorth")
 
 [node name="DaveNorth" parent="PatrolPoints" index="2" instance=ExtResource( 9 )]
 position = Vector2( 224, -128 )
@@ -163,7 +163,7 @@ _angle = 90.0
 _test_patrol_point_path = NodePath("../../EveSouthEast")
 
 [node name="GoToPatrolAction" parent="PatrolPoints/DaveNorth" index="2" instance=ExtResource( 10 )]
-_target_patrol_action_path = NodePath("../../DaveSouth/FacePatrolAction")
+_target_patrol_action_parent_path = NodePath("../../DaveSouth")
 
 [node name="DaveSouth" parent="PatrolPoints" index="3" instance=ExtResource( 9 )]
 position = Vector2( 224, 128 )
@@ -178,7 +178,7 @@ _test_patrol_point_path = NodePath("../../CarolSouth")
 _wait_duration = 4.0
 
 [node name="GoToPatrolAction" parent="PatrolPoints/DaveSouth" index="3" instance=ExtResource( 10 )]
-_target_patrol_action_path = NodePath("../../CarolNorth/FacePatrolAction")
+_target_patrol_action_parent_path = NodePath("../../CarolNorth")
 
 [node name="EveNorthWest" parent="PatrolPoints" index="4" instance=ExtResource( 9 )]
 position = Vector2( -112, -112 )
@@ -188,7 +188,7 @@ position = Vector2( -112, -112 )
 [node name="WaitPatrolAction" parent="PatrolPoints/EveNorthWest" index="1" instance=ExtResource( 11 )]
 
 [node name="GoToPatrolAction" parent="PatrolPoints/EveNorthWest" index="2" instance=ExtResource( 10 )]
-_target_patrol_action_path = NodePath("../../EveNorthEast/FacePatrolAction")
+_target_patrol_action_parent_path = NodePath("../../EveNorthEast")
 
 [node name="EveNorthEast" parent="PatrolPoints" index="5" instance=ExtResource( 9 )]
 position = Vector2( 112, -112 )
@@ -199,7 +199,7 @@ _angle = 90.0
 [node name="WaitPatrolAction" parent="PatrolPoints/EveNorthEast" index="1" instance=ExtResource( 11 )]
 
 [node name="GoToPatrolAction" parent="PatrolPoints/EveNorthEast" index="2" instance=ExtResource( 10 )]
-_target_patrol_action_path = NodePath("../../EveSouthEast/FacePatrolAction")
+_target_patrol_action_parent_path = NodePath("../../EveSouthEast")
 
 [node name="EveSouthWest" parent="PatrolPoints" index="6" instance=ExtResource( 9 )]
 position = Vector2( -112, -80 )
@@ -210,7 +210,7 @@ _angle = -90.0
 [node name="WaitPatrolAction" parent="PatrolPoints/EveSouthWest" index="1" instance=ExtResource( 11 )]
 
 [node name="GoToPatrolAction" parent="PatrolPoints/EveSouthWest" index="2" instance=ExtResource( 10 )]
-_target_patrol_action_path = NodePath("../../EveNorthWest/FacePatrolAction")
+_target_patrol_action_parent_path = NodePath("../../EveNorthWest")
 
 [node name="EveSouthEast" parent="PatrolPoints" index="7" instance=ExtResource( 9 )]
 position = Vector2( 112, -80 )
@@ -221,7 +221,7 @@ _angle = 180.0
 [node name="WaitPatrolAction" parent="PatrolPoints/EveSouthEast" index="1" instance=ExtResource( 11 )]
 
 [node name="GoToPatrolAction" parent="PatrolPoints/EveSouthEast" index="2" instance=ExtResource( 10 )]
-_target_patrol_action_path = NodePath("../../EveSouthWest/FacePatrolAction")
+_target_patrol_action_parent_path = NodePath("../../EveSouthWest")
 
 [node name="EntranceN" type="Position2D" parent="Points" index="0"]
 position = Vector2( 0, -304 )
