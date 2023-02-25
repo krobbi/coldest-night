@@ -9,7 +9,7 @@ export(NodePath) var _actor_path: NodePath
 export(NodePath) var _smooth_pivot_path: NodePath
 export(float) var _speed: float = 180.0
 export(float) var _acceleration: float = 1000.0
-export(float) var _friction: float = 1200.0
+export(float) var _friction: float = 3000.0
 
 var _patrol_point: PatrolPoint = null
 
@@ -48,7 +48,7 @@ func tick(delta: float) -> State:
 	
 	if _actor.is_pathing():
 		return self
-	elif _actor.global_position.distance_to(_patrol_point.global_position) > 16.0:
+	elif _actor.global_position.distance_to(_patrol_point.global_position) > 20.0:
 		_actor.find_nav_path(_patrol_point.global_position)
 		_actor.run_nav_path()
 		return self
