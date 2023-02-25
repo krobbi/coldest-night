@@ -18,12 +18,10 @@ func create_frontend(source: String) -> Frontend:
 	var stripped_source: String = source.strip_edges(true, false)
 	var code: IRCode = IRCode.new()
 	
-	if stripped_source.begins_with("# NightScript Version 2."):
-		return preload("v2/frontend_v2.gd").new(code)
-	elif stripped_source.begins_with("# NightScript Version 3."):
-		return preload("v3/frontend_v3.gd").new(code)
+	if stripped_source.begins_with("# NightScript Version 3."):
+		return load("res://nightscript/compiler/v3/frontend_v3.gd").new(code)
 	
-	return preload("v3/frontend_v3.gd").new(code)
+	return load("res://nightscript/compiler/v3/frontend_v3.gd").new(code)
 
 
 # Assemble IR code to NightScript bytecode.
