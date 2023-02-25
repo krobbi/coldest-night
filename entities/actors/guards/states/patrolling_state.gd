@@ -60,13 +60,18 @@ func tick(delta: float) -> State:
 		return _fallback_state
 	elif next_action != _patrol_action:
 		_patrol_action.end()
-		_patrol_point.unoccupy()
 		
 		if _patrol_action.is_connected("message_sent", self, "_handle_message"):
 			_patrol_action.disconnect("message_sent", self, "_handle_message")
 		
 		_patrol_action = next_action
-		_patrol_point = _patrol_action.get_patrol_point()
+		var next_point: PatrolPoint = _patrol_action.get_patrol_point()
+		
+		if not next_point:
+			return _fallback_state
+		elif next_point != _patrol_point:
+			_patrol_point.unoccupy()
+			_patrol_point = next_point
 		
 		if _patrol_action.connect("message_sent", self, "_handle_message") != OK:
 			if _patrol_action.is_connected("message_sent", self, "_handle_message"):
