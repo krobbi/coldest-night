@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://levels/test/area_bx.tscn" type="PackedScene" id=1]
 [ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=2]
@@ -13,7 +13,6 @@
 [ext_resource path="res://entities/patrol_point/patrol_actions/sync_patrol_action/sync_patrol_action.tscn" type="PackedScene" id=11]
 [ext_resource path="res://entities/patrol_point/patrol_actions/go_to_patrol_action/go_to_patrol_action.tscn" type="PackedScene" id=12]
 [ext_resource path="res://entities/patrol_point/patrol_actions/wait_patrol_action/wait_patrol_action.tscn" type="PackedScene" id=13]
-[ext_resource path="res://entities/actors/guards/guard.gd" type="Script" id=14]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 80, 128 )
@@ -70,14 +69,12 @@ __meta__ = {
 
 [node name="Alice" parent="Midground/Guards" index="0" instance=ExtResource( 3 )]
 position = Vector2( 656, -240 )
-script = ExtResource( 14 )
 actor_key = "alice"
 _main_patrol_action_parent_path = NodePath("../../../PatrolPoints/AliceInterior")
 start_facing = 2
 
 [node name="Bob" parent="Midground/Guards" index="1" instance=ExtResource( 3 )]
 position = Vector2( 656, 240 )
-script = ExtResource( 14 )
 actor_key = "bob"
 _main_patrol_action_parent_path = NodePath("../../../PatrolPoints/BobInterior")
 start_facing = 2
