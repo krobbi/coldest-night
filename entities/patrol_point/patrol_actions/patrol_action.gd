@@ -10,7 +10,7 @@ signal message_sent(name, arguments)
 var _has_patrol_point: bool = false
 var _has_next_patrol_action: bool = false
 var _patrol_point: PatrolPoint = null
-var _next_patrol_action: PatrolAction = null
+var _next_patrol_action: Node = null
 
 # Get the patrol action's patrol point. Return `null` if the patrol action has
 # no patrol point.
@@ -34,7 +34,7 @@ func get_patrol_point() -> PatrolPoint:
 
 # Get the patrol action's next patrol action. Return `null` if the patrol action
 # has no next patrol action.
-func get_next_patrol_action() -> PatrolAction:
+func get_next_patrol_action() -> Node:
 	if _has_next_patrol_action:
 		return _next_patrol_action
 	
@@ -75,7 +75,7 @@ func begin() -> void:
 # Run when the patrol action is ticked. Return the patrol action to go to when
 # the patrol action is finished. Return `self` if the patrol action has not
 # finished.
-func tick(_delta: float) -> PatrolAction:
+func tick(_delta: float) -> Node:
 	return self
 
 

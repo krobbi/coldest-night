@@ -15,7 +15,7 @@ func begin() -> void:
 
 # Run when the wait patrol action is ticked. Return the next patrol action if
 # the wait timer has finished. Otherwise, return `self`.
-func tick(delta: float) -> PatrolAction:
+func tick(delta: float) -> Node:
 	if _wait_timer <= 0.0:
 		return get_next_patrol_action()
 	else:
