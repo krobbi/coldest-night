@@ -65,6 +65,7 @@ func change_scene(path: String, has_fade_out: bool = true, has_fade_in: bool = t
 		yield(self, "faded_out")
 	
 	get_tree().change_scene(path) # warning-ignore: RETURN_VALUE_DISCARDED
+	get_tree().paused = false
 	_is_changing_scene = false
 	
 	if has_fade_in:

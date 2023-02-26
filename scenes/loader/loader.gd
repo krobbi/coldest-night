@@ -9,11 +9,9 @@ export(String, FILE, "*.tscn") var _completed_scene_path: String
 
 var _save_data: SaveData = SaveManager.get_working_data()
 
-# Run when the loader scene is entered. Ensure the game is not paused, start the
-# new game dialog on a new game, and change to the appropriate scene.
+# Run when the loader scene is entered. Start the new game dialog on a new game
+# and change to the appropriate scene.
 func _ready() -> void:
-	get_tree().paused = false
-	
 	match _save_data.state:
 		SaveData.State.NEW_GAME:
 			AudioManager.play_music("briefing")
