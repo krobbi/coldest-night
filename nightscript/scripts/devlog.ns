@@ -4,8 +4,6 @@
 
 include "devlog_dialog";
 
-do_not_pause();
-
 show();
 leave_prompt_dialog();
 

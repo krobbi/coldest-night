@@ -7,7 +7,6 @@ extends Reference
 const IRBlock: GDScript = preload("ir_block.gd")
 const IROp: GDScript = preload("ir_op.gd")
 
-var is_pausable: bool
 var current: IRBlock
 var blocks: Array
 var unique_label_count: int
@@ -19,7 +18,6 @@ func _init() -> void:
 
 # Reset the IR code.
 func reset() -> void:
-	is_pausable = true
 	current = IRBlock.new(".main")
 	blocks = [current]
 	unique_label_count = 0
@@ -88,11 +86,6 @@ func insert_unique_label(name: String) -> String:
 	var label: String = get_unique_label(name)
 	insert_label(label)
 	return label
-
-
-# Define the IR code as not pausable.
-func define_not_pausable() -> void:
-	is_pausable = false
 
 
 # Make an IR operation in the current label.
@@ -332,16 +325,6 @@ func make_freeze_player() -> void:
 # Make an unfreeze player IR operation in the current label.
 func make_unfreeze_player() -> void:
 	make_op(IROp.UNFREEZE_PLAYER)
-
-
-# Make a pause game IR operation in the current label.
-func make_pause_game() -> void:
-	make_op(IROp.PAUSE_GAME)
-
-
-# Make an unpause game IR operation in the current label.
-func make_unpause_game() -> void:
-	make_op(IROp.UNPAUSE_GAME)
 
 
 # Make a save game IR operation in the current label.

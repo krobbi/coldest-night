@@ -49,8 +49,6 @@ enum {
 	AWAIT_ACTOR_PATHS,
 	FREEZE_PLAYER,
 	UNFREEZE_PLAYER,
-	PAUSE_GAME,
-	UNPAUSE_GAME,
 	SAVE_GAME,
 	SAVE_CHECKPOINT,
 }
@@ -162,13 +160,9 @@ func _to_string() -> String:
 			return "freeze_player;"
 		UNFREEZE_PLAYER:
 			return "unfreeze_player;"
-		PAUSE_GAME:
-			return "pause_game;"
-		UNPAUSE_GAME:
-			return "unpause_game;"
 		SAVE_GAME:
 			return "save_game;"
 		SAVE_CHECKPOINT:
 			return "save_checkpoint;"
 	
-	return "// UNKNOWN: %d" % type
+	return "# Bug: Unnamed IR opcode type `%d`!" % type

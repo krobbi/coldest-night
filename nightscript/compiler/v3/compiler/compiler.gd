@@ -65,10 +65,6 @@ func compile_ast(root: RootASTNode) -> void:
 	
 	code.set_label(main_label)
 	code.make_freeze_player()
-	
-	if not code.is_pausable:
-		code.make_pause_game()
-	
 	code.make_show_dialog()
 	code.make_push_string("Error")
 	code.make_display_dialog_name()
@@ -79,10 +75,6 @@ func compile_ast(root: RootASTNode) -> void:
 	
 	code.make_clear_dialog_name()
 	code.make_hide_dialog()
-	
-	if not code.is_pausable:
-		code.make_unpause_game()
-	
 	code.make_unfreeze_player()
 	code.make_push_int(1)
 	code.make_sleep()
@@ -164,7 +156,6 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("await_paths", "make_await_actor_paths", 0)
 	scope_stack.define_intrinsic("call", "make_call_program", 1)
 	scope_stack.define_intrinsic("checkpoint", "make_save_checkpoint", 0)
-	scope_stack.define_intrinsic("do_not_pause", "define_not_pausable", 0)
 	scope_stack.define_intrinsic("exit", "make_halt", 0)
 	scope_stack.define_intrinsic("face", "make_actor_face_direction", 2)
 	scope_stack.define_intrinsic("format", "*visit_format_intrinsic_call_expr", -1)
@@ -174,7 +165,6 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("is_repeat", "=make_push_is_repeat", 0)
 	scope_stack.define_intrinsic("name", "*visit_name_intrinsic_call_expr", -1)
 	scope_stack.define_intrinsic("path", "make_actor_find_path", 2)
-	scope_stack.define_intrinsic("pause", "make_pause_game", 0)
 	scope_stack.define_intrinsic("run", "make_run_program", 1)
 	scope_stack.define_intrinsic("run_paths", "make_run_actor_paths", 0)
 	scope_stack.define_intrinsic("save", "make_save_game", 0)
@@ -183,7 +173,6 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("show", "make_show_dialog", 0)
 	scope_stack.define_intrinsic("sleep", "make_sleep", 1)
 	scope_stack.define_intrinsic("unfreeze", "make_unfreeze_player", 0)
-	scope_stack.define_intrinsic("unpause", "make_unpause_game", 0)
 	
 	for module in root.modules:
 		visit_node(module)

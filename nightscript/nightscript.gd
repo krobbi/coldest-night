@@ -39,7 +39,6 @@ class NightScriptVirtualMachine extends Reference:
 	
 	var tree: SceneTree
 	var is_repeat: bool
-	var is_pausable: bool
 	var is_awaiting: bool = false
 	var string_table: PoolStringArray = PoolStringArray()
 	var memory: StreamPeerBuffer = StreamPeerBuffer.new()
@@ -58,8 +57,6 @@ class NightScriptVirtualMachine extends Reference:
 		var buffer: StreamPeerBuffer = StreamPeerBuffer.new()
 		buffer.put_data(bytecode) # warning-ignore: RETURN_VALUE_DISCARDED
 		buffer.seek(1) # Skip magic number.
-		
-		is_pausable = bool(buffer.get_u8())
 		
 		var string_count: int = buffer.get_u32()
 		string_table.resize(string_count)
@@ -273,10 +270,6 @@ class NightScriptVirtualMachine extends Reference:
 				EventBus.emit_player_freeze_request()
 			UNFREEZE_PLAYER:
 				EventBus.emit_player_unfreeze_request()
-			PAUSE_GAME:
-				tree.paused = true
-			UNPAUSE_GAME:
-				tree.paused = false
 			SAVE_GAME:
 				SaveManager.save_game()
 			SAVE_CHECKPOINT:
@@ -354,10 +347,8 @@ enum {
 	AWAIT_ACTOR_PATHS = 0x29,
 	FREEZE_PLAYER = 0x2a,
 	UNFREEZE_PLAYER = 0x2b,
-	PAUSE_GAME = 0x2c,
-	UNPAUSE_GAME = 0x2d,
-	SAVE_GAME = 0x2e,
-	SAVE_CHECKPOINT = 0x2f,
+	SAVE_GAME = 0x2c,
+	SAVE_CHECKPOINT = 0x2d,
 }
 
 const THREAD_LIMIT: int = 16
@@ -394,13 +385,16 @@ func _ready() -> void:
 
 # Run on every physics frame. Step the NightScript component.
 func _physics_process(delta: float) -> void:
+	if get_tree().paused:
+		return
+	
 	for thread in _threads:
 		if thread.empty():
 			continue
 		
 		var vm: NightScriptVirtualMachine = thread[-1]
 		
-		if vm.is_awaiting or vm.is_pausable and get_tree().paused:
+		if vm.is_awaiting:
 			continue
 		
 		if vm.sleep_timer > 0.0:
@@ -410,7 +404,7 @@ func _physics_process(delta: float) -> void:
 		var steps: int = RUN_STEP_LIMIT
 		
 		while steps > 0:
-			if vm.is_awaiting or vm.sleep_timer > 0.0 or vm.is_pausable and get_tree().paused:
+			if vm.is_awaiting or vm.sleep_timer > 0.0:
 				break
 			
 			steps -= 1

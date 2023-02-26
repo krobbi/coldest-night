@@ -4,8 +4,6 @@
 
 include "new_game_dialog";
 
-do_not_pause();
-
 show();
 main_dialog();
 hide();

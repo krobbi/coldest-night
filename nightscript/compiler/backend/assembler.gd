@@ -54,8 +54,6 @@ const STRATEGIES: Dictionary = {
 	IROp.AWAIT_ACTOR_PATHS: [OP, NightScript.AWAIT_ACTOR_PATHS],
 	IROp.FREEZE_PLAYER: [OP, NightScript.FREEZE_PLAYER],
 	IROp.UNFREEZE_PLAYER: [OP, NightScript.UNFREEZE_PLAYER],
-	IROp.PAUSE_GAME: [OP, NightScript.PAUSE_GAME],
-	IROp.UNPAUSE_GAME: [OP, NightScript.UNPAUSE_GAME],
 	IROp.SAVE_GAME: [OP, NightScript.SAVE_GAME],
 	IROp.SAVE_CHECKPOINT: [OP, NightScript.SAVE_CHECKPOINT],
 }
@@ -139,7 +137,6 @@ func assemble_code(code: IRCode) -> PoolByteArray:
 	var bytecode_body: PoolByteArray = buffer.data_array
 	buffer.clear()
 	buffer.put_u8(NightScript.BYTECODE_MAGIC)
-	buffer.put_u8(int(code.is_pausable))
 	buffer.put_u32(string_table.size())
 	
 	for value in string_table:
