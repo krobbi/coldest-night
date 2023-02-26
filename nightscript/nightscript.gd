@@ -353,13 +353,12 @@ enum {
 
 const THREAD_LIMIT: int = 16
 const RUN_STEP_LIMIT: int = 16
-const BYTECODE_MAGIC: int = 0xfe
+const BYTECODE_MAGIC: int = 0xfe # Illegal UTF-8 byte, file must not be text.
 const EMPTY_BYTECODE: PoolByteArray = PoolByteArray([
-	BYTECODE_MAGIC, # 0xfe - Illegal UTF-8 byte, file is not text.
-	0x00, # Don't stop on pause.
-	0x00, 0x00, 0x00, 0x00, # 0 strings.
-	0x01, 0x00, 0x00, 0x00, # 1 byte.
-	HALT, # Halt.
+	BYTECODE_MAGIC, # File is already compiled to bytecode.
+	0x00, 0x00, 0x00, 0x00, # 0 strings in string table.
+	0x01, 0x00, 0x00, 0x00, # 1 byte of instruction memory.
+	HALT, # Halt instruction.
 ])
 
 var _is_caching: bool = true
