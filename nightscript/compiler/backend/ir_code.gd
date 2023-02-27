@@ -112,16 +112,6 @@ func make_halt() -> void:
 	make_op(IROp.HALT)
 
 
-# Make a run program IR operation in the current label.
-func make_run_program() -> void:
-	make_op(IROp.RUN_PROGRAM)
-
-
-# Make a call program IR operation in the current label.
-func make_call_program() -> void:
-	make_op(IROp.CALL_PROGRAM)
-
-
 # Make a sleep IR operation in the current label.
 func make_sleep() -> void:
 	make_op(IROp.SLEEP)

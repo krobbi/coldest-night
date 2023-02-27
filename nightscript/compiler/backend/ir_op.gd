@@ -6,8 +6,6 @@ extends Reference
 
 enum {
 	HALT,
-	RUN_PROGRAM,
-	CALL_PROGRAM,
 	SLEEP,
 	JUMP_LABEL,
 	JUMP_ZERO_LABEL,
@@ -74,10 +72,6 @@ func _to_string() -> String:
 	match type:
 		HALT:
 			return "halt;"
-		RUN_PROGRAM:
-			return "run_program;"
-		CALL_PROGRAM:
-			return "call_program;"
 		SLEEP:
 			return "sleep;"
 		JUMP_LABEL:

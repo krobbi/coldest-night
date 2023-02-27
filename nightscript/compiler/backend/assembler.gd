@@ -11,8 +11,6 @@ enum {OP, INT, STR, LBL}
 
 const STRATEGIES: Dictionary = {
 	IROp.HALT: [OP, NightScript.HALT],
-	IROp.RUN_PROGRAM: [OP, NightScript.RUN_PROGRAM],
-	IROp.CALL_PROGRAM: [OP, NightScript.CALL_PROGRAM],
 	IROp.SLEEP: [OP, NightScript.SLEEP],
 	IROp.JUMP_LABEL: [LBL, OP, NightScript.JUMP],
 	IROp.JUMP_ZERO_LABEL: [LBL, OP, NightScript.JUMP_ZERO],

@@ -154,7 +154,6 @@ func visit_node(node: ASTNode) -> void:
 func visit_root(root: RootASTNode) -> void:
 	scope_stack.push()
 	scope_stack.define_intrinsic("await_paths", "make_await_actor_paths", 0)
-	scope_stack.define_intrinsic("call", "make_call_program", 1)
 	scope_stack.define_intrinsic("checkpoint", "make_save_checkpoint", 0)
 	scope_stack.define_intrinsic("exit", "make_halt", 0)
 	scope_stack.define_intrinsic("face", "make_actor_face_direction", 2)
@@ -165,7 +164,6 @@ func visit_root(root: RootASTNode) -> void:
 	scope_stack.define_intrinsic("is_repeat", "=make_push_is_repeat", 0)
 	scope_stack.define_intrinsic("name", "*visit_name_intrinsic_call_expr", -1)
 	scope_stack.define_intrinsic("path", "make_actor_find_path", 2)
-	scope_stack.define_intrinsic("run", "make_run_program", 1)
 	scope_stack.define_intrinsic("run_paths", "make_run_actor_paths", 0)
 	scope_stack.define_intrinsic("save", "make_save_game", 0)
 	scope_stack.define_intrinsic("say", "make_display_dialog_message", 1)

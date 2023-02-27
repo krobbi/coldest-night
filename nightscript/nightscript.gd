@@ -34,7 +34,6 @@ class NightScriptVirtualMachine extends Reference:
 	# A NightScript virtual machine is a structure used by a NightScript
 	# component that contains a NightScript program's state.
 	
-	signal push_machine(program_key)
 	signal pop_machine
 	
 	var tree: SceneTree
@@ -89,11 +88,6 @@ class NightScriptVirtualMachine extends Reference:
 		match memory.get_u8():
 			HALT:
 				crash()
-			RUN_PROGRAM:
-				EventBus.emit_nightscript_run_program_request(stack.pop_back())
-			CALL_PROGRAM:
-				is_awaiting = true
-				emit_signal("push_machine", stack.pop_back())
 			SLEEP:
 				sleep_timer = float(stack.pop_back()) * 0.001
 			JUMP:
@@ -304,51 +298,49 @@ signal thread_joined
 
 enum {
 	HALT = 0x00,
-	RUN_PROGRAM = 0x01,
-	CALL_PROGRAM = 0x02,
-	SLEEP = 0x03,
-	JUMP = 0x04,
-	JUMP_ZERO = 0x05,
-	JUMP_NOT_ZERO = 0x06,
-	CALL_FUNCTION = 0x07,
-	RETURN_FROM_FUNCTION = 0x08,
-	DROP = 0x09,
-	DUPLICATE = 0x0a,
-	PUSH_IS_REPEAT = 0x0b,
-	PUSH_INT = 0x0c,
-	PUSH_STRING = 0x0d,
-	LOAD_LOCAL = 0x0e,
-	STORE_LOCAL = 0x0f,
-	LOAD_FLAG = 0x10,
-	STORE_FLAG = 0x11,
-	UNARY_NEGATE = 0x12,
-	UNARY_NOT = 0x13,
-	BINARY_ADD = 0x14,
-	BINARY_SUBTRACT = 0x15,
-	BINARY_MULTIPLY = 0x16,
-	BINARY_EQUALS = 0x17,
-	BINARY_NOT_EQUALS = 0x18,
-	BINARY_GREATER = 0x19,
-	BINARY_GREATER_EQUALS = 0x1a,
-	BINARY_LESS = 0x1b,
-	BINARY_LESS_EQUALS = 0x1c,
-	FORMAT_STRING = 0x1d,
-	SHOW_DIALOG = 0x1e,
-	HIDE_DIALOG = 0x1f,
-	CLEAR_DIALOG_NAME = 0x20,
-	DISPLAY_DIALOG_NAME = 0x21,
-	DISPLAY_DIALOG_MESSAGE = 0x22,
-	BEGIN_DIALOG_MENU = 0x23,
-	STORE_DIALOG_MENU_OPTION = 0x24,
-	END_DIALOG_MENU = 0x25,
-	ACTOR_FACE_DIRECTION = 0x26,
-	ACTOR_FIND_PATH = 0x27,
-	RUN_ACTOR_PATHS = 0x28,
-	AWAIT_ACTOR_PATHS = 0x29,
-	FREEZE_PLAYER = 0x2a,
-	UNFREEZE_PLAYER = 0x2b,
-	SAVE_GAME = 0x2c,
-	SAVE_CHECKPOINT = 0x2d,
+	SLEEP = 0x01,
+	JUMP = 0x02,
+	JUMP_ZERO = 0x03,
+	JUMP_NOT_ZERO = 0x04,
+	CALL_FUNCTION = 0x05,
+	RETURN_FROM_FUNCTION = 0x06,
+	DROP = 0x07,
+	DUPLICATE = 0x08,
+	PUSH_IS_REPEAT = 0x09,
+	PUSH_INT = 0x0a,
+	PUSH_STRING = 0x0b,
+	LOAD_LOCAL = 0x0c,
+	STORE_LOCAL = 0x0d,
+	LOAD_FLAG = 0x0e,
+	STORE_FLAG = 0x0f,
+	UNARY_NEGATE = 0x10,
+	UNARY_NOT = 0x11,
+	BINARY_ADD = 0x12,
+	BINARY_SUBTRACT = 0x13,
+	BINARY_MULTIPLY = 0x14,
+	BINARY_EQUALS = 0x15,
+	BINARY_NOT_EQUALS = 0x16,
+	BINARY_GREATER = 0x17,
+	BINARY_GREATER_EQUALS = 0x18,
+	BINARY_LESS = 0x19,
+	BINARY_LESS_EQUALS = 0x1a,
+	FORMAT_STRING = 0x1b,
+	SHOW_DIALOG = 0x1c,
+	HIDE_DIALOG = 0x1d,
+	CLEAR_DIALOG_NAME = 0x1e,
+	DISPLAY_DIALOG_NAME = 0x1f,
+	DISPLAY_DIALOG_MESSAGE = 0x20,
+	BEGIN_DIALOG_MENU = 0x21,
+	STORE_DIALOG_MENU_OPTION = 0x22,
+	END_DIALOG_MENU = 0x23,
+	ACTOR_FACE_DIRECTION = 0x24,
+	ACTOR_FIND_PATH = 0x25,
+	RUN_ACTOR_PATHS = 0x26,
+	AWAIT_ACTOR_PATHS = 0x27,
+	FREEZE_PLAYER = 0x28,
+	UNFREEZE_PLAYER = 0x29,
+	SAVE_GAME = 0x2a,
+	SAVE_CHECKPOINT = 0x2b,
 }
 
 const THREAD_LIMIT: int = 16
@@ -515,10 +507,6 @@ func _push_thread(program_key: String, thread_index: int) -> void:
 			get_tree(), SaveManager.get_working_data().get_flag(flag) != 0, bytecode)
 	SaveManager.get_working_data().set_flag(flag, 1)
 	
-	if vm.connect("push_machine", self, "_push_thread", [thread_index]) != OK:
-		if vm.is_connected("push_machine", self, "_push_thread"):
-			vm.disconnect("push_machine", self, "_push_thread")
-	
 	if vm.connect("pop_machine", self, "_pop_thread", [thread_index]) != OK:
 		if vm.is_connected("pop_machine", self, "_pop_thread"):
 			vm.disconnect("pop_machine", self, "_pop_thread")
@@ -533,9 +521,6 @@ func _pop_thread(thread_index: int) -> void:
 		return
 	
 	var vm: NightScriptVirtualMachine = _threads[thread_index].pop_back()
-	
-	if vm.is_connected("push_machine", self, "_call_program"):
-		vm.disconnect("push_machine", self, "_call_program")
 	
 	if vm.is_connected("pop_machine", self, "_pop_thread"):
 		vm.disconnect("pop_machine", self, "_pop_thread")
