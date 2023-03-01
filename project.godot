@@ -292,18 +292,8 @@ texture={
 "svg/scale": 1.0
 }
 ogg_vorbis={
-"loop": true,
+"loop": false,
 "loop_offset": 0
-}
-wav={
-"compress/mode": 0,
-"edit/loop": false,
-"edit/normalize": false,
-"edit/trim": false,
-"force/8_bit": false,
-"force/max_rate": false,
-"force/max_rate_hz": 44100,
-"force/mono": false
 }
 csv_translation={
 "compress": true,

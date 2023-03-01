@@ -18,11 +18,10 @@ data_*/*
 *.TMP
 *.translation
 
-# Defaulted Godot Engine Imports:
+# Godot Engine Imports:
 *.csv.import
 *.ogg.import
 *.png.import
-*.wav.import
 
 # Godot Engine Exports:
 builds/linux-demo/*

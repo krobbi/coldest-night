@@ -34,13 +34,7 @@ func play_clip(clip_key: String) -> void:
 	if not _clips.has(clip_key):
 		var clip_player: AudioStreamPlayer = AudioStreamPlayer.new()
 		clip_player.name = "ClipPlayer%d" % (_clips.size() + 1)
-		clip_player.stream = load("res://resources/audio/%s.wav" % clip_key.replace(".", "/"))
-		
-		if clip_player.stream.stereo:
-			clip_player.mix_target = AudioStreamPlayer.MIX_TARGET_STEREO
-		else:
-			clip_player.mix_target = AudioStreamPlayer.MIX_TARGET_CENTER
-		
+		clip_player.stream = load("res://resources/audio/%s.ogg" % clip_key.replace(".", "/"))
 		var clip_key_parts: PoolStringArray = clip_key.split(".", false, 1)
 		
 		if not clip_key_parts.empty():

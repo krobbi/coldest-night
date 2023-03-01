@@ -3,7 +3,7 @@
 [ext_resource path="res://gui/dialogs/dialog.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.gd" type="Script" id=2]
 [ext_resource path="res://resources/themes/dialogs/plain_dialog.tres" type="Theme" id=3]
-[ext_resource path="res://resources/audio/sfx/text.wav" type="AudioStream" id=4]
+[ext_resource path="res://resources/audio/sfx/text.ogg" type="AudioStream" id=4]
 
 [node name="PlainDialog" instance=ExtResource( 1 )]
 theme = ExtResource( 3 )
