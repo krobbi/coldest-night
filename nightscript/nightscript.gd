@@ -32,7 +32,7 @@ class NightScriptVirtualMachine extends Reference:
 	
 	# NightScript Virtual Machine
 	# A NightScript virtual machine is a structure used by a NightScript
-	# component that contains a NightScript program's state.
+	# component that contains a NightScript script's state.
 	
 	signal pop_machine
 	
@@ -48,7 +48,7 @@ class NightScriptVirtualMachine extends Reference:
 	var sleep_timer: float = 0.0
 	
 	# Deserialize the NightScript virtual machine from its thread ID, whether
-	# the NightScript program is a repeat, and NightScript bytecode.
+	# the NightScript script is a repeat, and NightScript bytecode.
 	func _init(tree_ref: SceneTree, is_repeat_val: bool, bytecode: PoolByteArray) -> void:
 		tree = tree_ref
 		is_repeat = is_repeat_val
@@ -354,7 +354,7 @@ const EMPTY_BYTECODE: PoolByteArray = PoolByteArray([
 ])
 
 var _is_caching: bool = true
-var _program_cache: Dictionary = {}
+var _script_cache: Dictionary = {}
 var _threads: Array = []
 
 # Run when the NightScript component enters the scene tree. Disable the physics
@@ -362,9 +362,9 @@ var _threads: Array = []
 # NightScript component to the language manager.
 func _ready() -> void:
 	set_physics_process(false)
-	EventBus.subscribe_node("nightscript_run_program_request", self, "run_program")
-	EventBus.subscribe_node("nightscript_stop_programs_request", self, "stop_programs")
-	EventBus.subscribe_node("nightscript_cache_program_request", self, "cache_program")
+	EventBus.subscribe_node("nightscript_run_script_request", self, "run_script")
+	EventBus.subscribe_node("nightscript_stop_script_request", self, "stop_script")
+	EventBus.subscribe_node("nightscript_cache_script_request", self, "cache_script")
 	EventBus.subscribe_node("nightscript_flush_cache_request", self, "flush_cache")
 	
 	if LangManager.connect("locale_changed", self, "flush_cache") != OK:
@@ -403,17 +403,17 @@ func _physics_process(delta: float) -> void:
 
 
 # Run when the NightScript component exits the scene tree. Disconnect the
-# NightScript component from the language manager. and stop all currently
-# running NightScript programs.
+# NightScript component from the language manager and stop the NightScript
+# script.
 func _exit_tree() -> void:
 	if LangManager.is_connected("locale_changed", self, "flush_cache"):
 		LangManager.disconnect("locale_changed", self, "flush_cache")
 	
-	stop_programs()
+	stop_script()
 
 
-# Run a NightScript program in an available NightScript thread.
-func run_program(program_key: String) -> void:
+# Run a NightScript script from its script key.
+func run_script(script_key: String) -> void:
 	var thread_index: int = _threads.size()
 	
 	if thread_index < THREAD_LIMIT:
@@ -430,11 +430,11 @@ func run_program(program_key: String) -> void:
 	if _threads.size() >= THREAD_LIMIT:
 		return
 	
-	_push_thread(program_key, thread_index)
+	_push_thread(script_key, thread_index)
 
 
-# Forcibly stop all NightScript programs.
-func stop_programs() -> void:
+# Forcibly stop the NightScript script.
+func stop_script() -> void:
 	while not _threads.empty():
 		for thread_index in range(_threads.size()):
 			_pop_thread(thread_index)
@@ -443,34 +443,31 @@ func stop_programs() -> void:
 			_threads.pop_back()
 
 
-# Cache a NightScript program from its program key.
-func cache_program(program_key: String) -> void:
-	if not _is_caching or _program_cache.has(program_key):
-		return
-	
-	_program_cache[program_key] = _get_bytecode(program_key)
+# Cache a NightScript script from its script key.
+func cache_script(script_key: String) -> void:
+	if _is_caching and not _script_cache.has(script_key):
+		_script_cache[script_key] = _get_bytecode(script_key)
 
 
-# Flush the NightScript program cache.
+# Flush the NightScript script cache.
 func flush_cache() -> void:
-	_program_cache.clear()
+	_script_cache.clear()
 
 
-# Get a NightScript program's bytecode from its program key.
-func _get_bytecode(program_key: String) -> PoolByteArray:
-	if _program_cache.has(program_key):
-		return _program_cache[program_key]
+# Get a NightScript script's bytecode from its script key.
+func _get_bytecode(script_key: String) -> PoolByteArray:
+	if _script_cache.has(script_key):
+		return _script_cache[script_key]
 	
 	var file: File = File.new()
-	var path: String = "res://nightscript/scripts/%s.%s.ns" % [
-			program_key, LangManager.get_locale()]
+	var path: String = "res://nightscript/scripts/%s.%s.ns" % [script_key, LangManager.get_locale()]
 	
 	if not file.file_exists(path):
-		path = "res://nightscript/scripts/%s.ns" % program_key
+		path = "res://nightscript/scripts/%s.ns" % script_key
 		
 		if not file.file_exists(path):
 			path = "res://nightscript/scripts/%s.%s.ns" % [
-					program_key, LangManager.get_default_locale()]
+					script_key, LangManager.get_default_locale()]
 			
 			if not file.file_exists(path):
 				return EMPTY_BYTECODE
@@ -496,13 +493,13 @@ func _get_bytecode(program_key: String) -> PoolByteArray:
 
 
 # Push a thread thread from its index.
-func _push_thread(program_key: String, thread_index: int) -> void:
-	var bytecode: PoolByteArray = _get_bytecode(program_key)
+func _push_thread(script_key: String, thread_index: int) -> void:
+	var bytecode: PoolByteArray = _get_bytecode(script_key)
 	
-	if _is_caching and not _program_cache.has(program_key):
-		_program_cache[program_key] = bytecode
+	if _is_caching and not _script_cache.has(script_key):
+		_script_cache[script_key] = bytecode
 	
-	var flag: String = "nightscript/is_repeat/%s" % program_key
+	var flag: String = "nightscript/is_repeat/%s" % script_key
 	var vm: NightScriptVirtualMachine = NightScriptVirtualMachine.new(
 			get_tree(), SaveManager.get_working_data().get_flag(flag) != 0, bytecode)
 	SaveManager.get_working_data().set_flag(flag, 1)

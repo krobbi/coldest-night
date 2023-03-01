@@ -2,7 +2,7 @@ extends Reference
 
 # IR Code
 # An IR code is a structure used by the NightScript compiler that represents a
-# NightScript program in labeled blocks.
+# NightScript script in labeled blocks.
 
 const IRBlock: GDScript = preload("ir_block.gd")
 const IROp: GDScript = preload("ir_op.gd")

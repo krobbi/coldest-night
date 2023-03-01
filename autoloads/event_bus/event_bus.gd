@@ -14,9 +14,9 @@ signal player_freeze_request()
 signal player_unfreeze_request()
 signal player_transition_request()
 
-signal nightscript_run_program_request(program_key)
-signal nightscript_stop_programs_request()
-signal nightscript_cache_program_request(program_key)
+signal nightscript_run_script_request(script_key)
+signal nightscript_stop_script_request()
+signal nightscript_cache_script_request(script_key)
 signal nightscript_flush_cache_request()
 
 signal floating_text_display_request(text, world_pos)
@@ -109,19 +109,19 @@ func emit_player_transition_request() -> void:
 	emit_signal("player_transition_request")
 
 
-# Emit a NightScript run program request event.
-func emit_nightscript_run_program_request(program_key: String) -> void:
-	emit_signal("nightscript_run_program_request", program_key)
+# Emit a NightScript run script request event.
+func emit_nightscript_run_script_request(script_key: String) -> void:
+	emit_signal("nightscript_run_script_request", script_key)
 
 
-# Emit a NightScript stop programs request event.
-func emit_nightscript_stop_programs_request() -> void:
-	emit_signal("nightscript_stop_programs_request")
+# Emit a NightScript stop script request event.
+func emit_nightscript_stop_script_request() -> void:
+	emit_signal("nightscript_stop_script_request")
 
 
-# Emit a NightScript cache program request event.
-func emit_nightscript_cache_program_request(program_key: String) -> void:
-	emit_signal("nightscript_cache_program_request", program_key)
+# Emit a NightScript cache script request event.
+func emit_nightscript_cache_script_request(script_key: String) -> void:
+	emit_signal("nightscript_cache_script_request", script_key)
 
 
 # Emit a NightScript flush cache request event.

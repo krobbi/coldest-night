@@ -163,11 +163,11 @@ __meta__ = {
 
 [node name="RedirectControlTerminal" parent="Midground/Terminals" index="0" instance=ExtResource( 4 )]
 position = Vector2( -208, -144 )
-_program_key = "test/area_bx/west/redirect_terminal"
+_script_key = "test/area_bx/west/redirect_terminal"
 
 [node name="UnlockControlTerminal" parent="Midground/Terminals" index="1" instance=ExtResource( 4 )]
 position = Vector2( 240, -144 )
-_program_key = "test/area_bx/west/unlock_terminal"
+_script_key = "test/area_bx/west/unlock_terminal"
 
 [node name="Windows" type="YSort" parent="Midground" index="5"]
 

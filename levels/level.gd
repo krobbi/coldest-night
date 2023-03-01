@@ -214,5 +214,5 @@ func _cache_nightscript_runners(node: Node) -> void:
 	for child in node.get_children():
 		_cache_nightscript_runners(child)
 	
-	if node.is_in_group("nightscript_runners") and node.has_method("get_nightscript_program_key"):
-		EventBus.emit_nightscript_cache_program_request(node.get_nightscript_program_key())
+	if node.is_in_group("nightscript_runners") and node.has_method("get_nightscript_script_key"):
+		EventBus.emit_nightscript_cache_script_request(node.get_nightscript_script_key())

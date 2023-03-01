@@ -13,7 +13,7 @@ func _ready() -> void:
 	AudioManager.play_music("devlog")
 	EventBus.subscribe_node(
 			"dialog_option_pressed", self, "_on_dialog_option_pressed", [], CONNECT_ONESHOT)
-	EventBus.emit_nightscript_run_program_request("devlog")
+	EventBus.emit_nightscript_run_script_request("devlog")
 	
 	if ConfigBus.get_bool("accessibility.reduced_motion"):
 		$BackgroundRect.material = null

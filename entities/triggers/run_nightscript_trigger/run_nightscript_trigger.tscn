@@ -1,8 +1,8 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://entities/triggers/trigger.tscn" type="PackedScene" id=1]
-[ext_resource path="res://entities/triggers/run_ns_trigger/run_ns_trigger.gd" type="Script" id=2]
+[ext_resource path="res://entities/triggers/run_nightscript_trigger/run_nightscript_trigger.gd" type="Script" id=2]
 
 [node name="RunNightScriptTrigger" groups=["nightscript_runners"] instance=ExtResource( 1 )]
 script = ExtResource( 2 )
-_program_key = ""
+_script_key = ""

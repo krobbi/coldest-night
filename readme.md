@@ -70,10 +70,10 @@ English. A table for translation keys in alphabetical order can be found at
 
 More lengthy or complex translations are determined from their file paths:
 
-| File type                | Naming convention                               |
-| :----------------------- | :---------------------------------------------- |
-| Credits files            | `scenes/credits/credits_<locale>.txt`           |
-| NightScript source files | `nightscript/scripts/<program key>.<locale>.ns` |
+| File type                | Naming convention                              |
+| :----------------------- | :--------------------------------------------- |
+| Credits files            | `scenes/credits/credits_<locale>.txt`          |
+| NightScript source files | `nightscript/scripts/<script key>.<locale>.ns` |
 
 If more than one locale is available to the game, a language menu will appear
 in the settings menu, otherwise it will be hidden. The translation system
@@ -84,6 +84,10 @@ The story, character names, and other attributes may not be final and may
 change.
 
 # Translating NightScript
+NightScript is a custom scripting language used for the dialog system and
+cutscenes. It may be continually phased out if a more practical solution is
+found for this.
+
 NightScript source files may be given a 'global' locale by omitting the locale
 extension. A global locale means that the script should not need to be
 translated.

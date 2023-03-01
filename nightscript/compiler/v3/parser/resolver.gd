@@ -2,7 +2,7 @@ extends Reference
 
 # Resolver
 # A resolver is a structure used by the NightScript compiler that resolves a
-# NightScript program's depenencies to a root abstract syntax tree.
+# NightScript script's depenencies to a root abstract syntax tree.
 
 const Logger: GDScript = preload("../logger/logger.gd")
 const Parser: GDScript = preload("parser.gd")
