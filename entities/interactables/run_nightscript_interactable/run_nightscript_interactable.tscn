@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=2]
-
-[ext_resource path="res://entities/interactables/interactable.tscn" type="PackedScene" id=1]
-[ext_resource path="res://entities/interactables/run_nightscript_interactable/run_nightscript_interactable.gd" type="Script" id=2]
-
-[node name="RunNightScriptInteractable" groups=["nightscript_runners"] instance=ExtResource( 1 )]
-script = ExtResource( 2 )
-_script_key = ""

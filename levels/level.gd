@@ -118,7 +118,10 @@ func _ready() -> void:
 	
 	EventBus.subscribe_node("save_state_request", self, "save_state")
 	
-	_cache_nightscript_runners(self)
+	for nightscript_runner in get_tree().get_nodes_in_group("nightscript_runners"):
+		if nightscript_runner.has_method("get_nightscript_script_key"):
+			EventBus.emit_nightscript_cache_script_request(
+					nightscript_runner.get_nightscript_script_key())
 
 
 # Run when the level exits the scene tree. Free the level's navigation regions.
@@ -207,12 +210,3 @@ func _free_persistent(node: Node) -> void:
 	
 	node.get_parent().remove_child(node)
 	node.free()
-
-
-# Recursively cache NightScript runners in a node.
-func _cache_nightscript_runners(node: Node) -> void:
-	for child in node.get_children():
-		_cache_nightscript_runners(child)
-	
-	if node.is_in_group("nightscript_runners") and node.has_method("get_nightscript_script_key"):
-		EventBus.emit_nightscript_cache_script_request(node.get_nightscript_script_key())

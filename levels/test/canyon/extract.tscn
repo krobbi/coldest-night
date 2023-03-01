@@ -2,9 +2,9 @@
 
 [ext_resource path="res://levels/test/canyon.tscn" type="PackedScene" id=1]
 [ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=2]
+[ext_resource path="res://entities/terminals/save_terminal/save_terminal.tscn" type="PackedScene" id=3]
 [ext_resource path="res://entities/triggers/focus_camera_trigger/focus_camera_trigger.tscn" type="PackedScene" id=4]
 [ext_resource path="res://entities/triggers/change_scene_trigger/change_scene_trigger.tscn" type="PackedScene" id=5]
-[ext_resource path="res://entities/test/save_terminal/save_terminal.tscn" type="PackedScene" id=7]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 128, 80 )
@@ -32,7 +32,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="SaveTerminal" parent="Midground/Terminals" index="0" instance=ExtResource( 7 )]
+[node name="SaveTerminal" parent="Midground/Terminals" index="0" instance=ExtResource( 3 )]
 position = Vector2( 432, 16 )
 
 [node name="NavTileMap" parent="." index="3"]
@@ -131,11 +131,11 @@ position = Vector2( -240, 0 )
 [node name="Terminal" type="Position2D" parent="Points" index="2"]
 position = Vector2( 432, 48 )
 
-[node name="Origin" parent="." index="9"]
+[node name="Origin" parent="." index="8"]
 position = Vector2( 400, 48 )
 
-[node name="TopLeft" parent="." index="10"]
+[node name="TopLeft" parent="." index="9"]
 position = Vector2( -256, -1088 )
 
-[node name="BottomRight" parent="." index="11"]
+[node name="BottomRight" parent="." index="10"]
 position = Vector2( 608, 320 )

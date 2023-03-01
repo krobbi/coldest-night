@@ -5,89 +5,71 @@ extends Node2D
 # An interactor is a component of a player that handles interacting with nearby
 # interactables.
 
+var _is_enabled: bool = false
 var _selected_interactable: Interactable = null
-var _selectable_interactables: Array = []
+var _nearby_interactables: Array = []
 
-onready var _selecting_shape: CollisionShape2D = $SelectingArea/SelectingShape
-
-# Virtual _ready method. Runs when the interactor finishes entering the scene
-# tree. Disables the interactor's physics process:
+# Run when the interactor finishes entering the scene tree. Disable the
+# interactor's physics process.
 func _ready() -> void:
 	set_physics_process(false)
 
 
-# Virtual _physics_process method. Runs on every physics frame while the
-# interactor's physics process is enabled. Sorts the selectable interactables by
-# distance to find the selected interactable:
+# Run on every physics frame while there are nearby interactables. Sort the
+# nearby interactables by distance to select the nearest interactable.
 func _physics_process(_delta: float) -> void:
 	var nearest_interactable: Interactable = null
 	var nearest_distance: float = INF
 	
-	for interactable in _selectable_interactables:
-		var distance: float = global_position.distance_squared_to(interactable.position)
+	for interactable in _nearby_interactables:
+		var distance: float = global_position.distance_squared_to(interactable.global_position)
 		
 		if distance < nearest_distance:
 			nearest_interactable = interactable
 			nearest_distance = distance
 	
-	_set_selected_interactable(nearest_interactable)
-
-
-# Interacts with the selected interactable if one is available:
-func interact() -> void:
-	if _selected_interactable:
-		_selected_interactable.interact()
-
-
-# Enables the interactor's ability to interact with interactables:
-func enable() -> void:
-	_selecting_shape.set_deferred("disabled", false)
-
-
-# Disables the interactor's ability to interact with interactables:
-func disable() -> void:
-	_selecting_shape.set_deferred("disabled", true)
-
-
-# Sets the selected interactable:
-func _set_selected_interactable(value: Interactable) -> void:
-	if _selected_interactable == value:
-		return
-	elif _selected_interactable:
-		_selected_interactable.deselect()
-	
-	_selected_interactable = value
-	
-	if _selected_interactable:
+	if nearest_interactable and _selected_interactable != nearest_interactable:
+		if _selected_interactable:
+			_selected_interactable.deselect()
+		
+		_selected_interactable = nearest_interactable
 		_selected_interactable.select()
 
 
-# Signal callback for area_entered on the selecting area. Handles the addition
-# of a selectable interactable:
+# Interact with the selected interactable if one is available.
+func interact() -> void:
+	if _is_enabled and _selected_interactable:
+		_selected_interactable.interact()
+
+
+# Enable the interactor's ability to interact with interactables.
+func enable() -> void:
+	_is_enabled = true
+
+
+# Disable the interactor's ability to interact with interactables.
+func disable() -> void:
+	_is_enabled = false
+
+
+# Run when an area enters the selecting area. Handle the addition of a
+# selectable interactable.
 func _on_selecting_area_area_entered(area: Area2D) -> void:
-	if not area is Interactable:
+	if not area is Interactable or _nearby_interactables.has(area):
 		return
 	
-	if not _selectable_interactables.has(area):
-		_selectable_interactables.push_back(area)
-	
-	if _selectable_interactables.size() == 1:
-		_set_selected_interactable(area)
-	else:
-		set_physics_process(true)
+	_nearby_interactables.push_back(area)
+	set_physics_process(true)
 
 
-# Signal callback for area_exited on the selecting area. Handles the removal of
-# a selectable interactable:
+# Run when an area exits the selecting area. Handle the removal of a selectable
+# interactable.
 func _on_selecting_area_area_exited(area: Area2D) -> void:
-	if not area is Interactable:
-		return
+	_nearby_interactables.erase(area)
 	
-	_selectable_interactables.erase(area)
+	if _selected_interactable == area:
+		_selected_interactable.deselect()
+		_selected_interactable = null
 	
-	match _selectable_interactables.size():
-		0:
-			_set_selected_interactable(null)
-		1:
-			set_physics_process(false)
-			_set_selected_interactable(_selectable_interactables[0])
+	if _nearby_interactables.empty():
+		set_physics_process(false)

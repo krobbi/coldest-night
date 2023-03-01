@@ -42,7 +42,7 @@ _global_script_classes=[ {
 "base": "Area2D",
 "class": "Interactable",
 "language": "GDScript",
-"path": "res://entities/interactables/interactable.gd"
+"path": "res://components/interactable/interactable.gd"
 }, {
 "base": "Node2D",
 "class": "Interactor",

@@ -60,11 +60,6 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Interactables" type="Node2D" parent="."]
-__meta__ = {
-"_edit_lock_": true
-}
-
 [node name="PatrolPoints" type="Node2D" parent="."]
 __meta__ = {
 "_edit_lock_": true

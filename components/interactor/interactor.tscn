@@ -3,7 +3,7 @@
 [ext_resource path="res://components/interactor/interactor.gd" type="Script" id=1]
 
 [sub_resource type="CircleShape2D" id=1]
-radius = 32.0
+radius = 40.0
 
 [node name="Interactor" type="Node2D"]
 script = ExtResource( 1 )
@@ -19,7 +19,6 @@ monitorable = false
 
 [node name="SelectingShape" type="CollisionShape2D" parent="SelectingArea"]
 shape = SubResource( 1 )
-disabled = true
 
 [connection signal="area_entered" from="SelectingArea" to="." method="_on_selecting_area_area_entered" flags=3]
 [connection signal="area_exited" from="SelectingArea" to="." method="_on_selecting_area_area_exited" flags=3]

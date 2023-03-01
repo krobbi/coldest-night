@@ -3,7 +3,6 @@
 [ext_resource path="res://levels/test/area_bx.tscn" type="PackedScene" id=1]
 [ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=2]
 [ext_resource path="res://entities/actors/guards/robot_guard.tscn" type="PackedScene" id=3]
-[ext_resource path="res://entities/test/control_terminal/control_terminal.tscn" type="PackedScene" id=4]
 [ext_resource path="res://entities/test/archival_unit/archival_unit.tscn" type="PackedScene" id=5]
 [ext_resource path="res://entities/test/window/window.tscn" type="PackedScene" id=6]
 [ext_resource path="res://entities/test/laser_wall/laser_wall.tscn" type="PackedScene" id=7]
@@ -13,6 +12,7 @@
 [ext_resource path="res://entities/patrol_point/patrol_actions/sync_patrol_action/sync_patrol_action.tscn" type="PackedScene" id=11]
 [ext_resource path="res://entities/patrol_point/patrol_actions/go_to_patrol_action/go_to_patrol_action.tscn" type="PackedScene" id=12]
 [ext_resource path="res://entities/patrol_point/patrol_actions/wait_patrol_action/wait_patrol_action.tscn" type="PackedScene" id=13]
+[ext_resource path="res://entities/terminals/terminal.tscn" type="PackedScene" id=14]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 80, 128 )
@@ -161,11 +161,11 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="RedirectControlTerminal" parent="Midground/Terminals" index="0" instance=ExtResource( 4 )]
+[node name="RedirectTerminal" parent="Midground/Terminals" index="0" instance=ExtResource( 14 )]
 position = Vector2( -208, -144 )
 _script_key = "test/area_bx/west/redirect_terminal"
 
-[node name="UnlockControlTerminal" parent="Midground/Terminals" index="1" instance=ExtResource( 4 )]
+[node name="UnlockTerminal" parent="Midground/Terminals" index="1" instance=ExtResource( 14 )]
 position = Vector2( 240, -144 )
 _script_key = "test/area_bx/west/unlock_terminal"
 
@@ -435,11 +435,11 @@ position = Vector2( -720, 0 )
 [node name="EntranceE" type="Position2D" parent="Points" index="1"]
 position = Vector2( 752, 0 )
 
-[node name="Origin" parent="." index="9"]
+[node name="Origin" parent="." index="8"]
 position = Vector2( 16, 0 )
 
-[node name="TopLeft" parent="." index="10"]
+[node name="TopLeft" parent="." index="9"]
 position = Vector2( -736, -480 )
 
-[node name="BottomRight" parent="." index="11"]
+[node name="BottomRight" parent="." index="10"]
 position = Vector2( 768, 480 )

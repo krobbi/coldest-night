@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://resources/textures/entities/terminals/control_terminal.png" type="Texture" id=1]
+[ext_resource path="res://entities/terminals/terminal.gd" type="Script" id=2]
+[ext_resource path="res://resources/audio/entities/terminals/deselect.ogg" type="AudioStream" id=3]
+[ext_resource path="res://resources/audio/entities/terminals/select.ogg" type="AudioStream" id=4]
+[ext_resource path="res://components/interactable/interactable.tscn" type="PackedScene" id=5]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 16, 16 )
+
+[node name="Terminal" type="Sprite" groups=["nightscript_runners"]]
+texture = ExtResource( 1 )
+offset = Vector2( 0, -16 )
+hframes = 2
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="SelectPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 4 )
+bus = "SFX"
+
+[node name="DeselectPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )
+bus = "SFX"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 5
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 1 )
+
+[node name="Interactable" parent="." instance=ExtResource( 5 )]
+
+[connection signal="deselected" from="Interactable" to="." method="_on_interactable_deselected"]
+[connection signal="interacted" from="Interactable" to="." method="_on_interactable_interacted"]
+[connection signal="selected" from="Interactable" to="." method="_on_interactable_selected"]
