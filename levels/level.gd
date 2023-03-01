@@ -16,8 +16,6 @@ enum NavTile {
 export(String) var area_name: String = "AREA.UNKNOWN"
 export(String) var level_name: String = "LEVEL.UNKNOWN"
 export(String) var music: String
-export(PoolStringArray) var cached_ns_programs: PoolStringArray
-export(PoolStringArray) var autorun_ns_programs: PoolStringArray
 
 var _save_data: SaveData = SaveManager.get_working_data()
 var _origin: Vector2 = Vector2.ZERO
@@ -34,9 +32,6 @@ func _enter_tree() -> void:
 # Run when the level finishes entering the scene tree. Initialize the level.
 func _ready() -> void:
 	AudioManager.play_music(music)
-	
-	for program_key in autorun_ns_programs:
-		EventBus.emit_nightscript_cache_program_request(program_key)
 	
 	var nav_tile_map: TileMap = $NavTileMap
 	var nav_tile_set: TileSet = nav_tile_map.tile_set
@@ -124,12 +119,6 @@ func _ready() -> void:
 	EventBus.subscribe_node("save_state_request", self, "save_state")
 	
 	_cache_nightscript_runners(self)
-	
-	for program_key in cached_ns_programs:
-		EventBus.emit_nightscript_cache_program_request(program_key)
-	
-	for program_key in autorun_ns_programs:
-		EventBus.emit_nightscript_run_program_request(program_key)
 
 
 # Run when the level exits the scene tree. Free the level's navigation regions.
