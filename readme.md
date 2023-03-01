@@ -15,7 +15,6 @@ _All rights reserved._
 5. [Translating](#translating)
    * [Translating NightScript](#translating-nightscript)
 6. [Credits and Licensing](#credits-and-licensing)
-7. [License](#license)
 
 # Coldest Night
 Coldest Night is a stealth game being developed in
@@ -145,7 +144,6 @@ See [docs/credits.md](./docs/credits.md) for a full copy of the credits.
 See [docs/eula.md](./docs/eula.md) for the end-user license agreement and
 third-party license texts.
 
-# License
 Coldest Night is released under the Krobbizoid Game License (KGL):  
 https://krobbi.github.io/license/2021/2023/kgl.txt
 
