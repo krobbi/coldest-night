@@ -435,11 +435,8 @@ position = Vector2( -720, 0 )
 [node name="EntranceE" type="Position2D" parent="Points" index="1"]
 position = Vector2( 752, 0 )
 
-[node name="Origin" parent="." index="8"]
-position = Vector2( 16, 0 )
-
-[node name="TopLeft" parent="." index="9"]
+[node name="TopLeft" parent="." index="8"]
 position = Vector2( -736, -480 )
 
-[node name="BottomRight" parent="." index="10"]
+[node name="BottomRight" parent="." index="9"]
 position = Vector2( 768, 480 )

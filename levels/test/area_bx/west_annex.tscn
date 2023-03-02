@@ -82,11 +82,8 @@ position = Vector2( 304, 0 )
 [node name="Terminal" type="Position2D" parent="Points" index="2"]
 position = Vector2( -16, 16 )
 
-[node name="Origin" parent="." index="8"]
-position = Vector2( 0, 16 )
-
-[node name="TopLeft" parent="." index="9"]
+[node name="TopLeft" parent="." index="8"]
 position = Vector2( -320, -320 )
 
-[node name="BottomRight" parent="." index="10"]
+[node name="BottomRight" parent="." index="9"]
 position = Vector2( 320, 320 )

@@ -38,7 +38,7 @@ func transition_level(
 
 # Initialize the game state from save data.
 func load_state() -> void:
-	_change_level(_save_data.level, "World", _save_data.position)
+	_change_level(_save_data.level, "", _save_data.position)
 
 
 # Change the current level from its level key, point and offset.
@@ -65,7 +65,7 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
 	
-	_save_data.position = current_level.get_world_pos(point, offset)
+	_save_data.position = current_level.get_point_pos(point) + offset
 	_player.position = _save_data.position
 	current_level.get_player_parent().add_child(_player)
 	_player.smooth_pivot.rotation = _save_data.angle

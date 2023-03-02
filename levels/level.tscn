@@ -70,12 +70,6 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Origin" type="Position2D" parent="."]
-position = Vector2( 320, 176 )
-__meta__ = {
-"_gizmo_extents_": 16.0
-}
-
 [node name="TopLeft" type="Position2D" parent="."]
 position = Vector2( -32, -32 )
 __meta__ = {

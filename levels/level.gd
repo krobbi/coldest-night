@@ -18,7 +18,6 @@ export(String) var level_name: String = "LEVEL.UNKNOWN"
 export(String) var music: String
 
 var _save_data: SaveData = SaveManager.get_working_data()
-var _origin: Vector2 = Vector2.ZERO
 var _points: Dictionary = {}
 var _nav_regions: Array = []
 
@@ -91,11 +90,6 @@ func _ready() -> void:
 	
 	points_node.free()
 	
-	var origin_node: Node2D = $Origin
-	remove_child(origin_node)
-	_origin = origin_node.position
-	origin_node.free()
-	
 	var top_left_node: Node2D = $TopLeft
 	var bottom_right_node: Node2D = $BottomRight
 	remove_child(top_left_node)
@@ -136,43 +130,13 @@ func get_player_parent() -> Node:
 	return $Midground
 
 
-# Get a point's world position. Returns the level's origin position if the point
+# Get a point's world position. Return `Vector2.ZERO` if the point is empty or
 # does not exist.
 func get_point_pos(point: String) -> Vector2:
-	return _points.get(point, _origin)
-
-
-# Get a point-relative position from a world position. This function returns two
-# values, the nearest point to the world position, and the offset from the
-# nearest point. The world position is returned as an offset from 'World' if the
-# level has no points.
-func get_relative_pos(world_pos: Vector2) -> Array:
-	var nearest_point: String = "World"
-	var nearest_pos: Vector2 = Vector2.ZERO
-	var nearest_distance: float = INF
-	
-	for point in _points:
-		var pos: Vector2 = _points[point]
-		var distance: float = world_pos.distance_squared_to(pos)
-		
-		if distance < nearest_distance:
-			nearest_point = point
-			nearest_pos = pos
-			nearest_distance = distance
-	
-	return [nearest_point, world_pos - nearest_pos]
-
-
-# Get a point-relative position's world position. Return the offset as a world
-# position if the point is 'World'. Return the level's origin position if the
-# point does not exist.
-func get_world_pos(point: String, offset: Vector2) -> Vector2:
-	if point == "World":
-		return offset
-	elif _points.has(point):
-		return _points[point] + offset
+	if point.empty():
+		return Vector2.ZERO
 	else:
-		return _origin
+		return _points.get(point, Vector2.ZERO)
 
 
 # Save the level's state to the current working save data.
