@@ -48,5 +48,5 @@ func set_text(value: String) -> void:
 # Run when the checkbox is toggled. Emit the toggled signal.
 func _on_checkbox_toggled(button_pressed: bool) -> void:
 	_toggle(button_pressed)
-	AudioManager.play_clip("sfx.menu_move" if button_pressed else "sfx.menu_cancel")
+	AudioManager.play_clip("sfx/menu_move" if button_pressed else "sfx/menu_cancel")
 	emit_signal("toggled", button_pressed)

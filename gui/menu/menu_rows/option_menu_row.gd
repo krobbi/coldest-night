@@ -139,7 +139,7 @@ func select_option(index: int, no_signal: bool = false) -> void:
 	
 	if not no_signal:
 		_change_value(_option_values[_selected_option])
-		AudioManager.play_clip("sfx.menu_move")
+		AudioManager.play_clip("sfx/menu_move")
 		emit_signal("value_changed", _option_values[_selected_option])
 
 

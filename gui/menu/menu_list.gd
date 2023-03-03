@@ -56,7 +56,7 @@ func select_row(index: int) -> void:
 		return
 	elif _selected_menu_row != -1:
 		_menu_rows[_selected_menu_row].deselect()
-		AudioManager.play_clip("sfx.menu_move")
+		AudioManager.play_clip("sfx/menu_move")
 	
 	_selected_menu_row = index
 	var menu_row: MenuRow = _menu_rows[_selected_menu_row]

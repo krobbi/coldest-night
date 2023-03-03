@@ -29,7 +29,7 @@ func _ready() -> void:
 # popping the menu card.
 func _input(event: InputEvent) -> void:
 	if _is_manually_poppable and event.is_action_pressed("pause"):
-		AudioManager.play_clip("sfx.menu_cancel")
+		AudioManager.play_clip("sfx/menu_cancel")
 		request_pop()
 
 

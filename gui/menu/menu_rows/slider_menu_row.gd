@@ -94,5 +94,5 @@ func set_text(value: String) -> void:
 # Run when the slider's value changes. Emit the `value_changed` signal.
 func _on_slider_value_changed(value: float) -> void:
 	_change_value(value)
-	AudioManager.play_clip("sfx.menu_move")
+	AudioManager.play_clip("sfx/menu_move")
 	emit_signal("value_changed", value)

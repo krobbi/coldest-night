@@ -34,8 +34,8 @@ func play_clip(clip_key: String) -> void:
 	if not _clips.has(clip_key):
 		var clip_player: AudioStreamPlayer = AudioStreamPlayer.new()
 		clip_player.name = "ClipPlayer%d" % (_clips.size() + 1)
-		clip_player.stream = load("res://resources/audio/%s.ogg" % clip_key.replace(".", "/"))
-		var clip_key_parts: PoolStringArray = clip_key.split(".", false, 1)
+		clip_player.stream = load("res://resources/audio/%s.ogg" % clip_key)
+		var clip_key_parts: PoolStringArray = clip_key.split("/", false, 1)
 		
 		if not clip_key_parts.empty():
 			var bus_key: String = clip_key_parts[0]
@@ -60,8 +60,7 @@ func play_music(music_key: String, loop: bool = true) -> void:
 	if _current_music.empty():
 		return
 	
-	_music_player.stream = load(
-			"res://resources/audio/music/%s.ogg" % _current_music.replace(".", "/"))
+	_music_player.stream = load("res://resources/audio/music/%s.ogg" % _current_music)
 	_music_player.stream.loop = loop
 	_music_player.play()
 
