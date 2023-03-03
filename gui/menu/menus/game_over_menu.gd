@@ -4,6 +4,9 @@ extends ColorRect
 # The game over menu is a menu that is displayed on game over and handles game
 # over operations.
 
+export(AudioStream) var _game_over_music: AudioStream
+export(AudioStream) var _menu_music: AudioStream
+
 var _is_open: bool = false
 
 onready var _menu_stack: MenuStack = $MenuStack
@@ -21,7 +24,7 @@ func open_menu() -> void:
 	
 	_is_open = true
 	EventBus.emit_player_freeze_request()
-	AudioManager.play_music("game_over", false)
+	AudioManager.play_music(_game_over_music, false)
 	show()
 	var tween: SceneTreeTween = create_tween()
 	# warning-ignore: RETURN_VALUE_DISCARDED
@@ -34,5 +37,5 @@ func open_menu() -> void:
 # the game over menu card to the menu stack.
 func _on_tween_callback() -> void:
 	get_tree().paused = true
-	AudioManager.play_music("menu")
+	AudioManager.play_music(_menu_music)
 	_menu_stack.push_card("game_over")

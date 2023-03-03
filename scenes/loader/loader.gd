@@ -6,6 +6,7 @@ extends Control
 
 export(String, FILE, "*.tscn") var _normal_scene_path: String
 export(String, FILE, "*.tscn") var _completed_scene_path: String
+export(AudioStream) var _new_game_music: AudioStream
 
 var _save_data: SaveData = SaveManager.get_working_data()
 
@@ -14,7 +15,7 @@ var _save_data: SaveData = SaveManager.get_working_data()
 func _ready() -> void:
 	match _save_data.state:
 		SaveData.State.NEW_GAME:
-			AudioManager.play_music("briefing")
+			AudioManager.play_music(_new_game_music)
 			EventBus.emit_nightscript_run_script_request("new_game")
 		SaveData.State.COMPLETED:
 			SceneManager.change_scene(_completed_scene_path)

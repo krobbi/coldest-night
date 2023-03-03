@@ -15,7 +15,8 @@ enum NavTile {
 
 export(String) var area_name: String = "AREA.UNKNOWN"
 export(String) var level_name: String = "LEVEL.UNKNOWN"
-export(String) var music: String
+
+export(AudioStream) var _music: AudioStream
 
 var _save_data: SaveData = SaveManager.get_working_data()
 var _points: Dictionary = {}
@@ -30,7 +31,7 @@ func _enter_tree() -> void:
 
 # Run when the level finishes entering the scene tree. Initialize the level.
 func _ready() -> void:
-	AudioManager.play_music(music)
+	AudioManager.play_music(_music)
 	
 	var nav_tile_map: TileMap = $NavTileMap
 	var nav_tile_set: TileSet = nav_tile_map.tile_set

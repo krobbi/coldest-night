@@ -4,13 +4,14 @@ extends Control
 # The devlog scene is a scene that runs the devlog dialog.
 
 export(String, FILE, "*.tscn") var _exit_scene_path: String
+export(AudioStream) var _music: AudioStream
 
 var _has_shown_silhouette: bool = false
 
 # Run when the dialog scene is entered. Play background music, subscribe the
 # devlog scene to the event bus, and run the devlog dialog.
 func _ready() -> void:
-	AudioManager.play_music("devlog")
+	AudioManager.play_music(_music)
 	EventBus.subscribe_node(
 			"dialog_option_pressed", self, "_on_dialog_option_pressed", [], CONNECT_ONESHOT)
 	EventBus.emit_nightscript_run_script_request("devlog")

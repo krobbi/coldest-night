@@ -7,6 +7,7 @@ const CREDITS_PATH: String = "res://scenes/credits/credits_%s.txt"
 const SPEED: float = 30.0
 
 export(String, FILE, "*.tscn") var _exit_scene_path: String
+export(AudioStream) var _music: AudioStream
 
 var _is_exiting: bool = false
 
@@ -31,7 +32,7 @@ func _ready() -> void:
 	
 	_credits_label.bbcode_text = _parse_credits(file.get_as_text())
 	file.close()
-	AudioManager.play_music("credits", false)
+	AudioManager.play_music(_music, false)
 
 
 # Run when the credits scene receives an input event. Handle controls for

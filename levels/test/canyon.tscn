@@ -1,12 +1,13 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://levels/level.tscn" type="PackedScene" id=1]
 [ext_resource path="res://resources/tile_sets/test/canyon.tres" type="TileSet" id=2]
 [ext_resource path="res://resources/tile_sets/test/blockout.tres" type="TileSet" id=3]
+[ext_resource path="res://resources/audio/music/canyon.ogg" type="AudioStream" id=4]
 
 [node name="Canyon" instance=ExtResource( 1 )]
 area_name = "AREA.TEST.CANYON"
-music = "canyon"
+_music = ExtResource( 4 )
 
 [node name="WallMap" type="TileMap" parent="Background" index="0"]
 tile_set = ExtResource( 2 )

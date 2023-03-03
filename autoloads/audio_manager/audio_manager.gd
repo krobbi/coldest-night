@@ -7,7 +7,6 @@ extends Node
 
 var _buses: Dictionary = {}
 var _clips: Dictionary = {}
-var _current_music: String = ""
 
 onready var _music_player: AudioStreamPlayer = $MusicPlayer
 
@@ -49,19 +48,20 @@ func play_clip(clip_key: String) -> void:
 	_clips[clip_key].play()
 
 
-# Play background music from its music key.
-func play_music(music_key: String, loop: bool = true) -> void:
-	if _current_music == music_key:
+# Play background music.
+func play_music(music: AudioStream, loop: bool = true) -> void:
+	if _music_player.stream == music:
 		return
 	
-	_current_music = music_key
 	_music_player.stop()
+	_music_player.stream = music
 	
-	if _current_music.empty():
+	if not _music_player.stream:
 		return
 	
-	_music_player.stream = load("res://resources/audio/music/%s.ogg" % _current_music)
-	_music_player.stream.loop = loop
+	if _music_player.stream is AudioStreamOGGVorbis:
+		_music_player.stream.loop = loop
+	
 	_music_player.play()
 
 
