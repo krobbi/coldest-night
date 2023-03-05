@@ -32,7 +32,7 @@ func transition_level(
 			offset.y = relative.y
 	
 	_save_data.level = level_path
-	_save_data.angle = _player.smooth_pivot.rotation
+	_save_data.angle = _player.smooth_pivot.rotation_degrees
 	_change_level(level_path, point, offset)
 
 
@@ -68,7 +68,7 @@ func _change_level(level_path: String, point: String, offset: Vector2) -> void:
 	_save_data.position = current_level.get_point_pos(point) + offset
 	_player.position = _save_data.position
 	current_level.get_player_parent().add_child(_player)
-	_player.smooth_pivot.rotation = _save_data.angle
+	_player.smooth_pivot.rotation_degrees = _save_data.angle
 	
 	EventBus.emit_radar_refresh_entities_request()
 	EventBus.emit_radar_camera_follow_anchor_request(_player)

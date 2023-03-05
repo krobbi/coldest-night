@@ -88,5 +88,5 @@ func disable_triggers() -> void:
 # Save the player's state and display floating text.
 func save_state() -> void:
 	_save_data.position = position
-	_save_data.angle = smooth_pivot.rotation
+	_save_data.angle = smooth_pivot.rotation_degrees
 	EventBus.emit_floating_text_display_request("FLOATING_TEXT.SAVED", position)
