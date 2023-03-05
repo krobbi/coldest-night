@@ -50,9 +50,9 @@ _global_script_classes=[ {
 "path": "res://components/interactor/interactor.gd"
 }, {
 "base": "Reference",
-"class": "JSONReader",
+"class": "JSONValidator",
 "language": "GDScript",
-"path": "res://autoloads/save_manager/json_reader.gd"
+"path": "res://autoloads/save_manager/json_validator.gd"
 }, {
 "base": "StaticBody2D",
 "class": "LaserWall",
@@ -193,7 +193,7 @@ _global_script_class_icons={
 "FloatingText": "",
 "Interactable": "",
 "Interactor": "",
-"JSONReader": "",
+"JSONValidator": "",
 "LaserWall": "",
 "Level": "",
 "MenuCard": "",

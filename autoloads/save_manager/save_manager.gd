@@ -61,23 +61,12 @@ func save_file() -> void:
 # Load the slot save data from its file.
 func load_file() -> void:
 	_slot_data.clear()
-	var file: File = File.new()
+	var validator: JSONValidator = JSONValidator.new()
+	validator.from_path(FILE_PATH)
+	_validate_save_data(validator)
 	
-	if not file.file_exists(FILE_PATH):
-		return
-	
-	if file.open(FILE_PATH, File.READ) != OK:
-		if file.is_open():
-			file.close()
-		
-		return
-	
-	var reader: JSONReader = JSONReader.new(file.get_as_text())
-	file.close()
-	_validate_save_data_json(reader)
-	
-	if reader.is_valid():
-		_slot_data.deserialize(reader.get_data())
+	if validator.is_valid():
+		_slot_data.deserialize(validator.get_root_data())
 
 
 # Push the current working save data to the slot save data.
@@ -107,27 +96,50 @@ func pull_from_checkpoint() -> void:
 	_working_data.stats.deserialize(stats_data)
 
 
-# Validate save data JSON from a JSON reader.
-func _validate_save_data_json(reader: JSONReader) -> void:
-	reader.check_enum("format_name", [FORMAT_NAME])
-	reader.check_enum("format_version", [FORMAT_VERSION])
-	reader.check_enum("state", ["NEW_GAME", "NORMAL", "COMPLETED"])
-	reader.check_string("level")
-	reader.check_float("position_x")
-	reader.check_float("position_y")
-	reader.check_float("angle")
-	reader.check_int("stats.time_hours")
-	reader.check_int("stats.time_minutes")
-	reader.check_int("stats.time_seconds")
-	reader.check_float("stats.time_fraction")
-	reader.check_int("stats.alert_count")
-	reader.check_dictionary("scenes")
+# Validate save data from a JSON validator.
+func _validate_save_data(validator: JSONValidator) -> void:
+	validator.check_enum("format_name", [FORMAT_NAME])
+	validator.check_enum("format_version", [FORMAT_VERSION])
+	validator.check_enum("state", ["NEW_GAME", "NORMAL", "COMPLETED"])
+	validator.check_string("level")
+	validator.check_float("position_x")
+	validator.check_float("position_y")
+	validator.check_float("angle")
 	
-	if not reader.has_dictionary("flags"):
-		reader.invalidate()
-		return
+	validator.enter_dictionary("stats") # Begin stats.
+	validator.check_int("time_hours")
+	validator.check_int("time_minutes")
+	validator.check_int("time_seconds")
+	validator.check_float("time_fraction")
+	validator.check_int("alert_count")
+	validator.exit() # End stats.
 	
-	for flag in reader.get_data().flags:
-		if flag.empty() or "." in flag or not reader.has_int("flags.%s" % flag):
-			reader.invalidate()
-			return
+	validator.enter_dictionary("flags") # Begin flags.
+	
+	for key in validator.get_keys():
+		validator.check_int(key)
+	
+	validator.exit() # End flags.
+	
+	validator.enter_dictionary("scenes") # Begin scene object array dictionary.
+	
+	for key in validator.get_keys():
+		validator.enter_array(key) # Begin scene object array.
+		
+		for index in validator.get_keys():
+			validator.enter_dictionary(index) # Begin scene object.
+			validator.check_string("filename")
+			validator.check_string("parent")
+			
+			if validator.has_property("position_x") or validator.has_property("position_y"):
+				validator.check_float("position_x")
+				validator.check_float("position_y")
+			
+			if validator.has_property("data"):
+				validator.check_dictionary("data")
+			
+			validator.exit() # End scene object.
+		
+		validator.exit() # End scene object array.
+	
+	validator.exit() # End scene object array dictionary.
