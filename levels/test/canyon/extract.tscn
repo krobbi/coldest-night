@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://levels/test/canyon.tscn" type="PackedScene" id=1]
-[ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=2]
+[ext_resource path="res://entities/triggers/transition_level_trigger/transition_level_trigger.tscn" type="PackedScene" id=2]
 [ext_resource path="res://entities/terminals/save_terminal/save_terminal.tscn" type="PackedScene" id=3]
 [ext_resource path="res://entities/triggers/focus_camera_trigger/focus_camera_trigger.tscn" type="PackedScene" id=4]
 [ext_resource path="res://entities/triggers/change_scene_trigger/change_scene_trigger.tscn" type="PackedScene" id=5]
@@ -95,41 +95,35 @@ points = PoolVector2Array( 224, -1088, 224, -1024, 256, -1024, 256, -1088 )
 [node name="Terminal" type="Polygon2D" parent="Radar/Walls" index="2"]
 polygon = PoolVector2Array( 416, 0, 448, 0, 448, 32, 416, 32 )
 
-[node name="ExitN" parent="Triggers" index="0" instance=ExtResource( 2 )]
+[node name="NorthExit" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( 160, -1168 )
-_level_key = "test/area_bx/hub"
-_point = "EntranceS"
-_relative_point = "EntranceN"
+_level_path = "res://levels/test/area_bx/hub.tscn"
+_point = "SouthEntrance"
+_relative_point = "NorthEntrance"
 _is_relative_x = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitN" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/NorthExit" index="0"]
 shape = SubResource( 1 )
 
-[node name="FocusExit" parent="Triggers" index="1" instance=ExtResource( 4 )]
+[node name="WestExitFocus" parent="Triggers" index="1" instance=ExtResource( 4 )]
 position = Vector2( -112, 0 )
 _focus_node_path = NodePath("Position2D")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusExit" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/WestExitFocus" index="0"]
 shape = SubResource( 2 )
 
-[node name="Position2D" type="Position2D" parent="Triggers/FocusExit" index="1"]
+[node name="Position2D" type="Position2D" parent="Triggers/WestExitFocus" index="1"]
 position = Vector2( -80, 0 )
 
-[node name="ChangeSceneTrigger" parent="Triggers" index="2" instance=ExtResource( 5 )]
+[node name="WestExit" parent="Triggers" index="2" instance=ExtResource( 5 )]
 position = Vector2( -336, 0 )
 _scene_path = "res://scenes/results/results.tscn"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ChangeSceneTrigger" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/WestExit" index="0"]
 shape = SubResource( 3 )
 
-[node name="EntranceN" type="Position2D" parent="Points" index="0"]
+[node name="NorthEntrance" type="Position2D" parent="Points" index="0"]
 position = Vector2( 160, -1072 )
-
-[node name="EntranceW" type="Position2D" parent="Points" index="1"]
-position = Vector2( -240, 0 )
-
-[node name="Terminal" type="Position2D" parent="Points" index="2"]
-position = Vector2( 432, 48 )
 
 [node name="TopLeft" parent="." index="8"]
 position = Vector2( -256, -1088 )

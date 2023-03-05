@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://levels/test/area_bx.tscn" type="PackedScene" id=1]
-[ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=2]
+[ext_resource path="res://entities/triggers/transition_level_trigger/transition_level_trigger.tscn" type="PackedScene" id=2]
 [ext_resource path="res://entities/actors/guards/robot_guard.tscn" type="PackedScene" id=3]
 [ext_resource path="res://entities/test/archival_unit/archival_unit.tscn" type="PackedScene" id=5]
 [ext_resource path="res://entities/test/window/window.tscn" type="PackedScene" id=6]
@@ -315,64 +315,64 @@ points = PoolVector2Array( 192, 200, 384, 200 )
 [node name="Ext" type="Line2D" parent="Radar/Walls/WindowSE" index="0"]
 points = PoolVector2Array( 192, 216, 384, 216 )
 
-[node name="ExitW" parent="Triggers" index="0" instance=ExtResource( 2 )]
+[node name="WestExit" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( -816, 0 )
-_level_key = "test/area_bx/west_annex"
-_point = "EntranceE"
-_relative_point = "EntranceW"
+_level_path = "res://levels/test/area_bx/west_annex.tscn"
+_point = "EastEntrance"
+_relative_point = "WestEntrance"
 _is_relative_y = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitW" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/WestExit" index="0"]
 shape = SubResource( 1 )
 
-[node name="ExitE" parent="Triggers" index="1" instance=ExtResource( 2 )]
+[node name="EastExit" parent="Triggers" index="1" instance=ExtResource( 2 )]
 position = Vector2( 848, 0 )
-_level_key = "test/area_bx/hub"
-_point = "EntranceW"
-_relative_point = "EntranceE"
+_level_path = "res://levels/test/area_bx/hub.tscn"
+_point = "WestEntrance"
+_relative_point = "EastEntrance"
 _is_relative_y = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitE" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/EastExit" index="0"]
 shape = SubResource( 1 )
 
-[node name="FocusNW" parent="Triggers" index="2" instance=ExtResource( 8 )]
+[node name="NorthWestFocus" parent="Triggers" index="2" instance=ExtResource( 8 )]
 position = Vector2( -256, -128 )
 _focus_node_path = NodePath("Position2D")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusNW" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/NorthWestFocus" index="0"]
 shape = SubResource( 2 )
 
-[node name="Position2D" type="Position2D" parent="Triggers/FocusNW" index="1"]
+[node name="Position2D" type="Position2D" parent="Triggers/NorthWestFocus" index="1"]
 position = Vector2( 0, -144 )
 
-[node name="FocusNE" parent="Triggers" index="3" instance=ExtResource( 8 )]
+[node name="NorthEastFocus" parent="Triggers" index="3" instance=ExtResource( 8 )]
 position = Vector2( 288, -128 )
 _focus_node_path = NodePath("Position2D")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusNE" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/NorthEastFocus" index="0"]
 shape = SubResource( 2 )
 
-[node name="Position2D" type="Position2D" parent="Triggers/FocusNE" index="1"]
+[node name="Position2D" type="Position2D" parent="Triggers/NorthEastFocus" index="1"]
 position = Vector2( 0, -144 )
 
-[node name="FocusSW" parent="Triggers" index="4" instance=ExtResource( 8 )]
+[node name="SouthWestFocus" parent="Triggers" index="4" instance=ExtResource( 8 )]
 position = Vector2( -256, 128 )
 _focus_node_path = NodePath("Position2D")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusSW" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/SouthWestFocus" index="0"]
 shape = SubResource( 2 )
 
-[node name="Position2D" type="Position2D" parent="Triggers/FocusSW" index="1"]
+[node name="Position2D" type="Position2D" parent="Triggers/SouthWestFocus" index="1"]
 position = Vector2( 0, 80 )
 
-[node name="FocusSE" parent="Triggers" index="5" instance=ExtResource( 8 )]
+[node name="SouthEastFocus" parent="Triggers" index="5" instance=ExtResource( 8 )]
 position = Vector2( 288, 128 )
 _focus_node_path = NodePath("Position2D")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusSE" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/SouthEastFocus" index="0"]
 shape = SubResource( 2 )
 
-[node name="Position2D" type="Position2D" parent="Triggers/FocusSE" index="1"]
+[node name="Position2D" type="Position2D" parent="Triggers/SouthEastFocus" index="1"]
 position = Vector2( 0, 80 )
 
 [node name="AliceExterior" parent="PatrolPoints" index="0" instance=ExtResource( 9 )]
@@ -429,10 +429,10 @@ _wait_duration = 5.0
 [node name="GoToPatrolAction" parent="PatrolPoints/BobExterior" index="3" instance=ExtResource( 12 )]
 _target_patrol_action_parent_path = NodePath("../../BobInterior")
 
-[node name="EntranceW" type="Position2D" parent="Points" index="0"]
+[node name="WestEntrance" type="Position2D" parent="Points" index="0"]
 position = Vector2( -720, 0 )
 
-[node name="EntranceE" type="Position2D" parent="Points" index="1"]
+[node name="EastEntrance" type="Position2D" parent="Points" index="1"]
 position = Vector2( 752, 0 )
 
 [node name="TopLeft" parent="." index="8"]

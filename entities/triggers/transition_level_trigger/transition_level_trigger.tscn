@@ -1,11 +1,11 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://entities/triggers/trigger.tscn" type="PackedScene" id=1]
-[ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.gd" type="Script" id=2]
+[ext_resource path="res://entities/triggers/transition_level_trigger/transition_level_trigger.gd" type="Script" id=2]
 
 [node name="ChangeLevelTrigger" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
-_level_key = ""
+_level_path = ""
 _point = ""
 _relative_point = ""
 _is_relative_x = false

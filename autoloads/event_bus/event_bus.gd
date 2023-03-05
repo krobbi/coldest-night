@@ -8,7 +8,7 @@ extends Node
 signal save_state_request()
 signal pause_game_request()
 signal game_over_request()
-signal transition_level_request(level_key, point, relative_point, is_relative_x, is_relative_y)
+signal transition_level_request(level_path, point, relative_point, is_relative_x, is_relative_y)
 
 signal player_freeze_request()
 signal player_unfreeze_request()
@@ -87,10 +87,10 @@ func emit_game_over_request() -> void:
 
 # Emit a transition level request event.
 func emit_transition_level_request(
-		level_key: String, point: String, relative_point: String,
+		level_path: String, point: String, relative_point: String,
 		is_relative_x: bool, is_relative_y: bool) -> void:
 	emit_signal(
-			"transition_level_request", level_key, point, relative_point,
+			"transition_level_request", level_path, point, relative_point,
 			is_relative_x, is_relative_y)
 
 

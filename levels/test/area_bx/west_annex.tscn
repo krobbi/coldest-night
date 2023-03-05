@@ -2,7 +2,7 @@
 
 [ext_resource path="res://levels/test/area_bx.tscn" type="PackedScene" id=1]
 [ext_resource path="res://entities/test/archival_unit/archival_unit.tscn" type="PackedScene" id=2]
-[ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=3]
+[ext_resource path="res://entities/triggers/transition_level_trigger/transition_level_trigger.tscn" type="PackedScene" id=3]
 [ext_resource path="res://entities/terminals/save_terminal/save_terminal.tscn" type="PackedScene" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
@@ -63,24 +63,18 @@ points = PoolVector2Array( -320, 64, -160, 64, -160, 160, 160, 160, 160, 64, 320
 [node name="Ext" type="Line2D" parent="Radar/Walls/OutlineS" index="0"]
 points = PoolVector2Array( -320, 96, -192, 96, -192, 192, 192, 192, 192, 96, 320, 96 )
 
-[node name="ChangeLevelTrigger" parent="Triggers" index="0" instance=ExtResource( 3 )]
+[node name="EastExit" parent="Triggers" index="0" instance=ExtResource( 3 )]
 position = Vector2( 400, 0 )
-_level_key = "test/area_bx/west"
-_point = "EntranceW"
-_relative_point = "EntranceE"
+_level_path = "res://levels/test/area_bx/west.tscn"
+_point = "WestEntrance"
+_relative_point = "EastEntrance"
 _is_relative_y = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ChangeLevelTrigger" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/EastExit" index="0"]
 shape = SubResource( 1 )
 
-[node name="EntranceW" type="Position2D" parent="Points" index="0"]
-position = Vector2( -304, 0 )
-
-[node name="EntranceE" type="Position2D" parent="Points" index="1"]
+[node name="EastEntrance" type="Position2D" parent="Points" index="0"]
 position = Vector2( 304, 0 )
-
-[node name="Terminal" type="Position2D" parent="Points" index="2"]
-position = Vector2( -16, 16 )
 
 [node name="TopLeft" parent="." index="8"]
 position = Vector2( -320, -320 )

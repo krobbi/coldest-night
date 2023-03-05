@@ -36,7 +36,7 @@ func get_flag(flag: String) -> int:
 # Clear the save data to a new game.
 func clear() -> void:
 	state = State.NEW_GAME
-	level = "test/area_bx/north"
+	level = "res://levels/test/area_bx/north.tscn"
 	position = Vector2(-368.0, -496.0)
 	angle = 0.0
 	stats.clear()

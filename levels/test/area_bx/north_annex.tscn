@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://levels/test/area_bx.tscn" type="PackedScene" id=1]
-[ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=2]
+[ext_resource path="res://entities/triggers/transition_level_trigger/transition_level_trigger.tscn" type="PackedScene" id=2]
 [ext_resource path="res://entities/test/serial_test/serial_test.tscn" type="PackedScene" id=3]
 [ext_resource path="res://entities/patrol_point/patrol_actions/sync_patrol_action/sync_patrol_action.tscn" type="PackedScene" id=4]
 [ext_resource path="res://entities/terminals/terminal.tscn" type="PackedScene" id=5]
@@ -116,14 +116,14 @@ points = PoolVector2Array( 0, -32, 0, 0 )
 [node name="SeparatorC" type="Line2D" parent="Radar/Walls" index="6"]
 points = PoolVector2Array( 32, -32, 32, 0 )
 
-[node name="ExitS" parent="Triggers" index="0" instance=ExtResource( 2 )]
+[node name="SouthExit" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( 0, 400 )
-_level_key = "test/area_bx/north"
-_point = "EntranceN"
-_relative_point = "EntranceS"
+_level_path = "res://levels/test/area_bx/north.tscn"
+_point = "NorthEntrance"
+_relative_point = "SouthEntrance"
 _is_relative_x = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitS" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/SouthExit" index="0"]
 shape = SubResource( 1 )
 
 [node name="CarolNorth" parent="PatrolPoints" index="0" instance=ExtResource( 9 )]
@@ -223,14 +223,8 @@ _angle = 180.0
 [node name="GoToPatrolAction" parent="PatrolPoints/EveSouthEast" index="2" instance=ExtResource( 10 )]
 _target_patrol_action_parent_path = NodePath("../../EveSouthWest")
 
-[node name="EntranceN" type="Position2D" parent="Points" index="0"]
-position = Vector2( 0, -304 )
-
-[node name="EntranceS" type="Position2D" parent="Points" index="1"]
+[node name="SouthEntrance" type="Position2D" parent="Points" index="0"]
 position = Vector2( 0, 304 )
-
-[node name="Terminal" type="Position2D" parent="Points" index="2"]
-position = Vector2( -16, 16 )
 
 [node name="TopLeft" parent="." index="8"]
 position = Vector2( -320, -320 )

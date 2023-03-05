@@ -17,7 +17,7 @@ func _ready() -> void:
 
 # Transition the current level.
 func transition_level(
-		level_key: String, point: String, relative_point: String,
+		level_path: String, point: String, relative_point: String,
 		is_relative_x: bool, is_relative_y: bool) -> void:
 	EventBus.emit_player_transition_request()
 	var offset: Vector2 = Vector2.ZERO
@@ -31,9 +31,9 @@ func transition_level(
 		if is_relative_y:
 			offset.y = relative.y
 	
-	_save_data.level = level_key
+	_save_data.level = level_path
 	_save_data.angle = _player.smooth_pivot.rotation
-	_change_level(level_key, point, offset)
+	_change_level(level_path, point, offset)
 
 
 # Initialize the game state from save data.
@@ -41,8 +41,8 @@ func load_state() -> void:
 	_change_level(_save_data.level, "", _save_data.position)
 
 
-# Change the current level from its level key, point and offset.
-func _change_level(level_key: String, point: String, offset: Vector2) -> void:
+# Change the current level from its level path, point and offset.
+func _change_level(level_path: String, point: String, offset: Vector2) -> void:
 	EventBus.emit_camera_unfollow_anchor_request()
 	EventBus.emit_radar_camera_unfollow_anchor_request()
 	
@@ -59,7 +59,7 @@ func _change_level(level_key: String, point: String, offset: Vector2) -> void:
 	
 	EventBus.emit_nightscript_stop_script_request()
 	
-	current_level = load("res://levels/%s.tscn" % level_key).instance()
+	current_level = load(level_path).instance()
 	add_child(current_level)
 	
 	yield(get_tree(), "idle_frame")

@@ -4,7 +4,7 @@
 [ext_resource path="res://entities/test/archival_unit/archival_unit.tscn" type="PackedScene" id=2]
 [ext_resource path="res://entities/actors/guards/guard.tscn" type="PackedScene" id=3]
 [ext_resource path="res://entities/test/laser_wall/laser_wall.tscn" type="PackedScene" id=4]
-[ext_resource path="res://entities/triggers/change_level_trigger/change_level_trigger.tscn" type="PackedScene" id=5]
+[ext_resource path="res://entities/triggers/transition_level_trigger/transition_level_trigger.tscn" type="PackedScene" id=5]
 [ext_resource path="res://entities/patrol_point/patrol_actions/wait_patrol_action/wait_patrol_action.tscn" type="PackedScene" id=6]
 [ext_resource path="res://entities/triggers/focus_camera_trigger/focus_camera_trigger.tscn" type="PackedScene" id=7]
 [ext_resource path="res://entities/patrol_point/patrol_point.tscn" type="PackedScene" id=8]
@@ -264,34 +264,34 @@ polygon = PoolVector2Array( 288, 480, 320, 480, 320, 640, 288, 640 )
 [node name="OutlineSW" type="Line2D" parent="Radar/Walls" index="23"]
 points = PoolVector2Array( -96, 768, -96, 640, -128, 640, -128, 704, -416, 704, -416, 416, -352, 416, -352, 160, -416, 160, -416, -128, -352, -128, -352, -384, -416, -384, -416, -480, -384, -480, -384, -416, -320, -416, -320, -96, -384, -96, -384, 128, -320, 128, -320, 448, -384, 448, -384, 672, -160, 672, -160, 608, -64, 608, -64, 768 )
 
-[node name="ExitN" parent="Triggers" index="0" instance=ExtResource( 5 )]
+[node name="NorthExit" parent="Triggers" index="0" instance=ExtResource( 5 )]
 position = Vector2( 0, -816 )
-_level_key = "test/area_bx/north_annex"
-_point = "EntranceS"
-_relative_point = "EntranceN"
+_level_path = "res://levels/test/area_bx/north_annex.tscn"
+_point = "SouthEntrance"
+_relative_point = "NorthEntrance"
 _is_relative_x = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitN" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/NorthExit" index="0"]
 shape = SubResource( 4 )
 
-[node name="ExitS" parent="Triggers" index="1" instance=ExtResource( 5 )]
+[node name="SouthExit" parent="Triggers" index="1" instance=ExtResource( 5 )]
 position = Vector2( 0, 848 )
-_level_key = "test/area_bx/hub"
-_point = "EntranceN"
-_relative_point = "EntranceS"
+_level_path = "res://levels/test/area_bx/hub.tscn"
+_point = "NorthEntrance"
+_relative_point = "SouthEntrance"
 _is_relative_x = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitS" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/SouthExit" index="0"]
 shape = SubResource( 1 )
 
-[node name="FocusCameraTrigger" parent="Triggers" index="2" instance=ExtResource( 7 )]
+[node name="BridgeFocus" parent="Triggers" index="2" instance=ExtResource( 7 )]
 position = Vector2( -272, -256 )
 _focus_node_path = NodePath("Position2D")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/FocusCameraTrigger" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/BridgeFocus" index="0"]
 shape = SubResource( 3 )
 
-[node name="Position2D" type="Position2D" parent="Triggers/FocusCameraTrigger" index="1"]
+[node name="Position2D" type="Position2D" parent="Triggers/BridgeFocus" index="1"]
 
 [node name="Archie" type="Node2D" parent="PatrolPoints" index="0"]
 __meta__ = {
@@ -706,10 +706,10 @@ _angle = -90.0
 [node name="GoToPatrolAction" parent="PatrolPoints/Susie/South" index="4" instance=ExtResource( 9 )]
 _target_patrol_action_parent_path = NodePath("../../North/SecondVisit")
 
-[node name="EntranceN" type="Position2D" parent="Points" index="0"]
+[node name="NorthEntrance" type="Position2D" parent="Points" index="0"]
 position = Vector2( 0, -720 )
 
-[node name="EntranceS" type="Position2D" parent="Points" index="1"]
+[node name="SouthEntrance" type="Position2D" parent="Points" index="1"]
 position = Vector2( 0, 752 )
 
 [node name="TopLeft" parent="." index="8"]
