@@ -8,6 +8,8 @@ var _menu_rows: Array = []
 var _menu_row_count: int = 0
 var _selected_menu_row: int = -1
 
+onready var _menu_move_player: AudioStreamPlayer = $MenuMovePlayer
+
 # Run when the menu list enters the scene tree. add and connect the menu list's
 # menu rows.
 func _ready() -> void:
@@ -56,7 +58,7 @@ func select_row(index: int) -> void:
 		return
 	elif _selected_menu_row != -1:
 		_menu_rows[_selected_menu_row].deselect()
-		AudioManager.play_clip("sfx/menu_move")
+		_menu_move_player.play()
 	
 	_selected_menu_row = index
 	var menu_row: MenuRow = _menu_rows[_selected_menu_row]

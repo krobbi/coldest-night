@@ -5,6 +5,7 @@ extends ColorRect
 
 var _is_open: bool = false
 
+onready var _paused_player: AudioStreamPlayer = $PausedPlayer
 onready var _menu_stack: MenuStack = $MenuStack
 
 # Run when the pause menu finishes entering the scene tree. Set the pause menu's
@@ -35,7 +36,7 @@ func _open_menu() -> void:
 	get_tree().paused = true
 	_menu_stack.push_card("pause")
 	show()
-	AudioManager.play_clip("sfx/menu_move")
+	_paused_player.play()
 
 
 # Run when the menu stack's root is popped. Close the menu.

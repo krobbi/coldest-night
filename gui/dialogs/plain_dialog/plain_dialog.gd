@@ -16,6 +16,7 @@ var _selected_option: int = -1
 onready var _type_timer: Timer = $TypeTimer
 onready var _pause_timer: Timer = $PauseTimer
 onready var _speech_player: AudioStreamPlayer = $SpeechPlayer
+onready var _menu_move_player: AudioStreamPlayer = $MenuMovePlayer
 onready var _message_label: RichTextLabel = $MessageLabel
 onready var _name_label: RichTextLabel = $MessageLabel/NameLabel
 onready var _option_container: VBoxContainer = $MessageLabel/OptionContainer
@@ -96,7 +97,7 @@ func _select_option(option_index: int) -> void:
 		return
 	elif _selected_option != -1:
 		_options[_selected_option].deselect()
-		AudioManager.play_clip("sfx/menu_move")
+		_menu_move_player.play()
 	
 	_selected_option = option_index
 	_options[_selected_option].select()

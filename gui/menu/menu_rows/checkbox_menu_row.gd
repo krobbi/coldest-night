@@ -10,6 +10,8 @@ export(bool) var is_pressed: bool setget set_pressed
 export(String) var text: String setget set_text
 
 onready var _checkbox: CheckButton = $Content/CheckButton
+onready var _pressed_player: AudioStreamPlayer = $PressedPlayer
+onready var _unpressed_player: AudioStreamPlayer = $UnpressedPlayer
 
 # Run when the checkbox menu row finishes entering the scene tree. Set whether
 # the checkbox is pressed and its text.
@@ -48,5 +50,10 @@ func set_text(value: String) -> void:
 # Run when the checkbox is toggled. Emit the toggled signal.
 func _on_checkbox_toggled(button_pressed: bool) -> void:
 	_toggle(button_pressed)
-	AudioManager.play_clip("sfx/menu_move" if button_pressed else "sfx/menu_cancel")
+	
+	if button_pressed:
+		_pressed_player.play()
+	else:
+		_unpressed_player.play()
+	
 	emit_signal("toggled", button_pressed)

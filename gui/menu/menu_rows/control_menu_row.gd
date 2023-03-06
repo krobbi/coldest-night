@@ -10,6 +10,7 @@ var _is_awaiting_input: bool = false
 
 onready var _button: Button = $Content/Button
 onready var _input_timer: Timer = $InputTimer
+onready var _mapped_player: AudioStreamPlayer = $MappedPlayer
 
 # Run when the control menu row finishes entering the scene tree. Subscribe the
 # control menu row to the configuration bus and set its tooltip and text.
@@ -30,7 +31,7 @@ func _input(event: InputEvent) -> void:
 	get_tree().set_input_as_handled() # Don't do anything else with the input.
 	InputManager.map_action_event(_action, event)
 	set_awaiting_input(false)
-	AudioManager.play_clip("sfx/menu_ok")
+	_mapped_player.play()
 
 
 # Run when the control menu row is deselected. Stop awaiting an input.

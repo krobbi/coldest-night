@@ -81,9 +81,7 @@ margin_right = 512.0
 margin_bottom = 248.0
 slider_value = 80.0
 min_value = 30.0
-max_value = 100.0
 step = 10.0
-text = ""
 config = "accessibility.pause_opacity"
 
 [node name="ContrastBoostSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 3 )]
@@ -91,11 +89,8 @@ anchor_right = 0.0
 margin_top = 252.0
 margin_right = 512.0
 margin_bottom = 284.0
-slider_value = 0.0
-min_value = 0.0
 max_value = 150.0
 step = 10.0
-text = ""
 config = "accessibility.contrast_boost"
 
 [node name="ColorGradingOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 4 )]
@@ -104,7 +99,6 @@ margin_top = 288.0
 margin_right = 512.0
 margin_bottom = 320.0
 option_source = 2
-text = ""
 config = "accessibility.color_grading"
 
 [node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="9" instance=ExtResource( 5 )]

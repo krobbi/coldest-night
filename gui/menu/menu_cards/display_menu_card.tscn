@@ -71,7 +71,6 @@ margin_top = 180.0
 margin_right = 512.0
 margin_bottom = 212.0
 option_source = 3
-text = ""
 config = "display.window_scale"
 
 [node name="ScaleModeOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 3 )]
@@ -80,7 +79,6 @@ margin_top = 216.0
 margin_right = 512.0
 margin_bottom = 248.0
 option_source = 4
-text = ""
 config = "display.scale_mode"
 
 [node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 4 )]

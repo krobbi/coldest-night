@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://gui/menu/menu_card.gd" type="Script" id=1]
+[ext_resource path="res://resources/audio/sfx/menu_cancel.ogg" type="AudioStream" id=2]
+[ext_resource path="res://components/remote_audio_player/remote_audio_player.tscn" type="PackedScene" id=3]
 
 [node name="MenuCard" type="Control"]
 anchor_right = 1.0
@@ -14,5 +16,10 @@ __meta__ = {
 [node name="TooltipTimer" type="Timer" parent="."]
 wait_time = 0.1
 one_shot = true
+
+[node name="ManualPopPlayer" parent="." instance=ExtResource( 3 )]
+stream = ExtResource( 2 )
+mix_target = 2
+bus = "SFX"
 
 [connection signal="timeout" from="TooltipTimer" to="." method="_on_tooltip_timer_timeout"]

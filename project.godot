@@ -139,6 +139,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/radar/radar_vision_area_renderer/radar_vision_area_renderer.gd"
 }, {
+"base": "AudioStreamPlayer",
+"class": "RemoteAudioPlayer",
+"language": "GDScript",
+"path": "res://components/remote_audio_player/remote_audio_player.gd"
+}, {
 "base": "Area2D",
 "class": "RepulsiveArea",
 "language": "GDScript",
@@ -211,6 +216,7 @@ _global_script_class_icons={
 "RadarPolygonRenderer": "",
 "RadarSegmentRenderer": "",
 "RadarVisionAreaRenderer": "",
+"RemoteAudioPlayer": "",
 "RepulsiveArea": "",
 "SaveData": "",
 "SliderMenuRow": "",

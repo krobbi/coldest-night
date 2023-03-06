@@ -5,6 +5,7 @@
 
 [node name="ConfigSliderMenuRow" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
+config = ""
 
 [node name="Label" parent="Content" index="0"]
 text = "Config slider"

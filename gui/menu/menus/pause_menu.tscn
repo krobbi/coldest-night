@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://gui/menu/menus/pause_menu.gd" type="Script" id=1]
 [ext_resource path="res://gui/menu/menu_stack.tscn" type="PackedScene" id=2]
+[ext_resource path="res://resources/audio/sfx/menu_move.ogg" type="AudioStream" id=3]
 
 [node name="PauseMenu" type="ColorRect"]
 pause_mode = 2
@@ -14,6 +15,11 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="PausedPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+mix_target = 2
+bus = "SFX"
 
 [node name="MenuStack" parent="." instance=ExtResource( 2 )]
 

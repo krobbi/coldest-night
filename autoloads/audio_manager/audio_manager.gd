@@ -6,7 +6,6 @@ extends Node
 # from any script by using `AudioManager`.
 
 var _buses: Dictionary = {}
-var _clips: Dictionary = {}
 
 onready var _music_player: AudioStreamPlayer = $MusicPlayer
 
@@ -26,26 +25,6 @@ func _ready() -> void:
 	for bus_key in _buses:
 		ConfigBus.subscribe_node_float(
 				"audio.%s_volume" % bus_key, self, "_on_volume_changed", [bus_key])
-
-
-# Play a cross-scene audio clip from its clip key.
-func play_clip(clip_key: String) -> void:
-	if not _clips.has(clip_key):
-		var clip_player: AudioStreamPlayer = AudioStreamPlayer.new()
-		clip_player.name = "ClipPlayer%d" % (_clips.size() + 1)
-		clip_player.stream = load("res://resources/audio/%s.ogg" % clip_key)
-		var clip_key_parts: PoolStringArray = clip_key.split("/", false, 1)
-		
-		if not clip_key_parts.empty():
-			var bus_key: String = clip_key_parts[0]
-			
-			if _buses.has(bus_key):
-				clip_player.bus = AudioServer.get_bus_name(_buses[bus_key])
-		
-		add_child(clip_player)
-		_clips[clip_key] = clip_player
-	
-	_clips[clip_key].play()
 
 
 # Play background music.

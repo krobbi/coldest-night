@@ -1,11 +1,17 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://gui/menu/menu_row.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_rows/slider_menu_row.gd" type="Script" id=2]
+[ext_resource path="res://resources/audio/sfx/menu_move.ogg" type="AudioStream" id=3]
 
 [node name="SliderMenuRow" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 focus_node_path = NodePath("Content/HSlider")
+slider_value = 0.0
+min_value = 0.0
+max_value = 100.0
+step = 1.0
+text = ""
 
 [node name="Label" type="Label" parent="Content" index="0"]
 anchor_bottom = 1.0
@@ -32,3 +38,8 @@ size_flags_vertical = 1
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="ChangedPlayer" type="AudioStreamPlayer" parent="." index="3"]
+stream = ExtResource( 3 )
+mix_target = 2
+bus = "SFX"

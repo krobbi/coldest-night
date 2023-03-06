@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://gui/menu/menu_row.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_rows/checkbox_menu_row.gd" type="Script" id=2]
+[ext_resource path="res://resources/audio/sfx/menu_cancel.ogg" type="AudioStream" id=3]
+[ext_resource path="res://resources/audio/sfx/menu_move.ogg" type="AudioStream" id=4]
 
 [node name="CheckboxMenuRow" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
@@ -20,5 +22,15 @@ clip_text = true
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="PressedPlayer" type="AudioStreamPlayer" parent="." index="3"]
+stream = ExtResource( 4 )
+mix_target = 2
+bus = "SFX"
+
+[node name="UnpressedPlayer" type="AudioStreamPlayer" parent="." index="4"]
+stream = ExtResource( 3 )
+mix_target = 2
+bus = "SFX"
 
 [connection signal="toggled" from="Content/CheckButton" to="." method="_on_checkbox_toggled"]

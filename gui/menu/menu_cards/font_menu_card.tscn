@@ -22,7 +22,6 @@ margin_bottom = 176.0
 anchor_right = 0.0
 margin_right = 512.0
 option_source = 1
-text = ""
 config = "font.family"
 
 [node name="SizeSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 5 )]
@@ -33,8 +32,6 @@ margin_bottom = 68.0
 slider_value = 20.0
 min_value = 15.0
 max_value = 25.0
-step = 1.0
-text = ""
 config = "font.size"
 
 [node name="OpenCustomFontsDirectoryButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 3 )]

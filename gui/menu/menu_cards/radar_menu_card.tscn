@@ -29,7 +29,6 @@ slider_value = 1.0
 min_value = 1.0
 max_value = 3.0
 step = 0.25
-text = ""
 config = "radar.scale"
 
 [node name="BackgroundOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 4 )]
@@ -38,10 +37,7 @@ margin_top = 72.0
 margin_right = 512.0
 margin_bottom = 104.0
 slider_value = 50.0
-min_value = 0.0
-max_value = 100.0
 step = 10.0
-text = ""
 config = "radar.background_opacity"
 
 [node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]

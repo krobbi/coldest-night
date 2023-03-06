@@ -5,6 +5,7 @@
 
 [node name="ConfigCheckboxMenuRow" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
+config = ""
 
 [node name="CheckButton" parent="Content" index="0"]
 text = "Config checkbox"

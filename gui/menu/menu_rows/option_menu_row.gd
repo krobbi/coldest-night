@@ -26,6 +26,8 @@ var _selected_option: int = -1
 
 onready var _label: Label = $Content/Label
 onready var _button: Button = $Content/Button
+onready var _previous_player: AudioStreamPlayer = $PreviousPlayer
+onready var _next_player: AudioStreamPlayer = $NextPlayer
 
 # Run when the option menu row finishes entering the scene tree. Set the
 # option's values and text.
@@ -139,7 +141,6 @@ func select_option(index: int, no_signal: bool = false) -> void:
 	
 	if not no_signal:
 		_change_value(_option_values[_selected_option])
-		AudioManager.play_clip("sfx/menu_move")
 		emit_signal("value_changed", _option_values[_selected_option])
 
 
@@ -147,9 +148,11 @@ func select_option(index: int, no_signal: bool = false) -> void:
 func select_previous() -> void:
 	if _option_count > 1:
 		select_option((_selected_option - 1 + _option_count) % _option_count)
+		_previous_player.play()
 
 
 # Select the next option if there are multiple options.
 func select_next() -> void:
 	if _option_count > 1:
 		select_option((_selected_option + 1) % _option_count)
+		_next_player.play()

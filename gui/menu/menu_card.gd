@@ -15,6 +15,7 @@ var _tooltip_label: Label = null
 var _next_tooltip: String = ""
 
 onready var _tooltip_timer: Timer = $TooltipTimer
+onready var _manual_pop_player: RemoteAudioPlayer = $ManualPopPlayer
 
 # Run when the menu card finishes entering the scene tree. Find the tooltip
 # label, and subscribe the menu card to the configuration bus and event bus.
@@ -29,7 +30,7 @@ func _ready() -> void:
 # popping the menu card.
 func _input(event: InputEvent) -> void:
 	if _is_manually_poppable and event.is_action_pressed("pause"):
-		AudioManager.play_clip("sfx/menu_cancel")
+		_manual_pop_player.play_remote()
 		request_pop()
 
 

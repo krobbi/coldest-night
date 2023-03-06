@@ -12,6 +12,8 @@ export(Texture) var icon: Texture setget set_icon
 export(PressSound) var press_sound: int = PressSound.OK
 
 onready var _button: Button = $Content/Button
+onready var _ok_player: RemoteAudioPlayer = $OKPlayer
+onready var _cancel_player: RemoteAudioPlayer = $CancelPlayer
 
 # Run when the button menu row finishes entering the scene tree. Set the
 # button's text and icon.
@@ -47,8 +49,8 @@ func _on_button_pressed() -> void:
 	
 	match press_sound:
 		PressSound.OK:
-			AudioManager.play_clip("sfx/menu_ok")
+			_ok_player.play_remote()
 		PressSound.CANCEL:
-			AudioManager.play_clip("sfx/menu_cancel")
+			_cancel_player.play_remote()
 	
 	emit_signal("pressed")

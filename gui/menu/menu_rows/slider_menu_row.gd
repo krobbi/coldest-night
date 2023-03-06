@@ -14,6 +14,7 @@ export(String) var text: String setget set_text
 
 onready var _label: Label = $Content/Label
 onready var _slider: HSlider = $Content/HSlider
+onready var _changed_player: AudioStreamPlayer = $ChangedPlayer
 
 # Run when the slider menu row finishes entering the scene tree. Set the
 # slider's values and text.
@@ -94,5 +95,5 @@ func set_text(value: String) -> void:
 # Run when the slider's value changes. Emit the `value_changed` signal.
 func _on_slider_value_changed(value: float) -> void:
 	_change_value(value)
-	AudioManager.play_clip("sfx/menu_move")
+	_changed_player.play()
 	emit_signal("value_changed", value)
