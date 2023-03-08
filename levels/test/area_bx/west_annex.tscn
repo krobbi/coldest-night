@@ -51,10 +51,7 @@ points = PoolVector2Array( -256, -64, -256, 64 )
 [node name="Ext" type="Line2D" parent="RadarWalls/Barrier" index="0"]
 points = PoolVector2Array( -224, -64, -224, 64 )
 
-[node name="Terminal" type="Polygon2D" parent="RadarWalls" index="2"]
-polygon = PoolVector2Array( -32, -32, 0, -32, 0, 0, -32, 0 )
-
-[node name="OutlineS" type="Line2D" parent="RadarWalls" index="3"]
+[node name="OutlineS" type="Line2D" parent="RadarWalls" index="2"]
 points = PoolVector2Array( -320, 64, -160, 64, -160, 160, 160, 160, 160, 64, 320, 64 )
 
 [node name="Ext" type="Line2D" parent="RadarWalls/OutlineS" index="0"]

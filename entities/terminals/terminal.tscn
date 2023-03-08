@@ -18,6 +18,10 @@ __meta__ = {
 "_edit_group_": true
 }
 
+[node name="RadarWall" type="Polygon2D" parent="." groups=["radar_walls"]]
+visible = false
+polygon = PoolVector2Array( -16, -16, 16, -16, 16, 16, -16, 16 )
+
 [node name="SelectPlayer" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 4 )
 bus = "SFX"

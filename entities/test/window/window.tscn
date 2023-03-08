@@ -11,6 +11,10 @@ __meta__ = {
 "_edit_group_": true
 }
 
+[node name="RadarFloor" type="Polygon2D" parent="." groups=["radar_floors"]]
+visible = false
+polygon = PoolVector2Array( -96, -8, 96, -8, 96, 8, -96, 8 )
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
 

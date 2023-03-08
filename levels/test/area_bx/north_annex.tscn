@@ -101,21 +101,6 @@ points = PoolVector2Array( 64, -320, 64, -160, 256, -160, 256, 160, 192, 160, 19
 [node name="Ext" type="Line2D" parent="RadarWalls/OutlineE" index="0"]
 points = PoolVector2Array( 96, -320, 96, -192, 288, -192, 288, 192, 96, 192, 96, 320 )
 
-[node name="TerminalsN" type="Line2D" parent="RadarWalls" index="2"]
-points = PoolVector2Array( -64, -32, 64, -32 )
-
-[node name="TerminalsS" type="Line2D" parent="RadarWalls" index="3"]
-points = PoolVector2Array( -64, 0, 64, 0 )
-
-[node name="SeparatorA" type="Line2D" parent="RadarWalls" index="4"]
-points = PoolVector2Array( -32, -32, -32, 0 )
-
-[node name="SeparatorB" type="Line2D" parent="RadarWalls" index="5"]
-points = PoolVector2Array( 0, -32, 0, 0 )
-
-[node name="SeparatorC" type="Line2D" parent="RadarWalls" index="6"]
-points = PoolVector2Array( 32, -32, 32, 0 )
-
 [node name="SouthExit" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( 0, 400 )
 _level_path = "res://levels/test/area_bx/north.tscn"

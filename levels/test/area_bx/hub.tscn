@@ -94,9 +94,6 @@ polygon = PoolVector2Array( 192, -256, 256, -256, 256, -192, 192, -192 )
 [node name="Elevator" type="Polygon2D" parent="RadarWalls" index="4"]
 polygon = PoolVector2Array( -96, -96, 96, -96, 96, 96, 32, 96, 32, 64, 64, 64, 64, -64, -64, -64, -64, 96, -96, 96 )
 
-[node name="Terminal" type="Line2D" parent="RadarWalls/Elevator" index="0"]
-points = PoolVector2Array( -64, 64, -32, 64, -32, 96, -64, 96 )
-
 [node name="OutlineSW" type="Line2D" parent="RadarWalls" index="5"]
 points = PoolVector2Array( -480, 64, -320, 64, -320, 320, -64, 320, -64, 480 )
 

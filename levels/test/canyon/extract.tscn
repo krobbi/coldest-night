@@ -89,9 +89,6 @@ points = PoolVector2Array( 64, -1088, 64, -1024, 96, -1024, 96, -1088 )
 [node name="WallNE" type="Line2D" parent="RadarWalls" index="1"]
 points = PoolVector2Array( 224, -1088, 224, -1024, 256, -1024, 256, -1088 )
 
-[node name="Terminal" type="Polygon2D" parent="RadarWalls" index="2"]
-polygon = PoolVector2Array( 416, 0, 448, 0, 448, 32, 416, 32 )
-
 [node name="NorthExit" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( 160, -1168 )
 _level_path = "res://levels/test/area_bx/hub.tscn"

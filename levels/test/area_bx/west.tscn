@@ -240,77 +240,41 @@ polygon = PoolVector2Array( 128, -224, 192, -224, 192, -192, 160, -192, 160, -12
 [node name="RooomENE" type="Polygon2D" parent="RadarWalls" index="8"]
 polygon = PoolVector2Array( 384, -224, 448, -224, 448, -160, 512, -160, 512, -32, 480, -32, 480, -128, 416, -128, 416, -192, 384, -192 )
 
-[node name="WindowNW" type="Line2D" parent="RadarWalls" index="9"]
-points = PoolVector2Array( -352, -216, -160, -216 )
-
-[node name="Int" type="Line2D" parent="RadarWalls/WindowNW" index="0"]
-points = PoolVector2Array( -352, -200, -160, -200 )
-
-[node name="WindowNE" type="Line2D" parent="RadarWalls" index="10"]
-points = PoolVector2Array( 192, -216, 384, -216 )
-
-[node name="Int" type="Line2D" parent="RadarWalls/WindowNE" index="0"]
-points = PoolVector2Array( 192, -200, 384, -200 )
-
-[node name="DeskNWW" type="Polygon2D" parent="RadarWalls" index="11"]
+[node name="DeskNWW" type="Polygon2D" parent="RadarWalls" index="9"]
 polygon = PoolVector2Array( -352, -160, -224, -160, -224, -128, -320, -128, -320, -96, -352, -96 )
 
-[node name="TerminalW" type="Line2D" parent="RadarWalls" index="12"]
-points = PoolVector2Array( -224, -160, -192, -160 )
-
-[node name="S" type="Line2D" parent="RadarWalls/TerminalW" index="0"]
-points = PoolVector2Array( -224, -128, -192, -128 )
-
-[node name="DeskNWE" type="Polygon2D" parent="RadarWalls" index="13"]
+[node name="DeskNWE" type="Polygon2D" parent="RadarWalls" index="10"]
 polygon = PoolVector2Array( -192, -160, -160, -160, -160, -96, -192, -96 )
 
-[node name="DeskNEW" type="Polygon2D" parent="RadarWalls" index="14"]
+[node name="DeskNEW" type="Polygon2D" parent="RadarWalls" index="11"]
 polygon = PoolVector2Array( 192, -160, 224, -160, 224, -96, 192, -96 )
 
-[node name="TerminalE" type="Line2D" parent="RadarWalls" index="15"]
-points = PoolVector2Array( 224, -160, 256, -160 )
-
-[node name="S" type="Line2D" parent="RadarWalls/TerminalE" index="0"]
-points = PoolVector2Array( 224, -128, 256, -128 )
-
-[node name="DeskNEE" type="Polygon2D" parent="RadarWalls" index="16"]
+[node name="DeskNEE" type="Polygon2D" parent="RadarWalls" index="12"]
 polygon = PoolVector2Array( 256, -160, 384, -160, 384, -96, 352, -96, 352, -128, 256, -128 )
 
-[node name="OutlineN" type="Line2D" parent="RadarWalls" index="17"]
+[node name="OutlineN" type="Line2D" parent="RadarWalls" index="13"]
 points = PoolVector2Array( -736, -96, -608, -96, -608, -128, -672, -128, -672, -416, -384, -416, -384, -352, -128, -352, -128, -416, 160, -416, 160, -352, 416, -352, 416, -416, 704, -416, 704, -128, 640, -128, 640, -96, 768, -96 )
 
 [node name="Int" type="Line2D" parent="RadarWalls/OutlineN" index="0"]
 points = PoolVector2Array( -736, -64, -576, -64, -576, -160, -640, -160, -640, -384, -416, -384, -416, -320, -96, -320, -96, -384, 128, -384, 128, -320, 448, -320, 448, -384, 672, -384, 672, -160, 608, -160, 608, -64, 768, -64 )
 
-[node name="RoomWSW" type="Polygon2D" parent="RadarWalls" index="18"]
+[node name="RoomWSW" type="Polygon2D" parent="RadarWalls" index="14"]
 polygon = PoolVector2Array( -480, 32, -448, 32, -448, 128, -384, 128, -384, 192, -352, 192, -352, 224, -416, 224, -416, 160, -480, 160 )
 
-[node name="RoomWSE" type="Polygon2D" parent="RadarWalls" index="19"]
+[node name="RoomWSE" type="Polygon2D" parent="RadarWalls" index="15"]
 polygon = PoolVector2Array( -64, 32, -32, 32, -32, 160, -96, 160, -96, 224, -160, 224, -160, 192, -128, 192, -128, 128, -64, 128 )
 
-[node name="RoomESW" type="Polygon2D" parent="RadarWalls" index="20"]
+[node name="RoomESW" type="Polygon2D" parent="RadarWalls" index="16"]
 polygon = PoolVector2Array( 64, 32, 96, 32, 96, 128, 160, 128, 160, 192, 192, 192, 192, 224, 128, 224, 128, 160, 64, 160 )
 
-[node name="RoomESE" type="Polygon2D" parent="RadarWalls" index="21"]
+[node name="RoomESE" type="Polygon2D" parent="RadarWalls" index="17"]
 polygon = PoolVector2Array( 480, 32, 512, 32, 512, 160, 448, 160, 448, 224, 384, 224, 384, 192, 416, 192, 416, 128, 480, 128 )
 
-[node name="DeskSW" type="Polygon2D" parent="RadarWalls" index="22"]
+[node name="DeskSW" type="Polygon2D" parent="RadarWalls" index="18"]
 polygon = PoolVector2Array( -352, 96, -320, 96, -320, 128, -192, 128, -192, 96, -160, 96, -160, 160, -352, 160 )
 
-[node name="DeskSE" type="Polygon2D" parent="RadarWalls" index="23"]
+[node name="DeskSE" type="Polygon2D" parent="RadarWalls" index="19"]
 polygon = PoolVector2Array( 192, 96, 224, 96, 224, 128, 352, 128, 352, 96, 384, 96, 384, 160, 192, 160 )
-
-[node name="WindowSW" type="Line2D" parent="RadarWalls" index="24"]
-points = PoolVector2Array( -352, 200, -160, 200 )
-
-[node name="Ext" type="Line2D" parent="RadarWalls/WindowSW" index="0"]
-points = PoolVector2Array( -352, 216, -160, 216 )
-
-[node name="WindowSE" type="Line2D" parent="RadarWalls" index="25"]
-points = PoolVector2Array( 192, 200, 384, 200 )
-
-[node name="Ext" type="Line2D" parent="RadarWalls/WindowSE" index="0"]
-points = PoolVector2Array( 192, 216, 384, 216 )
 
 [node name="WestExit" parent="Triggers" index="0" instance=ExtResource( 2 )]
 position = Vector2( -816, 0 )
