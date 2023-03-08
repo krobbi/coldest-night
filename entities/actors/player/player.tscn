@@ -16,7 +16,6 @@ radius = 8.0
 [node name="Player" instance=ExtResource( 5 )]
 script = ExtResource( 3 )
 actor_key = "player"
-radar_display = 1
 _freeze_state_path = NodePath("StateMachine/Pathing")
 _moving_state_path = NodePath("StateMachine/Moving")
 _transitioning_state_path = NodePath("StateMachine/Transitioning")
@@ -48,7 +47,10 @@ monitoring = false
 [node name="VisibleShape" type="CollisionShape2D" parent="VisibleArea" index="0"]
 shape = SubResource( 3 )
 
-[node name="Sprite" parent="." index="7"]
+[node name="RadarPoint" parent="." index="6"]
+_display_style = 1
+
+[node name="Sprite" parent="." index="8"]
 texture = ExtResource( 1 )
 
 [node name="Interactor" parent="SmoothPivot" index="2" instance=ExtResource( 6 )]

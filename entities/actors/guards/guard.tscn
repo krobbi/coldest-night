@@ -61,7 +61,7 @@ _guard_path = NodePath("../..")
 _smooth_pivot_path = NodePath("../../SmoothPivot")
 _vision_area_path = NodePath("../../SmoothPivot/VisionArea")
 
-[node name="Sprite" parent="." index="5"]
+[node name="Sprite" parent="." index="6"]
 texture = ExtResource( 2 )
 
 [node name="VisionArea" parent="SmoothPivot" index="2" instance=ExtResource( 4 )]

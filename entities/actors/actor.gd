@@ -5,14 +5,10 @@ extends KinematicBody2D
 # Actors are entities that represent characters in the game world and are
 # controlled by a state machine.
 
-signal radar_display_changed(radar_display)
-
 enum Facing {RIGHT, DOWN, LEFT, UP}
-enum RadarDisplay {NONE, PLAYER, IDLE, GUARD}
 
 export(String) var actor_key: String
 export(float) var animation_threshold: float = 40.0
-export(RadarDisplay) var radar_display: int = RadarDisplay.GUARD setget set_radar_display
 
 export(NodePath) var _main_patrol_action_parent_path: NodePath
 export(float) var _repel_speed: float = 180.0
@@ -64,17 +60,6 @@ func _physics_process(delta: float) -> void:
 		_animation_player.play("run_%s" % get_facing_key())
 	else:
 		_animation_player.play("idle_%s" % get_facing_key())
-
-
-# Set the actor's radar display.
-func set_radar_display(value: int) -> void:
-	if radar_display == value:
-		return
-	
-	match value:
-		RadarDisplay.NONE, RadarDisplay.PLAYER, RadarDisplay.IDLE, RadarDisplay.GUARD:
-			radar_display = value
-			emit_signal("radar_display_changed", radar_display)
 
 
 # Get the actor's main patrol action if it is specified. Otherwise, return

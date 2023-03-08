@@ -49,7 +49,7 @@ color = Color( 0.0862745, 0.619608, 0.14902, 1 )
 
 [node name="VisionAreas" type="Node2D" parent="Viewport/Foreground"]
 
-[node name="Actors" type="Node2D" parent="Viewport/Foreground"]
+[node name="Points" type="Node2D" parent="Viewport/Foreground"]
 
 [node name="LaserWalls" type="Node2D" parent="Viewport/Foreground"]
 

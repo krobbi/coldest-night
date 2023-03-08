@@ -4,17 +4,15 @@ extends ViewportContainer
 # The radar display is a HUD element of the overworld scene that displays a map
 # of the current level.
 
-const VisionAreaRenderer: PackedScene = preload(
-		"res://gui/radar/radar_vision_area_renderer/radar_vision_area_renderer.tscn")
-const ActorRenderer: PackedScene = preload(
-		"res://gui/radar/radar_actor_renderer/radar_actor_renderer.tscn")
-const LaserWallRenderer: PackedScene = preload(
-		"res://gui/radar/radar_laser_wall_renderer/radar_laser_wall_renderer.tscn")
+const VisionAreaRendererScene: PackedScene = preload(
+		"radar_vision_area_renderer/radar_vision_area_renderer.tscn")
+const LaserWallRendererScene: PackedScene = preload(
+		"radar_laser_wall_renderer/radar_laser_wall_renderer.tscn")
+const PointRendererScene: PackedScene = preload("radar_point_renderer/radar_point_renderer.tscn")
 
 const RESOLUTION: Vector2 = Vector2(128.0, 96.0)
 
 var _vision_area_renderers: Array = []
-var _actor_renderers: Array = []
 var _laser_wall_renderers: Array = []
 var _camera_anchor: Node2D = null
 
@@ -25,7 +23,7 @@ onready var _background_polygon: Polygon2D = $Viewport/Background/ColorPolygon
 onready var _pits_renderer: RadarPolygonRenderer = $Viewport/Foreground/Pits
 onready var _floors_renderer: RadarSegmentRenderer = $Viewport/Foreground/Floors
 onready var _vision_area_container: Node2D = $Viewport/Foreground/VisionAreas
-onready var _actor_container: Node2D = $Viewport/Foreground/Actors
+onready var _points_container: Node2D = $Viewport/Foreground/Points
 onready var _laser_wall_container: Node2D = $Viewport/Foreground/LaserWalls
 onready var _walls_renderer: RadarSegmentRenderer = $Viewport/Foreground/Walls
 
@@ -39,6 +37,7 @@ func _ready() -> void:
 	ConfigBus.subscribe_node_float("radar.background_opacity", self ,"_set_background_opacity")
 	EventBus.subscribe_node("radar_clear_request", self, "clear")
 	EventBus.subscribe_node("radar_render_level_request", self, "render_level")
+	EventBus.subscribe_node("radar_render_point_request", self, "render_point")
 	EventBus.subscribe_node("radar_referesh_entities_request", self, "refresh_entities")
 	EventBus.subscribe_node("radar_camera_follow_anchor_request", self, "camera_follow_anchor")
 	EventBus.subscribe_node("radar_camera_unfollow_anchor_request", self, "camera_unfollow_anchor")
@@ -53,16 +52,11 @@ func _process(_delta: float) -> void:
 # Refresh all rendered entities on the radar display.
 func refresh_entities() -> void:
 	clear_laser_walls()
-	clear_actors()
 	clear_vision_areas()
 	
 	for vision_area in get_tree().get_nodes_in_group("vision_areas"):
 		if vision_area is VisionArea:
 			render_vision_area(vision_area)
-	
-	for actor in get_tree().get_nodes_in_group("actors"):
-		if actor is Actor:
-			render_actor(actor)
 	
 	for laser_wall in get_tree().get_nodes_in_group("laser_walls"):
 		if laser_wall is LaserWall:
@@ -76,25 +70,11 @@ func render_vision_area(vision_area: VisionArea) -> void:
 			vision_area_renderer.vision_area = vision_area
 			return
 	
-	var vision_area_renderer: RadarVisionAreaRenderer = VisionAreaRenderer.instance()
+	var vision_area_renderer: RadarVisionAreaRenderer = VisionAreaRendererScene.instance()
 	vision_area_renderer.name = "VisionArea%d" % (_vision_area_renderers.size() + 1)
 	_vision_area_container.add_child(vision_area_renderer)
 	vision_area_renderer.vision_area = vision_area
 	_vision_area_renderers.push_back(vision_area_renderer)
-
-
-# Render an actor to the radar display.
-func render_actor(actor: Actor) -> void:
-	for actor_renderer in _actor_renderers:
-		if actor_renderer.is_available():
-			actor_renderer.actor = actor
-			return
-	
-	var actor_renderer: RadarActorRenderer = ActorRenderer.instance()
-	actor_renderer.name = "Actor%d" % (_actor_renderers.size() + 1)
-	_actor_container.add_child(actor_renderer)
-	actor_renderer.actor = actor
-	_actor_renderers.push_back(actor_renderer)
 
 
 # Render a laser wall renderer to the radar display.
@@ -104,7 +84,7 @@ func render_laser_wall(laser_wall: LaserWall) -> void:
 			laser_wall_renderer.laser_wall = laser_wall
 			return
 	
-	var laser_wall_renderer: RadarLaserWallRenderer = LaserWallRenderer.instance()
+	var laser_wall_renderer: RadarLaserWallRenderer = LaserWallRendererScene.instance()
 	laser_wall_renderer.name = "LaserWall%d" % (_laser_wall_renderers.size() + 1)
 	_laser_wall_container.add_child(laser_wall_renderer)
 	laser_wall_renderer.laser_wall = laser_wall
@@ -138,11 +118,17 @@ func render_level() -> void:
 	_walls_renderer.render(wall_segments)
 
 
+# Render a radar point to the radar display.
+func render_point(radar_point: RadarPoint) -> void:
+	var point_renderer: RadarPointRenderer = PointRendererScene.instance()
+	_points_container.add_child(point_renderer)
+	point_renderer.set_radar_point(radar_point)
+
+
 # Clear the radar display.
 func clear() -> void:
 	_walls_renderer.clear()
 	clear_laser_walls()
-	clear_actors()
 	clear_vision_areas()
 	_floors_renderer.clear()
 	_pits_renderer.clear()
@@ -152,12 +138,6 @@ func clear() -> void:
 func clear_laser_walls() -> void:
 	for laser_wall_renderer in _laser_wall_renderers:
 		laser_wall_renderer.clear_laser_wall()
-
-
-# Clear all actors from the radar display.
-func clear_actors() -> void:
-	for actor_renderer in _actor_renderers:
-		actor_renderer.clear_actor()
 
 
 # Clear all vision area renderers from the radar display.

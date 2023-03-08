@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://entities/test/archival_unit/archival_unit.gd" type="Script" id=1]
 [ext_resource path="res://resources/textures/entities/actors/shadow.png" type="Texture" id=2]
 [ext_resource path="res://resources/textures/entities/test/archival_unit.png" type="Texture" id=3]
+[ext_resource path="res://components/radar_point/radar_point.tscn" type="PackedScene" id=4]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 16.0
@@ -58,6 +59,9 @@ __meta__ = {
 
 [node name="TriggerShape" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
+
+[node name="RadarPoint" parent="." instance=ExtResource( 4 )]
+_display_style = 3
 
 [node name="Shadow" type="Sprite" parent="."]
 texture = ExtResource( 2 )
