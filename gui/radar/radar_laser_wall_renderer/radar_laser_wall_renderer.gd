@@ -5,38 +5,33 @@ extends Line2D
 # A radar laser wall renderer is a component of the radar display that renders
 # the state, position, and extents of a laser wall.
 
-var laser_wall: LaserWall = null setget set_laser_wall
+var _laser_wall: LaserWall = null
 
 # Sets the radar laser wall renderer's laser wall:
 func set_laser_wall(value: LaserWall) -> void:
+	if _laser_wall:
+		if _laser_wall.is_connected("tree_exiting", self, "queue_free"):
+			_laser_wall.disconnect("tree_exiting", self, "queue_free")
+		
+		if _laser_wall.is_connected("wall_visibility_changed", self, "set_visible"):
+			_laser_wall.disconnect("wall_visibility_changed", self, "set_visible")
+	
 	if not value:
-		hide()
-		
-		if laser_wall and laser_wall.is_connected("wall_visibility_changed", self, "set_visible"):
-			laser_wall.disconnect("wall_visibility_changed", self, "set_visible")
-		
-		laser_wall = null
+		_laser_wall = null
 		return
 	
-	laser_wall = value
-	position = laser_wall.position
-	points[0] = laser_wall.extents * Vector2(-1.0, -1.0)
-	points[1] = laser_wall.extents
+	if value.connect("tree_exiting", self, "queue_free", [], CONNECT_ONESHOT) != OK:
+		if value.is_connected("tree_exiting", self, "queue_free"):
+			value.disconnect("tree_exiting", self, "queue_free")
+		
+		return
 	
-	var error: int = laser_wall.connect("wall_visibility_changed", self, "set_visible")
+	if value.connect("wall_visibility_changed", self, "set_visible") != OK:
+		if value.is_connected("wall_visibility_changed", self, "set_visible"):
+			value.disconnect("wall_visbility_changed", self, "set_visible")
 	
-	if error and laser_wall.is_connected("wall_visibility_changed", self, "set_visible"):
-		laser_wall.disconnect("wall_visibility_changed", self, "set_visible")
-	
-	visible = laser_wall.visible
-
-
-# Gets whether the radar laser wall renderer is available in the radar laser
-# wall renderer pool:
-func is_available() -> bool:
-	return not laser_wall
-
-
-# Clears the radar laser wall renderer's laser wall:
-func clear_laser_wall() -> void:
-	set_laser_wall(null)
+	_laser_wall = value
+	transform = _laser_wall.global_transform
+	points[0] = -_laser_wall.extents
+	points[1] = _laser_wall.extents
+	visible = _laser_wall.visible

@@ -52,7 +52,6 @@ func _change_level(level_path: String, point: String, offset: Vector2) -> void:
 		
 		current_level.save_state()
 		
-		EventBus.emit_radar_clear_request()
 		_player.get_parent().remove_child(_player)
 		remove_child(current_level)
 		current_level.free()
@@ -70,7 +69,6 @@ func _change_level(level_path: String, point: String, offset: Vector2) -> void:
 	current_level.get_player_parent().add_child(_player)
 	_player.smooth_pivot.rotation_degrees = _save_data.angle
 	
-	EventBus.emit_radar_refresh_entities_request()
 	EventBus.emit_radar_camera_follow_anchor_request(_player)
 	EventBus.emit_camera_follow_anchor_request(_player.get_camera_anchor())
 	

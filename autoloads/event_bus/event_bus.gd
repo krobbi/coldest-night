@@ -36,11 +36,10 @@ signal dialog_display_options_request(texts)
 signal dialog_message_finished()
 signal dialog_option_pressed(index)
 
-signal radar_clear_request()
 signal radar_render_level_request()
 signal radar_render_point_request(radar_point)
 signal radar_render_vision_area_request(vision_area)
-signal radar_referesh_entities_request()
+signal radar_render_laser_wall_request(laser_wall)
 signal radar_camera_follow_anchor_request(anchor)
 signal radar_camera_unfollow_anchor_request()
 
@@ -201,11 +200,6 @@ func emit_dialog_option_pressed(index: int) -> void:
 	emit_signal("dialog_option_pressed", index)
 
 
-# Emit a radar clear request event.
-func emit_radar_clear_request() -> void:
-	emit_signal("radar_clear_request")
-
-
 # Emit a radar render level request event.
 func emit_radar_render_level_request() -> void:
 	emit_signal("radar_render_level_request")
@@ -221,9 +215,9 @@ func emit_radar_render_vision_area_request(vision_area: VisionArea) -> void:
 	emit_signal("radar_render_vision_area_request", vision_area)
 
 
-# Emit a radar refresh entities request event.
-func emit_radar_refresh_entities_request() -> void:
-	emit_signal("radar_referesh_entities_request")
+# Emit a radar render laser wall request event.
+func emit_radar_render_laser_wall_request(laser_wall: LaserWall) -> void:
+	emit_signal("radar_render_laser_wall_request", laser_wall)
 
 
 # Emit a radar camera follow anchor request event.

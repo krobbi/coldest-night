@@ -19,7 +19,8 @@ var _save_data: SaveData = SaveManager.get_working_data()
 onready var _obstructive_shape: CollisionShape2D = $ObstructiveShape
 
 # Run when the laser wall finishes entering the scene tree. Set the laser wall's
-# extents and connect the laser wall to the current working save data.
+# extents, connect the laser wall to the current working save data, and emit a
+# radar render laser wall request.
 func _ready() -> void:
 	var a: Vector2 = extents * -1.0
 	var b: Vector2 = extents
@@ -45,6 +46,8 @@ func _ready() -> void:
 	if _save_data.connect("flag_changed", self, "_on_flag_changed") != OK:
 		if _save_data.is_connected("flag_changed", self, "_on_flag_changed"):
 			_save_data.disconnect("flag_changed", self, "_on_flag_changed")
+	
+	EventBus.emit_radar_render_laser_wall_request(self)
 
 
 # Run when the laser wall exits the scene tree. Disconnect the laser wall from

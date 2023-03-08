@@ -12,7 +12,6 @@ const PointRendererScene: PackedScene = preload("radar_point_renderer/radar_poin
 
 const RESOLUTION: Vector2 = Vector2(128.0, 96.0)
 
-var _laser_wall_renderers: Array = []
 var _camera_anchor: Node2D = null
 
 onready var camera: Camera2D = $Viewport/Foreground/Camera
@@ -34,11 +33,10 @@ func _ready() -> void:
 	ConfigBus.subscribe_node_bool("radar.visible", self, "set_visible")
 	ConfigBus.subscribe_node_float("radar.scale", self, "_set_display_scale")
 	ConfigBus.subscribe_node_float("radar.background_opacity", self ,"_set_background_opacity")
-	EventBus.subscribe_node("radar_clear_request", self, "clear")
 	EventBus.subscribe_node("radar_render_level_request", self, "render_level")
 	EventBus.subscribe_node("radar_render_point_request", self, "render_point")
 	EventBus.subscribe_node("radar_render_vision_area_request", self, "render_vision_area")
-	EventBus.subscribe_node("radar_referesh_entities_request", self, "refresh_entities")
+	EventBus.subscribe_node("radar_render_laser_wall_request", self, "render_laser_wall")
 	EventBus.subscribe_node("radar_camera_follow_anchor_request", self, "camera_follow_anchor")
 	EventBus.subscribe_node("radar_camera_unfollow_anchor_request", self, "camera_unfollow_anchor")
 
@@ -47,29 +45,6 @@ func _ready() -> void:
 # camera anchor.
 func _process(_delta: float) -> void:
 	camera.position = _camera_anchor.position
-
-
-# Refresh all rendered entities on the radar display.
-func refresh_entities() -> void:
-	clear_laser_walls()
-	
-	for laser_wall in get_tree().get_nodes_in_group("laser_walls"):
-		if laser_wall is LaserWall:
-			render_laser_wall(laser_wall)
-
-
-# Render a laser wall renderer to the radar display.
-func render_laser_wall(laser_wall: LaserWall) -> void:
-	for laser_wall_renderer in _laser_wall_renderers:
-		if laser_wall_renderer.is_available():
-			laser_wall_renderer.laser_wall = laser_wall
-			return
-	
-	var laser_wall_renderer: RadarLaserWallRenderer = LaserWallRendererScene.instance()
-	laser_wall_renderer.name = "LaserWall%d" % (_laser_wall_renderers.size() + 1)
-	_laser_wall_container.add_child(laser_wall_renderer)
-	laser_wall_renderer.laser_wall = laser_wall
-	_laser_wall_renderers.push_back(laser_wall_renderer)
 
 
 # Render the current level to the radar display.
@@ -113,18 +88,10 @@ func render_vision_area(vision_area: VisionArea) -> void:
 	vision_area_renderer.set_vision_area(vision_area)
 
 
-# Clear the radar display.
-func clear() -> void:
-	_walls_renderer.clear()
-	clear_laser_walls()
-	_floors_renderer.clear()
-	_pits_renderer.clear()
-
-
-# Clear all laser walls from the radar display.
-func clear_laser_walls() -> void:
-	for laser_wall_renderer in _laser_wall_renderers:
-		laser_wall_renderer.clear_laser_wall()
+func render_laser_wall(laser_wall: LaserWall) -> void:
+	var laser_wall_renderer: RadarLaserWallRenderer = LaserWallRendererScene.instance()
+	_laser_wall_container.add_child(laser_wall_renderer)
+	laser_wall_renderer.set_laser_wall(laser_wall)
 
 
 # Start following a camera anchor.
