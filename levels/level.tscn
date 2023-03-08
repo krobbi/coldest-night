@@ -34,23 +34,20 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Radar" type="Node2D" parent="."]
-modulate = Color( 0, 0, 0, 0 )
+[node name="RadarPits" type="Node2D" parent="." groups=["radar_pits"]]
+visible = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Pits" type="Node2D" parent="Radar"]
+[node name="RadarFloors" type="Node2D" parent="." groups=["radar_floors"]]
+visible = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Floors" type="Node2D" parent="Radar"]
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="Walls" type="Node2D" parent="Radar"]
+[node name="RadarWalls" type="Node2D" parent="." groups=["radar_walls"]]
+visible = false
 __meta__ = {
 "_edit_lock_": true
 }

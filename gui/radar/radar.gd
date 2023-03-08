@@ -38,7 +38,7 @@ func _ready() -> void:
 	ConfigBus.subscribe_node_float("radar.scale", self, "_set_display_scale")
 	ConfigBus.subscribe_node_float("radar.background_opacity", self ,"_set_background_opacity")
 	EventBus.subscribe_node("radar_clear_request", self, "clear")
-	EventBus.subscribe_node("radar_render_node_request", self, "render_node")
+	EventBus.subscribe_node("radar_render_level_request", self, "render_level")
 	EventBus.subscribe_node("radar_referesh_entities_request", self, "refresh_entities")
 	EventBus.subscribe_node("radar_camera_follow_anchor_request", self, "camera_follow_anchor")
 	EventBus.subscribe_node("radar_camera_unfollow_anchor_request", self, "camera_unfollow_anchor")
@@ -111,22 +111,31 @@ func render_laser_wall(laser_wall: LaserWall) -> void:
 	_laser_wall_renderers.push_back(laser_wall_renderer)
 
 
-# Render a radar data node to the radar display.
-func render_node(node: Node) -> void:
-	if node.has_node("Pits"):
-		_pits_renderer.render(_collect_node_polygons(node.get_node("Pits")))
-	else:
-		_pits_renderer.clear()
+# Render the current level to the radar display.
+func render_level() -> void:
+	var pit_polygons: Array = []
 	
-	if node.has_node("Floors"):
-		_floors_renderer.render(_collect_node_segments(node.get_node("Floors")))
-	else:
-		_floors_renderer.clear()
+	for pit_node in get_tree().get_nodes_in_group("radar_pits"):
+		pit_polygons.append_array(_get_node_polygons(pit_node))
+		pit_node.queue_free()
 	
-	if node.has_node("Walls"):
-		_walls_renderer.render(_collect_node_segments(node.get_node("Walls")))
-	else:
-		_walls_renderer.clear()
+	_pits_renderer.render(pit_polygons)
+	
+	var floor_segments: PoolVector2Array = PoolVector2Array()
+	
+	for floor_node in get_tree().get_nodes_in_group("radar_floors"):
+		floor_segments.append_array(_get_node_segments(floor_node))
+		floor_node.queue_free()
+	
+	_floors_renderer.render(floor_segments)
+	
+	var wall_segments: PoolVector2Array = PoolVector2Array()
+	
+	for wall_node in get_tree().get_nodes_in_group("radar_walls"):
+		wall_segments.append_array(_get_node_segments(wall_node))
+		wall_node.queue_free()
+	
+	_walls_renderer.render(wall_segments)
 
 
 # Clear the radar display.
@@ -206,53 +215,50 @@ func _set_background_opacity(value: float) -> void:
 	_background_polygon.color.a = value * 0.01
 
 
-# Recursively collect polygons from a node and its children.
-func _collect_node_polygons(node: Node, depth: int = 8) -> Array:
+# Recursively get a node and its children's polygons.
+func _get_node_polygons(node: Node) -> Array:
 	var polygons: Array = []
 	
-	if node is Polygon2D:
-		polygons.push_back(node.polygon)
+	for child in node.get_children():
+		polygons.append_array(_get_node_polygons(child))
 	
-	if depth:
-		depth -= 1
-		
-		for child in node.get_children():
-			polygons.append_array(_collect_node_polygons(child, depth))
+	if node is Polygon2D:
+		polygons.push_back(_transform_points(node.polygon, node.global_transform))
 	
 	return polygons
 
 
-# Recursively collect line segments from a node and its children.
-func _collect_node_segments(node: Node, depth: int = 8) -> PoolVector2Array:
+# Recursively get a node and it's children's line segments.
+func _get_node_segments(node: Node) -> PoolVector2Array:
 	var segments: PoolVector2Array = PoolVector2Array()
 	
-	if node is Line2D:
-		segments.append_array(_segment_line(node.points))
-	elif node is Polygon2D:
-		segments.append_array(_segment_polygon(node.polygon))
+	for child in node.get_children():
+		segments.append_array(_get_node_segments(child))
 	
-	if depth:
-		depth -= 1
-		
-		for child in node.get_children():
-			segments.append_array(_collect_node_segments(child, depth))
+	if node is Line2D:
+		segments.append_array(_segment_line(_transform_points(node.points, node.global_transform)))
+	elif node is Polygon2D:
+		segments.append_array(
+				_segment_polygon(_transform_points(node.polygon, node.global_transform)))
 	
 	return segments
 
 
-# Segment a multi-segment line.
+# Transform an array of points.
+func _transform_points(points: PoolVector2Array, transform: Transform2D) -> PoolVector2Array:
+	for i in range(points.size()):
+		points[i] = transform.translated(points[i]).origin
+	
+	return points
+
+
+# Segment a line.
 func _segment_line(points: PoolVector2Array) -> PoolVector2Array:
-	var segment_count: int = points.size() - 1
 	var segments: PoolVector2Array = PoolVector2Array()
 	
-	if segment_count < 1:
-		return segments
-	
-	segments.resize(segment_count * 2)
-	
-	for i in range(segment_count):
-		segments[i * 2] = points[i]
-		segments[i * 2 + 1] = points[i + 1]
+	for i in range(points.size() - 1):
+		segments.push_back(points[i])
+		segments.push_back(points[i + 1])
 	
 	return segments
 

@@ -77,11 +77,6 @@ func _ready() -> void:
 	
 	Navigation2DServer.map_force_update(nav_map)
 	
-	var radar_node: Node = $Radar
-	remove_child(radar_node)
-	EventBus.emit_radar_render_node_request(radar_node)
-	radar_node.free()
-	
 	var points_node: Node = $Points
 	remove_child(points_node)
 	
@@ -111,6 +106,7 @@ func _ready() -> void:
 			if data.has("data") and node.has_method("deserialize"):
 				node.deserialize(data.data)
 	
+	EventBus.emit_radar_render_level_request()
 	EventBus.subscribe_node("save_state_request", self, "save_state")
 	
 	for nightscript_runner in get_tree().get_nodes_in_group("nightscript_runners"):

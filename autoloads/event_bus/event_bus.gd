@@ -37,7 +37,7 @@ signal dialog_message_finished()
 signal dialog_option_pressed(index)
 
 signal radar_clear_request()
-signal radar_render_node_request(node)
+signal radar_render_level_request()
 signal radar_referesh_entities_request()
 signal radar_camera_follow_anchor_request(anchor)
 signal radar_camera_unfollow_anchor_request()
@@ -204,9 +204,9 @@ func emit_radar_clear_request() -> void:
 	emit_signal("radar_clear_request")
 
 
-# Emit a radar render node request event.
-func emit_radar_render_node_request(node: Node) -> void:
-	emit_signal("radar_render_node_request", node)
+# Emit a radar render level request event.
+func emit_radar_render_level_request() -> void:
+	emit_signal("radar_render_level_request")
 
 
 # Emit a radar refresh entities request event.
