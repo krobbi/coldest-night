@@ -53,6 +53,6 @@ func tick(delta: float) -> State:
 	return self
 
 
-# Run when the looking state is exited. Set the vision area's radar display.
+# Run when the looking state is exited. Set the vision area's display style.
 func exit() -> void:
-	_vision_area.set_radar_display(VisionArea.RadarDisplay.NORMAL)
+	_vision_area.set_display_style(VisionArea.DisplayStyle.NORMAL)

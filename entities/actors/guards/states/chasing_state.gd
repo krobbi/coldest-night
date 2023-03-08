@@ -19,9 +19,9 @@ onready var _guard: Actor = get_node(_guard_path)
 onready var _smooth_pivot: SmoothPivot = get_node(_smooth_pivot_path)
 onready var _vision_area: VisionArea = get_node(_vision_area_path)
 
-# Run when the chasing state is entered. Set the vision area's radar display.
+# Run when the chasing state is entered. Set the vision area's display style.
 func enter() -> void:
-	_vision_area.set_radar_display(VisionArea.RadarDisplay.ALERT)
+	_vision_area.set_display_style(VisionArea.DisplayStyle.ALERT)
 
 
 # Run when the chasing state is ticked. Return the no target state if the guard
@@ -31,7 +31,7 @@ func tick(delta: float) -> State:
 	var target: Node2D = _guard.get_target()
 	
 	if not target:
-		_vision_area.set_radar_display(VisionArea.RadarDisplay.NORMAL)
+		_vision_area.set_display_style(VisionArea.DisplayStyle.NORMAL)
 		return _no_target_state
 	elif _guard.position.distance_to(target.position) <= _target_reached_distance:
 		return _reached_target_state

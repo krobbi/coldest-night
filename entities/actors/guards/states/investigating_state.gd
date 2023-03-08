@@ -16,11 +16,11 @@ onready var _guard: Actor = get_node(_guard_path)
 onready var _vision_area: VisionArea = get_node(_vision_area_path)
 
 # Run when the investigating state is entered. Find a path to the guard's target
-# and set the vision area's radar display.
+# and set the vision area's display style.
 func enter() -> void:
 	_guard.find_nav_path(_guard.investigated_pos)
 	_guard.run_nav_path()
-	_vision_area.set_radar_display(VisionArea.RadarDisplay.CAUTION)
+	_vision_area.set_display_style(VisionArea.DisplayStyle.CAUTION)
 
 
 # Run when the investigating state is ticked. Return the finished state if the
