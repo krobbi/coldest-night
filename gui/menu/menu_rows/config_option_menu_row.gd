@@ -1,3 +1,4 @@
+class_name ConfigOptionMenuRow
 extends OptionMenuRow
 
 # Configuration Option Menu Row

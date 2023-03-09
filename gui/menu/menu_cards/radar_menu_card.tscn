@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=2]
 [ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=3]
 [ext_resource path="res://gui/menu/menu_rows/config_slider_menu_row.tscn" type="PackedScene" id=4]
 [ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=5]
+[ext_resource path="res://gui/menu/menu_rows/color_config_option_menu_row.tscn" type="PackedScene" id=6]
 
 [node name="RadarMenuCard" instance=ExtResource( 1 )]
 
@@ -12,7 +13,7 @@
 text = "HEADING.RADAR_SETTINGS"
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 140.0
+margin_bottom = 212.0
 
 [node name="VisibleCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
 anchor_right = 0.0
@@ -40,11 +41,25 @@ slider_value = 50.0
 step = 10.0
 config = "radar.background_opacity"
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 2 )]
+[node name="WallColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 108.0
 margin_right = 512.0
 margin_bottom = 140.0
+config = "radar.wall_color"
+
+[node name="FloorColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 6 )]
+anchor_right = 0.0
+margin_top = 144.0
+margin_right = 512.0
+margin_bottom = 176.0
+config = "radar.floor_color"
+
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 2 )]
+anchor_right = 0.0
+margin_top = 180.0
+margin_right = 512.0
+margin_bottom = 212.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.FROM_RADAR"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 3 )

@@ -33,6 +33,8 @@ func _ready() -> void:
 	ConfigBus.subscribe_node_bool("radar.visible", self, "set_visible")
 	ConfigBus.subscribe_node_float("radar.scale", self, "_set_display_scale")
 	ConfigBus.subscribe_node_float("radar.background_opacity", self ,"_set_background_opacity")
+	ConfigBus.subscribe_node_string("radar.wall_color", self, "_set_wall_color")
+	ConfigBus.subscribe_node_string("radar.floor_color", self, "_set_floor_color")
 	EventBus.subscribe_node("radar_render_level_request", self, "render_level")
 	EventBus.subscribe_node("radar_render_point_request", self, "render_point")
 	EventBus.subscribe_node("radar_render_vision_area_request", self, "render_vision_area")
@@ -141,6 +143,16 @@ func _set_background_opacity(value: float) -> void:
 		return
 	
 	_background_polygon.color.a = value * 0.01
+
+
+# Set the radar display's wall color.
+func _set_wall_color(value: String) -> void:
+	_walls_renderer.set_color(DisplayManager.get_palette_color(value))
+
+
+# Set the radar display's floor color.
+func _set_floor_color(value: String) -> void:
+	_floors_renderer.set_color(DisplayManager.get_palette_color(value))
 
 
 # Recursively get a node and its children's polygons.

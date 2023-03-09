@@ -5,6 +5,15 @@ extends Node
 # display. It can be accessed from any script by using `DisplayManager`.
 
 const FONTS_DIR: String = "user://fonts/"
+const PALETTE: Dictionary = {
+	"white": Color("#f1f2f1"),
+	"red": Color("#ad1818"),
+	"orange": Color("ff980e"),
+	"yellow": Color("#fff959"),
+	"dark_green": Color("#169e26"),
+	"green": Color("#8ffa37"),
+	"blue": Color("#45c5d9"),
+}
 
 var _resolution: Vector2 = Vector2(
 		max(1.0, float(ProjectSettings.get_setting("display/window/size/width"))),
@@ -53,6 +62,21 @@ func _exit_tree() -> void:
 # Get the display's maximum window scale.
 func get_max_window_scale() -> int:
 	return _max_window_scale
+
+
+# Get a palette color from its color name.
+func get_palette_color(color_name: String) -> Color:
+	return PALETTE.get(color_name, PALETTE.orange)
+
+
+# Get a dictionary of color options.
+func get_color_options() -> Dictionary:
+	var color_options = {}
+	
+	for color_name in PALETTE:
+		color_options["OPTION.RADAR.COLOR.%s" % color_name.to_upper()] = color_name
+	
+	return color_options
 
 
 # Get a dictionary of font options.

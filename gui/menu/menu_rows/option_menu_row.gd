@@ -13,6 +13,7 @@ enum OptionSource {
 	DISPLAY_WINDOW_SCALE,
 	DISPLAY_SCALE_MODE,
 	LANGUAGE_LOCALE,
+	RADAR_COLOR,
 }
 
 export(OptionSource) var option_source: int = OptionSource.OPTIONS setget set_option_source
@@ -70,6 +71,8 @@ func set_option_source(value: int) -> void:
 			set_options(DisplayManager.get_scale_mode_options())
 		OptionSource.LANGUAGE_LOCALE:
 			set_options(LangManager.get_locale_options())
+		OptionSource.RADAR_COLOR:
+			set_options(DisplayManager.get_color_options())
 		OptionSource.OPTIONS, _:
 			option_source = OptionSource.OPTIONS
 			set_options(options)

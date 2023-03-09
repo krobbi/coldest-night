@@ -45,7 +45,7 @@ color = Color( 0.0509804, 0.027451, 0.0352941, 0.501961 )
 
 [node name="Floors" type="Node2D" parent="Viewport/Foreground"]
 script = ExtResource( 3 )
-color = Color( 0.0862745, 0.619608, 0.14902, 1 )
+_color = Color( 0.0862745, 0.619608, 0.14902, 1 )
 
 [node name="VisionAreas" type="Node2D" parent="Viewport/Foreground"]
 
@@ -55,7 +55,7 @@ color = Color( 0.0862745, 0.619608, 0.14902, 1 )
 
 [node name="Walls" type="Node2D" parent="Viewport/Foreground"]
 script = ExtResource( 3 )
-color = Color( 0.560784, 0.980392, 0.215686, 1 )
+_color = Color( 0.560784, 0.980392, 0.215686, 1 )
 
 [node name="Camera" type="Camera2D" parent="Viewport/Foreground"]
 current = true

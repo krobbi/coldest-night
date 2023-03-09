@@ -24,6 +24,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://autoloads/config_bus/config_connection.gd"
 }, {
+"base": "OptionMenuRow",
+"class": "ConfigOptionMenuRow",
+"language": "GDScript",
+"path": "res://gui/menu/menu_rows/config_option_menu_row.gd"
+}, {
 "base": "Control",
 "class": "Dialog",
 "language": "GDScript",
@@ -198,6 +203,7 @@ _global_script_class_icons={
 "Actor": "",
 "CheckboxMenuRow": "",
 "ConfigConnection": "",
+"ConfigOptionMenuRow": "",
 "Dialog": "",
 "DialogTagParser": "",
 "FloatingText": "",

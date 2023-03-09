@@ -39,6 +39,8 @@ var _data: Dictionary = {
 	"radar.visible": true,
 	"radar.scale": 1.0,
 	"radar.background_opacity": 50.0,
+	"radar.wall_color": "green",
+	"radar.floor_color": "dark_green",
 	"advanced.show_advanced": false,
 	"advanced.readable_saves": false,
 	"debug.show_state_labels": false,
