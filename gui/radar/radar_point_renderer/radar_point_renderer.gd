@@ -10,13 +10,19 @@ const GUARD_COLOR: Color = Color("#ad1818")
 const COLLECTABLE_COLOR: Color = Color("#ff980e")
 
 var _radar_point: RadarPoint = null
+var _display_style: int = RadarPoint.DisplayStyle.NONE
+var _colors: Dictionary = {}
 
 onready var _color_polygon: Polygon2D = $ColorPolygon
 
 # Run when the radar point renderer finished entering the scene tree. Disable
-# the radar point renderer's physics process.
+# the radar point renderer's physics process and subscribe the radar point
+# renderer to the coniguration bus.
 func _ready() -> void:
 	set_physics_process(false)
+	_add_style("radar.player_color", RadarPoint.DisplayStyle.PLAYER)
+	_add_style("radar.guard_color", RadarPoint.DisplayStyle.GUARD)
+	_add_style("radar.collectable_color", RadarPoint.DisplayStyle.COLLECTABLE)
 
 
 # Run on every physics frame while the radar point renderer has a radar point.
@@ -27,15 +33,9 @@ func _physics_process(_delta: float) -> void:
 
 # Set the radar point renderer's display style.
 func set_display_style(value: int) -> void:
-	match value:
-		RadarPoint.DisplayStyle.PLAYER:
-			_color_polygon.color = PLAYER_COLOR
-		RadarPoint.DisplayStyle.GUARD:
-			_color_polygon.color = GUARD_COLOR
-		RadarPoint.DisplayStyle.COLLECTABLE:
-			_color_polygon.color = COLLECTABLE_COLOR
-	
-	visible = value != RadarPoint.DisplayStyle.NONE
+	_display_style = value
+	_color_polygon.color = _colors.get(_display_style, Color.transparent)
+	visible = _display_style != RadarPoint.DisplayStyle.NONE
 
 
 # Set the radar point renderer's radar point.
@@ -66,3 +66,15 @@ func set_radar_point(value: RadarPoint) -> void:
 	position = _radar_point.global_position
 	set_display_style(_radar_point.get_display_style())
 	set_physics_process(true)
+
+
+# Add a display style to the radar point renderer.
+func _add_style(config_key: String, config_style: int) -> void:
+	ConfigBus.subscribe_node_string(config_key, self, "_on_config_changed", [config_style])
+
+
+# Run when the radar point renderer's configuration changes. Update the display
+# style colors.
+func _on_config_changed(value: String, config_style: int) -> void:
+	_colors[config_style] = DisplayManager.get_palette_color(value)
+	set_display_style(_display_style)
