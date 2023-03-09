@@ -41,6 +41,7 @@ var _data: Dictionary = {
 	"radar.background_opacity": 50.0,
 	"radar.wall_color": "green",
 	"radar.floor_color": "dark_green",
+	"radar.barrier_color": "red",
 	"radar.player_color": "white",
 	"radar.guard_color": "red",
 	"radar.collectable_color": "orange",

@@ -7,6 +7,12 @@ extends Line2D
 
 var _laser_wall: LaserWall = null
 
+# Run when the radar laser wall renderer enters the scene tree. Subscribe the
+# radar laser wall renderer to the configuration bus.
+func _ready() -> void:
+	ConfigBus.subscribe_node_string("radar.barrier_color", self, "_on_config_changed")
+
+
 # Sets the radar laser wall renderer's laser wall:
 func set_laser_wall(value: LaserWall) -> void:
 	if _laser_wall:
@@ -35,3 +41,9 @@ func set_laser_wall(value: LaserWall) -> void:
 	points[0] = -_laser_wall.extents
 	points[1] = _laser_wall.extents
 	visible = _laser_wall.visible
+
+
+# Run when the radar laser wall renderer's configuration changes. Update the
+# radar laser wall renderer's color.
+func _on_config_changed(value: String) -> void:
+	default_color = DisplayManager.get_palette_color(value)
