@@ -6,8 +6,11 @@ extends Node
 
 const FONTS_DIR: String = "user://fonts/"
 const PALETTE: Dictionary = {
+	"black": Color("#0d0709"),
 	"white": Color("#f1f2f1"),
+	"maroon": Color("#3d0518"),
 	"red": Color("#ad1818"),
+	"dark_orange": Color("#d94f0c"),
 	"orange": Color("ff980e"),
 	"yellow": Color("#fff959"),
 	"dark_green": Color("#169e26"),

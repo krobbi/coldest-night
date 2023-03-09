@@ -38,6 +38,7 @@ var _data: Dictionary = {
 	"language.locale": "auto",
 	"radar.visible": true,
 	"radar.scale": 1.0,
+	"radar.background_color": "maroon",
 	"radar.background_opacity": 50.0,
 	"radar.wall_color": "green",
 	"radar.floor_color": "dark_green",

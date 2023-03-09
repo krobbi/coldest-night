@@ -32,6 +32,7 @@ func _ready() -> void:
 	set_process(false)
 	ConfigBus.subscribe_node_bool("radar.visible", self, "set_visible")
 	ConfigBus.subscribe_node_float("radar.scale", self, "_set_display_scale")
+	ConfigBus.subscribe_node_string("radar.background_color", self, "_set_background_color")
 	ConfigBus.subscribe_node_float("radar.background_opacity", self ,"_set_background_opacity")
 	ConfigBus.subscribe_node_string("radar.wall_color", self, "_set_wall_color")
 	ConfigBus.subscribe_node_string("radar.floor_color", self, "_set_floor_color")
@@ -131,6 +132,14 @@ func _set_display_scale(value: float) -> void:
 	rect_size = RESOLUTION * value
 	rect_position.x = 624.0 - rect_size.x
 	camera.zoom = Vector2(8.0, 8.0) / value
+
+
+# Set the radar display's background color.
+func _set_background_color(value: String) -> void:
+	var color: Color = DisplayManager.get_palette_color(value)
+	_background_polygon.color.r = color.r
+	_background_polygon.color.g = color.g
+	_background_polygon.color.b = color.b
 
 
 # Set the radar display's background opacity.
