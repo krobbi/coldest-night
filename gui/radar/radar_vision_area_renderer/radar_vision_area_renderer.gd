@@ -5,16 +5,18 @@ extends Polygon2D
 # A radar vision area renderer is a component of the radar display that renders
 # the size, position, and rotation of a vision area.
 
-const NORMAL_COLOR: Color = Color("#45c5d9")
-const CAUTION_COLOR: Color = Color("#fff959")
-const ALERT_COLOR: Color = Color("#ad1818")
-
 var _vision_area: VisionArea = null
+var _display_style: int = VisionArea.DisplayStyle.NONE
+var _colors: Dictionary = {}
 
 # Run when the radar vision area renderer enters the scene tree. Disable the
-# radar vision area renderer's physics process.
+# radar vision area renderer's physics process and subscribe the radar vision
+# area renderer to the configuration bus.
 func _ready() -> void:
 	set_physics_process(false)
+	_add_style("radar.normal_cone_color", VisionArea.DisplayStyle.NORMAL)
+	_add_style("radar.caution_cone_color", VisionArea.DisplayStyle.CAUTION)
+	_add_style("radar.alert_cone_color", VisionArea.DisplayStyle.ALERT)
 
 
 # Run on every physics frame while the radar vision area renderer's has a vision
@@ -25,17 +27,9 @@ func _physics_process(_delta: float) -> void:
 
 # Set the radar vision area renderer's display style.
 func set_display_style(value: int) -> void:
-	var target_color: Color = NORMAL_COLOR
-	
-	match value:
-		VisionArea.DisplayStyle.CAUTION:
-			target_color = CAUTION_COLOR
-		VisionArea.DisplayStyle.ALERT:
-			target_color = ALERT_COLOR
-	
+	_display_style = value
+	modulate = _colors.get(_display_style, Color.transparent)
 	visible = value != VisionArea.DisplayStyle.NONE
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	create_tween().tween_property(self, "modulate", target_color, 0.08).set_trans(Tween.TRANS_SINE)
 
 
 # Set the radar vision area renderer's vision area.
@@ -77,3 +71,15 @@ func set_vision_area(value: VisionArea) -> void:
 	transform = _vision_area.global_transform
 	set_display_style(_vision_area.get_display_style())
 	set_physics_process(true)
+
+
+# Add a display style to the radar vision area renderer.
+func _add_style(config_key: String, config_style: int) -> void:
+	ConfigBus.subscribe_node_string(config_key, self, "_on_config_changed", [config_style])
+
+
+# Run when the radar vision area renderer's configuration changes. Update the
+# display style colors.
+func _on_config_changed(value: String, config_style: int) -> void:
+	_colors[config_style] = DisplayManager.get_palette_color(value)
+	set_display_style(_display_style)

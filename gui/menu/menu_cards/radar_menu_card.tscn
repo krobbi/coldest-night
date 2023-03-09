@@ -24,7 +24,7 @@ margin_right = 528.0
 margin_right = 528.0
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 356.0
+margin_bottom = 464.0
 
 [node name="VisibleCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
 anchor_right = 0.0
@@ -94,11 +94,32 @@ margin_right = 512.0
 margin_bottom = 320.0
 config = "radar.collectable_color"
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="9" instance=ExtResource( 2 )]
+[node name="NormalConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="9" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 324.0
 margin_right = 512.0
 margin_bottom = 356.0
+config = "radar.normal_cone_color"
+
+[node name="CautionConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="10" instance=ExtResource( 6 )]
+anchor_right = 0.0
+margin_top = 360.0
+margin_right = 512.0
+margin_bottom = 392.0
+config = "radar.caution_cone_color"
+
+[node name="AlertConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="11" instance=ExtResource( 6 )]
+anchor_right = 0.0
+margin_top = 396.0
+margin_right = 512.0
+margin_bottom = 428.0
+config = "radar.alert_cone_color"
+
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="12" instance=ExtResource( 2 )]
+anchor_right = 0.0
+margin_top = 432.0
+margin_right = 512.0
+margin_bottom = 464.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.FROM_RADAR"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 3 )
