@@ -13,7 +13,7 @@ func _ready() -> void:
 	ConfigBus.subscribe_node_string("radar.barrier_color", self, "_on_config_changed")
 
 
-# Sets the radar laser wall renderer's laser wall:
+# Set the radar laser wall renderer's laser wall.
 func set_laser_wall(value: LaserWall) -> void:
 	if _laser_wall:
 		if _laser_wall.is_connected("tree_exiting", self, "queue_free"):

@@ -19,8 +19,8 @@ func _ready() -> void:
 	_add_style("radar.alert_cone_color", VisionArea.DisplayStyle.ALERT)
 
 
-# Run on every physics frame while the radar vision area renderer's has a vision
-# area. Update radar vision area's transform.
+# Run on every physics frame while the radar vision area renderer has a vision
+# area. Update radar vision area renderer's transform.
 func _physics_process(_delta: float) -> void:
 	transform = _vision_area.global_transform
 
