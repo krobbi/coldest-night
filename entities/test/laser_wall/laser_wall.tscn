@@ -3,7 +3,7 @@
 [ext_resource path="res://entities/test/laser_wall/laser_wall.gd" type="Script" id=1]
 [ext_resource path="res://resources/textures/entities/test/laser_wall.png" type="Texture" id=2]
 
-[node name="LaserWall" type="StaticBody2D" groups=["laser_walls"]]
+[node name="LaserWall" type="StaticBody2D"]
 collision_mask = 0
 script = ExtResource( 1 )
 __meta__ = {

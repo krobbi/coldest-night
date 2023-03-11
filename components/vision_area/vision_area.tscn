@@ -2,7 +2,7 @@
 
 [ext_resource path="res://components/vision_area/vision_area.gd" type="Script" id=1]
 
-[node name="VisionArea" type="Area2D" groups=["vision_areas"]]
+[node name="VisionArea" type="Area2D"]
 collision_layer = 0
 collision_mask = 8
 monitorable = false
