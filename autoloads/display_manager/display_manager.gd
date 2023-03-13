@@ -36,9 +36,11 @@ var _text_themes: Array = [
 
 var _custom_fonts: Dictionary = {}
 
-# Run when the display manager enters the scene tree. Subscribe the display
-# manager to the configuration bus and refresh the custom fonts.
+# Run when the display manager enters the scene tree. Set the clear color and
+# subscribe the display manager to the configuration bus and refresh the custom
+# fonts.
 func _ready() -> void:
+	VisualServer.set_default_clear_color(PALETTE.black)
 	ConfigBus.subscribe_node_bool("display.fullscreen", self, "_on_fullscreen_changed")
 	ConfigBus.subscribe_node_bool("display.vsync", self, "_on_vsync_changed")
 	ConfigBus.subscribe_node_bool("display.pixel_snap", self, "_on_pixel_snap_changed")

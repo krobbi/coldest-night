@@ -435,6 +435,5 @@ batching/precision/uv_contract=true
 portals/debug/logging=false
 quality/lightmapping/use_bicubic_sampling=false
 quality/subsurface_scattering/quality=0
-environment/default_clear_color=Color( 0.0509804, 0.027451, 0.0352941, 1 )
 quality/depth/hdr=false
 environment/default_environment="res://resources/environments/default_env.tres"
