@@ -24,109 +24,116 @@ margin_right = 528.0
 margin_right = 528.0
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 500.0
+margin_bottom = 536.0
 
-[node name="VisibleCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
+[node name="ShowWorldConesCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
 anchor_right = 0.0
 margin_right = 512.0
-is_pressed = true
-config = "radar.visible"
+config = "radar.show_world_cones"
 
-[node name="ScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 4 )]
+[node name="NormalConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 36.0
 margin_right = 512.0
 margin_bottom = 68.0
+config = "radar.normal_cone_color"
+
+[node name="CautionConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 6 )]
+anchor_right = 0.0
+margin_top = 72.0
+margin_right = 512.0
+margin_bottom = 104.0
+config = "radar.caution_cone_color"
+
+[node name="AlertConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 6 )]
+anchor_right = 0.0
+margin_top = 108.0
+margin_right = 512.0
+margin_bottom = 140.0
+config = "radar.alert_cone_color"
+
+[node name="VisibleCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 5 )]
+anchor_right = 0.0
+margin_top = 144.0
+margin_right = 512.0
+margin_bottom = 176.0
+is_pressed = true
+config = "radar.visible"
+
+[node name="ScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 4 )]
+anchor_right = 0.0
+margin_top = 180.0
+margin_right = 512.0
+margin_bottom = 212.0
 slider_value = 1.0
 min_value = 1.0
 max_value = 3.0
 step = 0.25
 config = "radar.scale"
 
-[node name="BackgroundColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 72.0
-margin_right = 512.0
-margin_bottom = 104.0
-config = "radar.background_color"
-
-[node name="BackgroundOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 108.0
-margin_right = 512.0
-margin_bottom = 140.0
-slider_value = 50.0
-step = 10.0
-config = "radar.background_opacity"
-
-[node name="WallColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 144.0
-margin_right = 512.0
-margin_bottom = 176.0
-config = "radar.wall_color"
-
-[node name="FloorColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 180.0
-margin_right = 512.0
-margin_bottom = 212.0
-config = "radar.floor_color"
-
-[node name="BarrierColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 6 )]
+[node name="BackgroundColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 216.0
 margin_right = 512.0
 margin_bottom = 248.0
-config = "radar.barrier_color"
+config = "radar.background_color"
 
-[node name="PlayerColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 6 )]
+[node name="BackgroundOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_top = 252.0
 margin_right = 512.0
 margin_bottom = 284.0
-config = "radar.player_color"
+slider_value = 50.0
+step = 10.0
+config = "radar.background_opacity"
 
-[node name="GuardColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 6 )]
+[node name="WallColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 288.0
 margin_right = 512.0
 margin_bottom = 320.0
-config = "radar.guard_color"
+config = "radar.wall_color"
 
-[node name="CollectableColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="9" instance=ExtResource( 6 )]
+[node name="FloorColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="9" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 324.0
 margin_right = 512.0
 margin_bottom = 356.0
-config = "radar.collectable_color"
+config = "radar.floor_color"
 
-[node name="NormalConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="10" instance=ExtResource( 6 )]
+[node name="BarrierColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="10" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 360.0
 margin_right = 512.0
 margin_bottom = 392.0
-config = "radar.normal_cone_color"
+config = "radar.barrier_color"
 
-[node name="CautionConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="11" instance=ExtResource( 6 )]
+[node name="PlayerColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="11" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 396.0
 margin_right = 512.0
 margin_bottom = 428.0
-config = "radar.caution_cone_color"
+config = "radar.player_color"
 
-[node name="AlertConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="12" instance=ExtResource( 6 )]
+[node name="GuardColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="12" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 432.0
 margin_right = 512.0
 margin_bottom = 464.0
-config = "radar.alert_cone_color"
+config = "radar.guard_color"
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="13" instance=ExtResource( 2 )]
+[node name="CollectableColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="13" instance=ExtResource( 6 )]
 anchor_right = 0.0
 margin_top = 468.0
 margin_right = 512.0
 margin_bottom = 500.0
+config = "radar.collectable_color"
+
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="14" instance=ExtResource( 2 )]
+anchor_right = 0.0
+margin_top = 504.0
+margin_right = 512.0
+margin_bottom = 536.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.FROM_RADAR"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 3 )
