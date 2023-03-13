@@ -20,4 +20,4 @@ shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )
-offset = Vector2( 0, -40 )
+offset = Vector2( 0, -18 )
