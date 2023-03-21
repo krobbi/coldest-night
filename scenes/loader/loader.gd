@@ -16,7 +16,7 @@ func _ready() -> void:
 	match _save_data.state:
 		SaveData.State.NEW_GAME:
 			AudioManager.play_music(_new_game_music)
-			EventBus.emit_nightscript_run_script_request("new_game")
+			CutsceneManager.run_cutscene("new_game")
 		SaveData.State.COMPLETED:
 			SceneManager.change_scene(_completed_scene_path)
 		SaveData.State.NORMAL, _:

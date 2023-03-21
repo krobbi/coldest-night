@@ -16,7 +16,7 @@ func get_nightscript_script_key() -> String:
 # Run when the terminal's interactable is interacted with. Run the terminal's
 # NightScript script.
 func _on_interactable_interacted() -> void:
-	EventBus.emit_nightscript_run_script_request(_script_key)
+	CutsceneManager.run_cutscene(_script_key)
 
 
 # Run when the terminal's interactable is selected. Play the selected sound and
