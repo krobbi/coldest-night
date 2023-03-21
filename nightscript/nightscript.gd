@@ -363,9 +363,7 @@ var _threads: Array = []
 func _ready() -> void:
 	set_physics_process(false)
 	EventBus.subscribe_node("nightscript_run_script_request", self, "run_script")
-	EventBus.subscribe_node("nightscript_stop_script_request", self, "stop_script")
 	EventBus.subscribe_node("nightscript_cache_script_request", self, "cache_script")
-	EventBus.subscribe_node("nightscript_flush_cache_request", self, "flush_cache")
 	
 	if LangManager.connect("locale_changed", self, "flush_cache") != OK:
 		if LangManager.is_connected("locale_changed", self, "flush_cache"):
@@ -486,8 +484,7 @@ func _get_bytecode(script_key: String) -> PoolByteArray:
 	
 	if OS.is_debug_build():
 		var compiler: Reference = load("res://nightscript/compiler/ns_compiler.gd").new()
-		return compiler.compile_path(LangManager.get_locale(), path, ConfigBus.get_bool(
-				"debug.optimize_nightscript"))
+		return compiler.compile_path(LangManager.get_locale(), path, true)
 	
 	return EMPTY_BYTECODE
 

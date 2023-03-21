@@ -15,9 +15,7 @@ signal player_unfreeze_request()
 signal player_transition_request()
 
 signal nightscript_run_script_request(script_key)
-signal nightscript_stop_script_request()
 signal nightscript_cache_script_request(script_key)
-signal nightscript_flush_cache_request()
 
 signal floating_text_display_request(text, world_pos)
 signal subtitle_display_request(message)
@@ -115,19 +113,9 @@ func emit_nightscript_run_script_request(script_key: String) -> void:
 	emit_signal("nightscript_run_script_request", script_key)
 
 
-# Emit a NightScript stop script request event.
-func emit_nightscript_stop_script_request() -> void:
-	emit_signal("nightscript_stop_script_request")
-
-
 # Emit a NightScript cache script request event.
 func emit_nightscript_cache_script_request(script_key: String) -> void:
 	emit_signal("nightscript_cache_script_request", script_key)
-
-
-# Emit a NightScript flush cache request event.
-func emit_nightscript_flush_cache_request() -> void:
-	emit_signal("nightscript_flush_cache_request")
 
 
 # Emit a floating text display request event.

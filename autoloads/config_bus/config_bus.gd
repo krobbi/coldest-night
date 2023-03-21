@@ -53,7 +53,6 @@ var _data: Dictionary = {
 	"advanced.show_advanced": false,
 	"advanced.readable_saves": false,
 	"debug.show_state_labels": false,
-	"debug.optimize_nightscript": false,
 }
 
 # Run when the configuration bus enters the scene tree. Load the configuration

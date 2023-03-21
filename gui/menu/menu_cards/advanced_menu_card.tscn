@@ -1,20 +1,17 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_cards/advanced_menu_card.gd" type="Script" id=2]
 [ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=3]
 [ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=4]
-[ext_resource path="res://resources/textures/gui/icons/clear.png" type="Texture" id=5]
 [ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=6]
 
 [node name="AdvancedMenuCard" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
 text = "HEADING.ADVANCED_SETTINGS"
 
 [node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 176.0
+margin_bottom = 104.0
 
 [node name="ReadableSavesCheckboxMenuRow" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 3 )]
 anchor_right = 0.0
@@ -30,33 +27,14 @@ margin_bottom = 68.0
 appearance_condition = 2
 config = "debug.show_state_labels"
 
-[node name="OptimizeNightScriptCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 3 )]
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_top = 72.0
 margin_right = 512.0
 margin_bottom = 104.0
-appearance_condition = 2
-config = "debug.optimize_nightscript"
-
-[node name="FlushNightScriptCacheButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 108.0
-margin_right = 512.0
-margin_bottom = 140.0
-appearance_condition = 3
-tooltip = "TOOLTIP.BUTTON.FLUSH_NIGHTSCRIPT_CACHE"
-text = "BUTTON.FLUSH_NIGHTSCRIPT_CACHE"
-icon = ExtResource( 5 )
-
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 144.0
-margin_right = 512.0
-margin_bottom = 176.0
 tooltip = "TOOLTIP.BUTTON.GO_BACK.TO_SETTINGS"
 text = "BUTTON.GO_BACK"
 icon = ExtResource( 6 )
 press_sound = 2
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/FlushNightScriptCacheButton" to="." method="_on_flush_nightscript_cache_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]

@@ -56,8 +56,6 @@ func _change_level(level_path: String, point: String, offset: Vector2) -> void:
 		remove_child(current_level)
 		current_level.free()
 	
-	EventBus.emit_nightscript_stop_script_request()
-	
 	current_level = load(level_path).instance()
 	add_child(current_level)
 	
