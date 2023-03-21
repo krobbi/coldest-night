@@ -13,4 +13,4 @@ func get_nightscript_script_key() -> String:
 
 # Run when the run NightScript trigger is entered. Run a NightScript script.
 func _enter() -> void:
-	CutsceneManager.run_cutscene(_script_key)
+	EventBus.emit_nightscript_run_script_request(_script_key)
