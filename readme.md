@@ -65,16 +65,13 @@ may cause a crash when running the game.
 * There is no native macOS icon between versions `0.4.0` and `0.6.0`.
 
 # Translating
-Coldest Night is fully translatable, although it is currently only available in
-English. A table for translation keys in alphabetical order can be found at
+The game's GUI and credits are fully translatable, although they are currently
+only available in English.
+
+A table for translation keys in alphabetical order can be found at
 `resources/translations/text.csv`.
 
-More lengthy or complex translations are determined from their file paths:
-
-| File type                | Naming convention                              |
-| :----------------------- | :--------------------------------------------- |
-| Credits files            | `scenes/credits/credits_<locale>.txt`          |
-| NightScript source files | `nightscript/scripts/<script key>.<locale>.ns` |
+The credits can be found at `scenes/credits/credits_<locale>.txt`.
 
 If more than one locale is available to the game, a language menu will appear
 in the settings menu, otherwise it will be hidden. The translation system
@@ -86,8 +83,11 @@ change.
 
 # Translating NightScript
 NightScript is a custom scripting language used for the dialog system and
-cutscenes. It may be continually phased out if a more practical solution is
-found for this.
+cutscenes. It is in the process of being deprecated for a more 'in-engine'
+cutscene system.
+
+NightScript source files can be found at
+`nightscript/scripts/<script key>.<locale>.ns`.
 
 NightScript source files may be given a 'global' locale by omitting the locale
 extension. A global locale means that the script should not need to be
