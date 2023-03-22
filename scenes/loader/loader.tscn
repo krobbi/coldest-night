@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scenes/loader/loader.gd" type="Script" id=1]
 [ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=2]
-[ext_resource path="res://nightscript/nightscript.tscn" type="PackedScene" id=3]
-[ext_resource path="res://resources/audio/music/briefing.ogg" type="AudioStream" id=4]
+[ext_resource path="res://components/cutscene/cutscene.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/loader/new_game_cutscene.gd" type="Script" id=4]
+[ext_resource path="res://resources/audio/music/briefing.ogg" type="AudioStream" id=5]
 
 [node name="Loader" type="Control"]
 pause_mode = 2
@@ -17,10 +18,11 @@ __meta__ = {
 }
 _normal_scene_path = "res://scenes/overworld/overworld.tscn"
 _completed_scene_path = "res://scenes/results/results.tscn"
-_new_game_music = ExtResource( 4 )
 
-[node name="NightScript" parent="." instance=ExtResource( 3 )]
+[node name="NewGameCutscene" parent="." instance=ExtResource( 3 )]
+script = ExtResource( 4 )
+_music = ExtResource( 5 )
 
 [node name="PlainDialog" parent="." instance=ExtResource( 2 )]
 
-[connection signal="thread_joined" from="NightScript" to="." method="_load_normal" flags=6]
+[connection signal="cutscene_finished" from="NewGameCutscene" to="." method="_on_new_game_cutscene_finished"]

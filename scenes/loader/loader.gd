@@ -6,31 +6,25 @@ extends Control
 
 export(String, FILE, "*.tscn") var _normal_scene_path: String
 export(String, FILE, "*.tscn") var _completed_scene_path: String
-export(AudioStream) var _new_game_music: AudioStream
 
-var _save_data: SaveData = SaveManager.get_working_data()
+onready var _new_game_cutscene: Cutscene = $NewGameCutscene
 
-# Run when the loader scene is entered. Start the new game dialog on a new game
+# Run when the loader scene is entered. Run the new game cutscene on a new game
 # and change to the appropriate scene.
 func _ready() -> void:
-	match _save_data.state:
+	match SaveManager.get_working_data().state:
 		SaveData.State.NEW_GAME:
-			AudioManager.play_music(_new_game_music)
-			EventBus.emit_nightscript_run_script_request("new_game")
+			_new_game_cutscene.run()
+		SaveData.State.NORMAL:
+			SceneManager.change_scene(_normal_scene_path, true, false)
 		SaveData.State.COMPLETED:
 			SceneManager.change_scene(_completed_scene_path)
-		SaveData.State.NORMAL, _:
-			_load_normal()
 
 
-# Set the current working save data's state to normal and change to the normal
-# scene.
-func _load_normal() -> void:
-	var is_new_game: bool = _save_data.state == SaveData.State.NEW_GAME
-	_save_data.state = SaveData.State.NORMAL
-	
-	if is_new_game:
-		SaveManager.push_to_slot()
-		SaveManager.save_file()
-	
+# Run when the new game cutscene finishes. Save the current working save data in
+# its normal state and change to the overworld scene.
+func _on_new_game_cutscene_finished() -> void:
+	SaveManager.get_working_data().state = SaveData.State.NORMAL
+	SaveManager.push_to_slot()
+	SaveManager.save_file()
 	SceneManager.change_scene(_normal_scene_path, true, false)

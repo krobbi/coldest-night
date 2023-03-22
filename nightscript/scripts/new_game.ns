@@ -1,9 +1,0 @@
-# NightScript Version 3.
-# New Game
-# Run when a new game is started.
-
-include "new_game_dialog";
-
-show();
-main_dialog();
-hide();
