@@ -1,7 +1,0 @@
-# NightScript Version 3.
-
-freeze();
-show();
-say("Secret message!");
-hide();
-unfreeze();
