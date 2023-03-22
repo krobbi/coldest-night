@@ -29,6 +29,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/menu/menu_rows/config_option_menu_row.gd"
 }, {
+"base": "Node",
+"class": "Cutscene",
+"language": "GDScript",
+"path": "res://components/cutscene/cutscene.gd"
+}, {
+"base": "Reference",
+"class": "CutsceneAction",
+"language": "GDScript",
+"path": "res://components/cutscene/cutscene_action.gd"
+}, {
 "base": "Control",
 "class": "Dialog",
 "language": "GDScript",
@@ -204,6 +214,8 @@ _global_script_class_icons={
 "CheckboxMenuRow": "",
 "ConfigConnection": "",
 "ConfigOptionMenuRow": "",
+"Cutscene": "",
+"CutsceneAction": "",
 "Dialog": "",
 "DialogTagParser": "",
 "FloatingText": "",
