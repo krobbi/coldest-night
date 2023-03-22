@@ -1,11 +1,12 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scenes/devlog/devlog.gd" type="Script" id=1]
-[ext_resource path="res://nightscript/nightscript.tscn" type="PackedScene" id=2]
 [ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/textures/scenes/devlog/background.png" type="Texture" id=4]
 [ext_resource path="res://resources/textures/scenes/devlog/silhouette.png" type="Texture" id=5]
 [ext_resource path="res://resources/audio/music/devlog.ogg" type="AudioStream" id=6]
+[ext_resource path="res://components/cutscene/cutscene.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/devlog/devlog_cutscene.gd" type="Script" id=8]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
@@ -33,10 +34,12 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_lock_": true
 }
-_exit_scene_path = "res://scenes/menu/menu.tscn"
 _music = ExtResource( 6 )
 
-[node name="NightScript" parent="." instance=ExtResource( 2 )]
+[node name="DevlogCutscene" parent="." instance=ExtResource( 7 )]
+script = ExtResource( 8 )
+_is_autorun = true
+_end_scene_path = "res://scenes/menu/menu.tscn"
 
 [node name="BackgroundRect" type="TextureRect" parent="."]
 material = SubResource( 2 )
@@ -62,5 +65,3 @@ __meta__ = {
 }
 
 [node name="PlainDialog" parent="." instance=ExtResource( 3 )]
-
-[connection signal="thread_joined" from="NightScript" to="." method="_on_nightscript_thread_joined" flags=6]
