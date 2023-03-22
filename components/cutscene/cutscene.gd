@@ -46,6 +46,16 @@ func run() -> void:
 	nop()
 
 
+# Set a flag.
+func set_flag(flag: String, value: int) -> void:
+	SaveManager.get_working_data().set_flag(flag, value)
+
+
+# Get a flag.
+func get_flag(flag: String) -> int:
+	return SaveManager.get_working_data().get_flag(flag)
+
+
 # Add an action to the cutscene.
 func add_action(action: CutsceneAction) -> void:
 	_action_queue.push_back(action)
@@ -112,3 +122,13 @@ func option(message: String, method: String, args: Array = [], object: Object = 
 func menu() -> void:
 	add_action(_menu_action)
 	_menu_action = MenuCutsceneAction.new()
+
+
+# Freeze the player.
+func freeze() -> void:
+	add_action(CallCutsceneAction.new(EventBus, "emit_player_freeze_request"))
+
+
+# Unfreeze the player.
+func unfreeze() -> void:
+	add_action(CallCutsceneAction.new(EventBus, "emit_player_unfreeze_request"))

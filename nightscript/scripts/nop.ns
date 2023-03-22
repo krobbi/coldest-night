@@ -1,0 +1,7 @@
+# NightScript Version 3.
+# No Operation
+# A Nightcript script that does nothing.
+
+const FLAG = "nop_counter";
+
+set_flag(FLAG, get_flag(FLAG) + 1);
