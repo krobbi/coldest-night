@@ -65,3 +65,28 @@ func nop() -> void:
 # Sleep for a duration in seconds.
 func sleep(duration: float) -> void:
 	add_action(SleepCutsceneAction.new(duration))
+
+
+# Show the dialog display.
+func show() -> void:
+	add_action(CallCutsceneAction.new(EventBus, "emit_dialog_show_request"))
+
+
+# Hide the dialog display.
+func hide() -> void:
+	add_action(CallCutsceneAction.new(EventBus, "emit_dialog_hide_request"))
+
+
+# Display a dialog speaker.
+func speaker(speaker_name: String = "") -> void:
+	if speaker_name.empty():
+		add_action(CallCutsceneAction.new(EventBus, "emit_dialog_clear_name_request"))
+	else:
+		add_action(CallCutsceneAction.new(
+				EventBus, "emit_dialog_display_name_request", [speaker_name]))
+
+
+# Display a dialog message.
+func say(message: String) -> void:
+	add_action(CallCutsceneAction.new(EventBus, "emit_dialog_display_message_request", [message]))
+	add_action(AwaitCutsceneAction.new(EventBus, "dialog_message_finished"))
