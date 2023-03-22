@@ -60,3 +60,8 @@ func add_action(action: CutsceneAction) -> void:
 # Run an empty cutscene action.
 func nop() -> void:
 	add_action(CutsceneAction.new())
+
+
+# Sleep for a duration in seconds.
+func sleep(duration: float) -> void:
+	add_action(SleepCutsceneAction.new(duration))
