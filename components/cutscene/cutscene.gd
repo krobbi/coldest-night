@@ -18,7 +18,7 @@ func _ready() -> void:
 	set_physics_process(false)
 	
 	if _is_autorun:
-		run()
+		call_deferred("run")
 
 
 # Run on every physics frame while the cutscene has actions. Process the current
