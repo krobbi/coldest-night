@@ -8,6 +8,7 @@ signal cutscene_finished
 
 export(bool) var _is_autorun: bool = false
 
+var _menu_action: MenuCutsceneAction = MenuCutsceneAction.new()
 var _current_action: CutsceneAction = null
 var _action_queue: Array = []
 
@@ -37,18 +38,12 @@ func _physics_process(delta: float) -> void:
 		
 		if _action_queue.empty():
 			set_physics_process(false)
-			end()
 			emit_signal("cutscene_finished")
 
 
 # Run the cutscene.
 func run() -> void:
 	nop()
-
-
-# Run when the cutscene ends.
-func end() -> void:
-	pass
 
 
 # Add an action to the cutscene.
@@ -60,6 +55,19 @@ func add_action(action: CutsceneAction) -> void:
 # Run an empty cutscene action.
 func nop() -> void:
 	add_action(CutsceneAction.new())
+
+
+# Call a method.
+func then(method: String, args: Array = [], object: Object = null) -> void:
+	if not is_instance_valid(object):
+		object = self
+	
+	add_action(CallCutsceneAction.new(object, method, args))
+
+
+# Wait for a signal.
+func wait(object: Object, signal_name: String) -> void:
+	add_action(AwaitCutsceneAction.new(object, signal_name))
 
 
 # Sleep for a duration in seconds.
@@ -90,3 +98,17 @@ func speaker(speaker_name: String = "") -> void:
 func say(message: String) -> void:
 	add_action(CallCutsceneAction.new(EventBus, "emit_dialog_display_message_request", [message]))
 	add_action(AwaitCutsceneAction.new(EventBus, "dialog_message_finished"))
+
+
+# Add an option to the dialog menu.
+func option(message: String, method: String, args: Array = [], object: Object = null) -> void:
+	if not is_instance_valid(object):
+		object = self
+	
+	_menu_action.add_option(message, object, method, args)
+
+
+# Display the dialog menu.
+func menu() -> void:
+	add_action(_menu_action)
+	_menu_action = MenuCutsceneAction.new()

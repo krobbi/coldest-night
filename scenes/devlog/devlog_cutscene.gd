@@ -18,19 +18,25 @@ func run() -> void:
 	
 	show()
 	speaker("Sphinx")
-	say("The quick,{p=0.25} brown fox jumps over the lazy dog.")
-	hide()
+	say("What is your favorite fruit?")
 	
+	option("Apple", "end", ["crunchy"])
+	option("Orange", "end", ["juicy"])
+	option("Other", "end", ["mysterious"])
+	menu()
+
+
+# End the devlog cutscene.
+func end(fruit_description: String) -> void:
+	say("Ah,{p=0.25} so %s!" % fruit_description)
+	say("An excellent choice.")
+	hide()
 	sleep(1.0)
 	
 	show()
 	speaker()
-	say("Fascinating advice{s=0.1}...")
+	say("(You feel satisfied with your choice.)")
 	hide()
 	
 	sleep(1.0)
-
-
-# Run when the devlog cutscene ends. Exit the devlog scene.
-func end() -> void:
-	SceneManager.change_scene(_end_scene_path)
+	then("change_scene", [_end_scene_path], SceneManager)
