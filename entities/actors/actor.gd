@@ -115,16 +115,6 @@ func find_nav_path(world_pos: Vector2) -> void:
 	_nav_path = Navigation2DServer.map_get_path(_nav_map, position, world_pos, true)
 
 
-# Find a navigation path to a point.
-func find_nav_path_point(point: String) -> void:
-	var level_host = find_parent("LevelHost")
-	
-	if not level_host or not level_host.current_level:
-		return
-	
-	find_nav_path(level_host.current_level.get_point_pos(point))
-
-
 # Run the navigation path.
 func run_nav_path() -> void:
 	if not _nav_path.empty():
