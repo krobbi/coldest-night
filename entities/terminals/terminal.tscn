@@ -9,7 +9,7 @@
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 16, 16 )
 
-[node name="Terminal" type="Sprite" groups=["nightscript_runners"]]
+[node name="Terminal" type="Sprite"]
 texture = ExtResource( 1 )
 offset = Vector2( 0, -16 )
 hframes = 2
