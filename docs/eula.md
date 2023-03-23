@@ -5,7 +5,8 @@ __Copyright &copy; 2021-2023 Chris Roberts__ (Krobbizoid).
 _All rights reserved._
 
 # End User License Agreement
-By running the packaged executable file (the game), you accept the following:
+By using the packaged executable file and/or its associated files (the game),
+you accept the following:
 
 * You agree to the terms of the
 [Krobbizoid Game License](https://krobbi.github.io/license/2021/2023/kgl.txt)
