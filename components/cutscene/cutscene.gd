@@ -124,6 +124,16 @@ func menu() -> void:
 	_menu_action = MenuCutsceneAction.new()
 
 
+# Face an actor to an angle.
+func face(actor_key: String, degrees: float) -> void:
+	add_action(FaceCutsceneAction.new(get_tree(), actor_key, degrees))
+
+
+# Path an actor to a target position.
+func path(actor_key: String, target_pos: Vector2) -> void:
+	add_action(PathCutsceneAction.new(get_tree(), actor_key, target_pos))
+
+
 # Freeze the player.
 func freeze() -> void:
 	add_action(CallCutsceneAction.new(EventBus, "emit_player_freeze_request"))

@@ -108,11 +108,6 @@ func _ready() -> void:
 	
 	EventBus.emit_radar_render_level_request()
 	EventBus.subscribe_node("save_state_request", self, "save_state")
-	
-	for nightscript_runner in get_tree().get_nodes_in_group("nightscript_runners"):
-		if nightscript_runner.has_method("get_nightscript_script_key"):
-			EventBus.emit_nightscript_cache_script_request(
-					nightscript_runner.get_nightscript_script_key())
 
 
 # Run when the level exits the scene tree. Free the level's navigation regions.
