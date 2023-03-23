@@ -115,12 +115,10 @@ except for the `.empty` files.
 3. Open the game in the [correct version](#versions) of the Godot Engine
 editor.
 4. Wait for any assets to be reimported (a progress bar may appear).
-5. Make sure that the `NightScript Precompiler` plugin is enabled by selecting
-`Project > Project Settings... > Plugins`.
-6. Close the project settings menu. Select `Project > Export...` to open the
+5. Close the project settings menu. Select `Project > Export...` to open the
 export menu.
-7. Select `Export All... > Release` to begin exporting the game.
-8. Wait for the exporting process to finish. You may now close the Godot Engine
+6. Select `Export All... > Release` to begin exporting the game.
+7. Wait for the exporting process to finish. You may now close the Godot Engine
 editor.
 
 In addition to the files generated in the build output directories, the

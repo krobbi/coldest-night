@@ -119,11 +119,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://gui/menu/menu_stack.gd"
 }, {
-"base": "Node",
-"class": "NightScript",
-"language": "GDScript",
-"path": "res://nightscript/nightscript.gd"
-}, {
 "base": "MenuRow",
 "class": "OptionMenuRow",
 "language": "GDScript",
@@ -262,7 +257,6 @@ _global_script_class_icons={
 "MenuList": "",
 "MenuRow": "",
 "MenuStack": "",
-"NightScript": "",
 "OptionMenuRow": "",
 "PathCutsceneAction": "",
 "PatrolAction": "",
@@ -329,10 +323,6 @@ window/stretch/aspect="keep"
 
 scene_naming=2
 convert_text_resources_to_binary_on_export=true
-
-[editor_plugins]
-
-enabled=PoolStringArray( "res://addons/nightscript_precompiler/plugin.cfg" )
 
 [importer_defaults]
 

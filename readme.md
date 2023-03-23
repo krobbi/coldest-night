@@ -14,7 +14,6 @@ _All rights reserved._
    * [Issues Affecting Windows](#issues-affecting-windows)
    * [Issues Affecting macOS](#issues-affecting-macos)
 5. [Translating](#translating)
-   * [Translating NightScript](#translating-nightscript)
 6. [Credits and Licensing](#credits-and-licensing)
 
 # Coldest Night
@@ -66,7 +65,7 @@ may cause a crash when running the game.
 
 # Translating
 The game's GUI and credits are fully translatable, although they are currently
-only available in English.
+only available in English. Cutscene dialogue is not yet translatable.
 
 A table for translation keys in alphabetical order can be found at
 `resources/translations/text.csv`.
@@ -80,69 +79,6 @@ project setting.
 
 The story, character names, and other attributes may not be final and may
 change.
-
-# Translating NightScript
-NightScript is a custom scripting language used for the dialog system and
-cutscenes. It is in the process of being deprecated for a more 'in-engine'
-cutscene system.
-
-NightScript source files can be found at
-`nightscript/scripts/<script key>.<locale>.ns`.
-
-NightScript source files may be given a 'global' locale by omitting the locale
-extension. A global locale means that the script should not need to be
-translated.
-
-If a complex script needs to display translatable text it can be given a global
-locale and include another script with a locale. For example, `cutscene.ns`
-could include `cutscene_dialog.en.ns` by using `include "cutscene_dialog";`.
-The appropriate locale will be selected automatically. Functions can then be
-called from the included script. New scripts with the same name and implemented
-functions can then be created for each locale.
-
-See below for an example.
-
-`cutscene.ns`:
-```
-# NightScript Version 3.
-
-include "cutscene_dialog"; # File extensions are omitted from includes.
-
-freeze(); # Freeze the player.
-show(); # Show the dialog box.
-
-name(get_name()); # Call `get_name` and display the returned value as a name.
-display_dialog(); # Call `display_dialog` and ignore any returned value.
-
-hide(); # Hide the dialog box.
-unfreeze(); # Unfreeze the player.
-```
-
-`cutscene_dialog.en.ns`:
-```
-# NightScript Version 3.
-
-func get_name(){
-   return "John";
-}
-
-func display_dialog(){
-   say("Hello, world!");
-}
-```
-
-`cutscene_dialog.fr.ns`:
-```
-# NightScript Version 3.
-
-func get_name(){
-   return "Jean";
-}
-
-func display_dialog(){
-   say("Bonjour, le monde!");
-}
-```
 
 # Credits and Licensing
 See [docs/credits.md](./docs/credits.md) for a full copy of the credits.  
