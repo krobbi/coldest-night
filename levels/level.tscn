@@ -11,6 +11,8 @@ __meta__ = {
 "_edit_lock_": true
 }
 
+[node name="Cutscenes" type="Node" parent="."]
+
 [node name="Background" type="Node2D" parent="."]
 __meta__ = {
 "_edit_lock_": true
