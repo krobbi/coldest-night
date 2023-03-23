@@ -1,7 +1,6 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scenes/overworld/overworld.gd" type="Script" id=1]
-[ext_resource path="res://scenes/overworld/level_host.gd" type="Script" id=2]
 [ext_resource path="res://scenes/overworld/level_camera.gd" type="Script" id=3]
 [ext_resource path="res://gui/radar/radar.tscn" type="PackedScene" id=4]
 [ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=6]
@@ -13,12 +12,6 @@
 [node name="Overworld" type="Node2D"]
 pause_mode = 1
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="LevelHost" type="Node2D" parent="."]
-script = ExtResource( 2 )
 __meta__ = {
 "_edit_lock_": true
 }
