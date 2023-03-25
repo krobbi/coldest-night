@@ -57,8 +57,6 @@ requires the following dependencies:
 
 * A modern version of [Python](https://www.python.org) - at least version `3.5`
 but preferably higher - that can be accessed from the command line as `python`.
-* An installation of [Git](https://git-scm.com) that can be accessed from the
-command line as `git`.
 * A file named `godot_path.txt` in `builds/` containing an absolute path to the
 Godot Engine executable. This file is ignored by Git for privacy and
 compatibility.
@@ -87,9 +85,9 @@ available from the root directory of the repository:
 
 ```
 build help             - Display a list of commands.
-build list             - List all channels.
-build clean            - Clean all channels' build output.
-build clean <channel>  - Clean a single channel's build output.
+build list             - Display a list of channels.
+build clean            - Clean all channels.
+build clean <channel>  - Clean a single channel.
 build export           - Export all channels.
 build export <channel> - Export a single channel.
 ```
