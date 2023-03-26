@@ -27,10 +27,12 @@ data_*/*
 builds/linux-demo/*
 builds/mac-demo/*
 builds/win-demo/*
+builds/butler_path.txt
 builds/godot_path.txt
-!builds/linux-demo/.empty
-!builds/mac-demo/.empty
-!builds/win-demo/.empty
+builds/version_lock.txt
+!builds/linux-demo/.itch
+!builds/mac-demo/.itch
+!builds/win-demo/.itch
 
 # Python Scripts:
 __pycache__/*

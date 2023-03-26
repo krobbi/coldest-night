@@ -61,6 +61,12 @@ but preferably higher - that can be accessed from the command line as `python`.
 Godot Engine executable. This file is ignored by Git for privacy and
 compatibility.
 
+If you want to use the build script for publishing, you will also need:
+
+* A file named `butler_path.txt` in `builds/` containing the absolute path to a
+[butler](https://itchio.itch.io/butler) executable
+(the stable version is recommended.) This file is also ignored by Git.
+
 The build script itself is located in `build.py` alongside two wrapper scripts:
 `build.bat` (for Windows), and `build` (for Linux and macOS). These wrapper
 scripts are used to shorten the command so that it can be run from the command
@@ -86,10 +92,13 @@ available from the root directory of the repository:
 ```
 build help             - Display a list of commands.
 build list             - Display a list of channels.
+build test godot       - Test Godot Engine version.
+build test butler      - Test butler version.
 build clean            - Clean all channels.
 build clean <channel>  - Clean a single channel.
 build export           - Export all channels.
 build export <channel> - Export a single channel.
+build publish          - Publish all channels.
 ```
 
 The `build export` command will clean the relevant channels before building the
@@ -97,11 +106,9 @@ game. You do not need to run `build clean` beforehand.
 
 After running `build export` the exported game will be available in the build
 output directories at `builds/<channel>/`, including any additional files
-normally distributed with the game. The `.empty` files in the build output
-directories are not normally distributed.
-
-There are plans for a command for publishing the game to itch.io, but this has
-not yet been implemented.
+normally distributed with the game. The `.itch` files allow the build output
+directories to appear in the repository, but are ignored when published to
+[itch.io](https://itch.io).
 
 # Building from Godot Engine
 The following steps should be taken to successfully export the game from Godot
@@ -109,7 +116,7 @@ Engine:
 
 1. Make sure that all of the [dependencies](#dependencies) have been met.
 2. Clear all files from the build output directories at `builds/<channel>/`
-except for the `.empty` files.
+except for the `.itch` files.
 3. Open the game in the [correct version](#versions) of the Godot Engine
 editor.
 4. Wait for any assets to be reimported (a progress bar may appear).
