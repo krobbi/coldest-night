@@ -22,8 +22,8 @@ Coldest Night is a stealth game being developed in
 may not represent its final quality. Significant changes may occur between
 versions.
 
-The game _does not_ yet support Godot Engine 4.0, but there are plans to
-upgrade it when a more stable version is available.
+The game is in the process of being migrated to Godot Engine 4. See the
+`migrate-godot-4` branch for more information.
 
 # Running
 Pre-built demo versions of the game can be found on the
