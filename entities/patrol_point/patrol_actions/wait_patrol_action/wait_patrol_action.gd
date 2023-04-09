@@ -4,7 +4,7 @@ extends PatrolAction
 # A wait patrol action is a patrol action that waits for a duration before
 # jumping to the next patrol action.
 
-export(float) var _wait_duration: float = 2.0
+@export var _wait_duration: float = 2.0
 
 var _wait_timer: float = 0.0
 

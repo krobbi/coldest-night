@@ -1,42 +1,35 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=9 format=3 uid="uid://ba2xkpiq88okq"]
 
-[ext_resource path="res://scenes/overworld/overworld.gd" type="Script" id=1]
-[ext_resource path="res://scenes/overworld/level_camera.gd" type="Script" id=3]
-[ext_resource path="res://gui/radar/radar.tscn" type="PackedScene" id=4]
-[ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=6]
-[ext_resource path="res://gui/menu/menus/pause_menu.tscn" type="PackedScene" id=7]
-[ext_resource path="res://gui/floating_text/floating_text_spawner.tscn" type="PackedScene" id=8]
-[ext_resource path="res://gui/menu/menus/game_over_menu.tscn" type="PackedScene" id=9]
-[ext_resource path="res://gui/subtitle/subtitle.tscn" type="PackedScene" id=10]
+[ext_resource type="Script" path="res://scenes/overworld/overworld.gd" id="1"]
+[ext_resource type="Script" path="res://scenes/overworld/level_camera.gd" id="3"]
+[ext_resource type="PackedScene" uid="uid://ec12aj1nj0n0" path="res://gui/radar/radar.tscn" id="4"]
+[ext_resource type="PackedScene" uid="uid://uemgtywlxewr" path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://cx1ay1fqghybq" path="res://gui/menu/menus/pause_menu.tscn" id="7"]
+[ext_resource type="PackedScene" uid="uid://d3go2jvyukcu1" path="res://gui/floating_text/floating_text_spawner.tscn" id="8"]
+[ext_resource type="PackedScene" uid="uid://bw1mqgnicor37" path="res://gui/menu/menus/game_over_menu.tscn" id="9"]
+[ext_resource type="PackedScene" uid="uid://cmaeanf1dsyig" path="res://gui/subtitle/subtitle.tscn" id="10"]
 
 [node name="Overworld" type="Node2D"]
-pause_mode = 1
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+process_mode = 1
+script = ExtResource("1")
 
 [node name="LevelCamera" type="Camera2D" parent="."]
-current = true
 limit_smoothed = true
-smoothing_enabled = true
+position_smoothing_enabled = true
 editor_draw_screen = false
-script = ExtResource( 3 )
-__meta__ = {
-"_edit_lock_": true
-}
+script = ExtResource("3")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
-[node name="Radar" parent="HUD" instance=ExtResource( 4 )]
+[node name="Radar" parent="HUD" instance=ExtResource("4")]
 
-[node name="FloatingTextSpawner" parent="HUD" instance=ExtResource( 8 )]
+[node name="FloatingTextSpawner" parent="HUD" instance=ExtResource("8")]
 _camera_path = NodePath("../../LevelCamera")
 
-[node name="PlainDialog" parent="HUD" instance=ExtResource( 6 )]
+[node name="PlainDialog" parent="HUD" instance=ExtResource("6")]
 
-[node name="Subtitle" parent="HUD" instance=ExtResource( 10 )]
+[node name="Subtitle" parent="HUD" instance=ExtResource("10")]
 
-[node name="PauseMenu" parent="HUD" instance=ExtResource( 7 )]
+[node name="PauseMenu" parent="HUD" instance=ExtResource("7")]
 
-[node name="GameOverMenu" parent="HUD" instance=ExtResource( 9 )]
+[node name="GameOverMenu" parent="HUD" instance=ExtResource("9")]

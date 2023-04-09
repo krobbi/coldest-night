@@ -4,19 +4,18 @@ extends MenuRow
 # A control menu row is a menu row that contains a button for changing an input
 # mapping.
 
-export(String) var _action: String
+@export var _action: String
 
 var _is_awaiting_input: bool = false
 
-onready var _button: Button = $Content/Button
-onready var _input_timer: Timer = $InputTimer
-onready var _mapped_player: AudioStreamPlayer = $MappedPlayer
+@onready var _button: Button = $Content/Button
+@onready var _input_timer: Timer = $InputTimer
+@onready var _mapped_player: AudioStreamPlayer = $MappedPlayer
 
 # Run when the control menu row finishes entering the scene tree. Subscribe the
 # control menu row to the configuration bus and set its tooltip and text.
 func _ready() -> void:
-	ConfigBus.subscribe_node_string(
-			"controls.%s_mapping" % _action, self, "_on_config_value_changed")
+	ConfigBus.subscribe_node_string("controls.%s_mapping" % _action, _on_config_value_changed)
 	tooltip = "TOOLTIP.CONTROL.%s" % _action.to_upper()
 	$Content/Label.text = "CONTROL.ACTION.%s" % _action.to_upper()
 
@@ -28,15 +27,10 @@ func _input(event: InputEvent) -> void:
 	if not _is_awaiting_input or not InputManager.is_event_mappable(event):
 		return
 	
-	get_tree().set_input_as_handled() # Don't do anything else with the input.
+	get_viewport().set_input_as_handled() # Don't do anything else with the input.
 	InputManager.map_action_event(_action, event)
 	set_awaiting_input(false)
 	_mapped_player.play()
-
-
-# Run when the control menu row is deselected. Stop awaiting an input.
-func _deselect() -> void:
-	set_awaiting_input(false)
 
 
 # Set whether the control button is awaiting an input.
@@ -57,7 +51,12 @@ func set_awaiting_input(value: bool) -> void:
 		_button.text = InputManager.get_mapping_name(_action)
 
 
-# Runs when the control menu row's input action input mapping is changed. Stop
+# Run when the control menu row is deselected. Stop awaiting an input.
+func _on_deselected() -> void:
+	set_awaiting_input(false)
+
+
+# Run when the control menu row's input action input mapping is changed. Stop
 # awaiting an input.
 func _on_config_value_changed(_value: String) -> void:
 	set_awaiting_input(false)

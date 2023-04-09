@@ -4,7 +4,7 @@ extends MenuCard
 # The pause menu card is a fixed menu card that is the root menu card of the
 # pause menu.
 
-export(String, FILE, "*.tscn") var _loader_scene_path: String
+@export var _loader_scene_path: String # (String, FILE, "*.tscn")
 
 # Run when the quick save button is pressed. Save the game.
 func _on_quick_save_button_pressed() -> void:
@@ -15,11 +15,11 @@ func _on_quick_save_button_pressed() -> void:
 # change to the loader scene.
 func _on_quick_load_button_pressed() -> void:
 	SaveManager.pull_from_slot()
-	SceneManager.change_scene(_loader_scene_path)
+	SceneManager.change_scene_to_file(_loader_scene_path)
 
 
 # Run when the load checkpoint button is pressed. Pull from the checkpoint save
 # data and change to the loader scene.
 func _on_load_checkpoint_button_pressed() -> void:
 	SaveManager.pull_from_checkpoint()
-	SceneManager.change_scene(_loader_scene_path)
+	SceneManager.change_scene_to_file(_loader_scene_path)

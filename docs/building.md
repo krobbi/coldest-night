@@ -33,6 +33,7 @@ project in Godot Engine or build the game.
 
 | Game version      | Target Godot Engine version |
 | ----------------: | :-------------------------- |
+| `0.8.0`           | `4.0.2`                     |
 | `0.7.0`           | `3.5.1`                     |
 | `0.6.0`           | `3.4.4`                     |
 | `0.5.0`           | `3.4.2`                     |

@@ -1,7 +1,7 @@
 ![Coldest Night logo.](docs/header.png)  
 _A prototype stealth game._  
-__Version__ `0.7.0`  
-__Godot Engine__ `3.5.1`  
+__Version__ `0.8.0`  
+__Godot Engine__ `4.0.2`  
 __Copyright &copy; 2021-2023 Chris Roberts__ (Krobbizoid).  
 _All rights reserved._
 
@@ -21,9 +21,6 @@ Coldest Night is a stealth game being developed in
 [Godot Engine](https://godotengine.org). The game is in a prototype stage and
 may not represent its final quality. Significant changes may occur between
 versions.
-
-The game is in the process of being migrated to Godot Engine 4. See the
-`migrate-godot-4` branch for more information.
 
 # Running
 Pre-built demo versions of the game can be found on the

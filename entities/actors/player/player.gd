@@ -4,27 +4,27 @@ extends Actor
 # Player Base
 # Players are actors that can be controlled by the user.
 
-export(NodePath) var _freeze_state_path: NodePath
-export(NodePath) var _moving_state_path: NodePath
-export(NodePath) var _transitioning_state_path: NodePath
+@export var _freeze_state_path: NodePath
+@export var _moving_state_path: NodePath
+@export var _transitioning_state_path: NodePath
 
 var _save_data: SaveData = SaveManager.get_working_data()
 var _is_frozen: bool = false
 var _unfreeze_state: State
 
-onready var _freeze_state: State = get_node(_freeze_state_path)
-onready var _moving_state: State = get_node(_moving_state_path)
-onready var _transitioning_state: State = get_node(_transitioning_state_path)
-onready var _interactor: Interactor = $SmoothPivot/Interactor
-onready var _triggering_shape: CollisionShape2D = $TriggeringArea/TriggeringShape
+@onready var _freeze_state: State = get_node(_freeze_state_path)
+@onready var _moving_state: State = get_node(_moving_state_path)
+@onready var _transitioning_state: State = get_node(_transitioning_state_path)
+@onready var _interactor: Interactor = $SmoothPivot/Interactor
+@onready var _triggering_shape: CollisionShape2D = $TriggeringArea/TriggeringShape
 
 # Run when the player enters the scene tree. Subscribe the player to the event
 # bus.
 func _enter_tree() -> void:
-	EventBus.subscribe_node("player_freeze_request", self, "freeze")
-	EventBus.subscribe_node("player_unfreeze_request", self, "unfreeze")
-	EventBus.subscribe_node("player_transition_request", self, "transition")
-	EventBus.subscribe_node("save_state_request", self, "save_state")
+	EventBus.subscribe_node(EventBus.player_freeze_request, freeze)
+	EventBus.subscribe_node(EventBus.player_unfreeze_request, unfreeze)
+	EventBus.subscribe_node(EventBus.player_transition_request, transition)
+	EventBus.subscribe_node(EventBus.save_state_request, save_state)
 
 
 # Get the player's interact input.
@@ -89,4 +89,4 @@ func disable_triggers() -> void:
 func save_state() -> void:
 	_save_data.position = position
 	_save_data.angle = smooth_pivot.rotation_degrees
-	EventBus.emit_floating_text_display_request("FLOATING_TEXT.SAVED", position)
+	EventBus.floating_text_display_request.emit("FLOATING_TEXT.SAVED", position)

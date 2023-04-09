@@ -1,11 +1,11 @@
 class_name SaveData
-extends Reference
+extends RefCounted
 
 # Save Data
 # Save data are structures that represent the data that is stored in a save
 # file.
 
-signal flag_changed(flag, value)
+signal flag_changed(flag: String, value: int)
 
 enum State {NEW_GAME, NORMAL, COMPLETED}
 
@@ -25,7 +25,7 @@ func _init() -> void:
 # Set a flag from its flag.
 func set_flag(flag: String, value: int) -> void:
 	flags[flag] = value
-	emit_signal("flag_changed", flag, value)
+	flag_changed.emit(flag, value)
 
 
 # Get a flag from its flag.

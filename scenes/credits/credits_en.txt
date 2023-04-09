@@ -40,7 +40,7 @@ Bitmap font to TTF converter
 https://yal.cc/r/20/pixelfont
 
 ## Lead Developer
-Vadim (YellowAfterlife)
+Vadym Diachenko (YellowAfterlife)
 
 # make-icns
 PNG to ICNS converter

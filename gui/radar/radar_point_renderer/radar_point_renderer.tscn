@@ -1,15 +1,12 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://crllq47fc21c1"]
 
-[ext_resource path="res://gui/radar/radar_point_renderer/radar_point_renderer.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://gui/radar/radar_point_renderer/radar_point_renderer.gd" id="1"]
 
 [node name="RadarPointRenderer" type="Polygon2D"]
 visible = false
-color = Color( 0.945098, 0.94902, 0.945098, 0.501961 )
-polygon = PoolVector2Array( -16, -16, 16, -16, 16, 16, -16, 16 )
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_group_": true
-}
+color = Color(0.945098, 0.94902, 0.945098, 0.501961)
+polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+script = ExtResource("1")
 
 [node name="ColorPolygon" type="Polygon2D" parent="."]
-polygon = PoolVector2Array( -8, -8, 8, -8, 8, 8, -8, 8 )
+polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)

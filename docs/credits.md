@@ -52,7 +52,7 @@ Igor Ferreira (Diemorth)
 
 ### Lead Developer
 ```
-Vadim (YellowAfterlife)
+Vadym Diachenko (YellowAfterlife)
 ```
 
 ## make-icns

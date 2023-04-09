@@ -20,35 +20,17 @@ enum AppearanceCondition {
 const _COLOR_SELECT: Color = Color("#ff980e")
 const _COLOR_DESELECT: Color = Color("#d94f0c")
 const _TWEEN_TIME: float = 0.25
-const _TWEEN_TRANS: int = Tween.TRANS_SINE
+const _TWEEN_TRANS: Tween.TransitionType = Tween.TRANS_SINE
 
-export(NodePath) var focus_node_path: NodePath = NodePath()
-export(AppearanceCondition) var appearance_condition: int = AppearanceCondition.ALWAYS
-export(String) var tooltip: String
+@export var focus_node_path: NodePath = NodePath()
+@export var appearance_condition: AppearanceCondition = AppearanceCondition.ALWAYS
+@export var tooltip: String
 
-var is_selected: bool = false setget set_selected
+var _is_selected: bool = false
 
-onready var _select_rect: Panel = $SelectRect
-onready var _underline_rect: Panel = $UnderlineRect
-onready var _content: Control = $Content
-
-# Run when the menu row is selected.
-func _select() -> void:
-	pass
-
-
-# Run when the menu row is deselected.
-func _deselect() -> void:
-	pass
-
-
-# Set whether the menu row is selected.
-func set_selected(value: bool) -> void:
-	if value:
-		select()
-	else:
-		deselect()
-
+@onready var _select_rect: Panel = $SelectRect
+@onready var _underline_rect: Panel = $UnderlineRect
+@onready var _content: Control = $Content
 
 # Get the menu row's focus node.
 func get_focus_node() -> Control:
@@ -76,42 +58,34 @@ func get_should_appear() -> bool:
 
 # Select the menu row.
 func select() -> void:
-	if is_selected:
+	if _is_selected:
 		return
 	
-	is_selected = true
-	var tween: SceneTreeTween = create_tween().set_trans(_TWEEN_TRANS).set_parallel()
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	tween.tween_property(_select_rect, "rect_size:x", 8.0, _TWEEN_TIME)
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	tween.tween_property(_underline_rect, "rect_size:x", 496.0, _TWEEN_TIME)
-	# warning-ignore: RETURN_VALUE_DISCARDED
+	_is_selected = true
+	var tween: Tween = create_tween().set_trans(_TWEEN_TRANS).set_parallel()
+	tween.tween_property(_select_rect, "size:x", 8.0, _TWEEN_TIME)
+	tween.tween_property(_underline_rect, "size:x", 496.0, _TWEEN_TIME)
 	tween.tween_property(_content, "modulate", _COLOR_SELECT, _TWEEN_TIME)
 	
 	if ConfigBus.get_bool("accessibility.reduced_motion"):
-		tween.custom_step(_TWEEN_TIME) # warning-ignore: RETURN_VALUE_DISCARDED
+		tween.custom_step.call_deferred(_TWEEN_TIME)
 	
-	_select()
-	EventBus.emit_tooltip_display_request(tooltip)
-	emit_signal("selected")
+	EventBus.tooltip_display_request.emit(tooltip)
+	selected.emit()
 
 
 # Deselect the menu row.
 func deselect() -> void:
-	if not is_selected:
+	if not _is_selected:
 		return
 	
-	is_selected = false
-	var tween: SceneTreeTween = create_tween().set_trans(_TWEEN_TRANS).set_parallel()
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	tween.tween_property(_select_rect, "rect_size:x", 0.0, _TWEEN_TIME)
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	tween.tween_property(_underline_rect, "rect_size:x", 0.0, _TWEEN_TIME)
-	# warning-ignore: RETURN_VALUE_DISCARDED
+	_is_selected = false
+	var tween: Tween = create_tween().set_trans(_TWEEN_TRANS).set_parallel()
+	tween.tween_property(_select_rect, "size:x", 0.0, _TWEEN_TIME)
+	tween.tween_property(_underline_rect, "size:x", 0.0, _TWEEN_TIME)
 	tween.tween_property(_content, "modulate", _COLOR_DESELECT, _TWEEN_TIME)
 	
 	if ConfigBus.get_bool("accessibility.reduced_motion"):
-		tween.custom_step(_TWEEN_TIME) # warning-ignore: RETURN_VALUE_DISCARDED
+		tween.custom_step.call_deferred(_TWEEN_TIME)
 	
-	_deselect()
-	emit_signal("deselected")
+	deselected.emit()

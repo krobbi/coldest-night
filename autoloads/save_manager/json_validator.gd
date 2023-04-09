@@ -1,11 +1,11 @@
 class_name JSONValidator
-extends Reference
+extends RefCounted
 
 # JSON Validator
 # A JSON validator is a wrapper class for parsing and validating JSON data.
 
 var _is_valid: bool = true
-var _data_stack: Array
+var _data_stack: Array[Variant]
 
 # Clear the JSON validator.
 func _init() -> void:
@@ -18,13 +18,13 @@ func get_root_data() -> Dictionary:
 
 
 # Get the JSON validator's leaf data.
-func get_leaf_data():
+func get_leaf_data() -> Variant:
 	return _data_stack[-1]
 
 
 # Get the JSON validator's leaf data's keys.
-func get_keys() -> Array:
-	var leaf = get_leaf_data()
+func get_keys() -> Array[Variant]:
+	var leaf: Variant = get_leaf_data()
 	
 	if typeof(leaf) == TYPE_DICTIONARY:
 		return leaf.keys()
@@ -36,7 +36,7 @@ func get_keys() -> Array:
 
 # Get a property from the JSON validator from its key. Return `default` if the
 # property does not exist.
-func get_property(key, default = null):
+func get_property(key: Variant, default: Variant = null) -> Variant:
 	if has_property(key):
 		return get_leaf_data()[key]
 	else:
@@ -49,8 +49,8 @@ func is_valid() -> bool:
 
 
 # Return whether the JSON validator's leaf data has a property from its key.
-func has_property(key) -> bool:
-	var leaf = get_leaf_data()
+func has_property(key: Variant) -> bool:
+	var leaf: Variant = get_leaf_data()
 	
 	if typeof(leaf) == TYPE_DICTIONARY and typeof(key) == TYPE_STRING:
 		return leaf.has(key)
@@ -60,58 +60,68 @@ func has_property(key) -> bool:
 		return false
 
 
-# Return whether the JSON validator's leaf data has an enum property.
-func has_enum(key, values: Array) -> bool:
-	if has_property(key):
-		return get_property(key) in values
-	else:
-		return false
-
-
 # Return whether the JSON validator's leaf data has an int property. Integer
 # float values are accepted as JSON has an ambiguous number format. `INF` and
 # `NAN` are not accepted.
-func has_int(key) -> bool:
+func has_int(key: Variant) -> bool:
 	if not has_property(key):
 		return false
 	
-	var value = get_property(key)
+	var value: Variant = get_property(key)
 	
 	if typeof(value) == TYPE_INT:
 		return true
-	elif typeof(value) == TYPE_REAL:
-		return not is_inf(value) and not is_nan(value) and floor(value) == value
+	elif typeof(value) == TYPE_FLOAT:
+		return is_finite(value) and floorf(value) == value
 	else:
 		return false
+
+
+# Return whether the JSON validator's leaf data has an int property with a
+# specific value.
+func has_int_value(key: Variant, value: int) -> bool:
+	return has_int(key) and int(get_property(key)) == value
 
 
 # Return whether the JSON validator's leaf data has a float property. Int values
 # are accepted as JSON has an ambiguous number format. `INF` and `NAN` are not
 # accepted.
-func has_float(key) -> bool:
+func has_float(key: Variant) -> bool:
 	if not has_property(key):
 		return false
 	
-	var value = get_property(key)
+	var value: Variant = get_property(key)
 	
 	if typeof(value) == TYPE_INT:
 		return true
-	elif typeof(value) == TYPE_REAL:
-		return not is_inf(value) and not is_nan(value)
+	elif typeof(value) == TYPE_FLOAT:
+		return is_finite(value)
 	else:
 		return false
 
 
 # Return whether the JSON validator's leaf data has a string property.
-func has_string(key) -> bool:
+func has_string(key: Variant) -> bool:
 	if has_property(key):
 		return typeof(get_property(key)) == TYPE_STRING
 	else:
 		return false
 
 
+# Return whether the JSON validator's leaf data has a string property with a
+# specific value.
+func has_string_value(key: Variant, value: String) -> bool:
+	return has_string(key) and get_property(key) == value
+
+
+# Return whether the JSON validator's leaf data has a string property with a
+# value in a set of values.
+func has_string_enum(key: Variant, values: Array[String]) -> bool:
+	return has_string(key) and get_property(key) in values
+
+
 # Return whether the JSON validator's leaf data has a dictionary property.
-func has_dictionary(key) -> bool:
+func has_dictionary(key: Variant) -> bool:
 	if has_property(key):
 		return typeof(get_property(key)) == TYPE_DICTIONARY
 	else:
@@ -119,7 +129,7 @@ func has_dictionary(key) -> bool:
 
 
 # Return whether the JSON validator's leaf data has an array property.
-func has_array(key) -> bool:
+func has_array(key: Variant) -> bool:
 	if has_property(key):
 		return typeof(get_property(key)) == TYPE_ARRAY
 	else:
@@ -140,12 +150,9 @@ func invalidate() -> void:
 # Initialize the JSON validator from a JSON file's path.
 func from_path(path: String) -> void:
 	clear()
-	var file: File = File.new()
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
 	
-	if file.open(path, File.READ) != OK:
-		if file.is_open():
-			file.close()
-		
+	if not file:
 		invalidate()
 		return
 	
@@ -157,17 +164,13 @@ func from_path(path: String) -> void:
 # Initialize the JSON vaidator from a JSON string.
 func from_json(json: String) -> void:
 	clear()
+	var data: Variant = JSON.parse_string(json)
 	
-	if not validate_json(json).empty():
+	if typeof(data) != TYPE_DICTIONARY:
 		invalidate()
 		return
 	
-	var parse_result: JSONParseResult = JSON.parse(json)
-	
-	if parse_result.error == OK and typeof(parse_result.result) == TYPE_DICTIONARY:
-		from_data(parse_result.result)
-	else:
-		invalidate()
+	from_data(data)
 
 
 # Initialize the JSON validator from a data dictionary.
@@ -177,52 +180,68 @@ func from_data(data: Dictionary) -> void:
 
 
 # Invalidate the JSON validator if its leaf data does not have a property.
-func check_property(key) -> void:
+func check_property(key: Variant) -> void:
 	if not has_property(key):
 		invalidate()
 
 
-# Invalidate the JSON validator if its leaf data does not have an enum property.
-func check_enum(key, values: Array) -> void:
-	if not has_enum(key, values):
-		invalidate()
-
-
 # Invalidate the JSON validator if its leaf data does not have an int property.
-func check_int(key) -> void:
+func check_int(key: Variant) -> void:
 	if not has_int(key):
 		invalidate()
 
 
+# Invalidate the JSON validator if its leaf data does not have an int property
+# with a specific value.
+func check_int_value(key: Variant, value: int) -> void:
+	if not has_int_value(key, value):
+		invalidate()
+
+
 # Invalidate the JSON validator if its leaf data does not have a float property.
-func check_float(key) -> void:
+func check_float(key: Variant) -> void:
 	if not has_float(key):
 		invalidate()
 
 
 # Invalidate the JSON validator if its leaf data does not have a string
 # property.
-func check_string(key) -> void:
+func check_string(key: Variant) -> void:
 	if not has_string(key):
+		invalidate()
+
+
+# Invalidate the JSON validator if its leaf data does not have a string property
+# with a specific value.
+func check_string_value(key: Variant, value: String) -> void:
+	if not has_string_value(key, value):
+		invalidate()
+
+
+# Invalidate the JSON validator if its leaf data does not have a string property
+# with a value in a set of values.
+func check_string_enum(key: Variant, values: Array[String]) -> void:
+	if not has_string_enum(key, values):
 		invalidate()
 
 
 # Invalidate the JSON validator if its leaf data does not have a dictionary
 # property.
-func check_dictionary(key) -> void:
+func check_dictionary(key: Variant) -> void:
 	if not has_dictionary(key):
 		invalidate()
 
 
-# Invalidae the JSON validator if its leaf data does not have an array property.
-func check_array(key) -> void:
+# Invalidate the JSON validator if its leaf data does not have an array
+# property.
+func check_array(key: Variant) -> void:
 	if not has_array(key):
 		invalidate()
 
 
 # Enter a dictionary property of the JSON validator's leaf data as the new leaf
 # data.
-func enter_dictionary(key) -> void:
+func enter_dictionary(key: Variant) -> void:
 	if has_dictionary(key):
 		_data_stack.push_back(get_property(key))
 	else:
@@ -232,7 +251,7 @@ func enter_dictionary(key) -> void:
 
 # Enter an array property of the JSON validator's leaf data as the new leaf
 # data.
-func enter_array(key) -> void:
+func enter_array(key: Variant) -> void:
 	if has_array(key):
 		_data_stack.push_back(get_property(key))
 	else:
@@ -243,6 +262,6 @@ func enter_array(key) -> void:
 # Exit the JSON validator's leaf data.
 func exit() -> void:
 	if _data_stack.size() > 1:
-		_data_stack.remove(_data_stack.size() - 1)
+		_data_stack.remove_at(_data_stack.size() - 1)
 	else:
 		invalidate()

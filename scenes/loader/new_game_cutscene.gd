@@ -3,7 +3,7 @@ extends Cutscene
 # New Game Cutscene
 # The new game cutscene is the cutscene that runs when a new game is started.
 
-export(AudioStream) var _music: AudioStream
+@export var _music: AudioStream
 
 # Run the new game cutscene.
 func run() -> void:
@@ -16,7 +16,7 @@ func run() -> void:
 	hide()
 	
 	sleep(1.0)
-	then("play_music", [_music], AudioManager)
+	then(AudioManager.play_music.bind(_music))
 	
 	show()
 	speaker()

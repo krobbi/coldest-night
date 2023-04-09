@@ -13,9 +13,9 @@ const WEST_COMPLETE_FLAG: String = "test/area_bx/hub/has_seen_west_complete"
 const NORTH_TOTAL: int = 10
 const WEST_TOTAL: int = NORTH_TOTAL + 6 + 1
 
-export(NodePath) var _terminal_point_path: NodePath
+@export var _terminal_point_path: NodePath
 
-onready var _terminal_point: Position2D = get_node(_terminal_point_path)
+@onready var _terminal_point: Marker2D = get_node(_terminal_point_path)
 
 # Run the hub enter cutscene.
 func run() -> void:

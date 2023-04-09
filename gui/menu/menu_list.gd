@@ -4,11 +4,11 @@ extends VBoxContainer
 # Menu List
 # A menu list is a GUI element that contains a list of menu rows.
 
-var _menu_rows: Array = []
+var _menu_rows: Array[MenuRow] = []
 var _menu_row_count: int = 0
 var _selected_menu_row: int = -1
 
-onready var _menu_move_player: AudioStreamPlayer = $MenuMovePlayer
+@onready var _menu_move_player: AudioStreamPlayer = $MenuMovePlayer
 
 # Run when the menu list enters the scene tree. add and connect the menu list's
 # menu rows.
@@ -32,19 +32,30 @@ func _ready() -> void:
 				_menu_rows[(i + 1) % _menu_row_count].get_focus_node()
 		)
 		focus_node.focus_previous = prev_focus
-		focus_node.focus_neighbour_top = prev_focus
+		focus_node.focus_neighbor_top = prev_focus
 		focus_node.focus_next = next_focus
-		focus_node.focus_neighbour_bottom = next_focus
-		connect_select_row(focus_node, "focus_entered", i)
-		connect_select_row(menu_row, "mouse_entered", i)
+		focus_node.focus_neighbor_bottom = next_focus
+		
+		if focus_node.focus_entered.connect(select_row.bind(i)) != OK:
+			if focus_node.focus_entered.is_connected(select_row):
+				focus_node.focus_entered.disconnect(select_row)
+		
+		if menu_row.mouse_entered.connect(select_row.bind(i)) != OK:
+			if menu_row.mouse_entered.is_connected(select_row):
+				menu_row.mouse_entered.disconnect(select_row)
 
 
 # Run when the menu list exits the scene tree. Disconnect signals from selecting
 # menu rows.
 func _exit_tree() -> void:
-	for connection in get_incoming_connections():
-		if connection.method_name == "select_row":
-			connection.source.disconnect(connection.signal_name, self, connection.method_name)
+	for menu_row in _menu_rows:
+		if menu_row.mouse_entered.is_connected(select_row):
+			menu_row.mouse_entered.disconnect(select_row)
+		
+		var focus_node: Control = menu_row.get_focus_node()
+		
+		if focus_node.focus_entered.is_connected(select_row):
+			focus_node.focus_entered.disconnect(select_row)
 
 
 # Get the selected menu row's index.
@@ -64,11 +75,3 @@ func select_row(index: int) -> void:
 	var menu_row: MenuRow = _menu_rows[_selected_menu_row]
 	menu_row.select()
 	menu_row.get_focus_node().grab_focus()
-
-
-# Connect a signal to selecting a menu row.
-func connect_select_row(source: Object, signal_name: String, index: int) -> void:
-	var error: int = source.connect(signal_name, self, "select_row", [index])
-	
-	if error and source.is_connected(signal_name, self, "select_row"):
-		source.disconnect(signal_name, self, "select_row")

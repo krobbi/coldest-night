@@ -1,25 +1,25 @@
 class_name RadarPoint
-extends Position2D
+extends Marker2D
 
 # Radar Point
 # A radar point is a component that is rendered as a point on the radar display.
 
-signal display_style_changed
+signal display_style_changed(display_style: DisplayStyle)
 
 enum DisplayStyle {NONE, PLAYER, GUARD, COLLECTABLE}
 
-export(DisplayStyle) var _display_style: int = DisplayStyle.GUARD
+@export var _display_style: DisplayStyle = DisplayStyle.GUARD
 
 # Run when the radar point enters the scene tree. Emit a radar render point
 # request event.
 func _enter_tree() -> void:
-	EventBus.emit_radar_render_point_request(self)
+	EventBus.radar_render_point_request.emit(self)
 
 
 # Set the radar point's display style.
-func set_display_style(value: int) -> void:
+func set_display_style(value: DisplayStyle) -> void:
 	_display_style = value
-	emit_signal("display_style_changed", _display_style)
+	display_style_changed.emit(_display_style)
 
 
 # Get the radar point's display style.

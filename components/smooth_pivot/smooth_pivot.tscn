@@ -1,12 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://bbfb4k27hypgp"]
 
-[ext_resource path="res://components/smooth_pivot/smooth_pivot.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://components/smooth_pivot/smooth_pivot.gd" id="1"]
 
-[node name="SmoothPivot" type="Position2D"]
-script = ExtResource( 1 )
-__meta__ = {
-"_gizmo_extents_": 16.0
-}
+[node name="SmoothPivot" type="Marker2D"]
+script = ExtResource("1")
 
 [node name="TweenTimer" type="Timer" parent="."]
 one_shot = true

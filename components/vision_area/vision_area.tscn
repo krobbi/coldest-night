@@ -1,18 +1,16 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://dnscs04iptupt"]
 
-[ext_resource path="res://components/vision_area/vision_area.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://components/vision_area/vision_area.gd" id="1"]
 
 [node name="VisionArea" type="Area2D"]
 collision_layer = 0
 collision_mask = 8
 monitorable = false
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_group_": true
-}
+script = ExtResource("1")
+metadata/_edit_group_ = true
 
-[node name="RayCast" type="RayCast2D" parent="."]
-cast_to = Vector2( 0, 0 )
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(0, 0)
 collision_mask = 12
 collide_with_areas = true
 

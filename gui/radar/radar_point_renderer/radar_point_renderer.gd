@@ -10,10 +10,10 @@ const GUARD_COLOR: Color = Color("#ad1818")
 const COLLECTABLE_COLOR: Color = Color("#ff980e")
 
 var _radar_point: RadarPoint = null
-var _display_style: int = RadarPoint.DisplayStyle.NONE
+var _display_style: RadarPoint.DisplayStyle = RadarPoint.DisplayStyle.NONE
 var _colors: Dictionary = {}
 
-onready var _color_polygon: Polygon2D = $ColorPolygon
+@onready var _color_polygon: Polygon2D = $ColorPolygon
 
 # Run when the radar point renderer finished entering the scene tree. Disable
 # the radar point renderer's physics process and subscribe the radar point
@@ -32,35 +32,35 @@ func _physics_process(_delta: float) -> void:
 
 
 # Set the radar point renderer's display style.
-func set_display_style(value: int) -> void:
+func set_display_style(value: RadarPoint.DisplayStyle) -> void:
 	_display_style = value
-	_color_polygon.color = _colors.get(_display_style, Color.transparent)
+	_color_polygon.color = _colors.get(_display_style, Color.TRANSPARENT)
 	visible = _display_style != RadarPoint.DisplayStyle.NONE
 
 
 # Set the radar point renderer's radar point.
 func set_radar_point(value: RadarPoint) -> void:
 	if _radar_point:
-		if _radar_point.is_connected("tree_exiting", self, "queue_free"):
-			_radar_point.disconnect("tree_exiting", self, "queue_free")
+		if _radar_point.tree_exiting.is_connected(queue_free):
+			_radar_point.tree_exiting.disconnect(queue_free)
 		
-		if _radar_point.is_connected("display_style_changed", self, "set_display_style"):
-			_radar_point.disconnect("display_style_changed", self, "set_display_style")
+		if _radar_point.display_style_changed.is_connected(set_display_style):
+			_radar_point.display_style_changed.disconnect(set_display_style)
 	
 	if not value:
 		set_physics_process(false)
 		_radar_point = null
 		return
 	
-	if value.connect("tree_exiting", self, "queue_free", [], CONNECT_ONESHOT) != OK:
-		if value.is_connected("tree_exiting", self, "queue_free"):
-			value.disconnect("tree_exiting", self, "queue_free")
+	if value.tree_exiting.connect(queue_free, CONNECT_ONE_SHOT) != OK:
+		if value.tree_exiting.is_connected(queue_free):
+			value.tree_exiting.disconnect(queue_free)
 		
 		return
 	
-	if value.connect("display_style_changed", self, "set_display_style") != OK:
-		if value.is_connected("display_style_changed", self, "set_display_style"):
-			value.disconnect("display_style_changed", self, "set_display_style")
+	if value.display_style_changed.connect(set_display_style) != OK:
+		if value.display_style_changed.is_connected(set_display_style):
+			value.display_style_changed.disconnect(set_display_style)
 	
 	_radar_point = value
 	position = _radar_point.global_position
@@ -69,12 +69,12 @@ func set_radar_point(value: RadarPoint) -> void:
 
 
 # Add a display style to the radar point renderer.
-func _add_style(config_key: String, config_style: int) -> void:
-	ConfigBus.subscribe_node_string(config_key, self, "_on_config_changed", [config_style])
+func _add_style(config_key: String, config_style: RadarPoint.DisplayStyle) -> void:
+	ConfigBus.subscribe_node_string(config_key, _on_config_changed.bind(config_style))
 
 
 # Run when the radar point renderer's configuration changes. Update the display
 # style colors.
-func _on_config_changed(value: String, config_style: int) -> void:
+func _on_config_changed(value: String, config_style: RadarPoint.DisplayStyle) -> void:
 	_colors[config_style] = DisplayManager.get_palette_color(value)
 	set_display_style(_display_style)

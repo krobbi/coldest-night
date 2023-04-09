@@ -1,52 +1,76 @@
-[gd_resource type="Theme" load_steps=10 format=2]
+[gd_resource type="Theme" load_steps=10 format=3 uid="uid://b71ruafb4hlk1"]
 
-[ext_resource path="res://resources/fonts/coldnight.tres" type="DynamicFont" id=1]
-[ext_resource path="res://resources/textures/gui/checkboxes/unchecked.png" type="Texture" id=2]
-[ext_resource path="res://resources/textures/gui/checkboxes/checked.png" type="Texture" id=3]
-[ext_resource path="res://resources/textures/gui/bars/content_horizontal.png" type="Texture" id=4]
-[ext_resource path="res://resources/textures/gui/bars/border.png" type="Texture" id=5]
+[ext_resource type="Texture2D" uid="uid://hv2c5fg1fmrx" path="res://resources/textures/gui/checkboxes/unchecked.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://01g2xnu1s8yt" path="res://resources/textures/gui/checkboxes/checked.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://byw2tgh2o0gfg" path="res://resources/textures/gui/bars/content_horizontal.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://wjpxx1pyfdda" path="res://resources/textures/gui/bars/border.png" id="5"]
+[ext_resource type="FontFile" uid="uid://cr4gap6dsct16" path="res://resources/fonts/coldnight.ttf" id="5_xbl4c"]
 
-[sub_resource type="StyleBoxEmpty" id=1]
+[sub_resource type="StyleBoxEmpty" id="1"]
 
-[sub_resource type="ImageTexture" id=2]
+[sub_resource type="ImageTexture" id="ImageTexture_mrfi2"]
 
-[sub_resource type="StyleBoxTexture" id=3]
-texture = ExtResource( 4 )
-region_rect = Rect2( 0, 0, 11, 16 )
-margin_left = 5.0
-margin_right = 5.0
-margin_top = 5.0
-margin_bottom = 5.0
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_uo2nc"]
+texture = ExtResource("4")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 5.0
+region_rect = Rect2(0, 0, 11, 16)
 
-[sub_resource type="StyleBoxTexture" id=4]
-texture = ExtResource( 5 )
-region_rect = Rect2( 0, 0, 16, 16 )
-margin_left = 2.0
-margin_right = 2.0
-margin_top = 2.0
-margin_bottom = 2.0
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wx601"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+texture = ExtResource("5")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+region_rect = Rect2(0, 0, 16, 16)
 draw_center = false
 
 [resource]
-default_font = ExtResource( 1 )
-Button/colors/font_color = Color( 1, 1, 1, 1 )
-Button/colors/font_color_disabled = Color( 1, 1, 1, 1 )
-Button/colors/font_color_focus = Color( 1, 1, 1, 1 )
-Button/colors/font_color_hover = Color( 1, 1, 1, 1 )
-Button/constants/hseparation = 8
-Button/styles/disabled = SubResource( 1 )
-Button/styles/focus = SubResource( 1 )
-Button/styles/hover = SubResource( 1 )
-Button/styles/normal = SubResource( 1 )
-Button/styles/pressed = SubResource( 1 )
-CheckButton/icons/off = ExtResource( 2 )
-CheckButton/icons/off_disabled = ExtResource( 2 )
-CheckButton/icons/on = ExtResource( 3 )
-CheckButton/icons/on_disabled = ExtResource( 3 )
-HSlider/icons/grabber = SubResource( 2 )
-HSlider/icons/grabber_disabled = SubResource( 2 )
-HSlider/icons/grabber_highlight = SubResource( 2 )
-HSlider/icons/tick = SubResource( 2 )
-HSlider/styles/grabber_area = SubResource( 3 )
-HSlider/styles/grabber_area_highlight = SubResource( 3 )
-HSlider/styles/slider = SubResource( 4 )
+default_font = ExtResource("5_xbl4c")
+default_font_size = 16
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_disabled_color = Color(1, 1, 1, 1)
+Button/colors/font_focus_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+Button/colors/font_outline_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(1, 1, 1, 1)
+Button/colors/icon_disabled_color = Color(1, 1, 1, 1)
+Button/colors/icon_focus_color = Color(1, 1, 1, 1)
+Button/colors/icon_hover_color = Color(1, 1, 1, 1)
+Button/colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+Button/colors/icon_normal_color = Color(1, 1, 1, 1)
+Button/colors/icon_pressed_color = Color(1, 1, 1, 1)
+Button/constants/h_separation = 8
+Button/styles/disabled = SubResource("1")
+Button/styles/focus = SubResource("1")
+Button/styles/hover = SubResource("1")
+Button/styles/normal = SubResource("1")
+Button/styles/pressed = SubResource("1")
+CheckButton/icons/checked = ExtResource("3")
+CheckButton/icons/checked_disabled = ExtResource("3")
+CheckButton/icons/checked_disabled_mirrored = ExtResource("3")
+CheckButton/icons/checked_mirrored = ExtResource("3")
+CheckButton/icons/unchecked = ExtResource("2")
+CheckButton/icons/unchecked_disabled = ExtResource("2")
+CheckButton/icons/unchecked_disabled_mirrored = ExtResource("2")
+CheckButton/icons/unchecked_mirrored = ExtResource("2")
+CheckButton/styles/disabled = SubResource("1")
+CheckButton/styles/focus = SubResource("1")
+CheckButton/styles/hover = SubResource("1")
+CheckButton/styles/hover_pressed = SubResource("1")
+CheckButton/styles/normal = SubResource("1")
+CheckButton/styles/pressed = SubResource("1")
+HSlider/icons/grabber = SubResource("ImageTexture_mrfi2")
+HSlider/icons/grabber_disabled = SubResource("ImageTexture_mrfi2")
+HSlider/icons/grabber_highlight = SubResource("ImageTexture_mrfi2")
+HSlider/icons/tick = SubResource("ImageTexture_mrfi2")
+HSlider/styles/grabber_area = SubResource("StyleBoxTexture_uo2nc")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxTexture_uo2nc")
+HSlider/styles/slider = SubResource("StyleBoxTexture_wx601")

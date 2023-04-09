@@ -23,11 +23,10 @@ func begin() -> void:
 	for actor in _tree.get_nodes_in_group("actors"):
 		if actor.actor_key == _actor_key and actor.state_machine.get_state_name() == "Pathing":
 			_actor = actor
-			_actor.find_nav_path(_target_pos)
-			_actor.run_nav_path()
+			_actor.navigate_to(_target_pos)
 			break
 
 
 # Tick the path cutscene action and return whether it has finished.
 func tick(_delta: float) -> bool:
-	return not is_instance_valid(_actor) or not _actor.is_pathing()
+	return not is_instance_valid(_actor) or not _actor.is_navigating()

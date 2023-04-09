@@ -6,7 +6,7 @@ extends Polygon2D
 # the size, position, and rotation of a vision area.
 
 var _vision_area: VisionArea = null
-var _display_style: int = VisionArea.DisplayStyle.NONE
+var _display_style: VisionArea.DisplayStyle = VisionArea.DisplayStyle.NONE
 var _colors: Dictionary = {}
 
 # Run when the radar vision area renderer enters the scene tree. Disable the
@@ -26,35 +26,35 @@ func _physics_process(_delta: float) -> void:
 
 
 # Set the radar vision area renderer's display style.
-func set_display_style(value: int) -> void:
+func set_display_style(value: VisionArea.DisplayStyle) -> void:
 	_display_style = value
-	modulate = _colors.get(_display_style, Color.transparent)
+	modulate = _colors.get(_display_style, Color.TRANSPARENT)
 	visible = value != VisionArea.DisplayStyle.NONE
 
 
 # Set the radar vision area renderer's vision area.
 func set_vision_area(value: VisionArea) -> void:
 	if _vision_area:
-		if _vision_area.is_connected("tree_exiting", self, "queue_free"):
-			_vision_area.disconnect("tree_exiting", self, "queue_free")
+		if _vision_area.tree_exiting.is_connected(queue_free):
+			_vision_area.tree_exiting.disconnect(queue_free)
 		
-		if _vision_area.is_connected("display_style_changed", self, "set_display_style"):
-			_vision_area.disconnect("display_style_changed", self, "set_display_style")
+		if _vision_area.display_style_changed.is_connected(set_display_style):
+			_vision_area.display_style_changed.disconnect(set_display_style)
 	
 	if not value:
 		set_physics_process(false)
 		_vision_area = null
 		return
 	
-	if value.connect("tree_exiting", self, "queue_free", [], CONNECT_ONESHOT) != OK:
-		if value.is_connected("tree_exiting", self, "queue_free"):
-			value.disconnect("tree_exiting", self, "queue_free")
+	if value.tree_exiting.connect(queue_free, CONNECT_ONE_SHOT) != OK:
+		if value.tree_exiting.is_connected(queue_free):
+			value.tree_exiting.disconnect(queue_free)
 		
 		return
 	
-	if value.connect("display_style_changed", self, "set_display_style") != OK:
-		if value.is_connected("display_style_changed", self, "set_display_style"):
-			value.disconnect("display_style_changed", self, "set_display_style")
+	if value.display_style_changed.connect(set_display_style) != OK:
+		if value.display_style_changed.is_connected(set_display_style):
+			value.display_style_changed.disconnect(set_display_style)
 	
 	_vision_area = value
 	var near_edge_pos: Vector2 = _vision_area.get_near_edge_pos()
@@ -74,12 +74,12 @@ func set_vision_area(value: VisionArea) -> void:
 
 
 # Add a display style to the radar vision area renderer.
-func _add_style(config_key: String, config_style: int) -> void:
-	ConfigBus.subscribe_node_string(config_key, self, "_on_config_changed", [config_style])
+func _add_style(config_key: String, config_style: VisionArea.DisplayStyle) -> void:
+	ConfigBus.subscribe_node_string(config_key, _on_config_changed.bind(config_style))
 
 
 # Run when the radar vision area renderer's configuration changes. Update the
 # display style colors.
-func _on_config_changed(value: String, config_style: int) -> void:
+func _on_config_changed(value: String, config_style: VisionArea.DisplayStyle) -> void:
 	_colors[config_style] = DisplayManager.get_palette_color(value)
 	set_display_style(_display_style)

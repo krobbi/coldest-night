@@ -15,5 +15,5 @@ func display_text(text: String) -> void:
 	else:
 		animation_player.play("display")
 	
-	yield(animation_player, "animation_finished")
+	await animation_player.animation_finished
 	queue_free()

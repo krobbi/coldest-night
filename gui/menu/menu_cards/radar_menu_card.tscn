@@ -1,145 +1,86 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=3 uid="uid://b5fwm4pfecwrt"]
 
-[ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=2]
-[ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=3]
-[ext_resource path="res://gui/menu/menu_rows/config_slider_menu_row.tscn" type="PackedScene" id=4]
-[ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=5]
-[ext_resource path="res://gui/menu/menu_rows/color_config_option_menu_row.tscn" type="PackedScene" id=6]
+[ext_resource type="PackedScene" uid="uid://chkq7f11r28a0" path="res://gui/menu/menu_cards/scroll_menu_card.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://c6374r3urk8o6" path="res://gui/menu/menu_rows/button_menu_row.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://b8dyyssck2fju" path="res://resources/textures/gui/icons/back.png" id="3"]
+[ext_resource type="PackedScene" uid="uid://ban24f37p4eqh" path="res://gui/menu/menu_rows/config_slider_menu_row.tscn" id="4"]
+[ext_resource type="PackedScene" uid="uid://d1nk1tvcpy5d1" path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://dswhwmruafqun" path="res://gui/menu/menu_rows/color_config_option_menu_row.tscn" id="6"]
+[ext_resource type="AudioStream" uid="uid://cymu5mgsmse7e" path="res://resources/audio/sfx/menu_cancel.ogg" id="7"]
 
-[node name="RadarMenuCard" instance=ExtResource( 1 )]
-
-[node name="VBoxContainer" parent="CenterContainer" index="0"]
-margin_left = 56.0
-margin_right = 584.0
+[node name="RadarMenuCard" instance=ExtResource("1")]
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
-margin_right = 528.0
 text = "HEADING.RADAR_SETTINGS"
 
-[node name="HeadingSeparator" parent="CenterContainer/VBoxContainer" index="1"]
-margin_right = 528.0
+[node name="ShowWorldConesCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource("5")]
+layout_mode = 2
+_config = "radar.show_world_cones"
 
-[node name="ScrollContainer" parent="CenterContainer/VBoxContainer" index="2"]
-margin_right = 528.0
+[node name="NormalConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.normal_cone_color"
 
-[node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 536.0
+[node name="CautionConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.caution_cone_color"
 
-[node name="ShowWorldConesCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 5 )]
-anchor_right = 0.0
-margin_right = 512.0
-config = "radar.show_world_cones"
+[node name="AlertConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.alert_cone_color"
 
-[node name="NormalConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 36.0
-margin_right = 512.0
-margin_bottom = 68.0
-config = "radar.normal_cone_color"
+[node name="VisibleCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource("5")]
+layout_mode = 2
+_config = "radar.visible"
+_is_pressed = true
 
-[node name="CautionConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 72.0
-margin_right = 512.0
-margin_bottom = 104.0
-config = "radar.caution_cone_color"
+[node name="ScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource("4")]
+layout_mode = 2
+_config = "radar.scale"
+_slider_value = 100.0
+_min_value = 100.0
+_max_value = 300.0
+_step = 25.0
 
-[node name="AlertConeColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 108.0
-margin_right = 512.0
-margin_bottom = 140.0
-config = "radar.alert_cone_color"
+[node name="BackgroundColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.background_color"
 
-[node name="VisibleCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 5 )]
-anchor_right = 0.0
-margin_top = 144.0
-margin_right = 512.0
-margin_bottom = 176.0
-is_pressed = true
-config = "radar.visible"
+[node name="BackgroundOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource("4")]
+layout_mode = 2
+_config = "radar.background_opacity"
+_slider_value = 50.0
+_step = 10.0
 
-[node name="ScaleSlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 180.0
-margin_right = 512.0
-margin_bottom = 212.0
-slider_value = 1.0
-min_value = 1.0
-max_value = 3.0
-step = 0.25
-config = "radar.scale"
+[node name="WallColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.wall_color"
 
-[node name="BackgroundColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 216.0
-margin_right = 512.0
-margin_bottom = 248.0
-config = "radar.background_color"
+[node name="FloorColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="9" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.floor_color"
 
-[node name="BackgroundOpacitySlider" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 252.0
-margin_right = 512.0
-margin_bottom = 284.0
-slider_value = 50.0
-step = 10.0
-config = "radar.background_opacity"
+[node name="BarrierColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="10" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.barrier_color"
 
-[node name="WallColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 288.0
-margin_right = 512.0
-margin_bottom = 320.0
-config = "radar.wall_color"
+[node name="PlayerColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="11" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.player_color"
 
-[node name="FloorColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="9" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 324.0
-margin_right = 512.0
-margin_bottom = 356.0
-config = "radar.floor_color"
+[node name="GuardColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="12" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.guard_color"
 
-[node name="BarrierColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="10" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 360.0
-margin_right = 512.0
-margin_bottom = 392.0
-config = "radar.barrier_color"
+[node name="CollectableColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="13" instance=ExtResource("6")]
+layout_mode = 2
+_config = "radar.collectable_color"
 
-[node name="PlayerColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="11" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 396.0
-margin_right = 512.0
-margin_bottom = 428.0
-config = "radar.player_color"
-
-[node name="GuardColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="12" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 432.0
-margin_right = 512.0
-margin_bottom = 464.0
-config = "radar.guard_color"
-
-[node name="CollectableColorOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="13" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 468.0
-margin_right = 512.0
-margin_bottom = 500.0
-config = "radar.collectable_color"
-
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="14" instance=ExtResource( 2 )]
-anchor_right = 0.0
-margin_top = 504.0
-margin_right = 512.0
-margin_bottom = 536.0
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="14" instance=ExtResource("2")]
+layout_mode = 2
+_text = "BUTTON.GO_BACK"
+_icon = ExtResource("3")
+_pressed_sound = ExtResource("7")
 tooltip = "TOOLTIP.BUTTON.GO_BACK.FROM_RADAR"
-text = "BUTTON.GO_BACK"
-icon = ExtResource( 3 )
-press_sound = 2
-
-[node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]
-margin_right = 528.0
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]

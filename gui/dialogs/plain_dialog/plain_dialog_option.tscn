@@ -1,34 +1,30 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://hyt4do5q7o2o"]
 
-[ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog_option.gd" type="Script" id=1]
-[ext_resource path="res://resources/themes/dialogs/plain_dialog.tres" type="Theme" id=2]
+[ext_resource type="Script" path="res://gui/dialogs/plain_dialog/plain_dialog_option.gd" id="1"]
+[ext_resource type="Theme" uid="uid://dliyxjn0fcso2" path="res://resources/themes/dialogs/plain_dialog.tres" id="2"]
 
 [node name="PlainDialogOption" type="Button"]
+custom_minimum_size = Vector2(256, 32)
+anchors_preset = 10
 anchor_right = 1.0
-margin_right = -448.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 256, 32 )
+offset_right = -448.0
+offset_bottom = 32.0
 size_flags_vertical = 0
-theme = ExtResource( 2 )
+theme = ExtResource("2")
 text = "Option"
-align = 2
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
+alignment = 2
+script = ExtResource("1")
+metadata/_edit_lock_ = true
 
 [node name="SelectRect" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 0
 anchor_bottom = 1.0
-margin_left = 8.0
-margin_top = 8.0
-margin_right = 8.0
-margin_bottom = -8.0
-rect_min_size = Vector2( 0, 16 )
-mouse_filter = 1
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 8.0
+offset_bottom = -8.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-color = Color( 1, 0.596078, 0.054902, 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+mouse_filter = 1
+color = Color(1, 0.596078, 0.054902, 1)

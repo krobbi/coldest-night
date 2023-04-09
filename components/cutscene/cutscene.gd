@@ -6,11 +6,11 @@ extends Node
 
 signal cutscene_finished
 
-export(bool) var _is_autorun: bool = false
+@export var _is_autorun: bool = false
 
 var _menu_action: MenuCutsceneAction = MenuCutsceneAction.new()
 var _current_action: CutsceneAction = null
-var _action_queue: Array = []
+var _action_queue: Array[CutsceneAction] = []
 
 # Run when the cutscene enters the scene tree. Disable the cutscene's physics
 # process and run the cutscene if it is an autorun.
@@ -25,7 +25,7 @@ func _ready() -> void:
 # action.
 func _physics_process(delta: float) -> void:
 	if not _current_action:
-		if not _action_queue.empty():
+		if not _action_queue.is_empty():
 			_current_action = _action_queue.pop_front()
 			_current_action.begin()
 		else:
@@ -36,14 +36,16 @@ func _physics_process(delta: float) -> void:
 		_current_action.end()
 		_current_action = null
 		
-		if _action_queue.empty():
+		if _action_queue.is_empty():
 			set_physics_process(false)
-			emit_signal("cutscene_finished")
+			cutscene_finished.emit()
 
 
 # Run the cutscene.
 func run() -> void:
-	nop()
+	# Include an empty cutscene action by default to ensure that the
+	# `cutscene_finished` signal is emitted.
+	add_action(CutsceneAction.new())
 
 
 # Set a flag.
@@ -62,22 +64,14 @@ func add_action(action: CutsceneAction) -> void:
 	set_physics_process(true)
 
 
-# Run an empty cutscene action.
-func nop() -> void:
-	add_action(CutsceneAction.new())
-
-
-# Call a method.
-func then(method: String, args: Array = [], object: Object = null) -> void:
-	if not is_instance_valid(object):
-		object = self
-	
-	add_action(CallCutsceneAction.new(object, method, args))
+# Call a callable.
+func then(callable: Callable) -> void:
+	add_action(CallCutsceneAction.new(callable))
 
 
 # Wait for a signal.
-func wait(object: Object, signal_name: String) -> void:
-	add_action(AwaitCutsceneAction.new(object, signal_name))
+func wait(awaited_signal: Signal) -> void:
+	add_action(AwaitCutsceneAction.new(awaited_signal))
 
 
 # Sleep for a duration in seconds.
@@ -87,35 +81,31 @@ func sleep(duration: float) -> void:
 
 # Show the dialog display.
 func show() -> void:
-	add_action(CallCutsceneAction.new(EventBus, "emit_dialog_show_request"))
+	then(func() -> void: EventBus.dialog_show_request.emit())
 
 
 # Hide the dialog display.
 func hide() -> void:
-	add_action(CallCutsceneAction.new(EventBus, "emit_dialog_hide_request"))
+	then(func() -> void: EventBus.dialog_hide_request.emit())
 
 
 # Display a dialog speaker.
 func speaker(speaker_name: String = "") -> void:
-	if speaker_name.empty():
-		add_action(CallCutsceneAction.new(EventBus, "emit_dialog_clear_name_request"))
+	if speaker_name.is_empty():
+		then(func() -> void: EventBus.dialog_clear_name_request.emit())
 	else:
-		add_action(CallCutsceneAction.new(
-				EventBus, "emit_dialog_display_name_request", [speaker_name]))
+		then(func() -> void: EventBus.dialog_display_name_request.emit(speaker_name))
 
 
 # Display a dialog message.
 func say(message: String) -> void:
-	add_action(CallCutsceneAction.new(EventBus, "emit_dialog_display_message_request", [message]))
-	add_action(AwaitCutsceneAction.new(EventBus, "dialog_message_finished"))
+	then(func() -> void: EventBus.dialog_display_message_request.emit(message))
+	wait(EventBus.dialog_message_finished)
 
 
 # Add an option to the dialog menu.
-func option(message: String, method: String, args: Array = [], object: Object = null) -> void:
-	if not is_instance_valid(object):
-		object = self
-	
-	_menu_action.add_option(message, object, method, args)
+func option(message: String, callable: Callable) -> void:
+	_menu_action.add_option(message, callable)
 
 
 # Display the dialog menu.
@@ -136,9 +126,9 @@ func path(actor_key: String, target_pos: Vector2) -> void:
 
 # Freeze the player.
 func freeze() -> void:
-	add_action(CallCutsceneAction.new(EventBus, "emit_player_freeze_request"))
+	then(func() -> void: EventBus.player_freeze_request.emit())
 
 
 # Unfreeze the player.
 func unfreeze() -> void:
-	add_action(CallCutsceneAction.new(EventBus, "emit_player_unfreeze_request"))
+	then(func() -> void: EventBus.player_unfreeze_request.emit())

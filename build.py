@@ -292,7 +292,7 @@ class BuildCommand:
         
         try:
             subprocess.check_call(
-                    [self.godot, "--no-window", "--export", channel])
+                    [self.godot, "--headless", "--export-release", channel])
         except subprocess.CalledProcessError:
             print(f"Failed to export channel `{channel}`!")
             return False

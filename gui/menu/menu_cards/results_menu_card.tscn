@@ -1,70 +1,52 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://bjfrj6goh5hf6"]
 
-[ext_resource path="res://gui/menu/menu_cards/fixed_menu_card.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_cards/results_menu_card.gd" type="Script" id=2]
-[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=3]
-[ext_resource path="res://resources/textures/gui/icons/next.png" type="Texture" id=4]
+[ext_resource type="PackedScene" uid="uid://dc0jhm72vpnto" path="res://gui/menu/menu_cards/fixed_menu_card.tscn" id="1"]
+[ext_resource type="Script" path="res://gui/menu/menu_cards/results_menu_card.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://c6374r3urk8o6" path="res://gui/menu/menu_rows/button_menu_row.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://d14oavfpm1kob" path="res://resources/textures/gui/icons/next.png" id="4"]
 
-[node name="ResultsMenuCard" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
-_is_manually_poppable = false
+[node name="ResultsMenuCard" instance=ExtResource("1")]
+script = ExtResource("2")
 _just_completed_scene_path = "res://scenes/credits/credits.tscn"
 _already_completed_scene_path = "res://scenes/menu/menu.tscn"
-
-[node name="VBoxContainer" parent="CenterContainer" index="0"]
-margin_top = 123.0
-margin_bottom = 237.0
+_is_manually_poppable = false
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
 text = "HEADING.RESULTS"
 
 [node name="GridContainer" type="GridContainer" parent="CenterContainer/VBoxContainer" index="2"]
-margin_top = 30.0
-margin_right = 512.0
-margin_bottom = 70.0
+layout_mode = 2
 columns = 2
+metadata/_edit_lock_ = true
 
 [node name="TimeLabel" type="Label" parent="CenterContainer/VBoxContainer/GridContainer" index="0"]
-margin_right = 328.0
-margin_bottom = 18.0
+layout_mode = 2
 size_flags_horizontal = 3
 text = "LABEL.STAT.TIME"
+metadata/_edit_lock_ = true
 
 [node name="TimeValue" type="Label" parent="CenterContainer/VBoxContainer/GridContainer" index="1"]
-margin_left = 332.0
-margin_right = 512.0
-margin_bottom = 18.0
+layout_mode = 2
 size_flags_horizontal = 3
 text = "00:00:00"
+metadata/_edit_lock_ = true
 
 [node name="AlertCountLabel" type="Label" parent="CenterContainer/VBoxContainer/GridContainer" index="2"]
-margin_top = 22.0
-margin_right = 328.0
-margin_bottom = 40.0
+layout_mode = 2
 size_flags_horizontal = 3
 text = "LABEL.STAT.ALERT_COUNT"
+metadata/_edit_lock_ = true
 
 [node name="AlertCountValue" type="Label" parent="CenterContainer/VBoxContainer/GridContainer" index="3"]
-margin_left = 332.0
-margin_top = 22.0
-margin_right = 512.0
-margin_bottom = 40.0
+layout_mode = 2
 size_flags_horizontal = 3
 text = "0"
+metadata/_edit_lock_ = true
 
-[node name="MenuList" parent="CenterContainer/VBoxContainer" index="3"]
-margin_top = 74.0
-margin_bottom = 106.0
-
-[node name="ContinueButton" parent="CenterContainer/VBoxContainer/MenuList" index="0" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_right = 512.0
+[node name="ContinueButton" parent="CenterContainer/VBoxContainer/MenuList" index="0" instance=ExtResource("3")]
+layout_mode = 2
+_text = "BUTTON.RESULTS_CONTINUE"
+_icon = ExtResource("4")
 tooltip = "TOOLTIP.BUTTON.RESULTS_CONTINUE"
-text = "BUTTON.RESULTS_CONTINUE"
-icon = ExtResource( 4 )
-
-[node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="4"]
-margin_top = 110.0
-margin_bottom = 114.0
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/ContinueButton" to="." method="_on_continue_button_pressed"]

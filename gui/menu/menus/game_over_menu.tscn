@@ -1,23 +1,28 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://bw1mqgnicor37"]
 
-[ext_resource path="res://gui/menu/menus/game_over_menu.gd" type="Script" id=1]
-[ext_resource path="res://gui/menu/menu_stack.tscn" type="PackedScene" id=2]
-[ext_resource path="res://resources/audio/music/menu.ogg" type="AudioStream" id=3]
-[ext_resource path="res://resources/audio/music/game_over.ogg" type="AudioStream" id=4]
+[ext_resource type="Script" path="res://gui/menu/menus/game_over_menu.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://d1j5jmuxywpr4" path="res://gui/menu/menu_stack.tscn" id="2"]
+[ext_resource type="AudioStream" uid="uid://b7pu03ijoc4hc" path="res://resources/audio/music/menu.ogg" id="3"]
+[ext_resource type="AudioStream" uid="uid://c8uybigqdg28r" path="res://resources/audio/music/game_over.ogg" id="4"]
 
 [node name="GameOverMenu" type="ColorRect"]
-pause_mode = 2
+process_mode = 3
 visible = false
-modulate = Color( 0.678431, 0.0941176, 0.0941176, 0 )
+modulate = Color(0.678431, 0.0941176, 0.0941176, 0)
+custom_minimum_size = Vector2(640, 360)
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 640, 360 )
-color = Color( 0.0509804, 0.027451, 0.0352941, 1 )
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
-_game_over_music = ExtResource( 4 )
-_menu_music = ExtResource( 3 )
+color = Color(0.0509804, 0.027451, 0.0352941, 1)
+script = ExtResource("1")
+_game_over_music = ExtResource("4")
+_menu_music = ExtResource("3")
+metadata/_edit_lock_ = true
 
-[node name="MenuStack" parent="." instance=ExtResource( 2 )]
+[node name="MenuStack" parent="." instance=ExtResource("2")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_right = 640.0
+offset_bottom = 360.0
+metadata/_edit_lock_ = true

@@ -6,18 +6,18 @@ extends Label
 
 var _next_message: String
 
-onready var _timer: Timer = $Timer
+@onready var _timer: Timer = $Timer
 
 # Run when the tooltip label finishes entering the scene tree. Subscribe the
 # tooltip label to the config bus and event bus.
 func _ready() -> void:
-	ConfigBus.subscribe_node_bool("accessibility.tooltips", self, "set_visible")
-	EventBus.subscribe_node("tooltip_display_request", self, "display_tooltip")
+	ConfigBus.subscribe_node_bool("accessibility.tooltips", set_visible)
+	EventBus.subscribe_node(EventBus.tooltip_display_request, display_tooltip)
 
 
 # Display a tooltip.
 func display_tooltip(message: String) -> void:
-	if text.empty():
+	if text.is_empty():
 		text = message
 	else:
 		_next_message = message

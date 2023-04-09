@@ -5,7 +5,7 @@ extends Node
 # A state machine is a component of an entity that handles processing a set of
 # finite states.
 
-export(NodePath) var _main_state_path: NodePath
+@export var _main_state_path: NodePath
 
 var _state: State
 

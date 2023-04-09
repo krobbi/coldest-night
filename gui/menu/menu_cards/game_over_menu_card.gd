@@ -4,8 +4,8 @@ extends MenuCard
 # The game over menu card is a fixed menu card that is the root menu card of the
 # game over menu.
 
-export(String, FILE, "*.tscn") var _retry_scene_path: String
-export(String, FILE, "*.tscn") var _quit_scene_path: String
+@export var _retry_scene_path: String # (String, FILE, "*.tscn")
+@export var _quit_scene_path: String # (String, FILE, "*.tscn")
 
 var _is_continuing: bool = false
 var _save_data: SaveData = SaveManager.get_working_data()
@@ -19,7 +19,7 @@ func _on_game_over_retry_button_pressed() -> void:
 	_is_continuing = true
 	SaveManager.pull_from_checkpoint()
 	_save_data.stats.accumulate_alert_count()
-	SceneManager.change_scene(_retry_scene_path)
+	SceneManager.change_scene_to_file(_retry_scene_path)
 
 
 # Run when the quit to main menu button is pressed. Overwrite the current
@@ -37,4 +37,4 @@ func _on_quit_to_main_menu_button_pressed() -> void:
 	_save_data.stats.accumulate_alert_count()
 	SaveManager.push_to_slot()
 	SaveManager.save_file()
-	SceneManager.change_scene(_quit_scene_path)
+	SceneManager.change_scene_to_file(_quit_scene_path)

@@ -1,29 +1,9 @@
-# OS:
-.DS_Store
-desktop.ini
-Thumbs.db
+# Ignore:
+ignore/*
+!ignore/.gdignore
+!ignore/readme.md
 
-# IDE:
-.idea/*
-.vscode/*
-*.code-workspace
-*.sublime-project
-*.sublime-workspace
-*.suo
-
-# Godot Engine:
-.import/*
-.mono/*
-data_*/*
-*.TMP
-*.translation
-
-# Godot Engine Imports:
-*.csv.import
-*.ogg.import
-*.png.import
-
-# Godot Engine Exports:
+# Builds:
 builds/linux-demo/*
 builds/mac-demo/*
 builds/win-demo/*
@@ -34,14 +14,34 @@ builds/version_lock.txt
 !builds/mac-demo/.itch
 !builds/win-demo/.itch
 
-# Python Scripts:
+# Godot Engine:
+.godot/*
+.import/*
+
+# Godot Engine Mono:
+.mono/*
+data_*/*
+mono_crash.*.json
+
+# Godot Engine imported translations:
+*.translation
+
+# Python:
 __pycache__/*
 *$py.class
 *.pyc
 *.pyd
 *.pyo
 
-# Ignore:
-ignore/*
-!ignore/.gdignore
-!ignore/readme.md
+# IDE:
+.idea/*
+.vscode/*
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+*.suo
+
+# OS:
+.DS_Store
+desktop.ini
+Thumbs.db

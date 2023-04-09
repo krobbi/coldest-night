@@ -2,6 +2,8 @@ shader_type canvas_item;
 
 // Based on https://godotshaders.com/shader/colorblindness-correction-shader/
 
+uniform sampler2D SCREEN_TEXTURE: hint_screen_texture, filter_linear_mipmap;
+
 void fragment(){
 	vec4 texel = texture(SCREEN_TEXTURE, SCREEN_UV);
 	

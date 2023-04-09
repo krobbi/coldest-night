@@ -1,9 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://bubixlhpjlhju"]
 
-[ext_resource path="res://gui/radar/radar_laser_wall_renderer/radar_laser_wall_renderer.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://gui/radar/radar_laser_wall_renderer/radar_laser_wall_renderer.gd" id="1"]
 
 [node name="RadarLaserWallRenderer" type="Line2D"]
-points = PoolVector2Array( -64, 0, 64, 0 )
+points = PackedVector2Array(-64, 0, 64, 0)
 width = 16.0
-default_color = Color( 0.678431, 0.0941176, 0.0941176, 1 )
-script = ExtResource( 1 )
+default_color = Color(0.678431, 0.0941176, 0.0941176, 1)
+script = ExtResource("1")

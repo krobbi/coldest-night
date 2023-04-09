@@ -1,15 +1,13 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://cv1ac7dxjnvdj"]
 
-[ext_resource path="res://entities/triggers/trigger.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://entities/triggers/trigger.gd" id="1"]
 
 [node name="Trigger" type="Area2D"]
 collision_layer = 0
 collision_mask = 32
 monitorable = false
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_group_": true
-}
+script = ExtResource("1")
+metadata/_edit_group_ = true
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered" flags=3]
 [connection signal="area_exited" from="." to="." method="_on_area_exited" flags=3]

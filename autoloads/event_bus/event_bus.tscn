@@ -1,7 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://c2k8s3e4ux4p7"]
 
-[ext_resource path="res://autoloads/event_bus/event_bus.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://autoloads/event_bus/event_bus.gd" id="1"]
 
 [node name="EventBus" type="Node"]
-pause_mode = 2
-script = ExtResource( 1 )
+process_mode = 3
+script = ExtResource("1")

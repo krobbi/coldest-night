@@ -2,19 +2,16 @@ class_name CallCutsceneAction
 extends CutsceneAction
 
 # Call Cutscene Action
-# A call cutscene action is a cutscene action that calls a method of an object.
+# A call cutscene action is a cutscene action that calls a callable.
 
-var _object: Object
-var _method: String
-var _args: Array
+var _callable: Callable
 
-# Initialize the call cutscene action's object, method, and arguments.
-func _init(object_ref: Object, method_val: String, args_ref: Array = []) -> void:
-	_object = object_ref
-	_method = method_val
-	_args = args_ref
+# Initialize the call cutscene action's callable.
+func _init(callable_ref: Callable) -> void:
+	_callable = callable_ref
 
 
-# Run when the call cutscene action begins. Call the method.
+# Run when the call cutscene action begins. Call the callable if it is valid.
 func begin() -> void:
-	_object.callv(_method, _args)
+	if _callable.is_valid():
+		_callable.call()

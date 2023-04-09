@@ -1,44 +1,49 @@
-[gd_resource type="Theme" load_steps=8 format=2]
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://bfxlynjqiqif1"]
 
-[ext_resource path="res://resources/fonts/coldnight.tres" type="DynamicFont" id=1]
-[ext_resource path="res://resources/textures/gui/boxes/horizontal.png" type="Texture" id=2]
-[ext_resource path="res://resources/textures/gui/bars/content_vertical.png" type="Texture" id=3]
-[ext_resource path="res://resources/textures/gui/bars/border.png" type="Texture" id=4]
+[ext_resource type="Texture2D" uid="uid://63x36j3avmdv" path="res://resources/textures/gui/boxes/horizontal.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://d3bmm7bjg1uea" path="res://resources/textures/gui/bars/content_vertical.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://wjpxx1pyfdda" path="res://resources/textures/gui/bars/border.png" id="4"]
+[ext_resource type="FontFile" uid="uid://cr4gap6dsct16" path="res://resources/fonts/coldnight.ttf" id="4_txbo8"]
 
-[sub_resource type="StyleBoxTexture" id=1]
-texture = ExtResource( 2 )
-region_rect = Rect2( 0, 0, 3, 2 )
-margin_left = 1.0
-margin_right = 1.0
-modulate_color = Color( 1, 0.596078, 0.054902, 1 )
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vwvhy"]
+content_margin_left = 3.0
+texture = ExtResource("2")
+texture_margin_left = 1.0
+texture_margin_right = 1.0
+expand_margin_top = 1.0
+expand_margin_bottom = 1.0
+region_rect = Rect2(0, 0, 3, 2)
+modulate_color = Color(1, 0.596078, 0.054902, 1)
 
-[sub_resource type="StyleBoxTexture" id=2]
-texture = ExtResource( 3 )
-region_rect = Rect2( 0, 0, 16, 11 )
-margin_left = 5.0
-margin_right = 5.0
-margin_top = 5.0
-margin_bottom = 5.0
-modulate_color = Color( 1, 0.596078, 0.054902, 1 )
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3284u"]
+texture = ExtResource("3")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 5.0
+region_rect = Rect2(0, 0, 16, 11)
+modulate_color = Color(1, 0.596078, 0.054902, 1)
 
-[sub_resource type="StyleBoxTexture" id=3]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sk370"]
+content_margin_left = 14.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 4 )
-region_rect = Rect2( 0, 0, 16, 16 )
-margin_left = 2.0
-margin_right = 2.0
-margin_top = 2.0
-margin_bottom = 2.0
-modulate_color = Color( 1, 0.596078, 0.054902, 1 )
+texture = ExtResource("4")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+region_rect = Rect2(0, 0, 16, 16)
+modulate_color = Color(1, 0.596078, 0.054902, 1)
 draw_center = false
 
 [resource]
-default_font = ExtResource( 1 )
-HSeparator/styles/separator = SubResource( 1 )
-Label/colors/font_color = Color( 0.945098, 0.94902, 0.945098, 1 )
-VScrollBar/styles/grabber = SubResource( 2 )
-VScrollBar/styles/grabber_highlight = SubResource( 2 )
-VScrollBar/styles/grabber_pressed = SubResource( 2 )
-VScrollBar/styles/scroll = SubResource( 3 )
-VScrollBar/styles/scroll_focus = SubResource( 3 )
+default_font = ExtResource("4_txbo8")
+default_font_size = 16
+HSeparator/styles/separator = SubResource("StyleBoxTexture_vwvhy")
+Label/colors/font_color = Color(0.945098, 0.94902, 0.945098, 1)
+VScrollBar/styles/grabber = SubResource("StyleBoxTexture_3284u")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBoxTexture_3284u")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBoxTexture_3284u")
+VScrollBar/styles/scroll = SubResource("StyleBoxTexture_sk370")
+VScrollBar/styles/scroll_focus = SubResource("StyleBoxTexture_sk370")

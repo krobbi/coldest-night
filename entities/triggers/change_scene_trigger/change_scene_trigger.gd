@@ -4,9 +4,9 @@ extends Trigger
 # A change scene trigger is a trigger that changes the current scene when
 # entered.
 
-export(String, FILE, "*.tscn") var _scene_path: String
+@export var _scene_path: String # (String, FILE, "*.tscn")
 
 # Run when a the change scene trigger is entered. Change the current scene.
-func _enter() -> void:
-	EventBus.emit_player_transition_request()
-	SceneManager.change_scene(_scene_path)
+func _on_entered() -> void:
+	EventBus.player_transition_request.emit()
+	SceneManager.change_scene_to_file(_scene_path)

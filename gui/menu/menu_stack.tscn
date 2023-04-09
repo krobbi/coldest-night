@@ -1,12 +1,13 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://d1j5jmuxywpr4"]
 
-[ext_resource path="res://gui/menu/menu_stack.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://gui/menu/menu_stack.gd" id="1"]
 
 [node name="MenuStack" type="Control"]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 640, 360 )
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")

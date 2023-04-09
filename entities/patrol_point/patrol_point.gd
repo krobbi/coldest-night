@@ -1,5 +1,5 @@
 class_name PatrolPoint
-extends Position2D
+extends Marker2D
 
 # Patrol Point
 # A patrol point is an entity that represents a target position of a patrol

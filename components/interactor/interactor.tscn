@@ -1,24 +1,22 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://c36gt3klfejjs"]
 
-[ext_resource path="res://components/interactor/interactor.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://components/interactor/interactor.gd" id="1"]
 
-[sub_resource type="CircleShape2D" id=1]
+[sub_resource type="CircleShape2D" id="1"]
 radius = 40.0
 
 [node name="Interactor" type="Node2D"]
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_group_": true
-}
+script = ExtResource("1")
+metadata/_edit_group_ = true
 
 [node name="SelectingArea" type="Area2D" parent="."]
-position = Vector2( 24, 0 )
+position = Vector2(24, 0)
 collision_layer = 0
 collision_mask = 64
 monitorable = false
 
 [node name="SelectingShape" type="CollisionShape2D" parent="SelectingArea"]
-shape = SubResource( 1 )
+shape = SubResource("1")
 
 [connection signal="area_entered" from="SelectingArea" to="." method="_on_selecting_area_area_entered" flags=3]
 [connection signal="area_exited" from="SelectingArea" to="." method="_on_selecting_area_area_exited" flags=3]

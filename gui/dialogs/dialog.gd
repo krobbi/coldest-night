@@ -4,17 +4,17 @@ extends Control
 # Dialog Display
 # A dialog display is a GUI element that handles displaying dialog messages.
 
-onready var tags: DialogTagParser = $DialogTagParser
+@onready var tags: DialogTagParser = $DialogTagParser
 
 # Run when the dialog display finishes entering the scene tree. Subscribe the
 # dialog display to the event bus.
 func _ready() -> void:
-	EventBus.subscribe_node("dialog_show_request", self, "show_dialog")
-	EventBus.subscribe_node("dialog_hide_request", self, "hide_dialog")
-	EventBus.subscribe_node("dialog_clear_name_request", self, "clear_name")
-	EventBus.subscribe_node("dialog_display_name_request", self, "display_name")
-	EventBus.subscribe_node("dialog_display_message_request", self, "display_message")
-	EventBus.subscribe_node("dialog_display_options_request", self, "display_options")
+	EventBus.subscribe_node(EventBus.dialog_show_request, show_dialog)
+	EventBus.subscribe_node(EventBus.dialog_hide_request, hide_dialog)
+	EventBus.subscribe_node(EventBus.dialog_clear_name_request, clear_name)
+	EventBus.subscribe_node(EventBus.dialog_display_name_request, display_name)
+	EventBus.subscribe_node(EventBus.dialog_display_message_request, display_message)
+	EventBus.subscribe_node(EventBus.dialog_display_options_request, display_options)
 
 
 # Run when the dialog display is shown.
@@ -46,7 +46,7 @@ func _display_message(_message: String) -> void:
 
 # Run when options are displayed to the dialog display. The
 # `dialog_option_pressed` event must be emitted when the user presses an option.
-func _display_options(_texts: PoolStringArray) -> void:
+func _display_options(_texts: PackedStringArray) -> void:
 	pass
 
 
@@ -76,5 +76,5 @@ func display_message(message: String) -> void:
 
 
 # Display options to the dialog display.
-func display_options(texts: PoolStringArray) -> void:
+func display_options(texts: PackedStringArray) -> void:
 	_display_options(texts)

@@ -4,17 +4,17 @@ extends Node
 # The language manager is an autoload scene that handles storing and applying
 # language settings. It can be accessed from any script by using `LangManager`.
 
-signal locale_changed(locale)
+signal locale_changed(locale: String)
 
-var _default_locale: String = ProjectSettings.get_setting("locale/fallback")
+var _default_locale: String = ProjectSettings.get_setting("internationalization/locale/fallback")
 var _locale: String = TranslationServer.get_locale()
-var _supported_locales: PoolStringArray = PoolStringArray(TranslationServer.get_loaded_locales())
+var _supported_locales: PackedStringArray = PackedStringArray(TranslationServer.get_loaded_locales())
 
 # Run when the language manager enters the scene tree. Normalize the default
 # locale and subscribe the language manager to the configuration bus.
 func _ready() -> void:
 	_default_locale = _normalize_locale(_default_locale)
-	ConfigBus.subscribe_node_string("language.locale", self, "set_locale")
+	ConfigBus.subscribe_node_string("language.locale", set_locale)
 
 
 # Set the locale.
@@ -25,7 +25,7 @@ func set_locale(value: String) -> void:
 	_locale = _normalize_locale(value)
 	TranslationServer.set_locale(_locale)
 	ConfigBus.set_string("language.locale", _locale)
-	emit_signal("locale_changed", _locale)
+	locale_changed.emit(_locale)
 
 
 # Get the default locale.
@@ -58,9 +58,9 @@ func _normalize_locale(locale: String) -> String:
 	if locale in _supported_locales:
 		return locale
 	
-	var locale_parts: PoolStringArray = locale.split("_", false)
+	var locale_parts: PackedStringArray = locale.split("_", false)
 	
-	if locale_parts.empty():
+	if locale_parts.is_empty():
 		return _default_locale
 	
 	var locale_language: String = locale_parts[0]

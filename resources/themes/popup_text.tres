@@ -1,10 +1,12 @@
-[gd_resource type="Theme" load_steps=2 format=2]
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://ceoee4rrk5dus"]
 
-[ext_resource path="res://resources/fonts/coldnight.tres" type="DynamicFont" id=1]
+[ext_resource type="FontFile" uid="uid://cr4gap6dsct16" path="res://resources/fonts/coldnight.ttf" id="1_28rot"]
 
 [resource]
-default_font = ExtResource( 1 )
-Label/colors/font_color = Color( 0.945098, 0.94902, 0.945098, 1 )
-Label/colors/font_color_shadow = Color( 0.239216, 0.0196078, 0.0941176, 1 )
+default_font = ExtResource("1_28rot")
+default_font_size = 16
+Label/colors/font_color = Color(0.945098, 0.94902, 0.945098, 1)
+Label/colors/font_shadow_color = Color(0.239216, 0.0196078, 0.0941176, 1)
 Label/constants/shadow_offset_x = 0
 Label/constants/shadow_offset_y = 2
+Label/constants/shadow_outline_size = 0

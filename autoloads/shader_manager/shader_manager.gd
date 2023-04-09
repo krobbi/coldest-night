@@ -4,18 +4,16 @@ extends CanvasLayer
 # The shader manager is an autoload scene that handles applying post processing
 # shader settings. It can be accessed from any script by using `ShaderManager`.
 
-onready var _contrast_boost_buffer: BackBufferCopy = $ContrastBoostBuffer
-onready var _contrast_boost_rect: ColorRect = $ContrastBoostBuffer/ContrastBoostRect
-onready var _color_grading_buffer: BackBufferCopy = $ColorGradingBuffer
-onready var _color_grading_rect: ColorRect = $ColorGradingBuffer/ColorGradingRect
+@onready var _contrast_boost_buffer: BackBufferCopy = $ContrastBoostBuffer
+@onready var _contrast_boost_rect: ColorRect = $ContrastBoostBuffer/ContrastBoostRect
+@onready var _color_grading_buffer: BackBufferCopy = $ColorGradingBuffer
+@onready var _color_grading_rect: ColorRect = $ColorGradingBuffer/ColorGradingRect
 
 # Run when the shader manager finishes entering the scene tree. Subscribe the
 # shader manager to the configuration bus.
 func _ready() -> void:
-	ConfigBus.subscribe_node_float(
-			"accessibility.contrast_boost", self, "_on_contrast_boost_changed")
-	ConfigBus.subscribe_node_string(
-			"accessibility.color_grading", self, "_on_color_grading_changed")
+	ConfigBus.subscribe_node_float("accessibility.contrast_boost", _on_contrast_boost_changed)
+	ConfigBus.subscribe_node_string("accessibility.color_grading", _on_color_grading_changed)
 
 
 # Get a dictionary of color grading options.
@@ -40,7 +38,7 @@ func _on_contrast_boost_changed(value: float) -> void:
 		ConfigBus.set_float("accessibility.contrast_boost", 150.0)
 		return
 	
-	_contrast_boost_rect.material.set_shader_param("magnitude", 1.0 + value * 0.01)
+	_contrast_boost_rect.material.set_shader_parameter("magnitude", 1.0 + value * 0.01)
 	_contrast_boost_buffer.visible = value > 0.0
 
 

@@ -1,5 +1,5 @@
 class_name StatsSaveData
-extends Reference
+extends RefCounted
 
 # Statistics Save Data
 # Statistics save data are structures that represent persistent statistics that

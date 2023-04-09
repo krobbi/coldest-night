@@ -5,52 +5,23 @@ extends MenuRow
 
 signal pressed
 
-enum PressSound {NONE, OK, CANCEL}
+@export var _text: String
+@export var _icon: Texture2D
+@export var _pressed_sound: AudioStream
 
-export(String) var text: String setget set_text
-export(Texture) var icon: Texture setget set_icon
-export(PressSound) var press_sound: int = PressSound.OK
-
-onready var _button: Button = $Content/Button
-onready var _ok_player: RemoteAudioPlayer = $OKPlayer
-onready var _cancel_player: RemoteAudioPlayer = $CancelPlayer
+@onready var _pressed_player: RemoteAudioPlayer = $PressedPlayer
 
 # Run when the button menu row finishes entering the scene tree. Set the
-# button's text and icon.
+# button's text, icon, and pressed sound.
 func _ready() -> void:
-	set_text(text)
-	set_icon(icon)
+	var button: Button = $Content/Button
+	button.text = _text
+	button.icon = _icon
+	_pressed_player.stream = _pressed_sound
 
 
-# Run when the button is pressed.
-func _press() -> void:
-	pass
-
-
-# Set the button's text.
-func set_text(value: String) -> void:
-	text = value
-	
-	if _button:
-		_button.text = text
-
-
-# Set the button's icon.
-func set_icon(value: Texture) -> void:
-	icon = value
-	
-	if _button:
-		_button.icon = icon
-
-
-# Run when the button is pressed. Emit the pressed signal.
+# Run when the button is pressed. Play the pressed sound and emit the `pressed`
+# signal.
 func _on_button_pressed() -> void:
-	_press()
-	
-	match press_sound:
-		PressSound.OK:
-			_ok_player.play_remote()
-		PressSound.CANCEL:
-			_cancel_player.play_remote()
-	
-	emit_signal("pressed")
+	_pressed_player.play_remote()
+	pressed.emit()

@@ -1,23 +1,20 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://b30pq0rw06h07"]
 
-[ext_resource path="res://resources/textures/entities/test/window.png" type="Texture" id=1]
+[ext_resource type="Texture2D" uid="uid://bh6c4bxd2y2li" path="res://resources/textures/entities/test/window.png" id="1"]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 96, 8 )
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(192, 16)
 
 [node name="Window" type="StaticBody2D"]
 collision_mask = 0
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="RadarFloor" type="Polygon2D" parent="." groups=["radar_floors"]]
 visible = false
-polygon = PoolVector2Array( -96, -8, 96, -8, 96, 8, -96, 8 )
+polygon = PackedVector2Array(-96, -8, 96, -8, 96, 8, -96, 8)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
+shape = SubResource("1")
 
-[node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 1 )
-offset = Vector2( 0, -16 )
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1")
+offset = Vector2(0, -16)

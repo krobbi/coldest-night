@@ -1,40 +1,31 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=3 uid="uid://b0fda7xvajdgg"]
 
-[ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" type="PackedScene" id=3]
-[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=4]
-[ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=6]
+[ext_resource type="PackedScene" uid="uid://chkq7f11r28a0" path="res://gui/menu/menu_cards/scroll_menu_card.tscn" id="1"]
+[ext_resource type="AudioStream" uid="uid://cymu5mgsmse7e" path="res://resources/audio/sfx/menu_cancel.ogg" id="2"]
+[ext_resource type="PackedScene" uid="uid://d1nk1tvcpy5d1" path="res://gui/menu/menu_rows/config_checkbox_menu_row.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://c6374r3urk8o6" path="res://gui/menu/menu_rows/button_menu_row.tscn" id="4"]
+[ext_resource type="Texture2D" uid="uid://b8dyyssck2fju" path="res://resources/textures/gui/icons/back.png" id="6"]
 
-[node name="AdvancedMenuCard" instance=ExtResource( 1 )]
+[node name="AdvancedMenuCard" instance=ExtResource("1")]
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
 text = "HEADING.ADVANCED_SETTINGS"
 
-[node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 104.0
-
-[node name="ReadableSavesCheckboxMenuRow" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_right = 512.0
+[node name="ReadableSavesCheckboxMenuRow" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource("3")]
+layout_mode = 2
+_config = "advanced.readable_saves"
 appearance_condition = 3
-config = "advanced.readable_saves"
 
-[node name="ShowStateLabelsCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_top = 36.0
-margin_right = 512.0
-margin_bottom = 68.0
+[node name="ShowStateLabelsCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource("3")]
+layout_mode = 2
+_config = "debug.show_state_labels"
 appearance_condition = 2
-config = "debug.show_state_labels"
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 72.0
-margin_right = 512.0
-margin_bottom = 104.0
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource("4")]
+layout_mode = 2
+_text = "BUTTON.GO_BACK"
+_icon = ExtResource("6")
+_pressed_sound = ExtResource("2")
 tooltip = "TOOLTIP.BUTTON.GO_BACK.TO_SETTINGS"
-text = "BUTTON.GO_BACK"
-icon = ExtResource( 6 )
-press_sound = 2
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]

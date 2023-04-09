@@ -18,14 +18,14 @@ func run() -> void:
 	
 	set_flag(FLAG, 1)
 	
-	option("Yes", "save_option")
-	option("No", "no_save_option")
+	option("Yes", save_option)
+	option("No", no_save_option)
 	menu()
 
 
 # Run the save option.
 func save_option() -> void:
-	then("save_game", [], SaveManager)
+	SaveManager.save_game()
 	say("Your progress has been saved!")
 	hide()
 	unfreeze()

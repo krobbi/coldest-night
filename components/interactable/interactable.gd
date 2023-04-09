@@ -11,12 +11,12 @@ signal deselected
 
 var _is_selected: bool = false
 
-onready var _animated_sprite: AnimatedSprite = $AnimatedSprite
+@onready var _animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 # Interact with the interactable if it is selected.
 func interact() -> void:
 	if _is_selected:
-		emit_signal("interacted")
+		interacted.emit()
 
 
 # Mark the interactable as selected if it is not selected.
@@ -24,7 +24,7 @@ func select() -> void:
 	if not _is_selected:
 		_is_selected = true
 		_animated_sprite.play("select")
-		emit_signal("selected")
+		selected.emit()
 
 
 # Mark the interactable as not selected if it is selected.
@@ -32,4 +32,4 @@ func deselect() -> void:
 	if _is_selected:
 		_is_selected = false
 		_animated_sprite.play("deselect")
-		emit_signal("deselected")
+		deselected.emit()

@@ -1,25 +1,22 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://cchd7sv73ca7x"]
 
-[ext_resource path="res://gui/tooltip_label/tooltip_label.gd" type="Script" id=1]
-[ext_resource path="res://resources/themes/menu_card.tres" type="Theme" id=2]
+[ext_resource type="Script" path="res://gui/tooltip_label/tooltip_label.gd" id="1"]
+[ext_resource type="Theme" uid="uid://bfxlynjqiqif1" path="res://resources/themes/menu_card.tres" id="2"]
 
 [node name="TooltipLabel" type="Label"]
+custom_minimum_size = Vector2(624, 24)
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 8.0
-margin_top = -32.0
-margin_right = -8.0
-margin_bottom = -8.0
-rect_min_size = Vector2( 624, 24 )
-size_flags_horizontal = 0
-size_flags_vertical = 0
-theme = ExtResource( 2 )
-valign = 2
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+offset_left = 8.0
+offset_top = -32.0
+offset_right = -8.0
+offset_bottom = -8.0
+theme = ExtResource("2")
+vertical_alignment = 2
+script = ExtResource("1")
+metadata/_edit_lock_ = true
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.1

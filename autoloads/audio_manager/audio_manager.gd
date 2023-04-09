@@ -7,7 +7,7 @@ extends Node
 
 var _buses: Dictionary = {}
 
-onready var _music_player: AudioStreamPlayer = $MusicPlayer
+@onready var _music_player: AudioStreamPlayer = $MusicPlayer
 
 # Run when the audio manager finishes entering the scene tree. Populate the
 # audio buses and subscribe the audio manager to the configuration bus.
@@ -20,11 +20,11 @@ func _ready() -> void:
 		if bus_map.has(bus_name):
 			_buses[bus_map[bus_name]] = AudioServer.get_bus_index(bus_name)
 	
-	ConfigBus.subscribe_node_bool("audio.mute", self, "_on_mute_changed")
+	ConfigBus.subscribe_node_bool("audio.mute", _on_mute_changed)
 	
 	for bus_key in _buses:
 		ConfigBus.subscribe_node_float(
-				"audio.%s_volume" % bus_key, self, "_on_volume_changed", [bus_key])
+				"audio.%s_volume" % bus_key, _on_volume_changed.bind(bus_key))
 
 
 # Play background music.
@@ -38,7 +38,7 @@ func play_music(music: AudioStream, loop: bool = true) -> void:
 	if not _music_player.stream:
 		return
 	
-	if _music_player.stream is AudioStreamOGGVorbis:
+	if _music_player.stream is AudioStreamOggVorbis:
 		_music_player.stream.loop = loop
 	
 	_music_player.play()
@@ -63,4 +63,4 @@ func _on_volume_changed(value: float, bus_key: String) -> void:
 	if not _buses.has(bus_key):
 		return
 	
-	AudioServer.set_bus_volume_db(_buses[bus_key], linear2db(value * 0.01))
+	AudioServer.set_bus_volume_db(_buses[bus_key], linear_to_db(value * 0.01))

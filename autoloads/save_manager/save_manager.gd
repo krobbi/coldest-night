@@ -27,32 +27,30 @@ func get_working_data() -> SaveData:
 # Save the state of the game and save current working save data to the slot save
 # data's file.
 func save_game() -> void:
-	EventBus.emit_save_state_request()
+	EventBus.save_state_request.emit()
 	push_to_slot()
 	save_file()
 
 
 # Save the slot save data to its file.
 func save_file() -> void:
-	var dir: Directory = Directory.new()
+	var dir: DirAccess = DirAccess.open("user://")
 	
-	if not dir.dir_exists(SAVES_DIR) and dir.make_dir(SAVES_DIR) != OK:
-		return
+	if not dir.dir_exists(SAVES_DIR):
+		if dir.make_dir(SAVES_DIR) != OK:
+			return
 	
-	var file: File = File.new()
+	var file: FileAccess = FileAccess.open(FILE_PATH, FileAccess.WRITE)
 	
-	if file.open(FILE_PATH, File.WRITE) != OK:
-		if file.is_open():
-			file.close()
-		
+	if not file:
 		return
 	
 	var data_string: String
 	
 	if ConfigBus.get_bool("advanced.readable_saves"):
-		data_string = "%s\n" % JSON.print(_slot_data.serialize(), "\t")
+		data_string = "%s\n" % JSON.stringify(_slot_data.serialize(), "\t", false)
 	else:
-		data_string = JSON.print(_slot_data.serialize())
+		data_string = JSON.stringify(_slot_data.serialize())
 	
 	file.store_string(data_string)
 	file.close()
@@ -98,9 +96,9 @@ func pull_from_checkpoint() -> void:
 
 # Validate save data from a JSON validator.
 func _validate_save_data(validator: JSONValidator) -> void:
-	validator.check_enum("format_name", [FORMAT_NAME])
-	validator.check_enum("format_version", [FORMAT_VERSION])
-	validator.check_enum("state", ["NEW_GAME", "NORMAL", "COMPLETED"])
+	validator.check_string_value("format_name", FORMAT_NAME)
+	validator.check_int_value("format_version", FORMAT_VERSION)
+	validator.check_string_enum("state", ["NEW_GAME", "NORMAL", "COMPLETED"])
 	validator.check_string("level")
 	validator.check_float("position_x")
 	validator.check_float("position_y")

@@ -1,70 +1,73 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=6 format=3 uid="uid://basbrvjtnrcrd"]
 
-[ext_resource path="res://gui/menu/menu_row.gd" type="Script" id=1]
-[ext_resource path="res://resources/themes/menu_row.tres" type="Theme" id=2]
-[ext_resource path="res://resources/textures/gui/boxes/solid.png" type="Texture" id=3]
+[ext_resource type="Script" path="res://gui/menu/menu_row.gd" id="1"]
+[ext_resource type="Theme" uid="uid://b71ruafb4hlk1" path="res://resources/themes/menu_row.tres" id="2"]
+[ext_resource type="Texture2D" uid="uid://cbdlfsxjbg1sr" path="res://resources/textures/gui/boxes/solid.png" id="3"]
 
-[sub_resource type="StyleBoxTexture" id=1]
-texture = ExtResource( 3 )
-region_rect = Rect2( 0, 0, 3, 3 )
-margin_left = 1.0
-margin_right = 1.0
-margin_top = 1.0
-margin_bottom = 1.0
-modulate_color = Color( 1, 0.596078, 0.054902, 1 )
+[sub_resource type="StyleBoxTexture" id="1"]
+texture = ExtResource("3")
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+region_rect = Rect2(0, 0, 3, 3)
+modulate_color = Color(1, 0.596078, 0.054902, 1)
 
-[sub_resource type="StyleBoxTexture" id=2]
-texture = ExtResource( 3 )
-region_rect = Rect2( 1, 1, 2, 2 )
-margin_right = 1.0
-modulate_color = Color( 1, 0.596078, 0.054902, 1 )
+[sub_resource type="StyleBoxTexture" id="2"]
+texture = ExtResource("3")
+texture_margin_right = 1.0
+region_rect = Rect2(1, 1, 2, 2)
+modulate_color = Color(1, 0.596078, 0.054902, 1)
 
 [node name="MenuRow" type="Control"]
-anchor_right = 1.0
-margin_right = -128.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 512, 32 )
+custom_minimum_size = Vector2(512, 32)
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -256.0
+offset_right = 256.0
+offset_bottom = 32.0
+grow_horizontal = 2
 size_flags_vertical = 0
-theme = ExtResource( 2 )
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+theme = ExtResource("2")
+script = ExtResource("1")
 focus_node_path = NodePath("Content")
+metadata/_edit_use_anchors_ = true
+metadata/_edit_lock_ = true
 
 [node name="SelectRect" type="Panel" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 0, 32 )
-mouse_filter = 1
 size_flags_horizontal = 0
-custom_styles/panel = SubResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+mouse_filter = 1
+theme_override_styles/panel = SubResource("1")
+metadata/_edit_lock_ = true
 
 [node name="UnderlineRect" type="Panel" parent="."]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -2.0
-margin_right = -512.0
-rect_min_size = Vector2( 0, 2 )
-mouse_filter = 1
+offset_top = -2.0
+offset_right = -512.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-custom_styles/panel = SubResource( 2 )
-__meta__ = {
-"_edit_lock_": true
-}
+mouse_filter = 1
+theme_override_styles/panel = SubResource("2")
+metadata/_edit_lock_ = true
 
 [node name="Content" type="Control" parent="."]
-modulate = Color( 0.85098, 0.309804, 0.0470588, 1 )
+modulate = Color(0.85098, 0.309804, 0.0470588, 1)
+custom_minimum_size = Vector2(480, 32)
+layout_mode = 1
+anchors_preset = 9
 anchor_bottom = 1.0
-margin_left = 16.0
-margin_right = 496.0
-rect_min_size = Vector2( 480, 32 )
-mouse_filter = 1
+offset_left = 16.0
+offset_right = 496.0
+grow_vertical = 2
 size_flags_horizontal = 0
-__meta__ = {
-"_edit_lock_": true
-}
+mouse_filter = 1
+metadata/_edit_lock_ = true

@@ -1,6 +1,6 @@
 # Coldest Night
 _A prototype stealth game._  
-__Version__ `0.7.0`  
+__Version__ `0.8.0`  
 __Copyright &copy; 2021-2023 Chris Roberts__ (Krobbizoid).  
 _All rights reserved._
 

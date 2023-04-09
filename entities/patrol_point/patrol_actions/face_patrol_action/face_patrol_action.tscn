@@ -1,8 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://cw1nhsxh31umy"]
 
-[ext_resource path="res://entities/patrol_point/patrol_actions/patrol_action.tscn" type="PackedScene" id=1]
-[ext_resource path="res://entities/patrol_point/patrol_actions/face_patrol_action/face_patrol_action.gd" type="Script" id=2]
+[ext_resource type="PackedScene" uid="uid://cko2xup270v5b" path="res://entities/patrol_point/patrol_actions/patrol_action.tscn" id="1"]
+[ext_resource type="Script" path="res://entities/patrol_point/patrol_actions/face_patrol_action/face_patrol_action.gd" id="2"]
 
-[node name="FacePatrolAction" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
+[node name="FacePatrolAction" instance=ExtResource("1")]
+script = ExtResource("2")
 _angle = 0.0

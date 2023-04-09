@@ -4,7 +4,7 @@ extends PatrolAction
 # A face patrol action is a patrol action that sends a `face_direction` message
 # before jumping to the next patrol action.
 
-export(float, -90.0, 180.0, 90.0) var _angle: float = 0.0
+@export var _angle: float = 0.0 # (float, -90.0, 180.0, 90.0)
 
 # Run when the face patrol action is ticked. Return the next patrol action.
 func tick(_delta: float) -> Node:

@@ -1,18 +1,18 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=11 format=3 uid="uid://cihpqv7av7x6f"]
 
-[ext_resource path="res://entities/actors/actor.tscn" type="PackedScene" id=1]
-[ext_resource path="res://resources/textures/entities/actors/guards/guard.png" type="Texture" id=2]
-[ext_resource path="res://entities/actors/guards/guard.gd" type="Script" id=3]
-[ext_resource path="res://components/vision_area/vision_area.tscn" type="PackedScene" id=4]
-[ext_resource path="res://entities/actors/guards/states/chasing_state.gd" type="Script" id=5]
-[ext_resource path="res://entities/actors/guards/states/cheating_state.gd" type="Script" id=6]
-[ext_resource path="res://entities/actors/guards/states/investigating_state.gd" type="Script" id=7]
-[ext_resource path="res://entities/actors/guards/states/aiming_state.gd" type="Script" id=8]
-[ext_resource path="res://entities/actors/guards/states/looking_state.gd" type="Script" id=9]
-[ext_resource path="res://entities/actors/guards/states/patrolling_state.gd" type="Script" id=10]
+[ext_resource type="PackedScene" uid="uid://ddo6sd23dsf5r" path="res://entities/actors/actor.tscn" id="1"]
+[ext_resource type="Texture2D" uid="uid://duivo666jav2k" path="res://resources/textures/entities/actors/guards/guard.png" id="2"]
+[ext_resource type="Script" path="res://entities/actors/guards/guard.gd" id="3"]
+[ext_resource type="PackedScene" uid="uid://dnscs04iptupt" path="res://components/vision_area/vision_area.tscn" id="4"]
+[ext_resource type="Script" path="res://entities/actors/guards/states/chasing_state.gd" id="5"]
+[ext_resource type="Script" path="res://entities/actors/guards/states/cheating_state.gd" id="6"]
+[ext_resource type="Script" path="res://entities/actors/guards/states/investigating_state.gd" id="7"]
+[ext_resource type="Script" path="res://entities/actors/guards/states/aiming_state.gd" id="8"]
+[ext_resource type="Script" path="res://entities/actors/guards/states/looking_state.gd" id="9"]
+[ext_resource type="Script" path="res://entities/actors/guards/states/patrolling_state.gd" id="10"]
 
-[node name="TestGuard" groups=["guards"] instance=ExtResource( 1 )]
-script = ExtResource( 3 )
+[node name="TestGuard" groups=["guards"] instance=ExtResource("1")]
+script = ExtResource("3")
 _investigating_state_path = NodePath("StateMachine/Investigating")
 _seen_player_state_path = NodePath("StateMachine/Chasing")
 _lost_player_state_path = NodePath("StateMachine/Cheating")
@@ -22,13 +22,13 @@ start_facing = 0
 _main_state_path = NodePath("Patrolling")
 
 [node name="Patrolling" type="Node" parent="StateMachine" index="1"]
-script = ExtResource( 10 )
+script = ExtResource("10")
 _fallback_state_path = NodePath("../Pathing")
 _actor_path = NodePath("../..")
 _smooth_pivot_path = NodePath("../../SmoothPivot")
 
 [node name="Chasing" type="Node" parent="StateMachine" index="2"]
-script = ExtResource( 5 )
+script = ExtResource("5")
 _no_target_state_path = NodePath("../Patrolling")
 _reached_target_state_path = NodePath("../Aiming")
 _guard_path = NodePath("../..")
@@ -36,7 +36,7 @@ _smooth_pivot_path = NodePath("../../SmoothPivot")
 _vision_area_path = NodePath("../../SmoothPivot/VisionArea")
 
 [node name="Aiming" type="Node" parent="StateMachine" index="3"]
-script = ExtResource( 8 )
+script = ExtResource("8")
 _no_target_state_path = NodePath("../Patrolling")
 _target_left_state_path = NodePath("../Chasing")
 _guard_path = NodePath("../..")
@@ -44,46 +44,46 @@ _smooth_pivot_path = NodePath("../../SmoothPivot")
 _vision_area_path = NodePath("../../SmoothPivot/VisionArea")
 
 [node name="Cheating" type="Node" parent="StateMachine" index="4"]
-script = ExtResource( 6 )
+script = ExtResource("6")
 _cheat_timeout_state_path = NodePath("../Investigating")
 _guard_path = NodePath("../..")
 
 [node name="Investigating" type="Node" parent="StateMachine" index="5"]
-script = ExtResource( 7 )
+script = ExtResource("7")
 _finished_state_path = NodePath("../Looking")
 _guard_path = NodePath("../..")
 _vision_area_path = NodePath("../../SmoothPivot/VisionArea")
 
 [node name="Looking" type="Node" parent="StateMachine" index="6"]
-script = ExtResource( 9 )
+script = ExtResource("9")
 _finished_state_path = NodePath("../Patrolling")
 _guard_path = NodePath("../..")
 _smooth_pivot_path = NodePath("../../SmoothPivot")
 _vision_area_path = NodePath("../../SmoothPivot/VisionArea")
 
-[node name="Sprite" parent="." index="6"]
-texture = ExtResource( 2 )
+[node name="Sprite2D" parent="." index="7"]
+texture = ExtResource("2")
 
-[node name="VisionArea" parent="SmoothPivot" index="2" instance=ExtResource( 4 )]
+[node name="VisionArea" parent="SmoothPivot" index="2" instance=ExtResource("4")]
 _near_edge_position = NodePath("NearEdgePosition")
 _far_edge_position = NodePath("FarEdgePosition")
 _curve_position = NodePath("CurvePosition")
 _front_position = NodePath("FrontPosition")
 
 [node name="VisionPolygon" type="CollisionPolygon2D" parent="SmoothPivot/VisionArea" index="1"]
-polygon = PoolVector2Array( 320, -160, 344, -64, 352, 0, 344, 64, 320, 160, 0, 24, -16, 16, -24, 0, -16, -16, 0, -24 )
+polygon = PackedVector2Array(320, -160, 344, -64, 352, 0, 344, 64, 320, 160, 0, 24, -16, 16, -24, 0, -16, -16, 0, -24)
 
-[node name="NearEdgePosition" type="Position2D" parent="SmoothPivot/VisionArea" index="2"]
-position = Vector2( 0, -24 )
+[node name="NearEdgePosition" type="Marker2D" parent="SmoothPivot/VisionArea" index="2"]
+position = Vector2(0, -24)
 
-[node name="FarEdgePosition" type="Position2D" parent="SmoothPivot/VisionArea" index="3"]
-position = Vector2( 320, -160 )
+[node name="FarEdgePosition" type="Marker2D" parent="SmoothPivot/VisionArea" index="3"]
+position = Vector2(320, -160)
 
-[node name="CurvePosition" type="Position2D" parent="SmoothPivot/VisionArea" index="4"]
-position = Vector2( 344, -64 )
+[node name="CurvePosition" type="Marker2D" parent="SmoothPivot/VisionArea" index="4"]
+position = Vector2(344, -64)
 
-[node name="FrontPosition" type="Position2D" parent="SmoothPivot/VisionArea" index="5"]
-position = Vector2( 352, 0 )
+[node name="FrontPosition" type="Marker2D" parent="SmoothPivot/VisionArea" index="5"]
+position = Vector2(352, 0)
 
 [connection signal="player_lost" from="SmoothPivot/VisionArea" to="." method="_on_vision_area_player_lost"]
 [connection signal="player_seen" from="SmoothPivot/VisionArea" to="." method="_on_vision_area_player_seen"]

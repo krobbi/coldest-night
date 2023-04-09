@@ -6,7 +6,7 @@ extends Node
 # and stripping dialog tags from dialog messages and emitting signals for dialog
 # behaviors at requested positions in the parsed dialog message.
 
-class FloatDialogTag extends Reference:
+class FloatDialogTag extends RefCounted:
 	
 	# Float Dialog Tag
 	# A float dialog tag is a helper structure used by a dialog tag parser that
@@ -15,46 +15,46 @@ class FloatDialogTag extends Reference:
 	var position: int
 	var value: float
 	
-	# Constructor. Sets the float dialog tag's position and value:
+	# Set the float dialog tag's position and value.
 	func _init(position_val: int, value_val: float) -> void:
 		position = position_val
 		value = value_val
 
 
-signal pause_requested(duration)
-signal speed_requested(speed)
+signal pause_requested(duration: float)
+signal speed_requested(speed: float)
 
-var _pause_tags: Array = []
-var _speed_tags: Array = []
+var _pause_tags: Array[FloatDialogTag] = []
+var _speed_tags: Array[FloatDialogTag] = []
 var _bbcode_regex: RegEx = _create_regex("\\[[^[\\]]*?\\]")
 var _tag_regex: RegEx = _create_regex("{[^{}]*?}")
 var _pause_regex: RegEx = _create_regex("{p=\\d+(\\.\\d+)?}")
 var _speed_regex: RegEx = _create_regex("{s=\\d+(\\.\\d+)?}")
 var _decimal_regex: RegEx = _create_regex("\\d+(\\.\\d+)?")
 
-# Parses and strips dialog tags from a dialog message:
+# Parse and strip dialog tags from a dialog message.
 func parse(message: String) -> String:
 	_pause_tags = _parse_float_tags(message, _pause_regex, 1)
 	_speed_tags = _parse_float_tags(message, _speed_regex, 1)
 	return _tag_regex.sub(message, "", true)
 
 
-# Requests signals for dialog behaviors at a position in the parsed dialog
-# message:
+# Request signals for dialog behaviors at a position in the parsed dialog
+# message.
 func request(position: int) -> void:
 	for pause_tag in _pause_tags:
 		if pause_tag.position == position:
-			emit_signal("pause_requested", pause_tag.value)
+			pause_requested.emit(pause_tag.value)
 			break
 	
 	for speed_tag in _speed_tags:
 		if speed_tag.position == position:
-			emit_signal("speed_requested", speed_tag.value)
+			speed_requested.emit(speed_tag.value)
 			return
 
 
-# Gets a position in a parsed dialog message from a position in an unparsed
-# dialog message:
+# Get a position in a parsed dialog message from a position in an unparsed
+# dialog message.
 func _get_parsed_position(message: String, position: int) -> int:
 	var left: String = message.left(position)
 	
@@ -67,16 +67,16 @@ func _get_parsed_position(message: String, position: int) -> int:
 	return position
 
 
-# Creates a new compiled RegEx from a regular expression pattern:
+# Create a new compiled RegEx from a regular expression pattern.
 func _create_regex(pattern: String) -> RegEx:
 	var regex: RegEx = RegEx.new()
-	regex.compile(pattern) # warning-ignore: RETURN_VALUE_DISCARDED
+	regex.compile(pattern)
 	return regex
 
 
-# Parses an array of float tags from a dialog message:
-func _parse_float_tags(message: String, tag_regex: RegEx, offset: int) -> Array:
-	var float_tags: Array = []
+# Parse an array of float tags from a dialog message.
+func _parse_float_tags(message: String, tag_regex: RegEx, offset: int) -> Array[FloatDialogTag]:
+	var float_tags: Array[FloatDialogTag] = []
 	
 	for result in tag_regex.search_all(message):
 		var tag_position: int = _get_parsed_position(message, result.get_start()) - offset

@@ -1,67 +1,64 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=9 format=3 uid="uid://b1wttg0ic2ul4"]
 
-[ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=3]
-[ext_resource path="res://resources/textures/scenes/devlog/background.png" type="Texture" id=4]
-[ext_resource path="res://resources/textures/scenes/devlog/silhouette.png" type="Texture" id=5]
-[ext_resource path="res://resources/audio/music/devlog.ogg" type="AudioStream" id=6]
-[ext_resource path="res://components/cutscene/cutscene.tscn" type="PackedScene" id=7]
-[ext_resource path="res://scenes/devlog/devlog_cutscene.gd" type="Script" id=8]
+[ext_resource type="Shader" path="res://resources/shaders/scenes/devlog/background.gdshader" id="1"]
+[ext_resource type="PackedScene" uid="uid://uemgtywlxewr" path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://dvxbpml5fdpae" path="res://resources/textures/scenes/devlog/background.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://rq4qby2hc58n" path="res://resources/textures/scenes/devlog/silhouette.png" id="5"]
+[ext_resource type="AudioStream" uid="uid://wjvcwyp3xcjm" path="res://resources/audio/music/devlog.ogg" id="6"]
+[ext_resource type="PackedScene" uid="uid://b5hmlnvmbjm6c" path="res://components/cutscene/cutscene.tscn" id="7"]
+[ext_resource type="Script" path="res://scenes/devlog/devlog_cutscene.gd" id="8"]
 
-[sub_resource type="Shader" id=1]
-code = "shader_type canvas_item;
-
-uniform float speed = 0.2f;
-uniform float magnitude = 0.02f;
-uniform float wobble = 3.0f;
-
-void fragment(){
-	COLOR = texture(TEXTURE, UV + vec2(sin(TIME * speed + UV.y * wobble) * magnitude, 0.0));
-}
-"
-
-[sub_resource type="ShaderMaterial" id=2]
-shader = SubResource( 1 )
-shader_param/speed = 0.2
-shader_param/magnitude = 0.02
-shader_param/wobble = 3.0
+[sub_resource type="ShaderMaterial" id="2"]
+shader = ExtResource("1")
+shader_parameter/speed = 0.2
+shader_parameter/magnitude = 0.02
+shader_parameter/wobble = 3.0
 
 [node name="Devlog" type="Control"]
-pause_mode = 2
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_lock_": true
-}
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
 
-[node name="DevlogCutscene" parent="." instance=ExtResource( 7 )]
-script = ExtResource( 8 )
-_is_autorun = true
+[node name="DevlogCutscene" parent="." instance=ExtResource("7")]
+script = ExtResource("8")
 _exit_scene_path = "res://scenes/menu/menu.tscn"
-_music = ExtResource( 6 )
+_music = ExtResource("6")
 _background_path = NodePath("../BackgroundRect")
 _silhouette_path = NodePath("../SilhouetteRect")
+_is_autorun = true
 
 [node name="BackgroundRect" type="TextureRect" parent="."]
-material = SubResource( 2 )
+material = SubResource("2")
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-texture = ExtResource( 4 )
-__meta__ = {
-"_edit_lock_": true
-}
+texture = ExtResource("4")
+metadata/_edit_lock_ = true
 
 [node name="SilhouetteRect" type="TextureRect" parent="."]
+layout_mode = 0
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 32.0
-margin_top = -254.0
-margin_right = 187.0
-margin_bottom = 24.0
-texture = ExtResource( 5 )
-__meta__ = {
-"_edit_lock_": true
-}
+offset_left = 32.0
+offset_top = -254.0
+offset_right = 187.0
+offset_bottom = 24.0
+texture = ExtResource("5")
+metadata/_edit_lock_ = true
 
-[node name="PlainDialog" parent="." instance=ExtResource( 3 )]
+[node name="PlainDialog" parent="." instance=ExtResource("3")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_right = 640.0
+offset_bottom = 360.0
+grow_horizontal = 1
+grow_vertical = 1

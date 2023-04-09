@@ -1,63 +1,57 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://priq2ojxfs6c"]
 
-[ext_resource path="res://scenes/credits/credits.gd" type="Script" id=1]
-[ext_resource path="res://resources/themes/credits.tres" type="Theme" id=2]
-[ext_resource path="res://resources/textures/identity/logo.png" type="Texture" id=3]
-[ext_resource path="res://resources/audio/music/credits.ogg" type="AudioStream" id=4]
+[ext_resource type="Script" path="res://scenes/credits/credits.gd" id="1"]
+[ext_resource type="Theme" uid="uid://b1v7mgs6u255c" path="res://resources/themes/credits.tres" id="2"]
+[ext_resource type="Texture2D" uid="uid://crbr3gvbdehkc" path="res://resources/textures/identity/logo.png" id="3"]
+[ext_resource type="AudioStream" uid="uid://xnnv8eheice6" path="res://resources/audio/music/credits.ogg" id="4"]
 
 [node name="Credits" type="Control"]
-pause_mode = 2
+process_mode = 3
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 640, 360 )
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
-theme = ExtResource( 2 )
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
+theme = ExtResource("2")
+script = ExtResource("1")
 _exit_scene_path = "res://scenes/menu/menu.tscn"
-_music = ExtResource( 4 )
+_music = ExtResource("4")
+metadata/_edit_lock_ = true
 
 [node name="LogoRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(512, 232)
+layout_mode = 0
 anchor_right = 1.0
-margin_left = 64.0
-margin_top = 64.0
-margin_right = -64.0
-margin_bottom = 296.0
-rect_min_size = Vector2( 512, 232 )
+offset_left = 64.0
+offset_top = 64.0
+offset_right = -64.0
+offset_bottom = 296.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-texture = ExtResource( 3 )
-expand = true
-stretch_mode = 4
-__meta__ = {
-"_edit_lock_": true
-}
+texture = ExtResource("3")
+stretch_mode = 3
+metadata/_edit_lock_ = true
 
 [node name="CreditsLabel" type="RichTextLabel" parent="."]
+custom_minimum_size = Vector2(512, 32)
+layout_mode = 0
 anchor_right = 1.0
-margin_left = 64.0
-margin_top = 392.0
-margin_right = -64.0
-margin_bottom = 424.0
-rect_min_size = Vector2( 512, 32 )
+offset_left = 64.0
+offset_top = 392.0
+offset_right = -64.0
+offset_bottom = 424.0
 size_flags_horizontal = 0
 size_flags_vertical = 2
 bbcode_enabled = true
-fit_content_height = true
+fit_content = true
 scroll_active = false
-__meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
+metadata/_edit_lock_ = true
 
 [node name="CreditsCamera" type="Camera2D" parent="."]
 anchor_mode = 0
-current = true
-smoothing_enabled = true
+position_smoothing_enabled = true
 editor_draw_screen = false
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true

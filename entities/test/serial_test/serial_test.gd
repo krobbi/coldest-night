@@ -4,7 +4,7 @@ extends StaticBody2D
 # A serial test is an entity used to test serialization and deserialization. A
 # serial test can be interacted with to switch between 3 states.
 
-onready var _sprite: Sprite = $Sprite
+@onready var _sprite: Sprite2D = $Sprite2D
 
 # Serialize the serial test to a JSON object.
 func serialize() -> Dictionary:

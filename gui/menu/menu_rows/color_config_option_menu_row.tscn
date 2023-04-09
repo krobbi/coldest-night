@@ -1,11 +1,10 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://dswhwmruafqun"]
 
-[ext_resource path="res://gui/menu/menu_rows/config_option_menu_row.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_rows/color_config_option_menu_row.gd" type="Script" id=2]
+[ext_resource type="PackedScene" uid="uid://dhaql7pi713ln" path="res://gui/menu/menu_rows/config_option_menu_row.tscn" id="1"]
+[ext_resource type="Script" path="res://gui/menu/menu_rows/color_config_option_menu_row.gd" id="2"]
 
-[node name="ColorConfigOptionMenuRow" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
-option_source = 6
+[node name="ColorConfigOptionMenuRow" instance=ExtResource("1")]
+script = ExtResource("2")
 
 [node name="Label" parent="Content" index="0"]
 text = "Color config option"
@@ -14,33 +13,29 @@ text = "Color config option"
 text = "Color"
 
 [node name="LeftColorRect" type="ColorRect" parent="." index="5"]
+custom_minimum_size = Vector2(8, 16)
+layout_mode = 0
 anchor_bottom = 1.0
-margin_left = 280.0
-margin_top = 8.0
-margin_right = 288.0
-margin_bottom = -8.0
-rect_min_size = Vector2( 8, 16 )
-mouse_filter = 2
+offset_left = 280.0
+offset_top = 8.0
+offset_right = 288.0
+offset_bottom = -8.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-color = Color( 1, 0.596078, 0.054902, 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+mouse_filter = 2
+color = Color(1, 0.596078, 0.054902, 1)
 
 [node name="RightColorRect" type="ColorRect" parent="." index="6"]
+custom_minimum_size = Vector2(8, 16)
+layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -48.0
-margin_top = 8.0
-margin_right = -40.0
-margin_bottom = -8.0
-rect_min_size = Vector2( 8, 16 )
-mouse_filter = 2
+offset_left = -48.0
+offset_top = 8.0
+offset_right = -40.0
+offset_bottom = -8.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-color = Color( 1, 0.596078, 0.054902, 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+mouse_filter = 2
+color = Color(1, 0.596078, 0.054902, 1)

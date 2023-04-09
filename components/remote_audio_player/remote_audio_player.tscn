@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://b4vwav1arica"]
 
-[ext_resource path="res://components/remote_audio_player/remote_audio_player.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://components/remote_audio_player/remote_audio_player.gd" id="1"]
 
 [node name="RemoteAudioPlayer" type="AudioStreamPlayer"]
-script = ExtResource( 1 )
+script = ExtResource("1")

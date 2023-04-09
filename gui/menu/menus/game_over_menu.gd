@@ -4,17 +4,17 @@ extends ColorRect
 # The game over menu is a menu that is displayed on game over and handles game
 # over operations.
 
-export(AudioStream) var _game_over_music: AudioStream
-export(AudioStream) var _menu_music: AudioStream
+@export var _game_over_music: AudioStream
+@export var _menu_music: AudioStream
 
 var _is_open: bool = false
 
-onready var _menu_stack: MenuStack = $MenuStack
+@onready var _menu_stack: MenuStack = $MenuStack
 
 # Run when the game over menu finishes entering the scene tree. Subscribe the
 # game over menu to the event bus.
 func _ready() -> void:
-	EventBus.subscribe_node("game_over_request", self, "open_menu", [], CONNECT_ONESHOT)
+	EventBus.subscribe_node(EventBus.game_over_request, open_menu, CONNECT_ONE_SHOT)
 
 
 # Open the game over menu and handle game over operations.
@@ -23,14 +23,12 @@ func open_menu() -> void:
 		return
 	
 	_is_open = true
-	EventBus.emit_player_freeze_request()
+	EventBus.player_freeze_request.emit()
 	AudioManager.play_music(_game_over_music, false)
 	show()
-	var tween: SceneTreeTween = create_tween()
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	tween.tween_property(self, "modulate", Color.white, 4.5).set_trans(Tween.TRANS_SINE)
-	# warning-ignore: RETURN_VALUE_DISCARDED
-	tween.tween_callback(self, "_on_tween_callback")
+	var tween: Tween = create_tween()
+	tween.tween_property(self, "modulate", Color.WHITE, 4.5).set_trans(Tween.TRANS_SINE)
+	tween.tween_callback(_on_tween_callback)
 
 
 # Run when the game over menu has finished appearing. Play menu music and push

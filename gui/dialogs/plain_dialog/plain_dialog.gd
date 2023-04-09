@@ -9,24 +9,24 @@ const OptionScene: PackedScene = preload("res://gui/dialogs/plain_dialog/plain_d
 const TYPING_SPEED: float = 0.04
 
 var _has_message: bool = false
-var _options: Array = []
+var _options: Array[PlainDialogOption] = []
 var _option_count: int = 0
 var _selected_option: int = -1
 
-onready var _type_timer: Timer = $TypeTimer
-onready var _pause_timer: Timer = $PauseTimer
-onready var _speech_player: AudioStreamPlayer = $SpeechPlayer
-onready var _menu_move_player: AudioStreamPlayer = $MenuMovePlayer
-onready var _message_label: RichTextLabel = $MessageLabel
-onready var _name_label: RichTextLabel = $MessageLabel/NameLabel
-onready var _option_container: VBoxContainer = $MessageLabel/OptionContainer
-onready var _continue_button: Button = $MessageLabel/ContinueButton
+@onready var _type_timer: Timer = $TypeTimer
+@onready var _pause_timer: Timer = $PauseTimer
+@onready var _speech_player: AudioStreamPlayer = $SpeechPlayer
+@onready var _menu_move_player: AudioStreamPlayer = $MenuMovePlayer
+@onready var _message_label: RichTextLabel = $MessageLabel
+@onready var _name_label: RichTextLabel = $MessageLabel/NameLabel
+@onready var _option_container: VBoxContainer = $MessageLabel/OptionContainer
+@onready var _continue_button: Button = $MessageLabel/ContinueButton
 
 # Run when the plain dialog is hidden. Clear the continue button and message and
 # name labels.
 func _hide_dialog() -> void:
 	hide()
-	_message_label.bbcode_text = ""
+	_message_label.text = ""
 	clear_name()
 	_continue_button.hide()
 
@@ -35,12 +35,12 @@ func _hide_dialog() -> void:
 # label.
 func _clear_name() -> void:
 	_name_label.hide()
-	_name_label.bbcode_text = ""
+	_name_label.text = ""
 
 
 # Run when a name is displayed to the plain dialog.
 func _display_name(speaker_name: String) -> void:
-	_name_label.bbcode_text = speaker_name
+	_name_label.text = speaker_name
 	_name_label.show()
 
 
@@ -48,8 +48,8 @@ func _display_name(speaker_name: String) -> void:
 # dialog message and show the continue button.
 func _display_message(message: String) -> void:
 	_has_message = true
-	_message_label.bbcode_text = message
-	_message_label.percent_visible = 0.0
+	_message_label.text = message
+	_message_label.visible_ratio = 0.0
 	_type_timer.wait_time = TYPING_SPEED
 	_type_timer.start()
 	_continue_button.text = tr("BUTTON.DIALOG_CONTINUE").format(
@@ -60,22 +60,21 @@ func _display_message(message: String) -> void:
 
 # Run when options are displayed to the plain dialog. Create and connect
 # options.
-func _display_options(texts: PoolStringArray) -> void:
+func _display_options(texts: PackedStringArray) -> void:
 	_destruct_options()
 	_option_count = texts.size()
 	
 	for i in range(_option_count):
-		var option: PlainDialogOption = OptionScene.instance()
+		var option: PlainDialogOption = OptionScene.instantiate()
 		option.text = texts[i]
 		_option_container.add_child(option)
-		var error: int = option.connect("pressed", self, "_on_option_pressed", [i])
 		
-		if error and option.is_connected("pressed", self, "_on_option_pressed"):
-			option.disconnect("pressed", self, "_on_option_pressed")
+		if option.pressed.connect(_on_option_pressed.bind(i)) != OK:
+			option.pressed.disconnect(_on_option_pressed)
 		
 		_options.push_back(option)
-		_connect_select(option, "focus_entered", i)
-		_connect_select(option, "mouse_entered", i)
+		_connect_select(option.focus_entered, i)
+		_connect_select(option.mouse_entered, i)
 	
 	if _option_count > 1:
 		for i in range(_option_count):
@@ -83,9 +82,9 @@ func _display_options(texts: PoolStringArray) -> void:
 			var prev_path: NodePath = option.get_path_to(_options[i - 1])
 			var next_path: NodePath = option.get_path_to(_options[(i + 1) % _option_count])
 			option.focus_previous = prev_path
-			option.focus_neighbour_top = prev_path
+			option.focus_neighbor_top = prev_path
 			option.focus_next = next_path
-			option.focus_neighbour_bottom = next_path
+			option.focus_neighbor_bottom = next_path
 	
 	_continue_button.hide()
 	_select_option(0)
@@ -104,27 +103,26 @@ func _select_option(option_index: int) -> void:
 	_options[_selected_option].grab_focus()
 
 
-# Connect a signal in a source object to selecting an option.
-func _connect_select(source: Object, signal_name: String, option_index: int) -> void:
-	if source.connect(signal_name, self, "_select_option", [option_index]) != OK:
-		if source.is_connected(signal_name, self, "_select_option"):
-			source.disconnect(signal_name, self, "_select_option")
+# Connect a signal to selecting an option.
+func _connect_select(select_signal: Signal, option_index: int) -> void:
+	if select_signal.connect(_select_option.bind(option_index)) != OK:
+		_disconnect_select(select_signal)
 
 
-# Disconnect a signal in a source object from selecting an option.
-func _disconnect_select(source: Object, signal_name: String) -> void:
-	if source.is_connected(signal_name, self, "_select_option"):
-		source.disconnect(signal_name, self, "_select_option")
+# Disconnect a signal from selecting an option.
+func _disconnect_select(select_signal: Signal) -> void:
+	if select_signal.is_connected(_select_option):
+		select_signal.disconnect(_select_option)
 
 
 # Disconnect and free the plain dialog's options.
 func _destruct_options() -> void:
 	for option in _options:
-		if option.is_connected("pressed", self, "_on_option_pressed"):
-			option.disconnect("pressed", self, "_on_option_pressed")
+		if option.pressed.is_connected(_on_option_pressed):
+			option.pressed.disconnect(_on_option_pressed)
 		
-		_disconnect_select(option, "mouse_entered")
-		_disconnect_select(option, "focus_entered")
+		_disconnect_select(option.mouse_entered)
+		_disconnect_select(option.focus_entered)
 		option.queue_free()
 	
 	_options.clear()
@@ -142,14 +140,14 @@ func _on_tags_pause_requested(duration: float) -> void:
 # Run when a speed tag is parsed. Change the typing speed of the dialog message.
 func _on_tags_speed_requested(speed: float) -> void:
 	_type_timer.stop()
-	_type_timer.wait_time = TYPING_SPEED / clamp(speed, 0.1, 10.0)
+	_type_timer.wait_time = TYPING_SPEED / clampf(speed, 0.1, 10.0)
 	_type_timer.start()
 
 
 # Run when the type timer times out. Type the next character of the dialog
 # message.
 func _on_type_timer_timeout() -> void:
-	if _message_label.percent_visible >= 1.0:
+	if _message_label.visible_ratio >= 1.0:
 		_type_timer.stop()
 		return
 	
@@ -157,7 +155,7 @@ func _on_type_timer_timeout() -> void:
 	_message_label.visible_characters += 1
 	
 	if not _speech_player.playing:
-		_speech_player.pitch_scale = rand_range(1.0, 1.1)
+		_speech_player.pitch_scale = randf_range(1.0, 1.1)
 		_speech_player.play()
 
 
@@ -170,15 +168,15 @@ func _on_pause_timer_timeout() -> void:
 # emit the `dialog_option_pressed` event.
 func _on_option_pressed(index: int) -> void:
 	_destruct_options()
-	EventBus.emit_dialog_option_pressed(index)
+	EventBus.dialog_option_pressed.emit(index)
 
 
 # Run when the continue button is pressed. Finish the dialog message.
 func _on_continue_button_pressed() -> void:
-	if _has_message and _message_label.percent_visible >= 1.0:
+	if _has_message and _message_label.visible_ratio >= 1.0:
 		_has_message = false
-		EventBus.emit_dialog_message_finished()
+		EventBus.dialog_message_finished.emit()
 	else:
 		_pause_timer.stop()
 		_type_timer.stop()
-		_message_label.percent_visible = 1.0
+		_message_label.visible_ratio = 1.0

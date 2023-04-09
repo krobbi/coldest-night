@@ -1,36 +1,34 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://ds2wsxc66u1ab"]
 
-[ext_resource path="res://gui/menu/menu_row.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_rows/checkbox_menu_row.gd" type="Script" id=2]
-[ext_resource path="res://resources/audio/sfx/menu_cancel.ogg" type="AudioStream" id=3]
-[ext_resource path="res://resources/audio/sfx/menu_move.ogg" type="AudioStream" id=4]
+[ext_resource type="PackedScene" uid="uid://basbrvjtnrcrd" path="res://gui/menu/menu_row.tscn" id="1"]
+[ext_resource type="Script" path="res://gui/menu/menu_rows/checkbox_menu_row.gd" id="2"]
+[ext_resource type="AudioStream" uid="uid://cymu5mgsmse7e" path="res://resources/audio/sfx/menu_cancel.ogg" id="3"]
+[ext_resource type="AudioStream" uid="uid://b0xgiumc04x8k" path="res://resources/audio/sfx/menu_move.ogg" id="4"]
 
-[node name="CheckboxMenuRow" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
+[node name="CheckboxMenuRow" instance=ExtResource("1")]
+script = ExtResource("2")
+_is_pressed = false
+_text = ""
 focus_node_path = NodePath("Content/CheckButton")
-is_pressed = false
-text = ""
 
 [node name="CheckButton" type="CheckButton" parent="Content" index="0"]
+custom_minimum_size = Vector2(480, 32)
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 480, 32 )
 mouse_filter = 1
 text = "Checkbox"
 flat = true
 clip_text = true
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="PressedPlayer" type="AudioStreamPlayer" parent="." index="3"]
-stream = ExtResource( 4 )
+stream = ExtResource("4")
 mix_target = 2
-bus = "SFX"
+bus = &"SFX"
 
 [node name="UnpressedPlayer" type="AudioStreamPlayer" parent="." index="4"]
-stream = ExtResource( 3 )
+stream = ExtResource("3")
 mix_target = 2
-bus = "SFX"
+bus = &"SFX"
 
 [connection signal="toggled" from="Content/CheckButton" to="." method="_on_checkbox_toggled"]

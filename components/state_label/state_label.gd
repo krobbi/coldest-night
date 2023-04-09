@@ -4,10 +4,10 @@ extends Control
 # A state label is a debug component that displays a state machine's current
 # state.
 
-export(NodePath) var _state_machine_path: NodePath
+@export var _state_machine_path: NodePath
 
-onready var _state_machine: StateMachine = get_node(_state_machine_path)
-onready var _label: Label = $Label
+@onready var _state_machine: StateMachine = get_node(_state_machine_path)
+@onready var _label: Label = $Label
 
 # Run when the state label enters the scene tree. Disable the state label's
 # physics process and subscribe the state label to the configuration bus if the
@@ -16,7 +16,7 @@ func _enter_tree() -> void:
 	set_physics_process(false)
 	
 	if OS.is_debug_build():
-		ConfigBus.subscribe_node_bool("debug.show_state_labels", self, "_on_visibility_changed")
+		ConfigBus.subscribe_node_bool("debug.show_state_labels", _on_visibility_changed)
 	else:
 		queue_free()
 

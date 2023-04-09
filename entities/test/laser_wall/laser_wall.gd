@@ -5,25 +5,25 @@ extends StaticBody2D
 # A laser wall is an entity that forms an obstruction until a flag condition is
 # met.
 
-signal wall_visibility_changed(wall_visible)
+signal wall_visibility_changed(is_wall_visible: bool)
 
 enum AppearanceCondition {ALWAYS, NEVER, RELEASE, DEBUG, EQ, NE, GT, GE, LT, LE}
 
-export(AppearanceCondition) var appearance_condition: int = AppearanceCondition.ALWAYS
-export(Vector2) var extents: Vector2 = Vector2(64.0, 0.0)
-export(String) var flag: String
-export(int) var compare_value: int
+@export var appearance_condition: AppearanceCondition = AppearanceCondition.ALWAYS
+@export var size: Vector2 = Vector2(64.0, 0.0)
+@export var flag: String
+@export var compare_value: int
 
 var _save_data: SaveData = SaveManager.get_working_data()
 
-onready var _obstructive_shape: CollisionShape2D = $ObstructiveShape
+@onready var _obstructive_shape: CollisionShape2D = $ObstructiveShape
 
 # Run when the laser wall finishes entering the scene tree. Set the laser wall's
 # extents, connect the laser wall to the current working save data, and emit a
 # radar render laser wall request.
 func _ready() -> void:
-	var a: Vector2 = extents * -1.0
-	var b: Vector2 = extents
+	var a: Vector2 = size * -1.0
+	var b: Vector2 = size
 	
 	var shape: SegmentShape2D = SegmentShape2D.new()
 	shape.a = a
@@ -43,32 +43,32 @@ func _ready() -> void:
 	else:
 		hide_wall()
 	
-	if _save_data.connect("flag_changed", self, "_on_flag_changed") != OK:
-		if _save_data.is_connected("flag_changed", self, "_on_flag_changed"):
-			_save_data.disconnect("flag_changed", self, "_on_flag_changed")
+	if _save_data.flag_changed.connect(_on_flag_changed) != OK:
+		if _save_data.flag_changed.is_connected(_on_flag_changed):
+			_save_data.flag_changed.disconnect(_on_flag_changed)
 	
-	EventBus.emit_radar_render_laser_wall_request(self)
+	EventBus.radar_render_laser_wall_request.emit(self)
 
 
 # Run when the laser wall exits the scene tree. Disconnect the laser wall from
 # the current working save data.
 func _exit_tree() -> void:
-	if _save_data.is_connected("flag_changed", self, "_on_flag_changed"):
-		_save_data.disconnect("flag_changed", self, "_on_flag_changed")
+	if _save_data.flag_changed.is_connected(_on_flag_changed):
+		_save_data.flag_changed.disconnect(_on_flag_changed)
 
 
 # Show the laser wall.
 func show_wall() -> void:
 	_obstructive_shape.set_deferred("disabled", false)
 	show()
-	emit_signal("wall_visibility_changed", true)
+	wall_visibility_changed.emit(true)
 
 
 # Hide the laser wall.
 func hide_wall() -> void:
 	hide()
 	_obstructive_shape.set_deferred("disabled", true)
-	emit_signal("wall_visibility_changed", false)
+	wall_visibility_changed.emit(false)
 
 
 # Evaluate whether the laser wall should be shown based on a value.

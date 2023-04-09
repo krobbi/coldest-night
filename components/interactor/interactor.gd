@@ -7,7 +7,7 @@ extends Node2D
 
 var _is_enabled: bool = false
 var _selected_interactable: Interactable = null
-var _nearby_interactables: Array = []
+var _nearby_interactables: Array[Interactable] = []
 
 # Run when the interactor finishes entering the scene tree. Disable the
 # interactor's physics process.
@@ -71,5 +71,5 @@ func _on_selecting_area_area_exited(area: Area2D) -> void:
 		_selected_interactable.deselect()
 		_selected_interactable = null
 	
-	if _nearby_interactables.empty():
+	if _nearby_interactables.is_empty():
 		set_physics_process(false)

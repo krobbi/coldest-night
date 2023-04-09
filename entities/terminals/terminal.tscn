@@ -1,43 +1,41 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=7 format=3 uid="uid://clfbme8812ksn"]
 
-[ext_resource path="res://resources/textures/entities/terminals/control_terminal.png" type="Texture" id=1]
-[ext_resource path="res://entities/terminals/terminal.gd" type="Script" id=2]
-[ext_resource path="res://resources/audio/entities/terminals/deselect.ogg" type="AudioStream" id=3]
-[ext_resource path="res://resources/audio/entities/terminals/select.ogg" type="AudioStream" id=4]
-[ext_resource path="res://components/interactable/interactable.tscn" type="PackedScene" id=5]
+[ext_resource type="Texture2D" uid="uid://dcyb8deevabbo" path="res://resources/textures/entities/terminals/control_terminal.png" id="1"]
+[ext_resource type="Script" path="res://entities/terminals/terminal.gd" id="2"]
+[ext_resource type="AudioStream" uid="uid://bsmb3yv3nd56m" path="res://resources/audio/entities/terminals/deselect.ogg" id="3"]
+[ext_resource type="AudioStream" uid="uid://duj1djinrplq3" path="res://resources/audio/entities/terminals/select.ogg" id="4"]
+[ext_resource type="PackedScene" uid="uid://dp18wetkgpqq1" path="res://components/interactable/interactable.tscn" id="5"]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 16, 16 )
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(32, 32)
 
-[node name="Terminal" type="Sprite"]
-texture = ExtResource( 1 )
-offset = Vector2( 0, -16 )
+[node name="Terminal" type="Sprite2D"]
+texture = ExtResource("1")
+offset = Vector2(0, -16)
 hframes = 2
-script = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
+script = ExtResource("2")
+metadata/_edit_group_ = true
 
 [node name="RadarWall" type="Polygon2D" parent="." groups=["radar_walls"]]
 visible = false
-polygon = PoolVector2Array( -16, -16, 16, -16, 16, 16, -16, 16 )
+polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
 
 [node name="SelectPlayer" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource( 4 )
-bus = "SFX"
+stream = ExtResource("4")
+bus = &"SFX"
 
 [node name="DeselectPlayer" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource( 3 )
-bus = "SFX"
+stream = ExtResource("3")
+bus = &"SFX"
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 collision_layer = 5
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-shape = SubResource( 1 )
+shape = SubResource("1")
 
-[node name="Interactable" parent="." instance=ExtResource( 5 )]
+[node name="Interactable" parent="." instance=ExtResource("5")]
 
 [connection signal="deselected" from="Interactable" to="." method="_on_interactable_deselected"]
 [connection signal="interacted" from="Interactable" to="." method="_on_interactable_interacted"]

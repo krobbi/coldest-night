@@ -13,12 +13,12 @@ func run() -> void:
 	
 	if get_flag(FLAG) != 0:
 		say("West annex is unlocked.{p=0.5}\nLock annex?")
-		option("Lock annex", "lock_option")
+		option("Lock annex", lock_option)
 	else:
 		say("West annex is locked.{p=0.5}\nUnlock annex?")
-		option("Unlock annex", "unlock_option")
+		option("Unlock annex", unlock_option)
 	
-	option("Cancel", "cancel_option")
+	option("Cancel", cancel_option)
 	menu()
 
 

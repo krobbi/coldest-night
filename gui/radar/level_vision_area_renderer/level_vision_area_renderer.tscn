@@ -1,9 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://bl6054aek4v2f"]
 
-[ext_resource path="res://gui/radar/level_vision_area_renderer/level_vision_area_renderer.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://gui/radar/level_vision_area_renderer/level_vision_area_renderer.gd" id="1"]
 
 [node name="LevelVisionAreaRenderer" type="Node2D"]
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+script = ExtResource("1")

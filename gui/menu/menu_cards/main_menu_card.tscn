@@ -1,133 +1,103 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=11 format=3 uid="uid://rw10kted6gy2"]
 
-[ext_resource path="res://gui/menu/menu_card.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_cards/main_menu_card.gd" type="Script" id=2]
-[ext_resource path="res://resources/textures/identity/logo.png" type="Texture" id=4]
-[ext_resource path="res://gui/menu/menu_list.tscn" type="PackedScene" id=5]
-[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=6]
-[ext_resource path="res://resources/textures/gui/icons/next.png" type="Texture" id=7]
-[ext_resource path="res://resources/textures/gui/icons/quit.png" type="Texture" id=8]
-[ext_resource path="res://resources/textures/gui/icons/settings.png" type="Texture" id=9]
-[ext_resource path="res://resources/textures/gui/icons/credits.png" type="Texture" id=10]
-[ext_resource path="res://resources/textures/gui/icons/load.png" type="Texture" id=11]
+[ext_resource type="PackedScene" uid="uid://r4jmw2edx2rt" path="res://gui/menu/menu_card.tscn" id="1"]
+[ext_resource type="Script" path="res://gui/menu/menu_cards/main_menu_card.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://crbr3gvbdehkc" path="res://resources/textures/identity/logo.png" id="4"]
+[ext_resource type="PackedScene" uid="uid://bgur41a2luw2t" path="res://gui/menu/menu_list.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://c6374r3urk8o6" path="res://gui/menu/menu_rows/button_menu_row.tscn" id="6"]
+[ext_resource type="Texture2D" uid="uid://d14oavfpm1kob" path="res://resources/textures/gui/icons/next.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://divxgpxgqa3xe" path="res://resources/textures/gui/icons/quit.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://co5nvoe0ofb8" path="res://resources/textures/gui/icons/settings.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://llgcla40q0qw" path="res://resources/textures/gui/icons/credits.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://bdkvt1c3a82nb" path="res://resources/textures/gui/icons/load.png" id="11"]
 
-[node name="MainMenuCard" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
-_is_manually_poppable = false
-_menu_list_path = NodePath("CenterContainer/VBoxContainer/MenuList")
+[node name="MainMenuCard" instance=ExtResource("1")]
+script = ExtResource("2")
 _loader_scene_path = "res://scenes/loader/loader.tscn"
 _credits_scene_path = "res://scenes/credits/credits.tscn"
 _devlog_scene_path = "res://scenes/devlog/devlog.tscn"
+_is_manually_poppable = false
+_menu_list_path = NodePath("CenterContainer/VBoxContainer/MenuList")
 
 [node name="VersionLabel" type="Label" parent="." index="2"]
+custom_minimum_size = Vector2(624, 24)
+layout_mode = 0
 anchor_right = 1.0
-margin_left = 8.0
-margin_top = 8.0
-margin_right = -8.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 624, 24 )
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 32.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 text = "LABEL.VERSION"
 clip_text = true
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="CenterContainer" type="CenterContainer" parent="." index="3"]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 640, 360 )
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" index="0"]
-margin_left = 64.0
-margin_top = 32.0
-margin_right = 576.0
-margin_bottom = 328.0
+custom_minimum_size = Vector2(528, 0)
+layout_mode = 2
 alignment = 1
 
 [node name="LogoRect" type="TextureRect" parent="CenterContainer/VBoxContainer" index="0"]
-margin_right = 512.0
-margin_bottom = 64.0
-texture = ExtResource( 4 )
-stretch_mode = 4
+layout_mode = 2
+texture = ExtResource("4")
+stretch_mode = 3
 
 [node name="LogoSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer" index="1"]
-margin_top = 68.0
-margin_right = 512.0
-margin_bottom = 72.0
+layout_mode = 2
 
-[node name="MenuList" parent="CenterContainer/VBoxContainer" index="2" instance=ExtResource( 5 )]
-anchor_right = 0.0
-margin_top = 76.0
-margin_right = 512.0
-margin_bottom = 288.0
+[node name="MenuList" parent="CenterContainer/VBoxContainer" index="2" instance=ExtResource("5")]
+layout_mode = 2
 
-[node name="ContinueGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="0" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_right = 512.0
+[node name="ContinueGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="0" instance=ExtResource("6")]
+layout_mode = 2
+_text = "BUTTON.CONTINUE_GAME"
+_icon = ExtResource("11")
 appearance_condition = 6
 tooltip = "TOOLTIP.BUTTON.CONTINUE_GAME"
-text = "BUTTON.CONTINUE_GAME"
-icon = ExtResource( 11 )
 
-[node name="NewGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="1" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 36.0
-margin_right = 512.0
-margin_bottom = 68.0
+[node name="NewGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="1" instance=ExtResource("6")]
+layout_mode = 2
+_text = "BUTTON.NEW_GAME"
+_icon = ExtResource("7")
 tooltip = "TOOLTIP.BUTTON.NEW_GAME"
-text = "BUTTON.NEW_GAME"
-icon = ExtResource( 7 )
 
-[node name="SettingsButton" parent="CenterContainer/VBoxContainer/MenuList" index="2" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 72.0
-margin_right = 512.0
-margin_bottom = 104.0
+[node name="SettingsButton" parent="CenterContainer/VBoxContainer/MenuList" index="2" instance=ExtResource("6")]
+layout_mode = 2
+_text = "BUTTON.SETTINGS"
+_icon = ExtResource("9")
 tooltip = "TOOLTIP.BUTTON.SETTINGS"
-text = "BUTTON.SETTINGS"
-icon = ExtResource( 9 )
 
-[node name="CreditsButton" parent="CenterContainer/VBoxContainer/MenuList" index="3" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 108.0
-margin_right = 512.0
-margin_bottom = 140.0
+[node name="CreditsButton" parent="CenterContainer/VBoxContainer/MenuList" index="3" instance=ExtResource("6")]
+layout_mode = 2
+_text = "BUTTON.CREDITS"
+_icon = ExtResource("10")
 tooltip = "TOOLTIP.BUTTON.CREDITS"
-text = "BUTTON.CREDITS"
-icon = ExtResource( 10 )
 
-[node name="DevlogButton" parent="CenterContainer/VBoxContainer/MenuList" index="4" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 144.0
-margin_right = 512.0
-margin_bottom = 176.0
+[node name="DevlogButton" parent="CenterContainer/VBoxContainer/MenuList" index="4" instance=ExtResource("6")]
+layout_mode = 2
+_text = "BUTTON.DEVLOG"
+_icon = ExtResource("10")
 tooltip = "TOOLTIP.BUTTON.DEVLOG"
-text = "BUTTON.DEVLOG"
-icon = ExtResource( 10 )
 
-[node name="QuitGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="5" instance=ExtResource( 6 )]
-anchor_right = 0.0
-margin_top = 180.0
-margin_right = 512.0
-margin_bottom = 212.0
+[node name="QuitGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="5" instance=ExtResource("6")]
+layout_mode = 2
+_text = "BUTTON.QUIT_GAME"
+_icon = ExtResource("8")
+_pressed_sound = null
 tooltip = "TOOLTIP.BUTTON.QUIT_GAME"
-text = "BUTTON.QUIT_GAME"
-icon = ExtResource( 8 )
-press_sound = 0
 
 [node name="MenuSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer" index="3"]
-margin_top = 292.0
-margin_right = 512.0
-margin_bottom = 296.0
+layout_mode = 2
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/ContinueGameButton" to="." method="_on_continue_game_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/NewGameButton" to="." method="_on_new_game_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/SettingsButton" to="." method="request_push" binds= [ "settings" ]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/SettingsButton" to="." method="request_push" binds= ["settings"]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/CreditsButton" to="." method="_on_credits_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/DevlogButton" to="." method="_on_devlog_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/QuitGameButton" to="." method="_on_quit_game_button_pressed"]

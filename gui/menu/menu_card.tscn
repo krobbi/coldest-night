@@ -1,24 +1,25 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=6 format=3 uid="uid://r4jmw2edx2rt"]
 
-[ext_resource path="res://gui/menu/menu_card.gd" type="Script" id=1]
-[ext_resource path="res://resources/audio/sfx/menu_cancel.ogg" type="AudioStream" id=2]
-[ext_resource path="res://components/remote_audio_player/remote_audio_player.tscn" type="PackedScene" id=3]
-[ext_resource path="res://gui/tooltip_label/tooltip_label.tscn" type="PackedScene" id=4]
-[ext_resource path="res://resources/themes/menu_card.tres" type="Theme" id=5]
+[ext_resource type="Script" path="res://gui/menu/menu_card.gd" id="1"]
+[ext_resource type="AudioStream" uid="uid://cymu5mgsmse7e" path="res://resources/audio/sfx/menu_cancel.ogg" id="2"]
+[ext_resource type="PackedScene" uid="uid://b4vwav1arica" path="res://components/remote_audio_player/remote_audio_player.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://cchd7sv73ca7x" path="res://gui/tooltip_label/tooltip_label.tscn" id="4"]
+[ext_resource type="Theme" uid="uid://bfxlynjqiqif1" path="res://resources/themes/menu_card.tres" id="5"]
 
 [node name="MenuCard" type="Control"]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 640, 360 )
-theme = ExtResource( 5 )
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("5")
+script = ExtResource("1")
 
-[node name="ManualPopPlayer" parent="." instance=ExtResource( 3 )]
-stream = ExtResource( 2 )
+[node name="ManualPopPlayer" parent="." instance=ExtResource("3")]
+stream = ExtResource("2")
 mix_target = 2
-bus = "SFX"
 
-[node name="TooltipLabel" parent="." instance=ExtResource( 4 )]
+[node name="TooltipLabel" parent="." instance=ExtResource("4")]
+layout_mode = 1

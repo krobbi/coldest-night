@@ -4,8 +4,8 @@ extends MenuCard
 # The results menu card is a fixed menu card that is the root menu card of the
 # results scene.
 
-export(String, FILE, "*.tscn") var _just_completed_scene_path: String
-export(String, FILE, "*.tscn") var _already_completed_scene_path: String
+@export var _just_completed_scene_path: String # (String, FILE, "*.tscn")
+@export var _already_completed_scene_path: String # (String, FILE, "*.tscn")
 
 var _save_data: SaveData = SaveManager.get_working_data()
 var _is_continuing: bool = false
@@ -18,7 +18,7 @@ func _ready() -> void:
 		_save_data.stats.time_minutes,
 		_save_data.stats.time_seconds,
 	]
-	$CenterContainer/VBoxContainer/GridContainer/AlertCountValue.text = String(
+	$CenterContainer/VBoxContainer/GridContainer/AlertCountValue.text = str(
 			_save_data.stats.alert_count)
 
 
@@ -32,9 +32,9 @@ func _on_continue_button_pressed() -> void:
 	_is_continuing = true
 	
 	if _save_data.state == SaveData.State.COMPLETED:
-		SceneManager.change_scene(_already_completed_scene_path)
+		SceneManager.change_scene_to_file(_already_completed_scene_path)
 	else:
 		_save_data.state = SaveData.State.COMPLETED
 		SaveManager.push_to_slot()
 		SaveManager.save_file()
-		SceneManager.change_scene(_just_completed_scene_path)
+		SceneManager.change_scene_to_file(_just_completed_scene_path)

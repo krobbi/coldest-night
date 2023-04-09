@@ -1,46 +1,32 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=3 uid="uid://dahvqnjm8wq1o"]
 
-[ext_resource path="res://gui/menu/menu_cards/fixed_menu_card.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_cards/pause_quit_menu_card.gd" type="Script" id=2]
-[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=3]
-[ext_resource path="res://resources/textures/gui/icons/next.png" type="Texture" id=4]
-[ext_resource path="res://resources/textures/gui/icons/quit.png" type="Texture" id=5]
+[ext_resource type="PackedScene" uid="uid://dc0jhm72vpnto" path="res://gui/menu/menu_cards/fixed_menu_card.tscn" id="1"]
+[ext_resource type="Script" path="res://gui/menu/menu_cards/pause_quit_menu_card.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://c6374r3urk8o6" path="res://gui/menu/menu_rows/button_menu_row.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://d14oavfpm1kob" path="res://resources/textures/gui/icons/next.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://divxgpxgqa3xe" path="res://resources/textures/gui/icons/quit.png" id="5"]
+[ext_resource type="AudioStream" uid="uid://cymu5mgsmse7e" path="res://resources/audio/sfx/menu_cancel.ogg" id="6"]
 
-[node name="PauseQuitMenuCard" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
+[node name="PauseQuitMenuCard" instance=ExtResource("1")]
+script = ExtResource("2")
 _quit_scene_path = "res://scenes/menu/menu.tscn"
-
-[node name="VBoxContainer" parent="CenterContainer" index="0"]
-margin_top = 127.0
-margin_bottom = 233.0
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
 text = "HEADING.PAUSE_QUIT"
 
-[node name="MenuList" parent="CenterContainer/VBoxContainer" index="2"]
-margin_bottom = 98.0
-
-[node name="ResumeGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="0" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_right = 512.0
+[node name="ResumeGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="0" instance=ExtResource("3")]
+layout_mode = 2
+_text = "BUTTON.RESUME_GAME"
+_icon = ExtResource("4")
+_pressed_sound = ExtResource("6")
 tooltip = "TOOLTIP.BUTTON.RESUME_GAME.DO_NOT_QUIT"
-text = "BUTTON.RESUME_GAME"
-icon = ExtResource( 4 )
-press_sound = 2
 
-[node name="QuitToMainMenuButton" parent="CenterContainer/VBoxContainer/MenuList" index="1" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_top = 36.0
-margin_right = 512.0
-margin_bottom = 68.0
+[node name="QuitToMainMenuButton" parent="CenterContainer/VBoxContainer/MenuList" index="1" instance=ExtResource("3")]
+layout_mode = 2
+_text = "BUTTON.QUIT_TO_MAIN_MENU"
+_icon = ExtResource("5")
+_pressed_sound = ExtResource("6")
 tooltip = "TOOLTIP.BUTTON.QUIT_TO_MAIN_MENU"
-text = "BUTTON.QUIT_TO_MAIN_MENU"
-icon = ExtResource( 5 )
-press_sound = 2
-
-[node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]
-margin_top = 102.0
-margin_bottom = 106.0
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/ResumeGameButton" to="." method="request_pop"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/QuitToMainMenuButton" to="." method="_on_quit_to_main_menu_button_pressed"]

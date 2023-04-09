@@ -1,85 +1,52 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=4 format=3 uid="uid://st5q5c7radys"]
 
-[ext_resource path="res://levels/level.gd" type="Script" id=1]
-[ext_resource path="res://resources/tile_sets/navigation.tres" type="TileSet" id=2]
-[ext_resource path="res://gui/radar/level_vision_area_renderer/level_vision_area_renderer.tscn" type="PackedScene" id=3]
+[ext_resource type="Script" path="res://levels/level.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://bl6054aek4v2f" path="res://gui/radar/level_vision_area_renderer/level_vision_area_renderer.tscn" id="3"]
+[ext_resource type="TileSet" uid="uid://dqthosdpewes3" path="res://resources/tile_sets/navigation.tres" id="3_qqo23"]
 
 [node name="Level" type="Node2D"]
-pause_mode = 1
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+script = ExtResource("1")
+metadata/_edit_lock_ = true
 
 [node name="Cutscenes" type="Node" parent="."]
 
-[node name="Background" type="Node2D" parent="."]
-__meta__ = {
-"_edit_lock_": true
-}
+[node name="Midground" type="Node2D" parent="."]
+y_sort_enabled = true
+metadata/_edit_lock_ = true
 
-[node name="LevelVisionAreaRenderer" parent="." instance=ExtResource( 3 )]
+[node name="LevelVisionAreaRenderer" parent="Midground" instance=ExtResource("3")]
+z_index = -1
+metadata/_edit_lock_ = true
 
-[node name="Midground" type="YSort" parent="."]
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="Foreground" type="Node2D" parent="."]
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="NavTileMap" type="TileMap" parent="."]
-tile_set = ExtResource( 2 )
-cell_size = Vector2( 32, 32 )
-collision_mask = 0
-format = 1
-__meta__ = {
-"_edit_lock_": true
-}
+[node name="NavigationTileMap" type="TileMap" parent="."]
+tile_set = ExtResource("3_qqo23")
+format = 2
+layer_0/name = "Navigation"
+metadata/_edit_lock_ = true
 
 [node name="RadarPits" type="Node2D" parent="." groups=["radar_pits"]]
 visible = false
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="RadarFloors" type="Node2D" parent="." groups=["radar_floors"]]
 visible = false
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="RadarWalls" type="Node2D" parent="." groups=["radar_walls"]]
 visible = false
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node2D" parent="."]
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="PatrolPoints" type="Node2D" parent="."]
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="Points" type="Node2D" parent="."]
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
-[node name="TopLeft" type="Position2D" parent="."]
-position = Vector2( -32, -32 )
-__meta__ = {
-"_gizmo_extents_": 32.0
-}
+[node name="TopLeft" type="Marker2D" parent="."]
+position = Vector2(-32, -32)
 
-[node name="BottomRight" type="Position2D" parent="."]
-position = Vector2( 672, 384 )
-__meta__ = {
-"_gizmo_extents_": 32.0
-}
+[node name="BottomRight" type="Marker2D" parent="."]
+position = Vector2(672, 384)

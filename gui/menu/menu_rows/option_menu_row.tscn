@@ -1,93 +1,85 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=7 format=3 uid="uid://baggoqbi4fuao"]
 
-[ext_resource path="res://gui/menu/menu_row.tscn" type="PackedScene" id=1]
-[ext_resource path="res://resources/textures/gui/buttons/option_previous.png" type="Texture" id=2]
-[ext_resource path="res://resources/textures/gui/buttons/option_next.png" type="Texture" id=3]
-[ext_resource path="res://gui/menu/menu_rows/option_menu_row.gd" type="Script" id=4]
-[ext_resource path="res://resources/audio/sfx/menu_cancel.ogg" type="AudioStream" id=5]
-[ext_resource path="res://resources/audio/sfx/menu_move.ogg" type="AudioStream" id=6]
+[ext_resource type="PackedScene" uid="uid://basbrvjtnrcrd" path="res://gui/menu/menu_row.tscn" id="1"]
+[ext_resource type="Texture2D" uid="uid://h6jt8ewairnd" path="res://resources/textures/gui/buttons/option_previous.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://cc5nxeej453tu" path="res://resources/textures/gui/buttons/option_next.png" id="3"]
+[ext_resource type="Script" path="res://gui/menu/menu_rows/option_menu_row.gd" id="4"]
+[ext_resource type="AudioStream" uid="uid://cymu5mgsmse7e" path="res://resources/audio/sfx/menu_cancel.ogg" id="5"]
+[ext_resource type="AudioStream" uid="uid://b0xgiumc04x8k" path="res://resources/audio/sfx/menu_move.ogg" id="6"]
 
-[node name="OptionMenuRow" instance=ExtResource( 1 )]
-script = ExtResource( 4 )
+[node name="OptionMenuRow" instance=ExtResource("1")]
+script = ExtResource("4")
+_option_source = 0
+_text = ""
 focus_node_path = NodePath("Content/Button")
-option_source = 0
-options = {
-}
-text = ""
 
 [node name="Label" type="Label" parent="Content" index="0"]
+custom_minimum_size = Vector2(240, 32)
+layout_mode = 0
 anchor_bottom = 1.0
-margin_right = 240.0
-rect_min_size = Vector2( 240, 32 )
-mouse_filter = 1
+offset_right = 240.0
 size_flags_horizontal = 0
 size_flags_vertical = 1
+mouse_filter = 1
 text = "Option"
-valign = 1
+vertical_alignment = 1
 clip_text = true
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="PreviousButton" type="TextureButton" parent="Content" index="1"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -240.0
-margin_right = -208.0
-rect_min_size = Vector2( 32, 32 )
+offset_left = -240.0
+offset_right = -208.0
+size_flags_horizontal = 0
 focus_mode = 0
 mouse_filter = 1
-size_flags_horizontal = 0
-texture_normal = ExtResource( 2 )
-expand = true
+texture_normal = ExtResource("2")
 stretch_mode = 3
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="Button" type="Button" parent="Content" index="2"]
+custom_minimum_size = Vector2(176, 32)
+layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -208.0
-margin_right = -32.0
-rect_min_size = Vector2( 176, 32 )
-mouse_filter = 1
+offset_left = -208.0
+offset_right = -32.0
 size_flags_horizontal = 0
+mouse_filter = 1
 text = "Value"
 flat = true
 clip_text = true
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="NextButton" type="TextureButton" parent="Content" index="3"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -32.0
-rect_min_size = Vector2( 32, 32 )
+offset_left = -32.0
+size_flags_horizontal = 0
 focus_mode = 0
 mouse_filter = 1
-size_flags_horizontal = 0
-texture_normal = ExtResource( 3 )
-expand = true
+texture_normal = ExtResource("3")
 stretch_mode = 3
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="PreviousPlayer" type="AudioStreamPlayer" parent="." index="3"]
-stream = ExtResource( 5 )
+stream = ExtResource("5")
 mix_target = 2
-bus = "SFX"
+bus = &"SFX"
 
 [node name="NextPlayer" type="AudioStreamPlayer" parent="." index="4"]
-stream = ExtResource( 6 )
+stream = ExtResource("6")
 mix_target = 2
-bus = "SFX"
+bus = &"SFX"
 
-[connection signal="pressed" from="Content/PreviousButton" to="." method="select_previous"]
-[connection signal="pressed" from="Content/Button" to="." method="select_next"]
-[connection signal="pressed" from="Content/NextButton" to="." method="select_next"]
+[connection signal="pressed" from="Content/PreviousButton" to="." method="_select_previous"]
+[connection signal="pressed" from="Content/Button" to="." method="_select_next"]
+[connection signal="pressed" from="Content/NextButton" to="." method="_select_next"]

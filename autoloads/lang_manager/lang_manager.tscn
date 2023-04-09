@@ -1,7 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://c4ixo8n2cs08q"]
 
-[ext_resource path="res://autoloads/lang_manager/lang_manager.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://autoloads/lang_manager/lang_manager.gd" id="1"]
 
 [node name="LangManager" type="Node"]
-pause_mode = 2
-script = ExtResource( 1 )
+process_mode = 3
+script = ExtResource("1")

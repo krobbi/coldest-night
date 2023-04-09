@@ -7,6 +7,9 @@ extends AudioStreamPlayer
 
 # Play the remote audio player remotely.
 func play_remote(from_position: float = 0.0) -> void:
+	if not stream:
+		return
+	
 	var copy: AudioStreamPlayer = AudioStreamPlayer.new()
 	copy.stream = stream
 	copy.volume_db = volume_db
@@ -15,11 +18,11 @@ func play_remote(from_position: float = 0.0) -> void:
 	copy.bus = bus
 	AudioManager.add_child(copy)
 	
-	if copy.connect("finished", copy, "queue_free", [], CONNECT_ONESHOT) == OK:
+	if copy.finished.connect(copy.queue_free, CONNECT_ONE_SHOT) == OK:
 		copy.play(from_position)
 	else:
-		if copy.is_connected("finished", copy, "queue_free"):
-			copy.disconnect("finished", copy, "queue_free")
+		if copy.finished.is_connected(copy.queue_free):
+			copy.finished.disconnect(copy.queue_free)
 		
 		copy.queue_free()
 		play(from_position)

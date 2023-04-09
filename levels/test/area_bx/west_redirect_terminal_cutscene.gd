@@ -12,8 +12,8 @@ func run() -> void:
 	show()
 	say("Redirect barriers?")
 	
-	option("Redirect barriers", "redirect_option")
-	option("Cancel", "cancel_option")
+	option("Redirect barriers", redirect_option)
+	option("Cancel", cancel_option)
 	menu()
 
 

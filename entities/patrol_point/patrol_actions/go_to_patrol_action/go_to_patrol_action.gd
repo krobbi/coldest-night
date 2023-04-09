@@ -4,9 +4,9 @@ extends PatrolAction
 # A go to patrol action is a patrol action that unconditionally jumps to another
 # patrol action.
 
-export(NodePath) var _target_patrol_action_parent_path: NodePath
+@export var _target_patrol_action_parent_path: NodePath
 
-onready var _target_patrol_action: Node = get_node(
+@onready var _target_patrol_action: Node = get_node(
 		_target_patrol_action_parent_path).get_child(0)
 
 # Run when the go to patrol action is ticked. Return the target patrol action.

@@ -7,23 +7,11 @@ extends Area2D
 signal entered
 signal exited
 
-# Run when the trigger is entered.
-func _enter() -> void:
-	pass
-
-
-# Run when the trigger is exited.
-func _exit() -> void:
-	pass
-
-
-# Run when the trigger's area is entered.
+# Run when the trigger's area is entered. Emit the `entered` signal.
 func _on_area_entered(_area: Area2D) -> void:
-	_enter()
-	emit_signal("entered")
+	entered.emit()
 
 
-# Run when the trigger's area is exited.
+# Run when the trigger's area is exited. Emit the `exited` signal.
 func _on_area_exited(_area: Area2D) -> void:
-	_exit()
-	emit_signal("exited")
+	exited.emit()

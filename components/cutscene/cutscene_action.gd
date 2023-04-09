@@ -1,5 +1,5 @@
 class_name CutsceneAction
-extends Reference
+extends RefCounted
 
 # Cutscene Action
 # A cutscene action is a component of a cutscene that runs an asynchronous

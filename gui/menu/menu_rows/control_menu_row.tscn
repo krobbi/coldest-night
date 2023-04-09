@@ -1,70 +1,68 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=6 format=3 uid="uid://ckd1jllrkd1yf"]
 
-[ext_resource path="res://gui/menu/menu_row.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_rows/control_menu_row.gd" type="Script" id=2]
-[ext_resource path="res://resources/textures/gui/buttons/menu_row.png" type="Texture" id=3]
-[ext_resource path="res://resources/audio/sfx/menu_ok.ogg" type="AudioStream" id=4]
+[ext_resource type="PackedScene" uid="uid://basbrvjtnrcrd" path="res://gui/menu/menu_row.tscn" id="1"]
+[ext_resource type="Script" path="res://gui/menu/menu_rows/control_menu_row.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://c4s51s3mf4wx7" path="res://resources/textures/gui/buttons/menu_row.png" id="3_8ry3n"]
+[ext_resource type="AudioStream" uid="uid://bv6qkul4i23tc" path="res://resources/audio/sfx/menu_ok.ogg" id="4"]
 
-[sub_resource type="StyleBoxTexture" id=1]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_x327r"]
 content_margin_left = 4.0
-content_margin_right = 4.0
 content_margin_top = 4.0
+content_margin_right = 4.0
 content_margin_bottom = 8.0
-texture = ExtResource( 3 )
-region_rect = Rect2( 0, 0, 6, 10 )
-margin_left = 2.0
-margin_right = 2.0
-margin_top = 2.0
-margin_bottom = 6.0
-draw_center = false
+texture = ExtResource("3_8ry3n")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 6.0
+region_rect = Rect2(0, 0, 6, 10)
 
-[node name="ControlMenuRow" groups=["control_menu_rows"] instance=ExtResource( 1 )]
-script = ExtResource( 2 )
-focus_node_path = NodePath("Content/Button")
+[node name="ControlMenuRow" groups=["control_menu_rows"] instance=ExtResource("1")]
+script = ExtResource("2")
 _action = ""
+focus_node_path = NodePath("Content/Button")
 
 [node name="Label" type="Label" parent="Content" index="0"]
+custom_minimum_size = Vector2(240, 32)
+layout_mode = 0
 anchor_bottom = 1.0
-margin_right = 240.0
-rect_min_size = Vector2( 240, 32 )
-mouse_filter = 1
+offset_right = 240.0
 size_flags_horizontal = 0
 size_flags_vertical = 1
+mouse_filter = 1
 text = "Control"
-valign = 1
+vertical_alignment = 1
 clip_text = true
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="Button" type="Button" parent="Content" index="1"]
+custom_minimum_size = Vector2(240, 32)
+layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -240.0
-rect_min_size = Vector2( 240, 32 )
-mouse_filter = 1
+offset_left = -240.0
 size_flags_horizontal = 0
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 1 )
-custom_styles/focus = SubResource( 1 )
-custom_styles/disabled = SubResource( 1 )
-custom_styles/normal = SubResource( 1 )
+mouse_filter = 1
+theme_override_styles/normal = SubResource("StyleBoxTexture_x327r")
+theme_override_styles/hover = SubResource("StyleBoxTexture_x327r")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_x327r")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_x327r")
+theme_override_styles/focus = SubResource("StyleBoxTexture_x327r")
 toggle_mode = true
 text = "Input"
 clip_text = true
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="InputTimer" type="Timer" parent="." index="3"]
 wait_time = 8.0
 one_shot = true
 
 [node name="MappedPlayer" type="AudioStreamPlayer" parent="." index="4"]
-stream = ExtResource( 4 )
+stream = ExtResource("4")
 mix_target = 2
-bus = "SFX"
+bus = &"SFX"
 
+[connection signal="deselected" from="." to="." method="_on_deselected"]
 [connection signal="toggled" from="Content/Button" to="." method="set_awaiting_input"]
 [connection signal="timeout" from="InputTimer" to="." method="_on_input_timer_timeout"]

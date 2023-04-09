@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://cko2xup270v5b"]
 
-[ext_resource path="res://entities/patrol_point/patrol_actions/patrol_action.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://entities/patrol_point/patrol_actions/patrol_action.gd" id="1"]
 
 [node name="PatrolAction" type="Node" groups=["patrol_actions"]]
-script = ExtResource( 1 )
+script = ExtResource("1")

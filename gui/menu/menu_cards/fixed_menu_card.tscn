@@ -1,45 +1,38 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://dc0jhm72vpnto"]
 
-[ext_resource path="res://gui/menu/menu_card.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_list.tscn" type="PackedScene" id=3]
+[ext_resource type="PackedScene" uid="uid://r4jmw2edx2rt" path="res://gui/menu/menu_card.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://bgur41a2luw2t" path="res://gui/menu/menu_list.tscn" id="3"]
 
-[node name="FixedMenuCard" instance=ExtResource( 1 )]
+[node name="FixedMenuCard" instance=ExtResource("1")]
 _menu_list_path = NodePath("CenterContainer/VBoxContainer/MenuList")
 
 [node name="CenterContainer" type="CenterContainer" parent="." index="2"]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 640, 360 )
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" index="0"]
-margin_left = 64.0
-margin_top = 145.0
-margin_right = 576.0
-margin_bottom = 215.0
+custom_minimum_size = Vector2(528, 0)
+layout_mode = 2
 alignment = 1
+metadata/_edit_lock_ = true
 
 [node name="HeadingLabel" type="Label" parent="CenterContainer/VBoxContainer" index="0"]
-margin_right = 512.0
-margin_bottom = 18.0
+layout_mode = 2
 text = "Heading"
-align = 1
-valign = 2
+horizontal_alignment = 1
+vertical_alignment = 2
+metadata/_edit_lock_ = true
 
 [node name="HeadingSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer" index="1"]
-margin_top = 22.0
-margin_right = 512.0
-margin_bottom = 26.0
+layout_mode = 2
+metadata/_edit_lock_ = true
 
-[node name="MenuList" parent="CenterContainer/VBoxContainer" index="2" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_top = 30.0
-margin_right = 512.0
-margin_bottom = 62.0
+[node name="MenuList" parent="CenterContainer/VBoxContainer" index="2" instance=ExtResource("3")]
+layout_mode = 2
 
 [node name="MenuSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer" index="3"]
-margin_top = 66.0
-margin_right = 512.0
-margin_bottom = 70.0
+layout_mode = 2
+metadata/_edit_lock_ = true

@@ -1,49 +1,39 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://hwntgpe28uv4"]
 
-[ext_resource path="res://autoloads/shader_manager/shader_manager.gd" type="Script" id=1]
-[ext_resource path="res://resources/shaders/autoloads/shader_manager/contrast_boost.gdshader" type="Shader" id=2]
+[ext_resource type="Script" path="res://autoloads/shader_manager/shader_manager.gd" id="1"]
+[ext_resource type="Shader" path="res://resources/shaders/autoloads/shader_manager/contrast_boost.gdshader" id="2"]
 
-[sub_resource type="ShaderMaterial" id=2]
-shader = ExtResource( 2 )
-shader_param/magnitude = 1.0
+[sub_resource type="ShaderMaterial" id="2"]
+shader = ExtResource("2")
+shader_parameter/magnitude = 1.0
 
-[sub_resource type="ShaderMaterial" id=1]
+[sub_resource type="ShaderMaterial" id="1"]
 
 [node name="ShaderManager" type="CanvasLayer"]
-pause_mode = 2
+process_mode = 3
 layer = 3
-script = ExtResource( 1 )
+script = ExtResource("1")
 
 [node name="ContrastBoostBuffer" type="BackBufferCopy" parent="."]
 visible = false
 copy_mode = 2
-rect = Rect2( 0, 0, 640, 360 )
-__meta__ = {
-"_edit_lock_": true
-}
+rect = Rect2(0, 0, 640, 360)
 
 [node name="ContrastBoostRect" type="ColorRect" parent="ContrastBoostBuffer"]
-material = SubResource( 2 )
+material = SubResource("2")
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="ColorGradingBuffer" type="BackBufferCopy" parent="."]
 visible = false
 copy_mode = 2
-rect = Rect2( 0, 0, 640, 360 )
-__meta__ = {
-"_edit_lock_": true
-}
+rect = Rect2(0, 0, 640, 360)
 
 [node name="ColorGradingRect" type="ColorRect" parent="ColorGradingBuffer"]
-material = SubResource( 1 )
+material = SubResource("1")
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-__meta__ = {
-"_edit_lock_": true
-}

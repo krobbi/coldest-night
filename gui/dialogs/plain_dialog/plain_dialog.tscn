@@ -1,14 +1,15 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=6 format=3 uid="uid://uemgtywlxewr"]
 
-[ext_resource path="res://gui/dialogs/dialog.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.gd" type="Script" id=2]
-[ext_resource path="res://resources/themes/dialogs/plain_dialog.tres" type="Theme" id=3]
-[ext_resource path="res://resources/audio/sfx/text.ogg" type="AudioStream" id=4]
-[ext_resource path="res://resources/audio/sfx/menu_move.ogg" type="AudioStream" id=5]
+[ext_resource type="PackedScene" uid="uid://c23qqfrlep2kp" path="res://gui/dialogs/dialog.tscn" id="1"]
+[ext_resource type="Script" path="res://gui/dialogs/plain_dialog/plain_dialog.gd" id="2"]
+[ext_resource type="Theme" uid="uid://dliyxjn0fcso2" path="res://resources/themes/dialogs/plain_dialog.tres" id="3"]
+[ext_resource type="AudioStream" uid="uid://tm4qjj6fimqf" path="res://resources/audio/sfx/text.ogg" id="4"]
+[ext_resource type="AudioStream" uid="uid://b0xgiumc04x8k" path="res://resources/audio/sfx/menu_move.ogg" id="5"]
 
-[node name="PlainDialog" instance=ExtResource( 1 )]
-theme = ExtResource( 3 )
-script = ExtResource( 2 )
+[node name="PlainDialog" instance=ExtResource("1")]
+theme = ExtResource("3")
+script = ExtResource("2")
+metadata/_edit_lock_ = true
 
 [node name="TypeTimer" type="Timer" parent="." index="1"]
 wait_time = 0.04
@@ -17,77 +18,73 @@ wait_time = 0.04
 one_shot = true
 
 [node name="SpeechPlayer" type="AudioStreamPlayer" parent="." index="3"]
-stream = ExtResource( 4 )
+stream = ExtResource("4")
 mix_target = 2
-bus = "SFX"
+bus = &"SFX"
 
 [node name="MenuMovePlayer" type="AudioStreamPlayer" parent="." index="4"]
-stream = ExtResource( 5 )
+stream = ExtResource("5")
 mix_target = 2
-bus = "SFX"
+bus = &"SFX"
 
 [node name="MessageLabel" type="RichTextLabel" parent="." index="5"]
+clip_contents = false
+custom_minimum_size = Vector2(576, 72)
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 32.0
-margin_top = -120.0
-margin_right = -32.0
-margin_bottom = -48.0
-rect_min_size = Vector2( 576, 72 )
-rect_clip_content = false
+offset_left = 32.0
+offset_top = -120.0
+offset_right = -32.0
+offset_bottom = -48.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 bbcode_enabled = true
 scroll_active = false
-__meta__ = {
-"_edit_lock_": true
-}
+visible_characters_behavior = 1
+metadata/_edit_lock_ = true
 
-[node name="NameLabel" type="RichTextLabel" parent="MessageLabel" index="0"]
+[node name="NameLabel" type="RichTextLabel" parent="MessageLabel" index="1"]
 visible = false
-margin_top = -28.0
-margin_right = 256.0
-margin_bottom = 4.0
-rect_min_size = Vector2( 256, 32 )
+custom_minimum_size = Vector2(256, 32)
+layout_mode = 0
+offset_top = -28.0
+offset_right = 256.0
+offset_bottom = 4.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 bbcode_enabled = true
 scroll_active = false
-__meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
+metadata/_edit_lock_ = true
 
 [node name="OptionContainer" type="VBoxContainer" parent="MessageLabel" index="2"]
+custom_minimum_size = Vector2(256, 32)
+layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -256.0
-margin_top = -32.0
+offset_left = -256.0
+offset_top = -32.0
 grow_vertical = 0
-rect_min_size = Vector2( 256, 32 )
 size_flags_horizontal = 0
 size_flags_vertical = 2
 alignment = 2
-__meta__ = {
-"_edit_lock_": true
-}
+metadata/_edit_lock_ = true
 
 [node name="ContinueButton" type="Button" parent="MessageLabel" index="3"]
 visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 0
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -32.0
-margin_bottom = 32.0
+offset_left = -32.0
+offset_bottom = 32.0
 grow_horizontal = 0
-rect_min_size = Vector2( 32, 32 )
 size_flags_horizontal = 3
-align = 2
-__meta__ = {
-"_edit_lock_": true
-}
+alignment = 2
+metadata/_edit_lock_ = true
 
 [connection signal="pause_requested" from="DialogTagParser" to="." method="_on_tags_pause_requested"]
 [connection signal="speed_requested" from="DialogTagParser" to="." method="_on_tags_speed_requested"]

@@ -4,7 +4,7 @@ extends Control
 # The results scene is a scene that displays and saves the results of a
 # completed save file.
 
-export(AudioStream) var _music: AudioStream
+@export var _music: AudioStream
 
 # Run when the results scene is entered. Play background music.
 func _ready() -> void:

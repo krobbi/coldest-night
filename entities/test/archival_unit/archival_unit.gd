@@ -11,7 +11,7 @@ var _is_collected: bool = false
 # Run when the archival unit finishes entering the scene tree. Play the archival
 # unit's animation.
 func _ready() -> void:
-	$AnimatedSprite.play()
+	$AnimatedSprite2D.play()
 
 
 # Run when a player's triggering area enters the archival unit's trigger area.
@@ -23,5 +23,5 @@ func _on_area_entered(_area: Area2D) -> void:
 	_is_collected = true
 	var save_data: SaveData = SaveManager.get_working_data()
 	save_data.set_flag(FLAG, save_data.get_flag(FLAG) + 1)
-	EventBus.emit_floating_text_display_request("FLOATING_TEXT.TEST.ARCHIVAL_UNIT", position)
+	EventBus.floating_text_display_request.emit("FLOATING_TEXT.TEST.ARCHIVAL_UNIT", position)
 	queue_free()

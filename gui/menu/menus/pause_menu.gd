@@ -5,14 +5,14 @@ extends ColorRect
 
 var _is_open: bool = false
 
-onready var _paused_player: AudioStreamPlayer = $PausedPlayer
-onready var _menu_stack: MenuStack = $MenuStack
+@onready var _paused_player: AudioStreamPlayer = $PausedPlayer
+@onready var _menu_stack: MenuStack = $MenuStack
 
 # Run when the pause menu finishes entering the scene tree. Set the pause menu's
 # opacity and subscribe the pause menu to the configuration bus and event bus.
 func _ready() -> void:
-	ConfigBus.subscribe_node_float("accessibility.pause_opacity", self, "_set_opacity")
-	EventBus.subscribe_node("pause_game_request", self, "_open_menu")
+	ConfigBus.subscribe_node_float("accessibility.pause_opacity", _set_opacity)
+	EventBus.subscribe_node(EventBus.pause_game_request, _open_menu)
 
 
 # Set the pause menu's opacity.

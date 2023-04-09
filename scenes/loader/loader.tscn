@@ -1,28 +1,30 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=6 format=3 uid="uid://cpblgwa4hjch7"]
 
-[ext_resource path="res://scenes/loader/loader.gd" type="Script" id=1]
-[ext_resource path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" type="PackedScene" id=2]
-[ext_resource path="res://components/cutscene/cutscene.tscn" type="PackedScene" id=3]
-[ext_resource path="res://scenes/loader/new_game_cutscene.gd" type="Script" id=4]
-[ext_resource path="res://resources/audio/music/briefing.ogg" type="AudioStream" id=5]
+[ext_resource type="Script" path="res://scenes/loader/loader.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://uemgtywlxewr" path="res://gui/dialogs/plain_dialog/plain_dialog.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://b5hmlnvmbjm6c" path="res://components/cutscene/cutscene.tscn" id="3"]
+[ext_resource type="Script" path="res://scenes/loader/new_game_cutscene.gd" id="4"]
+[ext_resource type="AudioStream" uid="uid://baq5p8i0p0oj1" path="res://resources/audio/music/briefing.ogg" id="5"]
 
 [node name="Loader" type="Control"]
-pause_mode = 2
+process_mode = 3
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 640, 360 )
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
 _normal_scene_path = "res://scenes/overworld/overworld.tscn"
 _completed_scene_path = "res://scenes/results/results.tscn"
+metadata/_edit_lock_ = true
 
-[node name="NewGameCutscene" parent="." instance=ExtResource( 3 )]
-script = ExtResource( 4 )
-_music = ExtResource( 5 )
+[node name="NewGameCutscene" parent="." instance=ExtResource("3")]
+script = ExtResource("4")
+_music = ExtResource("5")
 
-[node name="PlainDialog" parent="." instance=ExtResource( 2 )]
+[node name="PlainDialog" parent="." instance=ExtResource("2")]
+layout_mode = 1
 
 [connection signal="cutscene_finished" from="NewGameCutscene" to="." method="_on_new_game_cutscene_finished"]

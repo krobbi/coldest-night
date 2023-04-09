@@ -6,17 +6,17 @@ extends State
 # impression that the guards have some amount of short term memory and
 # intuition.
 
-export(NodePath) var _cheat_timeout_state_path: NodePath
-export(NodePath) var _guard_path: NodePath
-export(float) var _cheat_duration: float = 1.8
-export(float) var _speed: float = 160.0
-export(float) var _acceleration: float = 1100.0
-export(float) var _friction: float = 1200.0
+@export var _cheat_timeout_state_path: NodePath
+@export var _guard_path: NodePath
+@export var _cheat_duration: float = 1.8
+@export var _speed: float = 160.0
+@export var _acceleration: float = 1100.0
+@export var _friction: float = 1200.0
 
 var _cheat_timer: float = 0.0
 
-onready var _cheat_timeout_state: State = get_node(_cheat_timeout_state_path)
-onready var _guard: Actor = get_node(_guard_path)
+@onready var _cheat_timeout_state: State = get_node(_cheat_timeout_state_path)
+@onready var _guard: Actor = get_node(_guard_path)
 
 # Run when the cheating state is entered. Reset the cheat timer.
 func enter() -> void:
@@ -33,7 +33,6 @@ func tick(delta: float) -> State:
 		_guard.investigate(_guard.get_target().position, 8.0, 16.0)
 		return _cheat_timeout_state
 	
-	_guard.find_nav_path(_guard.get_target().position)
-	_guard.run_nav_path()
-	_guard.follow_nav_path(_speed, _acceleration, _friction, delta)
+	_guard.navigate_to(_guard.get_target().position)
+	_guard.process_navigation(_speed, _acceleration, _friction, delta)
 	return self

@@ -5,26 +5,24 @@ extends CutsceneAction
 # An await cutscene action is a cutscene action that finishes when a signal is
 # received.
 
-var _object: Object
-var _signal_name: String
+var _awaited_signal: Signal
 var _is_finished: bool = false
 
-# Initialize the await cutscene action's object and signal name.
-func _init(object_ref: Object, signal_name_val: String) -> void:
-	_object = object_ref
-	_signal_name = signal_name_val
+# Initialize the await cutscene action's awaited signal.
+func _init(awaited_signal_ref: Signal) -> void:
+	_awaited_signal = awaited_signal_ref
 
 
-# Run when the await cutscene action begins. Connect the object to the await
-# cutscene action.
+# Run when the await cutscene action begins. Connect the awaited signal to the
+# await cutscene action.
 func begin() -> void:
-	if not is_instance_valid(_object) or not _object.has_signal(_signal_name):
+	if _awaited_signal.is_null():
 		_is_finished = true
 		return
 	
-	if _object.connect(_signal_name, self, "_on_signal_received", [], CONNECT_ONESHOT) != OK:
-		if _object.is_connected(_signal_name, self, "_on_signal_received"):
-			_object.disconnect(_signal_name, self, "_on_signal_received")
+	if _awaited_signal.connect(_on_signal_received, CONNECT_ONE_SHOT) != OK:
+		if _awaited_signal.is_connected(_on_signal_received):
+			_awaited_signal.disconnect(_on_signal_received)
 		
 		_is_finished = true
 

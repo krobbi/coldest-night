@@ -1,5 +1,5 @@
 class_name Actor
-extends KinematicBody2D
+extends CharacterBody2D
 
 # Actor Base
 # Actors are entities that represent characters in the game world and are
@@ -7,25 +7,22 @@ extends KinematicBody2D
 
 enum Facing {RIGHT, DOWN, LEFT, UP}
 
-export(String) var actor_key: String
-export(float) var animation_threshold: float = 40.0
+@export var actor_key: String
+@export var animation_threshold: float = 40.0
 
-export(NodePath) var _main_patrol_action_parent_path: NodePath
-export(float) var _repel_speed: float = 180.0
-export(float) var _repel_force: float = 900.0
+@export var _main_patrol_action_parent_path: NodePath
+@export var _repel_speed: float = 180.0
+@export var _repel_force: float = 900.0
 
 var _facing: int = Facing.DOWN
-var _velocity: Vector2 = Vector2.ZERO
-var _is_pathing: bool = false
-var _nav_path: PoolVector2Array = PoolVector2Array()
 
-onready var state_machine: StateMachine = $StateMachine
-onready var smooth_pivot: SmoothPivot = $SmoothPivot
+@onready var state_machine: StateMachine = $StateMachine
+@onready var smooth_pivot: SmoothPivot = $SmoothPivot
 
-onready var _nav_map: RID = get_tree().root.world_2d.navigation_map
-onready var _animation_player: AnimationPlayer = $AnimationPlayer
-onready var _repulsive_area: RepulsiveArea = $RepulsiveArea
-onready var _camera_anchor: Position2D = $SmoothPivot/CameraAnchor
+@onready var _animation_player: AnimationPlayer = $AnimationPlayer
+@onready var _navigation_agent: NavigationAgent2D = $NavigationAgent2D
+@onready var _repulsive_area: RepulsiveArea = $RepulsiveArea
+@onready var _camera_anchor: Marker2D = $SmoothPivot/CameraAnchor
 
 # Initialize the actor's state machine.
 func _ready() -> void:
@@ -39,9 +36,9 @@ func _physics_process(delta: float) -> void:
 	var repel_vector: Vector2 = _repulsive_area.get_vector()
 	
 	if repel_vector:
-		_velocity = _velocity.move_toward(repel_vector * _repel_speed, _repel_force * delta)
+		velocity = velocity.move_toward(repel_vector * _repel_speed, _repel_force * delta)
 	
-	_velocity = move_and_slide(_velocity)
+	move_and_slide()
 	
 	var facing_vector: Vector2 = smooth_pivot.get_vector()
 	
@@ -56,7 +53,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			_facing = Facing.UP
 	
-	if _velocity.length() >= animation_threshold:
+	if velocity.length() >= animation_threshold:
 		_animation_player.play("run_%s" % get_facing_key())
 	else:
 		_animation_player.play("idle_%s" % get_facing_key())
@@ -65,7 +62,7 @@ func _physics_process(delta: float) -> void:
 # Get the actor's main patrol action if it is specified. Otherwise, return
 # `null`.
 func get_main_patrol_action() -> PatrolAction:
-	if not _main_patrol_action_parent_path:
+	if _main_patrol_action_parent_path.is_empty():
 		return null
 	
 	return get_node(_main_patrol_action_parent_path).get_child(0) as PatrolAction
@@ -92,56 +89,22 @@ func get_facing_key() -> String:
 			return "right"
 
 
-# Set the actor's velocity.
-func set_velocity(value: Vector2) -> void:
-	_velocity = value
+# Get whether the actor is navigating.
+func is_navigating() -> bool:
+	return not _navigation_agent.is_navigation_finished()
 
 
-# Get the actor's velocity.
-func get_velocity() -> Vector2:
-	return _velocity
+# Navigate the actor to a world position.
+func navigate_to(world_position: Vector2) -> void:
+	_navigation_agent.target_position = world_position
 
 
-# Get whether the actor is pathfinding.
-func is_pathing() -> bool:
-	if _nav_path.empty():
-		_is_pathing = false
-	
-	return _is_pathing
-
-
-# Find a navigation path to a world position.
-func find_nav_path(world_pos: Vector2) -> void:
-	_nav_path = Navigation2DServer.map_get_path(_nav_map, position, world_pos, true)
-
-
-# Run the navigation path.
-func run_nav_path() -> void:
-	if not _nav_path.empty():
-		_is_pathing = true
-
-
-# Follow the navigation path.
-func follow_nav_path(speed: float, acceleration: float, friction: float, delta: float) -> void:
-	if not is_pathing():
-		_velocity = _velocity.move_toward(Vector2.ZERO, friction * delta)
+# Process the actor's navigation.
+func process_navigation(speed: float, acceleration: float, friction: float, delta: float) -> void:
+	if _navigation_agent.is_navigation_finished():
+		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 		return
 	
-	var target: Vector2 = _nav_path[0]
-	var distance: float = position.distance_to(target)
-	
-	while distance < 0.5:
-		_nav_path.remove(0)
-		
-		if _nav_path.empty():
-			return
-		
-		target = _nav_path[0]
-		distance = position.distance_to(target)
-	
-	var direction: Vector2 = position.direction_to(target)
-	_velocity = _velocity.move_toward(direction * speed, acceleration * delta)
+	var direction: Vector2 = position.direction_to(_navigation_agent.get_next_path_position())
+	velocity = velocity.move_toward(direction * speed, acceleration * delta)
 	smooth_pivot.pivot_to(direction.angle())
-	
-	if _velocity.length() * delta >= distance - 8.0:
-		_nav_path.remove(0)

@@ -1,100 +1,59 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=3 uid="uid://dpnw6e73sr6gg"]
 
-[ext_resource path="res://gui/menu/menu_cards/scroll_menu_card.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_cards/controls_menu_card.gd" type="Script" id=2]
-[ext_resource path="res://gui/menu/menu_rows/control_menu_row.tscn" type="PackedScene" id=3]
-[ext_resource path="res://gui/menu/menu_rows/button_menu_row.tscn" type="PackedScene" id=4]
-[ext_resource path="res://resources/textures/gui/icons/clear.png" type="Texture" id=5]
-[ext_resource path="res://resources/textures/gui/icons/back.png" type="Texture" id=6]
+[ext_resource type="PackedScene" uid="uid://chkq7f11r28a0" path="res://gui/menu/menu_cards/scroll_menu_card.tscn" id="1"]
+[ext_resource type="Script" path="res://gui/menu/menu_cards/controls_menu_card.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://ckd1jllrkd1yf" path="res://gui/menu/menu_rows/control_menu_row.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://c6374r3urk8o6" path="res://gui/menu/menu_rows/button_menu_row.tscn" id="4"]
+[ext_resource type="Texture2D" uid="uid://ch1nxe8ve1m7t" path="res://resources/textures/gui/icons/clear.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://b8dyyssck2fju" path="res://resources/textures/gui/icons/back.png" id="6"]
+[ext_resource type="AudioStream" uid="uid://cymu5mgsmse7e" path="res://resources/audio/sfx/menu_cancel.ogg" id="7"]
 
-[node name="ControlsMenuCard" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
-
-[node name="VBoxContainer" parent="CenterContainer" index="0"]
-margin_left = 56.0
-margin_right = 584.0
+[node name="ControlsMenuCard" instance=ExtResource("1")]
+script = ExtResource("2")
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
-margin_right = 528.0
 text = "HEADING.CONTROLS"
 
-[node name="HeadingSeparator" parent="CenterContainer/VBoxContainer" index="1"]
-margin_right = 528.0
+[node name="ResetControlsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource("4")]
+layout_mode = 2
+_text = "BUTTON.RESET_CONTROLS"
+_icon = ExtResource("5")
+tooltip = "TOOLTIP.BUTTON.RESET_CONTROLS"
 
-[node name="ScrollContainer" parent="CenterContainer/VBoxContainer" index="2"]
-margin_right = 528.0
-
-[node name="MenuList" parent="CenterContainer/VBoxContainer/ScrollContainer" index="0"]
-margin_bottom = 320.0
-
-[node name="MoveUpControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="0" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_right = 512.0
+[node name="MoveUpControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource("3")]
+layout_mode = 2
 _action = "move_up"
 
-[node name="MoveDownControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_top = 36.0
-margin_right = 512.0
-margin_bottom = 68.0
+[node name="MoveDownControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource("3")]
+layout_mode = 2
 _action = "move_down"
 
-[node name="MoveLeftControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_top = 72.0
-margin_right = 512.0
-margin_bottom = 104.0
+[node name="MoveLeftControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource("3")]
+layout_mode = 2
 _action = "move_left"
 
-[node name="MoveRightControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_top = 108.0
-margin_right = 512.0
-margin_bottom = 140.0
+[node name="MoveRightControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource("3")]
+layout_mode = 2
 _action = "move_right"
 
-[node name="InteractControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="4" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_top = 144.0
-margin_right = 512.0
-margin_bottom = 176.0
+[node name="InteractControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource("3")]
+layout_mode = 2
 _action = "interact"
 
-[node name="PauseControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_top = 180.0
-margin_right = 512.0
-margin_bottom = 212.0
+[node name="PauseControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource("3")]
+layout_mode = 2
 _action = "pause"
 
-[node name="ToggleFullscreenControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource( 3 )]
-anchor_right = 0.0
-margin_top = 216.0
-margin_right = 512.0
-margin_bottom = 248.0
+[node name="ToggleFullscreenControl" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource("3")]
+layout_mode = 2
 _action = "toggle_fullscreen"
 
-[node name="ResetControlsButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="7" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 252.0
-margin_right = 512.0
-margin_bottom = 284.0
-tooltip = "TOOLTIP.BUTTON.RESET_CONTROLS"
-text = "BUTTON.RESET_CONTROLS"
-icon = ExtResource( 5 )
-
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource( 4 )]
-anchor_right = 0.0
-margin_top = 288.0
-margin_right = 512.0
-margin_bottom = 320.0
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="8" instance=ExtResource("4")]
+layout_mode = 2
+_text = "BUTTON.GO_BACK"
+_icon = ExtResource("6")
+_pressed_sound = ExtResource("7")
 tooltip = "TOOLTIP.BUTTON.GO_BACK.TO_SETTINGS"
-text = "BUTTON.GO_BACK"
-icon = ExtResource( 6 )
-press_sound = 2
-
-[node name="MenuSeparator" parent="CenterContainer/VBoxContainer" index="3"]
-margin_right = 528.0
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/ResetControlsButton" to="." method="_on_reset_controls_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ScrollContainer/MenuList/GoBackButton" to="." method="request_pop"]

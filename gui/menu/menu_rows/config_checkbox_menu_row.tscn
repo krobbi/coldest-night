@@ -1,11 +1,13 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://d1nk1tvcpy5d1"]
 
-[ext_resource path="res://gui/menu/menu_rows/checkbox_menu_row.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gui/menu/menu_rows/config_checkbox_menu_row.gd" type="Script" id=2]
+[ext_resource type="PackedScene" uid="uid://ds2wsxc66u1ab" path="res://gui/menu/menu_rows/checkbox_menu_row.tscn" id="1"]
+[ext_resource type="Script" path="res://gui/menu/menu_rows/config_checkbox_menu_row.gd" id="2"]
 
-[node name="ConfigCheckboxMenuRow" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
-config = ""
+[node name="ConfigCheckboxMenuRow" instance=ExtResource("1")]
+script = ExtResource("2")
+_config = ""
 
 [node name="CheckButton" parent="Content" index="0"]
 text = "Config checkbox"
+
+[connection signal="toggled" from="." to="." method="_on_toggled"]
