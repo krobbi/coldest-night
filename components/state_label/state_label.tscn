@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ch43ke17snyyk"]
 
-[ext_resource type="Theme" uid="uid://ceoee4rrk5dus" path="res://resources/themes/popup_text.tres" id="1_stqti"]
+[ext_resource type="Theme" uid="uid://ceoee4rrk5dus" path="res://resources/themes/popup_text.tres" id="1_51fta"]
 [ext_resource type="Script" path="res://components/state_label/state_label.gd" id="2"]
 
 [node name="StateLabel" type="Control"]
@@ -11,7 +11,7 @@ offset_left = -128.0
 offset_top = -96.0
 offset_right = 128.0
 offset_bottom = -64.0
-theme = ExtResource("1_stqti")
+theme = ExtResource("1_51fta")
 script = ExtResource("2")
 metadata/_edit_lock_ = true
 

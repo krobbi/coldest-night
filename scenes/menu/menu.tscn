@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/menu/menu.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://d1j5jmuxywpr4" path="res://gui/menu/menu_stack.tscn" id="2"]
-[ext_resource type="AudioStream" uid="uid://b7pu03ijoc4hc" path="res://resources/audio/music/menu.ogg" id="2_7ou2e"]
+[ext_resource type="AudioStream" uid="uid://b7pu03ijoc4hc" path="res://resources/audio/music/menu.ogg" id="2_tbrd3"]
 
 [node name="Menu" type="Control"]
 process_mode = 3
@@ -14,7 +14,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
-_music = ExtResource("2_7ou2e")
+_music = ExtResource("2_tbrd3")
 metadata/_edit_lock_ = true
 
 [node name="MenuStack" parent="." instance=ExtResource("2")]

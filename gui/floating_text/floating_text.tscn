@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://mnqq10lhlck1"]
 
 [ext_resource type="Script" path="res://gui/floating_text/floating_text.gd" id="1"]
-[ext_resource type="Theme" uid="uid://ceoee4rrk5dus" path="res://resources/themes/popup_text.tres" id="2"]
-[ext_resource type="AudioStream" uid="uid://fqxeumav6sxg" path="res://resources/audio/sfx/pickup.ogg" id="3"]
+[ext_resource type="Theme" uid="uid://ceoee4rrk5dus" path="res://resources/themes/popup_text.tres" id="1_5hhwb"]
+[ext_resource type="AudioStream" uid="uid://fqxeumav6sxg" path="res://resources/audio/sfx/pickup.ogg" id="3_8p27l"]
 [ext_resource type="Animation" uid="uid://bi3u3ug4oj0au" path="res://resources/animations/gui/floating_text/display.tres" id="4"]
 [ext_resource type="Animation" uid="uid://pta16ai1kwlq" path="res://resources/animations/gui/floating_text/display_reduced_motion.tres" id="5"]
 
@@ -21,12 +21,12 @@ offset_top = -64.0
 offset_right = 96.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-theme = ExtResource("2")
+theme = ExtResource("1_5hhwb")
 script = ExtResource("1")
 metadata/_edit_lock_ = true
 
 [node name="PickupPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3")
+stream = ExtResource("3_8p27l")
 mix_target = 2
 bus = &"SFX"
 

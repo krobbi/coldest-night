@@ -1,6 +1,5 @@
 [gd_scene load_steps=18 format=3 uid="uid://cmrnbhfwenmar"]
 
-[ext_resource type="Texture2D" uid="uid://ds6uvd8xrreuk" path="res://resources/textures/entities/actors/player/player.png" id="1"]
 [ext_resource type="Script" path="res://entities/actors/player/states/moving_state.gd" id="2"]
 [ext_resource type="Script" path="res://entities/actors/player/player.gd" id="3"]
 [ext_resource type="Script" path="res://entities/actors/player/states/transitioning_state.gd" id="4"]
@@ -14,6 +13,7 @@
 [ext_resource type="Animation" uid="uid://dewqi3ge6vrhm" path="res://resources/animations/entities/actors/run_left.tres" id="10_j253a"]
 [ext_resource type="Animation" uid="uid://cdffk80e3ktrp" path="res://resources/animations/entities/actors/run_right.tres" id="11_h0xti"]
 [ext_resource type="Animation" uid="uid://bgq35an1ldwjq" path="res://resources/animations/entities/actors/run_up.tres" id="12_ckt3q"]
+[ext_resource type="Texture2D" uid="uid://ds6uvd8xrreuk" path="res://resources/textures/entities/actors/player/player.png" id="13_bf58d"]
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_sqou3"]
 _data = {
@@ -76,6 +76,6 @@ shape = SubResource("3")
 _display_style = 1
 
 [node name="Sprite2D" parent="." index="9"]
-texture = ExtResource("1")
+texture = ExtResource("13_bf58d")
 
 [node name="Interactor" parent="SmoothPivot" index="2" instance=ExtResource("6")]
