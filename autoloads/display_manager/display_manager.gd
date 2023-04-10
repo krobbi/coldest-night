@@ -54,7 +54,7 @@ func _input(event: InputEvent) -> void:
 # Get the display's maximum window scale.
 func get_max_window_scale() -> int:
 	var max_scale: Vector2i = DisplayServer.screen_get_usable_rect().size / _resolution
-	return max(1, min(max_scale.x, max_scale.y))
+	return maxi(mini(max_scale.x, max_scale.y), 1)
 
 
 # Get a palette color from its color name.

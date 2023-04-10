@@ -81,6 +81,6 @@ func _parse_float_tags(message: String, tag_regex: RegEx, offset: int) -> Array[
 	for result in tag_regex.search_all(message):
 		var tag_position: int = _get_parsed_position(message, result.get_start()) - offset
 		var tag_value: float = float(_decimal_regex.search(result.get_string()).get_string())
-		float_tags.push_back(FloatDialogTag.new(int(max(0.0, float(tag_position))), tag_value))
+		float_tags.push_back(FloatDialogTag.new(maxi(tag_position, 0), tag_value))
 	
 	return float_tags

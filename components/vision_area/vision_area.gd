@@ -51,7 +51,7 @@ func _physics_process(delta: float) -> void:
 				_visible_area.global_position) - _suspicion_distance
 		
 		if distance >= 0.0:
-			add_suspicion(_suspicion_speed * delta / max(0.1, distance * _suspicion_attenuation))
+			add_suspicion(_suspicion_speed * delta / maxf(distance * _suspicion_attenuation, 0.1))
 		else:
 			add_suspicion(_alert_speed * delta)
 	else:

@@ -39,7 +39,7 @@ func accumulate_time(delta: float) -> void:
 
 # Accumulate the statistics save data's alert count.
 func accumulate_alert_count() -> void:
-	alert_count = int(min(float(alert_count + 1), 999.0))
+	alert_count = mini(alert_count + 1, 999)
 
 
 # Serialize the stats save data to a JSON object.
