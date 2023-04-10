@@ -62,8 +62,7 @@ func serialize() -> Dictionary:
 		"format_version": SaveManager.FORMAT_VERSION,
 		"state": serialize_state(),
 		"level": level,
-		"position_x": position.x,
-		"position_y": position.y,
+		"position": {"x": position.x, "y": position.y},
 		"angle": angle,
 		"stats": stats.serialize(),
 		"flags": flags.duplicate(true),
@@ -86,7 +85,7 @@ func deserialize_state(data: String) -> void:
 func deserialize(data: Dictionary) -> void:
 	deserialize_state(data.state)
 	level = data.level
-	position = Vector2(float(data.position_x), float(data.position_y))
+	position = Vector2(float(data.position.x), float(data.position.y))
 	angle = float(data.angle)
 	stats.deserialize(data.stats.duplicate(true))
 	flags = data.flags.duplicate(true)

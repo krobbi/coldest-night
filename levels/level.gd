@@ -48,7 +48,7 @@ func _ready() -> void:
 			var node: Node = load(data.filename).instantiate()
 			
 			if node is Node2D:
-				node.position = Vector2(data.position_x, data.position_y)
+				node.position = Vector2(float(data.position.x), float(data.position.y))
 			
 			get_node(NodePath(data.parent)).add_child(node)
 			
@@ -87,8 +87,7 @@ func save_state() -> void:
 		}
 		
 		if node is Node2D:
-			data.position_x = node.position.x
-			data.position_y = node.position.y
+			data.position = {"x": node.position.x, "y": node.position.y}
 		
 		if node.has_method("serialize"):
 			data.data = node.serialize()

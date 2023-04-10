@@ -100,8 +100,7 @@ func _validate_save_data(validator: JSONValidator) -> void:
 	validator.check_int_value("format_version", FORMAT_VERSION)
 	validator.check_string_enum("state", ["NEW_GAME", "NORMAL", "COMPLETED"])
 	validator.check_string("level")
-	validator.check_float("position_x")
-	validator.check_float("position_y")
+	validator.check_vector2("position")
 	validator.check_float("angle")
 	
 	validator.enter_dictionary("stats") # Begin stats.
@@ -129,9 +128,8 @@ func _validate_save_data(validator: JSONValidator) -> void:
 			validator.check_string("filename")
 			validator.check_string("parent")
 			
-			if validator.has_property("position_x") or validator.has_property("position_y"):
-				validator.check_float("position_x")
-				validator.check_float("position_y")
+			if validator.has_property("position"):
+				validator.check_vector2("position")
 			
 			if validator.has_property("data"):
 				validator.check_dictionary("data")

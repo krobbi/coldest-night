@@ -4,7 +4,7 @@ extends RefCounted
 # JSON Validator
 # A JSON validator is a wrapper class for parsing and validating JSON data.
 
-var _is_valid: bool = true
+var _is_valid: bool
 var _data_stack: Array[Variant]
 
 # Clear the JSON validator.
@@ -120,6 +120,19 @@ func has_string_enum(key: Variant, values: Array[String]) -> bool:
 	return has_string(key) and get_property(key) in values
 
 
+# Return whether the JSON validator's leaf data has a vector2 property. A
+# vector2 property is represented as a dictionary property containing only `x`
+# and `y` float properties as JSON does not support vector types.
+func has_vector2(key: Variant) -> bool:
+	if not has_dictionary(key):
+		return false
+	
+	enter_dictionary(key)
+	var has_components: bool = len(get_leaf_data()) == 2 and has_float("x") and has_float("y")
+	exit()
+	return has_components
+
+
 # Return whether the JSON validator's leaf data has a dictionary property.
 func has_dictionary(key: Variant) -> bool:
 	if has_property(key):
@@ -161,7 +174,7 @@ func from_path(path: String) -> void:
 	from_json(json)
 
 
-# Initialize the JSON vaidator from a JSON string.
+# Initialize the JSON validator from a JSON string.
 func from_json(json: String) -> void:
 	clear()
 	var data: Variant = JSON.parse_string(json)
@@ -222,6 +235,13 @@ func check_string_value(key: Variant, value: String) -> void:
 # with a value in a set of values.
 func check_string_enum(key: Variant, values: Array[String]) -> void:
 	if not has_string_enum(key, values):
+		invalidate()
+
+
+# Invalidate the JSON validator if its leaf data does not have a vector2
+# property.
+func check_vector2(key: Variant) -> void:
+	if not has_vector2(key):
 		invalidate()
 
 
