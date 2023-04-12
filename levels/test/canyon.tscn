@@ -9,7 +9,7 @@
 area_name = "AREA.TEST.CANYON"
 _music = ExtResource("4")
 
-[node name="CanyonTileMap" type="TileMap" parent="Midground" index="1"]
+[node name="CanyonTileMap" type="TileMap" parent="Entities" index="1"]
 tile_set = ExtResource("2")
 format = 2
 layer_0/name = "Back Wall"
@@ -23,7 +23,7 @@ layer_1/z_index = -2
 layer_1/tile_data = PackedInt32Array()
 metadata/_edit_lock_ = true
 
-[node name="LabTileMap" type="TileMap" parent="Midground" index="2"]
+[node name="LabTileMap" type="TileMap" parent="Entities" index="2"]
 y_sort_enabled = true
 tile_set = ExtResource("5_v5m7h")
 format = 2

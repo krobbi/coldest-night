@@ -8,7 +8,7 @@
 area_name = "AREA.TEST.AREA_BX"
 _music = ExtResource("3")
 
-[node name="TileMap" type="TileMap" parent="Midground" index="1"]
+[node name="TileMap" type="TileMap" parent="Entities" index="1"]
 y_sort_enabled = true
 tile_set = ExtResource("5_ni7kh")
 format = 2

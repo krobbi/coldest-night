@@ -10,11 +10,11 @@ metadata/_edit_lock_ = true
 
 [node name="Cutscenes" type="Node" parent="."]
 
-[node name="Midground" type="Node2D" parent="."]
+[node name="Entities" type="Node2D" parent="."]
 y_sort_enabled = true
 metadata/_edit_lock_ = true
 
-[node name="LevelVisionAreaRenderer" parent="Midground" instance=ExtResource("3")]
+[node name="LevelVisionAreaRenderer" parent="Entities" instance=ExtResource("3")]
 z_index = -1
 metadata/_edit_lock_ = true
 

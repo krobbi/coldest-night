@@ -13,6 +13,8 @@ extends Node2D
 var _save_data: SaveData = SaveManager.get_working_data()
 var _points: Dictionary = {}
 
+@onready var _entity_root: Node = $Entities
+
 # Run when the level enters the scene tree. Free persistent nodes if the level
 # has a saved state in the current working save data.
 func _enter_tree() -> void:
@@ -61,7 +63,7 @@ func _ready() -> void:
 
 # Get the parent node to add the player to.
 func get_player_parent() -> Node:
-	return $Midground
+	return _entity_root
 
 
 # Get a point's world position. Return `Vector2.ZERO` if the point is empty or
