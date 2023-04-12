@@ -13,12 +13,10 @@ extends Node2D
 var _save_data: SaveData = SaveManager.get_working_data()
 var _points: Dictionary = {}
 
-@onready var _entity_root: Node = $Entities
-
 # Run when the level enters the scene tree. Free persistent nodes if the level
 # has a saved state in the current working save data.
 func _enter_tree() -> void:
-	if _save_data.scenes.has(scene_file_path):
+	if _save_data.has_level_data(scene_file_path):
 		_free_persistent(self)
 
 
@@ -45,17 +43,8 @@ func _ready() -> void:
 	top_left_node.free()
 	bottom_right_node.free()
 	
-	if _save_data.scenes.has(scene_file_path):
-		for data in _save_data.scenes[scene_file_path]:
-			var node: Node = load(data.filename).instantiate()
-			
-			if node is Node2D:
-				node.position = Vector2(float(data.position.x), float(data.position.y))
-			
-			get_node(NodePath(data.parent)).add_child(node)
-			
-			if data.has("data") and node.has_method("deserialize"):
-				node.deserialize(data.data)
+	if _save_data.has_level_data(scene_file_path):
+		_save_data.get_level_data(scene_file_path).instantiate_entities(self)
 	
 	EventBus.radar_render_level_request.emit()
 	EventBus.subscribe_node(EventBus.save_state_request, save_state)
@@ -63,7 +52,7 @@ func _ready() -> void:
 
 # Get the parent node to add the player to.
 func get_player_parent() -> Node:
-	return _entity_root
+	return $Entities
 
 
 # Get a point's world position. Return `Vector2.ZERO` if the point is empty or
@@ -77,26 +66,11 @@ func get_point_pos(point: String) -> Vector2:
 
 # Save the level's state to the current working save data.
 func save_state() -> void:
-	var array: Array[Dictionary] = []
+	var level_data: LevelSaveData = _save_data.get_level_data(scene_file_path)
+	level_data.clear_entities()
 	
-	for node in get_tree().get_nodes_in_group("persistent"):
-		if node.scene_file_path.is_empty():
-			continue
-		
-		var data: Dictionary = {
-			"filename": node.scene_file_path,
-			"parent": str(get_path_to(node.get_parent())),
-		}
-		
-		if node is Node2D:
-			data.position = {"x": node.position.x, "y": node.position.y}
-		
-		if node.has_method("serialize"):
-			data.data = node.serialize()
-		
-		array.push_back(data)
-	
-	_save_data.scenes[scene_file_path] = array
+	for entity in get_tree().get_nodes_in_group("persistent"):
+		level_data.add_entity(entity, self)
 
 
 # Recursively free persistent nodes.

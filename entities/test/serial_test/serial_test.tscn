@@ -7,7 +7,7 @@
 [sub_resource type="CircleShape2D" id="1"]
 radius = 16.0
 
-[node name="SerialTest" type="StaticBody2D" groups=["persistent"]]
+[node name="SerialTest" type="StaticBody2D" groups=["persistent", "serializable"]]
 collision_mask = 0
 script = ExtResource("2")
 

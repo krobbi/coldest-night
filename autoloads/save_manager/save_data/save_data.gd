@@ -15,7 +15,8 @@ var position: Vector2
 var angle: float
 var stats: StatsSaveData = StatsSaveData.new()
 var flags: Dictionary = {}
-var scenes: Dictionary = {}
+
+var _levels: Dictionary = {}
 
 # Clear the save data.
 func _init() -> void:
@@ -33,6 +34,19 @@ func get_flag(flag: String) -> int:
 	return flags.get(flag, 0)
 
 
+# Get level save data from its level path.
+func get_level_data(level_path: String) -> LevelSaveData:
+	if not has_level_data(level_path):
+		_levels[level_path] = LevelSaveData.new()
+	
+	return _levels[level_path]
+
+
+# Return whether the save data has level save data from its level path.
+func has_level_data(level_path: String) -> bool:
+	return _levels.has(level_path)
+
+
 # Clear the save data to a new game.
 func clear() -> void:
 	state = State.NEW_GAME
@@ -41,7 +55,7 @@ func clear() -> void:
 	angle = 0.0
 	stats.clear()
 	flags.clear()
-	scenes.clear()
+	_levels.clear()
 
 
 # Serialize the save data's state to a string.
@@ -57,6 +71,11 @@ func serialize_state() -> String:
 
 # Serialize the save data to a JSON object.
 func serialize() -> Dictionary:
+	var levels_json: Dictionary = {}
+	
+	for level_path in _levels:
+		levels_json[level_path] = get_level_data(level_path).serialize()
+	
 	return {
 		"format_name": SaveManager.FORMAT_NAME,
 		"format_version": SaveManager.FORMAT_VERSION,
@@ -66,7 +85,7 @@ func serialize() -> Dictionary:
 		"angle": angle,
 		"stats": stats.serialize(),
 		"flags": flags.duplicate(true),
-		"scenes": scenes.duplicate(true),
+		"levels": levels_json,
 	}
 
 
@@ -89,4 +108,8 @@ func deserialize(data: Dictionary) -> void:
 	angle = float(data.angle)
 	stats.deserialize(data.stats.duplicate(true))
 	flags = data.flags.duplicate(true)
-	scenes = data.scenes.duplicate(true)
+	_levels.clear()
+	
+	for level_path in data.levels:
+		var level_data: LevelSaveData = get_level_data(level_path)
+		level_data.deserialize(data.levels[level_path])

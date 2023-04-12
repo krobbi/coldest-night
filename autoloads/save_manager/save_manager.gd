@@ -103,39 +103,55 @@ func _validate_save_data(validator: JSONValidator) -> void:
 	validator.check_vector2("position")
 	validator.check_float("angle")
 	
-	validator.enter_dictionary("stats") # Begin stats.
+	validator.enter_dictionary("stats")
+	_validate_stats_save_data(validator)
+	validator.exit()
+	
+	validator.enter_dictionary("flags")
+	
+	for flag in validator.get_keys():
+		validator.check_int(flag)
+	
+	validator.exit()
+	
+	validator.enter_dictionary("levels")
+	
+	for level_path in validator.get_keys():
+		validator.enter_dictionary(level_path)
+		_validate_level_save_data(validator)
+		validator.exit()
+	
+	validator.exit()
+
+
+# Validate stats save data from a JSON validator.
+func _validate_stats_save_data(validator: JSONValidator) -> void:
 	validator.check_int("time_hours")
 	validator.check_int("time_minutes")
 	validator.check_int("time_seconds")
 	validator.check_float("time_fraction")
 	validator.check_int("alert_count")
-	validator.exit() # End stats.
+
+
+# Validate level save data from a JSON validator.
+func _validate_level_save_data(validator: JSONValidator) -> void:
+	validator.enter_array("entities")
 	
-	validator.enter_dictionary("flags") # Begin flags.
+	for index in validator.get_keys():
+		validator.enter_dictionary(index)
+		_validate_entity_save_data(validator)
+		validator.exit()
 	
-	for key in validator.get_keys():
-		validator.check_int(key)
+	validator.exit()
+
+
+# Validate entity save data from a JSON validator.
+func _validate_entity_save_data(validator: JSONValidator) -> void:
+	validator.check_string("scene")
+	validator.check_string("parent")
 	
-	validator.exit() # End flags.
+	if validator.has_property("position"):
+		validator.check_vector2("position")
 	
-	validator.enter_dictionary("scenes") # Begin scene object array dictionary.
-	
-	for key in validator.get_keys():
-		validator.enter_array(key) # Begin scene object array.
-		
-		for index in validator.get_keys():
-			validator.enter_dictionary(index) # Begin scene object.
-			validator.check_string("filename")
-			validator.check_string("parent")
-			
-			if validator.has_property("position"):
-				validator.check_vector2("position")
-			
-			if validator.has_property("data"):
-				validator.check_dictionary("data")
-			
-			validator.exit() # End scene object.
-		
-		validator.exit() # End scene object array.
-	
-	validator.exit() # End scene object array dictionary.
+	if validator.has_property("data"):
+		validator.check_dictionary("data")
