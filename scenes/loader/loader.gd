@@ -4,8 +4,8 @@ extends Control
 # The loader scene is a scene that loads the game from the current working save
 # data.
 
-@export var _normal_scene_path: String # (String, FILE, "*.tscn")
-@export var _completed_scene_path: String # (String, FILE, "*.tscn")
+@export_file("*.tscn") var _normal_scene_path: String
+@export_file("*.tscn") var _completed_scene_path: String
 
 @onready var _new_game_cutscene: Cutscene = $NewGameCutscene
 

@@ -3,9 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://cv1ac7dxjnvdj" path="res://entities/triggers/trigger.tscn" id="1"]
 [ext_resource type="Script" path="res://entities/triggers/focus_camera_trigger/focus_camera_trigger.gd" id="2"]
 
-[node name="FocusCameraTrigger" instance=ExtResource("1")]
+[node name="FocusCameraTrigger" node_paths=PackedStringArray("_focus_node") instance=ExtResource("1")]
 script = ExtResource("2")
-_focus_node_path = NodePath("")
+_focus_node = NodePath(".")
 
 [connection signal="entered" from="." to="." method="_on_entered"]
 [connection signal="exited" from="." to="." method="_on_exited"]

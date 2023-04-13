@@ -4,10 +4,10 @@ extends State
 # A looking state is a state used by a guard that allows a guard to look around
 # randomly.
 
-@export var _finished_state_path: NodePath
-@export var _guard_path: NodePath
-@export var _smooth_pivot_path: NodePath
-@export var _vision_area_path: NodePath
+@export var _finished_state: State
+@export var _guard: Actor
+@export var _smooth_pivot: SmoothPivot
+@export var _vision_area: VisionArea
 @export var _min_turns: int = 2
 @export var _max_turns: int = 4
 @export var _min_turn_angle: float = TAU * 0.2
@@ -19,11 +19,6 @@ extends State
 
 var _remaining_turns: int = 0
 var _wait_timer: float = 0.0
-
-@onready var _finished_state: State = get_node(_finished_state_path)
-@onready var _guard: Actor = get_node(_guard_path)
-@onready var _smooth_pivot: SmoothPivot = get_node(_smooth_pivot_path)
-@onready var _vision_area: VisionArea = get_node(_vision_area_path)
 
 # Run when the looking state is entered. Set the number of remaining turns.
 func enter() -> void:

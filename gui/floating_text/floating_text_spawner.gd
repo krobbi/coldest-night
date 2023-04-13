@@ -7,9 +7,7 @@ const FloatingTextScene: PackedScene = preload("res://gui/floating_text/floating
 
 const OFFSET: Vector2 = Vector2(224.0, 116.0)
 
-@export var _camera_path: NodePath
-
-@onready var _camera: Camera2D = get_node(_camera_path)
+@export var _camera: Camera2D
 
 # Run when the floating text spawner enters the scene tree. Subscribe the
 # floating text spawner to the event bus.

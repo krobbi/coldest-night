@@ -4,9 +4,9 @@ extends MenuCard
 # The main menu card is a menu card that contains the main menu and its
 # functionality.
 
-@export var _loader_scene_path: String # (String, FILE, "*.tscn")
-@export var _credits_scene_path: String # (String, FILE, "*.tscn")
-@export var _devlog_scene_path: String # (String, FILE, "*.tscn")
+@export_file("*.tscn") var _loader_scene_path: String
+@export_file("*.tscn") var _credits_scene_path: String
+@export_file("*.tscn") var _devlog_scene_path: String
 
 # Run when the continue game button is pressed. Pull from the slot save data and
 # change to the loader scene.

@@ -33,22 +33,22 @@ radius = 1.0
 [sub_resource type="CircleShape2D" id="3"]
 radius = 8.0
 
-[node name="Player" instance=ExtResource("5")]
+[node name="Player" node_paths=PackedStringArray("_freeze_state", "_moving_state", "_transitioning_state") instance=ExtResource("5")]
 script = ExtResource("3")
-_freeze_state_path = NodePath("StateMachine/Pathing")
-_moving_state_path = NodePath("StateMachine/Moving")
-_transitioning_state_path = NodePath("StateMachine/Transitioning")
+_freeze_state = NodePath("StateMachine/Pathing")
+_moving_state = NodePath("StateMachine/Moving")
+_transitioning_state = NodePath("StateMachine/Transitioning")
 actor_key = "player"
 
-[node name="Moving" type="Node" parent="StateMachine" index="1"]
+[node name="Moving" type="Node" parent="StateMachine" index="1" node_paths=PackedStringArray("_player", "_smooth_pivot", "_interactor")]
 script = ExtResource("2")
-_player_path = NodePath("../..")
-_interactor_path = NodePath("../../SmoothPivot/Interactor")
-_smooth_pivot_path = NodePath("../../SmoothPivot")
+_player = NodePath("../..")
+_smooth_pivot = NodePath("../../SmoothPivot")
+_interactor = NodePath("../../SmoothPivot/Interactor")
 
-[node name="Transitioning" type="Node" parent="StateMachine" index="2"]
+[node name="Transitioning" type="Node" parent="StateMachine" index="2" node_paths=PackedStringArray("_player")]
 script = ExtResource("4")
-_player_path = NodePath("../..")
+_player = NodePath("../..")
 
 [node name="AnimationPlayer" parent="." index="1"]
 libraries = {

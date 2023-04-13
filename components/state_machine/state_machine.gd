@@ -5,23 +5,15 @@ extends Node
 # A state machine is a component of an entity that handles processing a set of
 # finite states.
 
-@export var _main_state_path: NodePath
-
-var _state: State
+@export var _state: State
 
 # Get the current state.
 func get_state() -> State:
 	return _state
 
 
-# Get the current state's node name.
-func get_state_name() -> String:
-	return _state.name
-
-
-# Initialize the state machine to its main state.
+# Enter the state machine's main state.
 func init() -> void:
-	_state = get_node(_main_state_path)
 	_state.enter()
 
 

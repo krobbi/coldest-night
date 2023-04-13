@@ -4,17 +4,14 @@ extends Actor
 # Player Base
 # Players are actors that can be controlled by the user.
 
-@export var _freeze_state_path: NodePath
-@export var _moving_state_path: NodePath
-@export var _transitioning_state_path: NodePath
+@export var _freeze_state: State
+@export var _moving_state: State
+@export var _transitioning_state: State
 
 var _save_data: SaveData = SaveManager.get_working_data()
 var _is_frozen: bool = false
 var _unfreeze_state: State
 
-@onready var _freeze_state: State = get_node(_freeze_state_path)
-@onready var _moving_state: State = get_node(_moving_state_path)
-@onready var _transitioning_state: State = get_node(_transitioning_state_path)
 @onready var _interactor: Interactor = $SmoothPivot/Interactor
 @onready var _triggering_shape: CollisionShape2D = $TriggeringArea/TriggeringShape
 

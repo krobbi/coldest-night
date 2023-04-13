@@ -23,8 +23,8 @@ script = ExtResource("3")
 
 [node name="Radar" parent="HUD" instance=ExtResource("4")]
 
-[node name="FloatingTextSpawner" parent="HUD" instance=ExtResource("8")]
-_camera_path = NodePath("../../LevelCamera")
+[node name="FloatingTextSpawner" parent="HUD" node_paths=PackedStringArray("_camera") instance=ExtResource("8")]
+_camera = NodePath("../../LevelCamera")
 
 [node name="PlainDialog" parent="HUD" instance=ExtResource("6")]
 

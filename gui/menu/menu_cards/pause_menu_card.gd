@@ -4,7 +4,7 @@ extends MenuCard
 # The pause menu card is a fixed menu card that is the root menu card of the
 # pause menu.
 
-@export var _loader_scene_path: String # (String, FILE, "*.tscn")
+@export_file("*.tscn") var _loader_scene_path: String
 
 # Run when the quick save button is pressed. Save the game.
 func _on_quick_save_button_pressed() -> void:

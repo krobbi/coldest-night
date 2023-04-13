@@ -62,17 +62,17 @@ position = Vector2(560, 368)
 y_sort_enabled = true
 metadata/_edit_lock_ = true
 
-[node name="Alice" parent="Entities/Guards" index="0" instance=ExtResource("3")]
+[node name="Alice" parent="Entities/Guards" index="0" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
 position = Vector2(656, -240)
 start_facing = 2
 actor_key = "alice"
-_main_patrol_action_parent_path = NodePath("../../../PatrolPoints/AliceInterior")
+_main_patrol_action_parent = NodePath("../../../PatrolPoints/AliceInterior")
 
-[node name="Bob" parent="Entities/Guards" index="1" instance=ExtResource("3")]
+[node name="Bob" parent="Entities/Guards" index="1" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
 position = Vector2(656, 240)
 start_facing = 2
 actor_key = "bob"
-_main_patrol_action_parent_path = NodePath("../../../PatrolPoints/BobInterior")
+_main_patrol_action_parent = NodePath("../../../PatrolPoints/BobInterior")
 
 [node name="LaserWalls" type="Node2D" parent="Entities" index="4"]
 y_sort_enabled = true
@@ -154,13 +154,13 @@ flag = "test/area_bx/west/is_annex_unlocked"
 y_sort_enabled = true
 metadata/_edit_lock_ = true
 
-[node name="RedirectTerminal" parent="Entities/Terminals" index="0" instance=ExtResource("14")]
+[node name="RedirectTerminal" parent="Entities/Terminals" index="0" node_paths=PackedStringArray("_cutscene") instance=ExtResource("14")]
 position = Vector2(-208, -144)
-_cutscene_path = NodePath("../../../Cutscenes/RedirectTerminalCutscene")
+_cutscene = NodePath("../../../Cutscenes/RedirectTerminalCutscene")
 
-[node name="UnlockTerminal" parent="Entities/Terminals" index="1" instance=ExtResource("14")]
+[node name="UnlockTerminal" parent="Entities/Terminals" index="1" node_paths=PackedStringArray("_cutscene") instance=ExtResource("14")]
 position = Vector2(240, -144)
-_cutscene_path = NodePath("../../../Cutscenes/UnlockTerminalCutscene")
+_cutscene = NodePath("../../../Cutscenes/UnlockTerminalCutscene")
 
 [node name="Windows" type="Node2D" parent="Entities" index="6"]
 y_sort_enabled = true
@@ -279,9 +279,9 @@ _is_relative_y = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/EastExit" index="0"]
 shape = SubResource("1")
 
-[node name="NorthWestFocus" parent="Triggers" index="2" instance=ExtResource("8")]
+[node name="NorthWestFocus" parent="Triggers" index="2" node_paths=PackedStringArray("_focus_node") instance=ExtResource("8")]
 position = Vector2(-256, -128)
-_focus_node_path = NodePath("Marker2D")
+_focus_node = NodePath("Marker2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/NorthWestFocus" index="0"]
 shape = SubResource("2")
@@ -289,9 +289,9 @@ shape = SubResource("2")
 [node name="Marker2D" type="Marker2D" parent="Triggers/NorthWestFocus" index="1"]
 position = Vector2(0, -144)
 
-[node name="NorthEastFocus" parent="Triggers" index="3" instance=ExtResource("8")]
+[node name="NorthEastFocus" parent="Triggers" index="3" node_paths=PackedStringArray("_focus_node") instance=ExtResource("8")]
 position = Vector2(288, -128)
-_focus_node_path = NodePath("Marker2D")
+_focus_node = NodePath("Marker2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/NorthEastFocus" index="0"]
 shape = SubResource("2")
@@ -299,9 +299,9 @@ shape = SubResource("2")
 [node name="Marker2D" type="Marker2D" parent="Triggers/NorthEastFocus" index="1"]
 position = Vector2(0, -144)
 
-[node name="SouthWestFocus" parent="Triggers" index="4" instance=ExtResource("8")]
+[node name="SouthWestFocus" parent="Triggers" index="4" node_paths=PackedStringArray("_focus_node") instance=ExtResource("8")]
 position = Vector2(-256, 128)
-_focus_node_path = NodePath("Marker2D")
+_focus_node = NodePath("Marker2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/SouthWestFocus" index="0"]
 shape = SubResource("2")
@@ -309,9 +309,9 @@ shape = SubResource("2")
 [node name="Marker2D" type="Marker2D" parent="Triggers/SouthWestFocus" index="1"]
 position = Vector2(0, 80)
 
-[node name="SouthEastFocus" parent="Triggers" index="5" instance=ExtResource("8")]
+[node name="SouthEastFocus" parent="Triggers" index="5" node_paths=PackedStringArray("_focus_node") instance=ExtResource("8")]
 position = Vector2(288, 128)
-_focus_node_path = NodePath("Marker2D")
+_focus_node = NodePath("Marker2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/SouthEastFocus" index="0"]
 shape = SubResource("2")
@@ -325,14 +325,14 @@ position = Vector2(656, -304)
 [node name="FacePatrolAction" parent="PatrolPoints/AliceExterior" index="0" instance=ExtResource("10")]
 _angle = 180.0
 
-[node name="SyncPatrolAction" parent="PatrolPoints/AliceExterior" index="1" instance=ExtResource("11")]
-_test_patrol_point_path = NodePath("../../BobExterior")
+[node name="SyncPatrolAction" parent="PatrolPoints/AliceExterior" index="1" node_paths=PackedStringArray("_test_patrol_point") instance=ExtResource("11")]
+_test_patrol_point = NodePath("../../BobExterior")
 
 [node name="WaitPatrolAction" parent="PatrolPoints/AliceExterior" index="2" instance=ExtResource("13")]
 _wait_duration = 5.0
 
-[node name="GoToPatrolAction" parent="PatrolPoints/AliceExterior" index="3" instance=ExtResource("12")]
-_target_patrol_action_parent_path = NodePath("../../AliceInterior")
+[node name="GoToPatrolAction" parent="PatrolPoints/AliceExterior" index="3" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("12")]
+_target_patrol_action_parent = NodePath("../../AliceInterior")
 
 [node name="AliceInterior" parent="PatrolPoints" index="1" instance=ExtResource("9")]
 position = Vector2(656, -240)
@@ -343,8 +343,8 @@ _angle = 180.0
 [node name="WaitPatrolAction" parent="PatrolPoints/AliceInterior" index="1" instance=ExtResource("13")]
 _wait_duration = 5.0
 
-[node name="GoToPatrolAction" parent="PatrolPoints/AliceInterior" index="2" instance=ExtResource("12")]
-_target_patrol_action_parent_path = NodePath("../../AliceExterior")
+[node name="GoToPatrolAction" parent="PatrolPoints/AliceInterior" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("12")]
+_target_patrol_action_parent = NodePath("../../AliceExterior")
 
 [node name="BobInterior" parent="PatrolPoints" index="2" instance=ExtResource("9")]
 position = Vector2(656, 240)
@@ -355,8 +355,8 @@ _angle = 180.0
 [node name="WaitPatrolAction" parent="PatrolPoints/BobInterior" index="1" instance=ExtResource("13")]
 _wait_duration = 5.0
 
-[node name="GoToPatrolAction" parent="PatrolPoints/BobInterior" index="2" instance=ExtResource("12")]
-_target_patrol_action_parent_path = NodePath("../../BobExterior")
+[node name="GoToPatrolAction" parent="PatrolPoints/BobInterior" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("12")]
+_target_patrol_action_parent = NodePath("../../BobExterior")
 
 [node name="BobExterior" parent="PatrolPoints" index="3" instance=ExtResource("9")]
 position = Vector2(656, 304)
@@ -364,14 +364,14 @@ position = Vector2(656, 304)
 [node name="FacePatrolAction" parent="PatrolPoints/BobExterior" index="0" instance=ExtResource("10")]
 _angle = 180.0
 
-[node name="SyncPatrolAction" parent="PatrolPoints/BobExterior" index="1" instance=ExtResource("11")]
-_test_patrol_point_path = NodePath("../../AliceExterior")
+[node name="SyncPatrolAction" parent="PatrolPoints/BobExterior" index="1" node_paths=PackedStringArray("_test_patrol_point") instance=ExtResource("11")]
+_test_patrol_point = NodePath("../../AliceExterior")
 
 [node name="WaitPatrolAction" parent="PatrolPoints/BobExterior" index="2" instance=ExtResource("13")]
 _wait_duration = 5.0
 
-[node name="GoToPatrolAction" parent="PatrolPoints/BobExterior" index="3" instance=ExtResource("12")]
-_target_patrol_action_parent_path = NodePath("../../BobInterior")
+[node name="GoToPatrolAction" parent="PatrolPoints/BobExterior" index="3" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("12")]
+_target_patrol_action_parent = NodePath("../../BobInterior")
 
 [node name="WestEntrance" type="Marker2D" parent="Points" index="0"]
 position = Vector2(-720, 0)

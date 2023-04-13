@@ -4,17 +4,13 @@ extends Actor
 # A guard is an actor that seeks the player and broadcasts messages to other
 # guards.
 
-@export var _investigating_state_path: NodePath
-@export var _seen_player_state_path: NodePath
-@export var _lost_player_state_path: NodePath
+@export var _investigating_state: State
+@export var _seen_player_state: State
+@export var _lost_player_state: State
 @export var start_facing: Facing = Facing.RIGHT
 
 var target: Player = null
 var investigated_pos: Vector2 = Vector2.ZERO
-
-@onready var _investigating_state: State = get_node(_investigating_state_path)
-@onready var _seen_player_state: State = get_node(_seen_player_state_path)
-@onready var _lost_player_state: State = get_node(_lost_player_state_path)
 
 # Run when the guard finishes entering the scene tree. Set the guard's initial
 # facing direction.
@@ -43,7 +39,7 @@ func get_target() -> Node2D:
 
 # Get whether the guard is willing to investigate something.
 func is_idle() -> bool:
-	return state_machine.get_state_name() in ["Pathing", "Patrolling", "Looking", "Investigating"]
+	return state_machine.get_state().name in ["Pathing", "Patrolling", "Looking", "Investigating"]
 
 
 # Investigate a torus shape around a world position.

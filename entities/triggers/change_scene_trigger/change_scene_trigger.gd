@@ -4,7 +4,7 @@ extends Trigger
 # A change scene trigger is a trigger that changes the current scene when
 # entered.
 
-@export var _scene_path: String # (String, FILE, "*.tscn")
+@export_file("*.tscn") var _scene_path: String
 
 # Run when a the change scene trigger is entered. Change the current scene.
 func _on_entered() -> void:

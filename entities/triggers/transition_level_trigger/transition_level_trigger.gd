@@ -4,7 +4,7 @@ extends Trigger
 # A transition level trigger is a trigger that transitions the current level
 # when entered.
 
-@export var _level_path: String # (String, FILE, "*.tscn")
+@export_file("*.tscn") var _level_path: String
 @export var _point: String
 @export var _relative_point: String
 @export var _is_relative_x: bool

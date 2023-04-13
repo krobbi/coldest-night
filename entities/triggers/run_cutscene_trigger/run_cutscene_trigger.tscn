@@ -5,6 +5,5 @@
 
 [node name="RunCutsceneTrigger" instance=ExtResource("1")]
 script = ExtResource("2")
-_cutscene_path = NodePath("")
 
 [connection signal="entered" from="." to="." method="_on_entered"]

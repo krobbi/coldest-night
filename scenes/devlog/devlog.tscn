@@ -24,12 +24,12 @@ grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_lock_ = true
 
-[node name="DevlogCutscene" parent="." instance=ExtResource("7")]
+[node name="DevlogCutscene" parent="." node_paths=PackedStringArray("_background", "_silhouette") instance=ExtResource("7")]
 script = ExtResource("8")
 _exit_scene_path = "res://scenes/menu/menu.tscn"
 _music = ExtResource("6")
-_background_path = NodePath("../BackgroundRect")
-_silhouette_path = NodePath("../SilhouetteRect")
+_background = NodePath("../BackgroundRect")
+_silhouette = NodePath("../SilhouetteRect")
 _is_autorun = true
 
 [node name="BackgroundRect" type="TextureRect" parent="."]

@@ -3,11 +3,10 @@ extends Sprite2D
 # Terminal
 # A terminal is an entity that runs a cutscene when interacted with.
 
-@export var _cutscene_path: NodePath
+@export var _cutscene: Cutscene
 
 @onready var _select_player: AudioStreamPlayer2D = $SelectPlayer
 @onready var _deselect_player: AudioStreamPlayer2D = $DeselectPlayer
-@onready var _cutscene: Cutscene = get_node(_cutscene_path)
 
 # Run when the terminal's interactable is interacted with. Run the terminal's
 # cutscene.

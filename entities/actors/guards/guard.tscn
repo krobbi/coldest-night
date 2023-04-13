@@ -11,64 +11,64 @@
 [ext_resource type="Script" path="res://entities/actors/guards/states/looking_state.gd" id="9"]
 [ext_resource type="Script" path="res://entities/actors/guards/states/patrolling_state.gd" id="10"]
 
-[node name="TestGuard" groups=["guards"] instance=ExtResource("1")]
+[node name="TestGuard" node_paths=PackedStringArray("_investigating_state", "_seen_player_state", "_lost_player_state") groups=["guards"] instance=ExtResource("1")]
 script = ExtResource("3")
-_investigating_state_path = NodePath("StateMachine/Investigating")
-_seen_player_state_path = NodePath("StateMachine/Chasing")
-_lost_player_state_path = NodePath("StateMachine/Cheating")
+_investigating_state = NodePath("StateMachine/Investigating")
+_seen_player_state = NodePath("StateMachine/Chasing")
+_lost_player_state = NodePath("StateMachine/Cheating")
 start_facing = 0
 
-[node name="StateMachine" parent="." index="0"]
-_main_state_path = NodePath("Patrolling")
+[node name="StateMachine" parent="." index="0" node_paths=PackedStringArray("_state")]
+_state = NodePath("Patrolling")
 
-[node name="Patrolling" type="Node" parent="StateMachine" index="1"]
+[node name="Patrolling" type="Node" parent="StateMachine" index="1" node_paths=PackedStringArray("_fallback_state", "_actor", "_smooth_pivot")]
 script = ExtResource("10")
-_fallback_state_path = NodePath("../Pathing")
-_actor_path = NodePath("../..")
-_smooth_pivot_path = NodePath("../../SmoothPivot")
+_fallback_state = NodePath("../Pathing")
+_actor = NodePath("../..")
+_smooth_pivot = NodePath("../../SmoothPivot")
 
-[node name="Chasing" type="Node" parent="StateMachine" index="2"]
+[node name="Chasing" type="Node" parent="StateMachine" index="2" node_paths=PackedStringArray("_no_target_state", "_reached_target_state", "_guard", "_smooth_pivot", "_vision_area")]
 script = ExtResource("5")
-_no_target_state_path = NodePath("../Patrolling")
-_reached_target_state_path = NodePath("../Aiming")
-_guard_path = NodePath("../..")
-_smooth_pivot_path = NodePath("../../SmoothPivot")
-_vision_area_path = NodePath("../../SmoothPivot/VisionArea")
+_no_target_state = NodePath("../Patrolling")
+_reached_target_state = NodePath("../Aiming")
+_guard = NodePath("../..")
+_smooth_pivot = NodePath("../../SmoothPivot")
+_vision_area = NodePath("../../SmoothPivot/VisionArea")
 
-[node name="Aiming" type="Node" parent="StateMachine" index="3"]
+[node name="Aiming" type="Node" parent="StateMachine" index="3" node_paths=PackedStringArray("_no_target_state", "_target_left_state", "_guard", "_smooth_pivot", "_vision_area")]
 script = ExtResource("8")
-_no_target_state_path = NodePath("../Patrolling")
-_target_left_state_path = NodePath("../Chasing")
-_guard_path = NodePath("../..")
-_smooth_pivot_path = NodePath("../../SmoothPivot")
-_vision_area_path = NodePath("../../SmoothPivot/VisionArea")
+_no_target_state = NodePath("../Patrolling")
+_target_left_state = NodePath("../Chasing")
+_guard = NodePath("../..")
+_smooth_pivot = NodePath("../../SmoothPivot")
+_vision_area = NodePath("../../SmoothPivot/VisionArea")
 
-[node name="Cheating" type="Node" parent="StateMachine" index="4"]
+[node name="Cheating" type="Node" parent="StateMachine" index="4" node_paths=PackedStringArray("_cheat_timeout_state", "_guard")]
 script = ExtResource("6")
-_cheat_timeout_state_path = NodePath("../Investigating")
-_guard_path = NodePath("../..")
+_cheat_timeout_state = NodePath("../Investigating")
+_guard = NodePath("../..")
 
-[node name="Investigating" type="Node" parent="StateMachine" index="5"]
+[node name="Investigating" type="Node" parent="StateMachine" index="5" node_paths=PackedStringArray("_finished_state", "_guard", "_vision_area")]
 script = ExtResource("7")
-_finished_state_path = NodePath("../Looking")
-_guard_path = NodePath("../..")
-_vision_area_path = NodePath("../../SmoothPivot/VisionArea")
+_finished_state = NodePath("../Looking")
+_guard = NodePath("../..")
+_vision_area = NodePath("../../SmoothPivot/VisionArea")
 
-[node name="Looking" type="Node" parent="StateMachine" index="6"]
+[node name="Looking" type="Node" parent="StateMachine" index="6" node_paths=PackedStringArray("_finished_state", "_guard", "_smooth_pivot", "_vision_area")]
 script = ExtResource("9")
-_finished_state_path = NodePath("../Patrolling")
-_guard_path = NodePath("../..")
-_smooth_pivot_path = NodePath("../../SmoothPivot")
-_vision_area_path = NodePath("../../SmoothPivot/VisionArea")
+_finished_state = NodePath("../Patrolling")
+_guard = NodePath("../..")
+_smooth_pivot = NodePath("../../SmoothPivot")
+_vision_area = NodePath("../../SmoothPivot/VisionArea")
 
 [node name="Sprite2D" parent="." index="7"]
 texture = ExtResource("2")
 
-[node name="VisionArea" parent="SmoothPivot" index="2" instance=ExtResource("4")]
-_near_edge_position = NodePath("NearEdgePosition")
-_far_edge_position = NodePath("FarEdgePosition")
-_curve_position = NodePath("CurvePosition")
-_front_position = NodePath("FrontPosition")
+[node name="VisionArea" parent="SmoothPivot" index="2" node_paths=PackedStringArray("_near_edge_point", "_far_edge_point", "_curve_point", "_front_point") instance=ExtResource("4")]
+_near_edge_point = NodePath("NearEdgePosition")
+_far_edge_point = NodePath("FarEdgePosition")
+_curve_point = NodePath("CurvePosition")
+_front_point = NodePath("FrontPosition")
 
 [node name="VisionPolygon" type="CollisionPolygon2D" parent="SmoothPivot/VisionArea" index="1"]
 polygon = PackedVector2Array(320, -160, 344, -64, 352, 0, 344, 64, 320, 160, 0, 24, -16, 16, -24, 0, -16, -16, 0, -24)

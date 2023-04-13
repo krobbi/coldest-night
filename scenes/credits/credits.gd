@@ -6,7 +6,7 @@ extends Control
 const CREDITS_PATH: String = "res://scenes/credits/credits_%s.txt"
 const SPEED: float = 30.0
 
-@export var _exit_scene_path: String # (String, FILE, "*.tscn")
+@export_file("*.tscn") var _exit_scene_path: String
 @export var _music: AudioStream
 
 var _is_exiting: bool = false

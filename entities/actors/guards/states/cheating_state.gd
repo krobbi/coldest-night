@@ -6,17 +6,14 @@ extends State
 # impression that the guards have some amount of short term memory and
 # intuition.
 
-@export var _cheat_timeout_state_path: NodePath
-@export var _guard_path: NodePath
+@export var _cheat_timeout_state: State
+@export var _guard: Actor
 @export var _cheat_duration: float = 1.8
 @export var _speed: float = 160.0
 @export var _acceleration: float = 1100.0
 @export var _friction: float = 1200.0
 
 var _cheat_timer: float = 0.0
-
-@onready var _cheat_timeout_state: State = get_node(_cheat_timeout_state_path)
-@onready var _guard: Actor = get_node(_guard_path)
 
 # Run when the cheating state is entered. Reset the cheat timer.
 func enter() -> void:

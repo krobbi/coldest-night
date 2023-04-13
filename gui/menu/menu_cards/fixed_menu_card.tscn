@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://r4jmw2edx2rt" path="res://gui/menu/menu_card.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://bgur41a2luw2t" path="res://gui/menu/menu_list.tscn" id="3"]
 
-[node name="FixedMenuCard" instance=ExtResource("1")]
-_menu_list_path = NodePath("CenterContainer/VBoxContainer/MenuList")
+[node name="FixedMenuCard" node_paths=PackedStringArray("_menu_list") instance=ExtResource("1")]
+_menu_list = NodePath("CenterContainer/VBoxContainer/MenuList")
 
 [node name="CenterContainer" type="CenterContainer" parent="." index="2"]
 custom_minimum_size = Vector2(640, 360)

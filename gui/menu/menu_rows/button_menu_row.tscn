@@ -5,12 +5,12 @@
 [ext_resource type="AudioStream" uid="uid://bv6qkul4i23tc" path="res://resources/audio/sfx/menu_ok.ogg" id="4"]
 [ext_resource type="PackedScene" uid="uid://b4vwav1arica" path="res://components/remote_audio_player/remote_audio_player.tscn" id="5"]
 
-[node name="ButtonMenuRow" instance=ExtResource("1")]
+[node name="ButtonMenuRow" node_paths=PackedStringArray("_focus_node") instance=ExtResource("1")]
 script = ExtResource("2")
 _text = ""
 _icon = null
 _pressed_sound = ExtResource("4")
-focus_node_path = NodePath("Content/Button")
+_focus_node = NodePath("Content/Button")
 
 [node name="Button" type="Button" parent="Content" index="0"]
 custom_minimum_size = Vector2(480, 32)

@@ -5,4 +5,3 @@
 
 [node name="GoToPatrolAction" instance=ExtResource("1")]
 script = ExtResource("2")
-_target_patrol_action_parent_path = NodePath("")

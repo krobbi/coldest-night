@@ -3,13 +3,10 @@ extends Cutscene
 # Devlog Cutscene
 # The devlog cutscene is the cutscene that runs the devlog.
 
-@export var _exit_scene_path: String # (String, FILE, "*.tscn")
+@export_file("*.tscn") var _exit_scene_path: String
 @export var _music: AudioStream
-@export var _background_path: NodePath
-@export var _silhouette_path: NodePath
-
-@onready var _background: TextureRect = get_node(_background_path)
-@onready var _silhouette: TextureRect = get_node(_silhouette_path)
+@export var _background: TextureRect
+@export var _silhouette: TextureRect
 
 # Run the devlog cutscene.
 func run() -> void:

@@ -40,13 +40,13 @@ collision_layer = 0
 script = ExtResource("1")
 metadata/_edit_group_ = true
 
-[node name="StateMachine" type="Node" parent="."]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("_state")]
 script = ExtResource("4")
-_main_state_path = NodePath("Pathing")
+_state = NodePath("Pathing")
 
-[node name="Pathing" type="Node" parent="StateMachine"]
+[node name="Pathing" type="Node" parent="StateMachine" node_paths=PackedStringArray("_actor")]
 script = ExtResource("6")
-_actor_path = NodePath("../..")
+_actor = NodePath("../..")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "idle_down"
@@ -81,5 +81,5 @@ frame = 6
 [node name="CameraAnchor" type="Marker2D" parent="SmoothPivot"]
 position = Vector2(32, 0)
 
-[node name="StateLabel" parent="." instance=ExtResource("7")]
-_state_machine_path = NodePath("../StateMachine")
+[node name="StateLabel" parent="." node_paths=PackedStringArray("_state_machine") instance=ExtResource("7")]
+_state_machine = NodePath("../StateMachine")

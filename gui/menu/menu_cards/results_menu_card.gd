@@ -4,8 +4,8 @@ extends MenuCard
 # The results menu card is a fixed menu card that is the root menu card of the
 # results scene.
 
-@export var _just_completed_scene_path: String # (String, FILE, "*.tscn")
-@export var _already_completed_scene_path: String # (String, FILE, "*.tscn")
+@export_file("*.tscn") var _just_completed_scene_path: String
+@export_file("*.tscn") var _already_completed_scene_path: String
 
 var _save_data: SaveData = SaveManager.get_working_data()
 var _is_continuing: bool = false

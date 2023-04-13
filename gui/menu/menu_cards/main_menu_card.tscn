@@ -11,13 +11,13 @@
 [ext_resource type="Texture2D" uid="uid://llgcla40q0qw" path="res://resources/textures/gui/icons/credits.png" id="10"]
 [ext_resource type="Texture2D" uid="uid://bdkvt1c3a82nb" path="res://resources/textures/gui/icons/load.png" id="11"]
 
-[node name="MainMenuCard" instance=ExtResource("1")]
+[node name="MainMenuCard" node_paths=PackedStringArray("_menu_list") instance=ExtResource("1")]
 script = ExtResource("2")
 _loader_scene_path = "res://scenes/loader/loader.tscn"
 _credits_scene_path = "res://scenes/credits/credits.tscn"
 _devlog_scene_path = "res://scenes/devlog/devlog.tscn"
 _is_manually_poppable = false
-_menu_list_path = NodePath("CenterContainer/VBoxContainer/MenuList")
+_menu_list = NodePath("CenterContainer/VBoxContainer/MenuList")
 
 [node name="VersionLabel" type="Label" parent="." index="2"]
 custom_minimum_size = Vector2(624, 24)

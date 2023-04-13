@@ -17,10 +17,10 @@ texture_margin_right = 2.0
 texture_margin_bottom = 6.0
 region_rect = Rect2(0, 0, 6, 10)
 
-[node name="ControlMenuRow" groups=["control_menu_rows"] instance=ExtResource("1")]
+[node name="ControlMenuRow" node_paths=PackedStringArray("_focus_node") groups=["control_menu_rows"] instance=ExtResource("1")]
 script = ExtResource("2")
 _action = ""
-focus_node_path = NodePath("Content/Button")
+_focus_node = NodePath("Content/Button")
 
 [node name="Label" type="Label" parent="Content" index="0"]
 custom_minimum_size = Vector2(240, 32)

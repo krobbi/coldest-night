@@ -4,9 +4,8 @@ extends Control
 # A state label is a debug component that displays a state machine's current
 # state.
 
-@export var _state_machine_path: NodePath
+@export var _state_machine: StateMachine
 
-@onready var _state_machine: StateMachine = get_node(_state_machine_path)
 @onready var _label: Label = $Label
 
 # Run when the state label enters the scene tree. Disable the state label's
@@ -24,7 +23,7 @@ func _enter_tree() -> void:
 # Run on every physics frame while the state label's physics process is enabled.
 # Update the state label's text.
 func _physics_process(_delta: float) -> void:
-	_label.text = _state_machine.get_state_name()
+	_label.text = _state_machine.get_state().name
 
 
 # Run when the state label's visibility changes. Set the state label's physics

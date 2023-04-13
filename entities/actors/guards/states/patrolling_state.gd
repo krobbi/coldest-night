@@ -4,18 +4,15 @@ extends State
 # A patrolling state is a state used by a guard that allows a guard to follow a
 # patrol route.
 
-@export var _fallback_state_path: NodePath
-@export var _actor_path: NodePath
-@export var _smooth_pivot_path: NodePath
+@export var _fallback_state: State
+@export var _actor: Actor
+@export var _smooth_pivot: SmoothPivot
 @export var _speed: float = 180.0
 @export var _acceleration: float = 1000.0
 @export var _friction: float = 3000.0
 
 var _patrol_point: PatrolPoint = null
 
-@onready var _fallback_state: State = get_node(_fallback_state_path)
-@onready var _actor: Actor = get_node(_actor_path)
-@onready var _smooth_pivot: SmoothPivot = get_node(_smooth_pivot_path)
 @onready var _patrol_action: PatrolAction = _actor.get_main_patrol_action()
 
 # Run when the patrolling state enters the scene tree. Set the patrolling

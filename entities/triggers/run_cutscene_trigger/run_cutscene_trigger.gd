@@ -3,9 +3,7 @@ extends Trigger
 # Run Cutscene Trigger
 # A run cutscene trigger is a trigger that runs a cutscene when entered.
 
-@export var _cutscene_path: NodePath
-
-@onready var _cutscene: Cutscene = get_node(_cutscene_path)
+@export var _cutscene: Cutscene
 
 # Run when the run cutscene trigger is entered. Run the run cutscene trigger's
 # cutscene.

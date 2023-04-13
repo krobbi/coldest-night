@@ -4,20 +4,14 @@ extends State
 # A chasing state is a state used by a guard that allows a guard to chase toward
 # its target.
 
-@export var _no_target_state_path: NodePath
-@export var _reached_target_state_path: NodePath
-@export var _guard_path: NodePath
-@export var _smooth_pivot_path: NodePath
-@export var _vision_area_path: NodePath
+@export var _no_target_state: State
+@export var _reached_target_state: State
+@export var _guard: Actor
+@export var _smooth_pivot: SmoothPivot
+@export var _vision_area: VisionArea
 @export var _speed: float = 160.0
 @export var _acceleration: float = 1100.0
 @export var _target_reached_distance: float = 64.0
-
-@onready var _no_target_state: State = get_node(_no_target_state_path)
-@onready var _reached_target_state: State = get_node(_reached_target_state_path)
-@onready var _guard: Actor = get_node(_guard_path)
-@onready var _smooth_pivot: SmoothPivot = get_node(_smooth_pivot_path)
-@onready var _vision_area: VisionArea = get_node(_vision_area_path)
 
 # Run when the chasing state is entered. Set the vision area's display style.
 func enter() -> void:

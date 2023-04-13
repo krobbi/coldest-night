@@ -88,9 +88,9 @@ _is_relative_x = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/NorthExit" index="0"]
 shape = SubResource("1")
 
-[node name="WestExitFocus" parent="Triggers" index="1" instance=ExtResource("4")]
+[node name="WestExitFocus" parent="Triggers" index="1" node_paths=PackedStringArray("_focus_node") instance=ExtResource("4")]
 position = Vector2(-112, 0)
-_focus_node_path = NodePath("Marker2D")
+_focus_node = NodePath("Marker2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/WestExitFocus" index="0"]
 shape = SubResource("2")

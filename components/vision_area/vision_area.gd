@@ -13,10 +13,10 @@ signal suspicion_seen(world_pos: Vector2)
 enum DisplayStyle {NONE, NORMAL, CAUTION, ALERT}
 
 @export var _display_style: DisplayStyle = DisplayStyle.NORMAL
-@export var _near_edge_position: NodePath = NodePath()
-@export var _far_edge_position: NodePath = NodePath()
-@export var _curve_position: NodePath = NodePath()
-@export var _front_position: NodePath = NodePath()
+@export var _near_edge_point: Marker2D
+@export var _far_edge_point: Marker2D
+@export var _curve_point: Marker2D
+@export var _front_point: Marker2D
 @export var _suspicion_distance: float = 256.0
 @export var _suspicion_attenuation: float = 0.05
 @export var _suspicion_speed: float = 1.4
@@ -71,34 +71,22 @@ func get_display_style() -> DisplayStyle:
 
 # Get the vision areas near edge position.
 func get_near_edge_pos() -> Vector2:
-	if _near_edge_position.is_empty() or not get_node(_near_edge_position) is Marker2D:
-		return Vector2(0.0, 8.0)
-	
-	return Vector2(0.0, abs(get_node(_near_edge_position).position.y))
+	return Vector2(0.0, absf(_near_edge_point.position.y))
 
 
 # Get the vision area's far edge position.
 func get_far_edge_pos() -> Vector2:
-	if _far_edge_position.is_empty() or not get_node(_far_edge_position) is Marker2D:
-		return Vector2(64.0, 32.0)
-	
-	return get_node(_far_edge_position).position.abs()
+	return _far_edge_point.position.abs()
 
 
 # Get the vision area's curve position.
 func get_curve_pos() -> Vector2:
-	if _curve_position.is_empty() or not get_node(_curve_position) is Marker2D:
-		return (get_far_edge_pos() + get_front_pos()) * 0.5
-	
-	return get_node(_curve_position).position.abs()
+	return _curve_point.position.abs()
 
 
 # Get the vision area's front position.
 func get_front_pos() -> Vector2:
-	if _front_position.is_empty() or not get_node(_front_position) is Marker2D:
-		return Vector2(96.0, 0.0)
-	
-	return Vector2(abs(get_node(_front_position).position.x), 0.0)
+	return Vector2(absf(_front_point.position.x), 0.0)
 
 
 # Add suspicion to the vision area.

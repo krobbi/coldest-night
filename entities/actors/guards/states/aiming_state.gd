@@ -4,19 +4,13 @@ extends State
 # An aiming state is a state used by a guard that allows a guard to track its
 # target when it is within a threshold distance.
 
-@export var _no_target_state_path: NodePath
-@export var _target_left_state_path: NodePath
-@export var _guard_path: NodePath
-@export var _smooth_pivot_path: NodePath
-@export var _vision_area_path: NodePath
+@export var _no_target_state: State
+@export var _target_left_state: State
+@export var _guard: Actor
+@export var _smooth_pivot: SmoothPivot
+@export var _vision_area: VisionArea
 @export var _friction: float = 1200.0
 @export var _target_left_distance: float = 96.0
-
-@onready var _no_target_state: State = get_node(_no_target_state_path)
-@onready var _target_left_state: State = get_node(_target_left_state_path)
-@onready var _guard: Actor = get_node(_guard_path)
-@onready var _smooth_pivot: SmoothPivot = get_node(_smooth_pivot_path)
-@onready var _vision_area: VisionArea = get_node(_vision_area_path)
 
 # Run when the aiming state is entered. Set the vision area's display style.
 func enter() -> void:

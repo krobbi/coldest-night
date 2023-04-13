@@ -4,14 +4,14 @@
 [ext_resource type="Script" path="res://gui/menu/menu_rows/slider_menu_row.gd" id="2"]
 [ext_resource type="AudioStream" uid="uid://b0xgiumc04x8k" path="res://resources/audio/sfx/menu_move.ogg" id="3"]
 
-[node name="SliderMenuRow" instance=ExtResource("1")]
+[node name="SliderMenuRow" node_paths=PackedStringArray("_focus_node") instance=ExtResource("1")]
 script = ExtResource("2")
 _slider_value = 0.0
 _min_value = 0.0
 _max_value = 100.0
 _step = 1.0
 _text = ""
-focus_node_path = NodePath("Content/HSlider")
+_focus_node = NodePath("Content/HSlider")
 
 [node name="Label" type="Label" parent="Content" index="0"]
 custom_minimum_size = Vector2(240, 32)

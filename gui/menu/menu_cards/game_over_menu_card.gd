@@ -4,8 +4,8 @@ extends MenuCard
 # The game over menu card is a fixed menu card that is the root menu card of the
 # game over menu.
 
-@export var _retry_scene_path: String # (String, FILE, "*.tscn")
-@export var _quit_scene_path: String # (String, FILE, "*.tscn")
+@export_file("*.tscn") var _retry_scene_path: String
+@export_file("*.tscn") var _quit_scene_path: String
 
 var _is_continuing: bool = false
 var _save_data: SaveData = SaveManager.get_working_data()

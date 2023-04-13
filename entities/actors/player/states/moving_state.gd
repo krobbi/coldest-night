@@ -4,18 +4,14 @@ extends State
 # The moving state is a state used by the player that allows the player to be
 # controlled by the user.
 
-@export var _player_path: NodePath
-@export var _interactor_path: NodePath
-@export var _smooth_pivot_path: NodePath
+@export var _player: Player
+@export var _smooth_pivot: SmoothPivot
+@export var _interactor: Interactor
 @export var _speed: float = 180.0
 @export var _acceleration: float = 1000.0
 @export var _friction: float = 1200.0
 
 var _save_data: SaveData = SaveManager.get_working_data()
-
-@onready var _player: Player = get_node(_player_path)
-@onready var _smooth_pivot: SmoothPivot = get_node(_smooth_pivot_path)
-@onready var _interactor: Interactor = get_node(_interactor_path)
 
 # Run when the moving state is ticked. Move the player and return the moving
 # state.

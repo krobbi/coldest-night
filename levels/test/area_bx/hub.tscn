@@ -27,9 +27,9 @@ size = Vector2(64, 32)
 [node name="Hub" instance=ExtResource("1")]
 level_name = "LEVEL.TEST.AREA_BX.HUB"
 
-[node name="EnterCutscene" parent="Cutscenes" index="0" instance=ExtResource("7")]
+[node name="EnterCutscene" parent="Cutscenes" index="0" node_paths=PackedStringArray("_terminal_point") instance=ExtResource("7")]
 script = ExtResource("8")
-_terminal_point_path = NodePath("TerminalPoint")
+_terminal_point = NodePath("TerminalPoint")
 
 [node name="TerminalPoint" type="Marker2D" parent="Cutscenes/EnterCutscene" index="0"]
 position = Vector2(-48, 112)
@@ -142,37 +142,37 @@ _is_relative_x = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/SouthExit" index="0"]
 shape = SubResource("1")
 
-[node name="NorthCutscene" parent="Triggers" index="4" instance=ExtResource("4")]
+[node name="NorthCutscene" parent="Triggers" index="4" node_paths=PackedStringArray("_cutscene") instance=ExtResource("4")]
 position = Vector2(0, -368)
-_cutscene_path = NodePath("../../Cutscenes/EnterCutscene")
+_cutscene = NodePath("../../Cutscenes/EnterCutscene")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/NorthCutscene" index="0"]
 shape = SubResource("3")
 
-[node name="WestCutscene" parent="Triggers" index="5" instance=ExtResource("4")]
+[node name="WestCutscene" parent="Triggers" index="5" node_paths=PackedStringArray("_cutscene") instance=ExtResource("4")]
 position = Vector2(-368, 0)
-_cutscene_path = NodePath("../../Cutscenes/EnterCutscene")
+_cutscene = NodePath("../../Cutscenes/EnterCutscene")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/WestCutscene" index="0"]
 shape = SubResource("4")
 
-[node name="EastCutscene" parent="Triggers" index="6" instance=ExtResource("4")]
+[node name="EastCutscene" parent="Triggers" index="6" node_paths=PackedStringArray("_cutscene") instance=ExtResource("4")]
 position = Vector2(368, 0)
-_cutscene_path = NodePath("../../Cutscenes/EnterCutscene")
+_cutscene = NodePath("../../Cutscenes/EnterCutscene")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/EastCutscene" index="0"]
 shape = SubResource("4")
 
-[node name="SouthCutscene" parent="Triggers" index="7" instance=ExtResource("4")]
+[node name="SouthCutscene" parent="Triggers" index="7" node_paths=PackedStringArray("_cutscene") instance=ExtResource("4")]
 position = Vector2(0, 368)
-_cutscene_path = NodePath("../../Cutscenes/EnterCutscene")
+_cutscene = NodePath("../../Cutscenes/EnterCutscene")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/SouthCutscene" index="0"]
 shape = SubResource("3")
 
-[node name="ElevatorFocus" parent="Triggers" index="8" instance=ExtResource("5")]
+[node name="ElevatorFocus" parent="Triggers" index="8" node_paths=PackedStringArray("_focus_node") instance=ExtResource("5")]
 position = Vector2(0, 80)
-_focus_node_path = NodePath("Marker2D")
+_focus_node = NodePath("Marker2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ElevatorFocus" index="0"]
 shape = SubResource("5")

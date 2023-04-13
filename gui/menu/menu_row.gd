@@ -22,9 +22,10 @@ const _COLOR_DESELECT: Color = Color("#d94f0c")
 const _TWEEN_TIME: float = 0.25
 const _TWEEN_TRANS: Tween.TransitionType = Tween.TRANS_SINE
 
-@export var focus_node_path: NodePath = NodePath()
 @export var appearance_condition: AppearanceCondition = AppearanceCondition.ALWAYS
 @export var tooltip: String
+
+@export var _focus_node: Control
 
 var _is_selected: bool = false
 
@@ -34,7 +35,7 @@ var _is_selected: bool = false
 
 # Get the menu row's focus node.
 func get_focus_node() -> Control:
-	return get_node(focus_node_path) as Control
+	return _focus_node
 
 
 # Get whether the menu row should appear.
