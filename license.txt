@@ -8,16 +8,18 @@ source code, and/or its documentation (the "Software"), to use, modify, copy,
 produce media based on, document, and/or archive the Software, subject to the
 following conditions:
 
-The Software or significant portions of the Software must not be distributed.
+The Software may only be distributed if the copyright holders are no longer
+distributing the Software. In this case, the Software must be distributed
+non-commercially.
 
 Media based on the Software must not be used commercially, except for revenue
-from advertising and/or crowdfunding.
+from advertising and/or funding.
 
 Media based on the Software must not provide a reasonable substitute for the
 Software.
 
 The Software, media based on the Software, or parts thereof must not be used in
-the promotion or production of cryptocurrencies, non-fungible tokens, or other
+the promotion or production of cryptocurrencies, non-fungible tokens, and/or
 blockchain technologies.
 
 The copyright holders reserve the rights to remove access to the Software or to
