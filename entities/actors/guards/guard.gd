@@ -4,20 +4,29 @@ extends Actor
 # A guard is an actor that seeks the player and broadcasts messages to other
 # guards.
 
+@export var _start_facing: Facing = Facing.RIGHT
 @export var _investigating_state: State
 @export var _seen_player_state: State
 @export var _lost_player_state: State
-@export var start_facing: Facing = Facing.RIGHT
+
+# HACK: Godot Engine 4.0 can't export an array of nodes. This is a known bug and
+# a milestone for Godot Engine 4.1.
+@export var _idle_state_paths: Array[NodePath]
 
 var target: Player = null
 var investigated_pos: Vector2 = Vector2.ZERO
 
-# Run when the guard finishes entering the scene tree. Set the guard's initial
-# facing direction.
+var _idle_states: Array[State] = []
+
+# Run when the guard finishes entering the scene tree. Set the guard's idle
+# states and initial facing direction.
 func _ready() -> void:
 	super()
 	
-	match start_facing:
+	for idle_state_path in _idle_state_paths:
+		_idle_states.push_back(get_node(idle_state_path))
+	
+	match _start_facing:
 		Facing.UP:
 			_facing = Facing.UP
 			smooth_pivot.rotation = PI * -0.5
@@ -39,7 +48,7 @@ func get_target() -> Node2D:
 
 # Get whether the guard is willing to investigate something.
 func is_idle() -> bool:
-	return state_machine.get_state().name in ["Pathing", "Patrolling", "Looking", "Investigating"]
+	return state_machine.get_state() in _idle_states
 
 
 # Investigate a torus shape around a world position.

@@ -14,6 +14,8 @@ enum Facing {RIGHT, DOWN, LEFT, UP}
 @export var _repel_speed: float = 180.0
 @export var _repel_force: float = 900.0
 
+@export var _navigating_state: State
+
 var _facing: int = Facing.DOWN
 
 @onready var state_machine: StateMachine = $StateMachine
@@ -92,6 +94,11 @@ func get_facing_key() -> String:
 # Get whether the actor is navigating.
 func is_navigating() -> bool:
 	return not _navigation_agent.is_navigation_finished()
+
+
+# Return whether the actor can navigate.
+func can_navigate() -> bool:
+	return state_machine.get_state() == _navigating_state
 
 
 # Navigate the actor to a world position.

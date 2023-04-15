@@ -64,13 +64,13 @@ metadata/_edit_lock_ = true
 
 [node name="Alice" parent="Entities/Guards" index="0" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
 position = Vector2(656, -240)
-start_facing = 2
+_start_facing = 2
 actor_key = "alice"
 _main_patrol_action_parent = NodePath("../../../PatrolPoints/AliceInterior")
 
 [node name="Bob" parent="Entities/Guards" index="1" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
 position = Vector2(656, 240)
-start_facing = 2
+_start_facing = 2
 actor_key = "bob"
 _main_patrol_action_parent = NodePath("../../../PatrolPoints/BobInterior")
 

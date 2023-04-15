@@ -13,10 +13,11 @@
 
 [node name="TestGuard" node_paths=PackedStringArray("_investigating_state", "_seen_player_state", "_lost_player_state") groups=["guards"] instance=ExtResource("1")]
 script = ExtResource("3")
+_start_facing = 0
 _investigating_state = NodePath("StateMachine/Investigating")
 _seen_player_state = NodePath("StateMachine/Chasing")
 _lost_player_state = NodePath("StateMachine/Cheating")
-start_facing = 0
+_idle_state_paths = Array[NodePath]([NodePath("StateMachine/Pathing"), NodePath("StateMachine/Patrolling"), NodePath("StateMachine/Investigating"), NodePath("StateMachine/Looking")])
 
 [node name="StateMachine" parent="." index="0" node_paths=PackedStringArray("_state")]
 _state = NodePath("Patrolling")

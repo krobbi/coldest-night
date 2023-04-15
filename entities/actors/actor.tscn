@@ -35,9 +35,10 @@ _data = {
 [sub_resource type="CircleShape2D" id="2"]
 radius = 12.0
 
-[node name="Actor" type="CharacterBody2D" groups=["actors"]]
+[node name="Actor" type="CharacterBody2D" node_paths=PackedStringArray("_navigating_state") groups=["actors"]]
 collision_layer = 0
 script = ExtResource("1")
+_navigating_state = NodePath("StateMachine/Pathing")
 metadata/_edit_group_ = true
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("_state")]

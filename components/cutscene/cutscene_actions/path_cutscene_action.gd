@@ -21,7 +21,7 @@ func _init(tree_ref: SceneTree, actor_key_val: String, target_pos_val: Vector2) 
 # Run when the path cutscene action begins. Find the actor and find the path.
 func begin() -> void:
 	for actor in _tree.get_nodes_in_group("actors"):
-		if actor.actor_key == _actor_key and actor.state_machine.get_state().name == "Pathing":
+		if actor.actor_key == _actor_key and actor.can_navigate():
 			_actor = actor
 			_actor.navigate_to(_target_pos)
 			break

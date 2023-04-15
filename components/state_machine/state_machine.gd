@@ -30,14 +30,3 @@ func change_state(next_state: State) -> void:
 	_state.exit()
 	_state = next_state
 	_state.enter()
-
-
-# Forcibly change the current state from its node name.
-func change_state_name(next_state_name: String) -> void:
-	if not has_node(next_state_name):
-		return
-	
-	var next_state: Node = get_node(next_state_name)
-	
-	if next_state is State:
-		change_state(next_state)

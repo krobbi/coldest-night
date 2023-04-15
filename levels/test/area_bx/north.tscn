@@ -68,7 +68,7 @@ metadata/_edit_lock_ = true
 
 [node name="Brian" parent="Entities/Guards" index="0" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
 position = Vector2(-272, -112)
-start_facing = 3
+_start_facing = 3
 actor_key = "brian"
 _main_patrol_action_parent = NodePath("../../../PatrolPoints/Brian/Bridge")
 
@@ -79,13 +79,13 @@ _main_patrol_action_parent = NodePath("../../../PatrolPoints/Nora/Hidden")
 
 [node name="Archie" parent="Entities/Guards" index="2" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
 position = Vector2(0, 128)
-start_facing = 3
+_start_facing = 3
 actor_key = "archie"
 _main_patrol_action_parent = NodePath("../../../PatrolPoints/Archie/Front")
 
 [node name="Susie" parent="Entities/Guards" index="3" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
 position = Vector2(112, 560)
-start_facing = 2
+_start_facing = 2
 actor_key = "susie"
 _main_patrol_action_parent = NodePath("../../../PatrolPoints/Susie/Entrance")
 

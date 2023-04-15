@@ -19,6 +19,6 @@ func _init(tree_ref: SceneTree, actor_key_val: String, degrees_val: float) -> vo
 # Run when the face cutscene action begins. Face the actor towards an angle.
 func begin() -> void:
 	for actor in _tree.get_nodes_in_group("actors"):
-		if actor.actor_key == _actor_key and actor.state_machine.get_state().name == "Pathing":
+		if actor.actor_key == _actor_key and actor.can_navigate():
 			actor.smooth_pivot.pivot_to(deg_to_rad(_degrees))
 			break
