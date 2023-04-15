@@ -59,7 +59,7 @@ func _exit_tree() -> void:
 
 # Show the laser wall.
 func show_wall() -> void:
-	_obstructive_shape.set_deferred("disabled", false)
+	_obstructive_shape.set_disabled.call_deferred(false)
 	show()
 	wall_visibility_changed.emit(true)
 
@@ -67,7 +67,7 @@ func show_wall() -> void:
 # Hide the laser wall.
 func hide_wall() -> void:
 	hide()
-	_obstructive_shape.set_deferred("disabled", true)
+	_obstructive_shape.set_disabled.call_deferred(true)
 	wall_visibility_changed.emit(false)
 
 

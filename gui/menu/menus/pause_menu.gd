@@ -47,4 +47,4 @@ func _on_menu_stack_root_popped() -> void:
 	_is_open = false
 	hide()
 	_menu_stack.clear()
-	get_tree().set_deferred("paused", false)
+	get_tree().paused = false
