@@ -18,9 +18,9 @@ enum Facing {RIGHT, DOWN, LEFT, UP}
 
 var _facing: int = Facing.DOWN
 
-@onready var state_machine: StateMachine = $StateMachine
 @onready var smooth_pivot: SmoothPivot = $SmoothPivot
 
+@onready var _state_machine: StateMachine = $StateMachine
 @onready var _animation_player: AnimationPlayer = $AnimationPlayer
 @onready var _navigation_agent: NavigationAgent2D = $NavigationAgent2D
 @onready var _repulsive_area: RepulsiveArea = $RepulsiveArea
@@ -28,13 +28,13 @@ var _facing: int = Facing.DOWN
 
 # Initialize the actor's state machine.
 func _ready() -> void:
-	state_machine.init()
+	_state_machine.init()
 
 
 # Run on every physics frame. Tick the actor's state machine, apply the actor's
 # repulsion, move the actor, and update the actor's animation.
 func _physics_process(delta: float) -> void:
-	state_machine.tick(delta)
+	_state_machine.tick(delta)
 	var repel_vector: Vector2 = _repulsive_area.get_vector()
 	
 	if repel_vector:
@@ -98,7 +98,7 @@ func is_navigating() -> bool:
 
 # Return whether the actor can navigate.
 func can_navigate() -> bool:
-	return state_machine.get_state() == _navigating_state
+	return _state_machine.get_state() == _navigating_state
 
 
 # Navigate the actor to a world position.

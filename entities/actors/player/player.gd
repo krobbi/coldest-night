@@ -5,12 +5,10 @@ extends Actor
 # Players are actors that can be controlled by the user.
 
 @export var _freeze_state: State
-@export var _moving_state: State
-@export var _transitioning_state: State
+@export var _transition_state: State
 
 var _save_data: SaveData = SaveManager.get_working_data()
-var _is_frozen: bool = false
-var _unfreeze_state: State
+var _state_stack: Array[State] = []
 
 @onready var _interactor: Interactor = $SmoothPivot/Interactor
 @onready var _triggering_shape: CollisionShape2D = $TriggeringArea/TriggeringShape
@@ -18,9 +16,9 @@ var _unfreeze_state: State
 # Run when the player enters the scene tree. Subscribe the player to the event
 # bus.
 func _enter_tree() -> void:
-	EventBus.subscribe_node(EventBus.player_freeze_request, freeze)
-	EventBus.subscribe_node(EventBus.player_unfreeze_request, unfreeze)
-	EventBus.subscribe_node(EventBus.player_transition_request, transition)
+	EventBus.subscribe_node(EventBus.player_push_freeze_state_request, push_freeze_state)
+	EventBus.subscribe_node(EventBus.player_push_transition_state_request, push_transition_state)
+	EventBus.subscribe_node(EventBus.player_pop_state_request, pop_state)
 	EventBus.subscribe_node(EventBus.save_state_request, save_state)
 
 
@@ -39,47 +37,32 @@ func get_pause_input() -> bool:
 	return Input.is_action_just_pressed("pause")
 
 
-# Get the player's moving state.
-func get_moving_state() -> State:
-	return _moving_state
-
-
-# Freeze the player.
-func freeze() -> void:
-	if _is_frozen:
-		return
-	
-	_is_frozen = true
-	_unfreeze_state = state_machine.get_state()
-	state_machine.change_state(_freeze_state)
-	disable_triggers()
-
-
-# Unfreeze the player.
-func unfreeze() -> void:
-	if not _is_frozen:
-		return
-	
-	_is_frozen = false
-	enable_triggers()
-	state_machine.change_state(_unfreeze_state)
-
-
-# Transition the player.
-func transition() -> void:
-	state_machine.change_state(_transitioning_state)
-
-
-# Enables the player's ability to interact with triggers and interactables.
-func enable_triggers() -> void:
-	_triggering_shape.set_deferred("disabled", false)
-	_interactor.enable()
-
-
-# Disable the player's ability to interact with triggers and interactables.
-func disable_triggers() -> void:
-	_triggering_shape.set_deferred("disabled", true)
+# Push a state to the player's state stack.
+func push_state(state: State) -> void:
+	_triggering_shape.set_disabled.call_deferred(true)
 	_interactor.disable()
+	_state_stack.push_back(_state_machine.get_state())
+	_state_machine.change_state(state)
+
+
+# Push the freeze state to the player's state stack.
+func push_freeze_state() -> void:
+	push_state(_freeze_state)
+
+
+# Push the transition state to the player's state stack.
+func push_transition_state() -> void:
+	push_state(_transition_state)
+
+
+# Pop a state from the player's state stack.
+func pop_state() -> void:
+	if not _state_stack.is_empty():
+		_state_machine.change_state(_state_stack.pop_back())
+		
+		if _state_stack.is_empty():
+			_interactor.enable()
+			_triggering_shape.set_disabled.call_deferred(false)
 
 
 # Save the player's state and display floating text.

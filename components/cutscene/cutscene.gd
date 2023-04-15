@@ -126,9 +126,9 @@ func path(actor_key: String, target_pos: Vector2) -> void:
 
 # Freeze the player.
 func freeze() -> void:
-	then(func() -> void: EventBus.player_freeze_request.emit())
+	then(func() -> void: EventBus.player_push_freeze_state_request.emit())
 
 
 # Unfreeze the player.
 func unfreeze() -> void:
-	then(func() -> void: EventBus.player_unfreeze_request.emit())
+	then(func() -> void: EventBus.player_pop_state_request.emit())

@@ -23,7 +23,7 @@ func open_menu() -> void:
 		return
 	
 	_is_open = true
-	EventBus.player_freeze_request.emit()
+	EventBus.player_push_freeze_state_request.emit()
 	AudioManager.play_music(_game_over_music, false)
 	show()
 	var tween: Tween = create_tween()

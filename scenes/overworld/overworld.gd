@@ -44,8 +44,7 @@ func _change_level(level_path: String, point: String, offset: Vector2) -> void:
 	EventBus.radar_camera_follow_anchor_request.emit(_player)
 	EventBus.camera_follow_anchor_request.emit(_player.get_camera_anchor())
 	
-	_player.state_machine.change_state(_player.get_moving_state())
-	_player.enable_triggers()
+	_player.pop_state()
 	
 	SaveManager.push_to_checkpoint()
 	SceneManager.fade_in()
@@ -55,7 +54,7 @@ func _change_level(level_path: String, point: String, offset: Vector2) -> void:
 func _transition_level(
 		level_path: String, point: String, relative_point: String,
 		is_relative_x: bool, is_relative_y: bool) -> void:
-	EventBus.player_transition_request.emit()
+	_player.push_transition_state()
 	var offset: Vector2 = Vector2.ZERO
 	
 	if _level:

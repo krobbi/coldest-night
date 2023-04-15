@@ -48,7 +48,7 @@ func get_target() -> Node2D:
 
 # Get whether the guard is willing to investigate something.
 func is_idle() -> bool:
-	return state_machine.get_state() in _idle_states
+	return _state_machine.get_state() in _idle_states
 
 
 # Investigate a torus shape around a world position.
@@ -57,7 +57,7 @@ func investigate(world_pos: Vector2, min_distance: float, max_distance: float) -
 	var angle: float = randf_range(-PI, PI)
 	var offset: Vector2 = Vector2(cos(angle), sin(angle)) * distance
 	investigated_pos = world_pos + offset
-	state_machine.change_state(_investigating_state)
+	_state_machine.change_state(_investigating_state)
 
 
 # Request other guards to investigate a world position.
@@ -81,7 +81,7 @@ func _on_vision_area_player_seen(player: Player, world_pos: Vector2) -> void:
 	if not ConfigBus.get_bool("accessibility.never_game_over"):
 		EventBus.game_over_request.emit()
 	
-	state_machine.change_state(_seen_player_state)
+	_state_machine.change_state(_seen_player_state)
 	request_investigation(world_pos, 16.0, 64.0)
 
 
@@ -89,7 +89,7 @@ func _on_vision_area_player_seen(player: Player, world_pos: Vector2) -> void:
 # to investigate the player's general last seen position.
 func _on_vision_area_player_lost(player: Player, world_pos: Vector2) -> void:
 	target = player
-	state_machine.change_state(_lost_player_state)
+	_state_machine.change_state(_lost_player_state)
 	request_investigation(world_pos, 128.0, 384.0)
 
 

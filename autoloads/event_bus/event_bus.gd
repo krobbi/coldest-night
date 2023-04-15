@@ -12,9 +12,9 @@ signal transition_level_request(
 		level_path: String, point: String, relative_point: String,
 		is_relative_x: bool, is_relative_y: bool)
 
-signal player_freeze_request
-signal player_unfreeze_request
-signal player_transition_request
+signal player_push_freeze_state_request
+signal player_push_transition_state_request
+signal player_pop_state_request
 
 signal floating_text_display_request(text: String, world_pos: Vector2)
 signal subtitle_display_request(message: String)

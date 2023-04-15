@@ -8,5 +8,5 @@ extends Trigger
 
 # Run when a the change scene trigger is entered. Change the current scene.
 func _on_entered() -> void:
-	EventBus.player_transition_request.emit()
+	EventBus.player_push_transition_state_request.emit()
 	SceneManager.change_scene_to_file(_scene_path)

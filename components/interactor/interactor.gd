@@ -5,7 +5,7 @@ extends Node2D
 # An interactor is a component of a player that handles interacting with nearby
 # interactables.
 
-var _is_enabled: bool = false
+var _is_enabled: bool = true
 var _selected_interactable: Interactable = null
 var _nearby_interactables: Array[Interactable] = []
 
