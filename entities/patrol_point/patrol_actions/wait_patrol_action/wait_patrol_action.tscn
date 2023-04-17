@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://bv6iwqb85fiao"]
-
-[ext_resource type="PackedScene" uid="uid://cko2xup270v5b" path="res://entities/patrol_point/patrol_actions/patrol_action.tscn" id="1"]
-[ext_resource type="Script" path="res://entities/patrol_point/patrol_actions/wait_patrol_action/wait_patrol_action.gd" id="2"]
-
-[node name="WaitPatrolAction" instance=ExtResource("1")]
-script = ExtResource("2")
-_wait_duration = 2.0

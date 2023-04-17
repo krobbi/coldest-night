@@ -1,16 +1,12 @@
-[gd_scene load_steps=15 format=3 uid="uid://bdds2g3hhxw8s"]
+[gd_scene load_steps=11 format=3 uid="uid://bdds2g3hhxw8s"]
 
 [ext_resource type="PackedScene" uid="uid://dofn6s8r2ut5k" path="res://levels/test/area_bx.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://cpo0geqwrh6p3" path="res://entities/test/archival_unit/archival_unit.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://cihpqv7av7x6f" path="res://entities/actors/guards/guard.tscn" id="3"]
 [ext_resource type="PackedScene" uid="uid://bulv33wevyvbf" path="res://entities/test/laser_wall/laser_wall.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://cjkd8gdjt25ot" path="res://entities/triggers/transition_level_trigger/transition_level_trigger.tscn" id="5"]
-[ext_resource type="PackedScene" uid="uid://bv6iwqb85fiao" path="res://entities/patrol_point/patrol_actions/wait_patrol_action/wait_patrol_action.tscn" id="6"]
 [ext_resource type="PackedScene" uid="uid://0hbot7ft6r82" path="res://entities/triggers/focus_camera_trigger/focus_camera_trigger.tscn" id="7"]
 [ext_resource type="PackedScene" uid="uid://y2ewmu5tu8el" path="res://entities/patrol_point/patrol_point.tscn" id="8"]
-[ext_resource type="PackedScene" uid="uid://ds52w3341hhfd" path="res://entities/patrol_point/patrol_actions/go_to_patrol_action/go_to_patrol_action.tscn" id="9"]
-[ext_resource type="PackedScene" uid="uid://cw1nhsxh31umy" path="res://entities/patrol_point/patrol_actions/face_patrol_action/face_patrol_action.tscn" id="10"]
-[ext_resource type="PackedScene" uid="uid://dch43m4h8o68e" path="res://entities/patrol_point/patrol_actions/sync_patrol_action/sync_patrol_action.tscn" id="11"]
 
 [sub_resource type="RectangleShape2D" id="4"]
 size = Vector2(256, 160)
@@ -66,28 +62,28 @@ position = Vector2(240, 240)
 y_sort_enabled = true
 metadata/_edit_lock_ = true
 
-[node name="Brian" parent="Entities/Guards" index="0" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
+[node name="Brian" parent="Entities/Guards" index="0" node_paths=PackedStringArray("_main_patrol_point") instance=ExtResource("3")]
 position = Vector2(-272, -112)
 _start_facing = 3
 actor_key = "brian"
-_main_patrol_action_parent = NodePath("../../../PatrolPoints/Brian/Bridge")
+_main_patrol_point = NodePath("../../../PatrolPoints/BrianBridge")
 
-[node name="Nora" parent="Entities/Guards" index="1" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
+[node name="Nora" parent="Entities/Guards" index="1" node_paths=PackedStringArray("_main_patrol_point") instance=ExtResource("3")]
 position = Vector2(16, -496)
 actor_key = "nora"
-_main_patrol_action_parent = NodePath("../../../PatrolPoints/Nora/Hidden")
+_main_patrol_point = NodePath("../../../PatrolPoints/NoraHidden")
 
-[node name="Archie" parent="Entities/Guards" index="2" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
+[node name="Archie" parent="Entities/Guards" index="2" node_paths=PackedStringArray("_main_patrol_point") instance=ExtResource("3")]
 position = Vector2(0, 128)
 _start_facing = 3
 actor_key = "archie"
-_main_patrol_action_parent = NodePath("../../../PatrolPoints/Archie/Front")
+_main_patrol_point = NodePath("../../../PatrolPoints/ArchieFront")
 
-[node name="Susie" parent="Entities/Guards" index="3" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
+[node name="Susie" parent="Entities/Guards" index="3" node_paths=PackedStringArray("_main_patrol_point") instance=ExtResource("3")]
 position = Vector2(112, 560)
 _start_facing = 2
 actor_key = "susie"
-_main_patrol_action_parent = NodePath("../../../PatrolPoints/Susie/Entrance")
+_main_patrol_point = NodePath("../../../PatrolPoints/SusieFront")
 
 [node name="LaserWalls" type="Node2D" parent="Entities" index="4"]
 y_sort_enabled = true
@@ -280,406 +276,235 @@ shape = SubResource("3")
 
 [node name="Marker2D" type="Marker2D" parent="Triggers/BridgeFocus" index="1"]
 
-[node name="Archie" type="Node2D" parent="PatrolPoints" index="0"]
-
-[node name="Front" parent="PatrolPoints/Archie" index="0" instance=ExtResource("8")]
-position = Vector2(0, 128)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/Front" index="0" instance=ExtResource("10")]
-_angle = -90.0
-
-[node name="SyncPatrolAction" parent="PatrolPoints/Archie/Front" index="1" node_paths=PackedStringArray("_test_patrol_point") instance=ExtResource("11")]
-_test_patrol_point = NodePath("../../../Brian/North")
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/Front" index="2" instance=ExtResource("6")]
-_wait_duration = 1.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/Front" index="3" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../LeftFarFront")
-
-[node name="LeftFarFront" parent="PatrolPoints/Archie" index="1" instance=ExtResource("8")]
-position = Vector2(-136, 200)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/LeftFarFront" index="0" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/LeftFarFront" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/LeftFarFront" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../LeftFront")
-
-[node name="LeftFront" parent="PatrolPoints/Archie" index="2" instance=ExtResource("8")]
-position = Vector2(-160, 272)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/LeftFront" index="0" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/LeftFront" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/LeftFront" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../LeftMiddle")
-
-[node name="LeftMiddle" parent="PatrolPoints/Archie" index="3" instance=ExtResource("8")]
-position = Vector2(-152, 336)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/LeftMiddle" index="0" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/LeftMiddle" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/LeftMiddle" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../LeftBack")
-
-[node name="LeftBack" parent="PatrolPoints/Archie" index="4" instance=ExtResource("8")]
-position = Vector2(-112, 400)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/LeftBack" index="0" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/LeftBack" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/LeftBack" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../LeftFarBack")
-
-[node name="LeftFarBack" parent="PatrolPoints/Archie" index="5" instance=ExtResource("8")]
-position = Vector2(-80, 464)
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/LeftFarBack" index="0" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../RightFarBack")
-
-[node name="RightFarBack" parent="PatrolPoints/Archie" index="6" instance=ExtResource("8")]
-position = Vector2(80, 464)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/RightFarBack" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/RightFarBack" index="1" instance=ExtResource("6")]
-_wait_duration = 1.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/RightFarBack" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../RightBack")
-
-[node name="RightBack" parent="PatrolPoints/Archie" index="7" instance=ExtResource("8")]
-position = Vector2(112, 400)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/RightBack" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/RightBack" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/RightBack" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../RightMiddle")
-
-[node name="RightMiddle" parent="PatrolPoints/Archie" index="8" instance=ExtResource("8")]
-position = Vector2(152, 336)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/RightMiddle" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/RightMiddle" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/RightMiddle" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../RightFront")
-
-[node name="RightFront" parent="PatrolPoints/Archie" index="9" instance=ExtResource("8")]
-position = Vector2(160, 272)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/RightFront" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/RightFront" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/RightFront" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../RightFarFront")
-
-[node name="RightFarFront" parent="PatrolPoints/Archie" index="10" instance=ExtResource("8")]
-position = Vector2(136, 200)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Archie/RightFarFront" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Archie/RightFarFront" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Archie/RightFarFront" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../Front")
-
-[node name="Brian" type="Node2D" parent="PatrolPoints" index="1"]
-
-[node name="Bridge" parent="PatrolPoints/Brian" index="0" instance=ExtResource("8")]
-position = Vector2(-272, -112)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Brian/Bridge" index="0" instance=ExtResource("10")]
-_angle = -90.0
-
-[node name="SyncPatrolAction" parent="PatrolPoints/Brian/Bridge" index="1" node_paths=PackedStringArray("_test_patrol_point") instance=ExtResource("11")]
-_test_patrol_point = NodePath("../../../Nora/Middle")
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Brian/Bridge" index="2" instance=ExtResource("6")]
-_wait_duration = 1.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Brian/Bridge" index="3" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../North")
-
-[node name="North" parent="PatrolPoints/Brian" index="1" instance=ExtResource("8")]
-position = Vector2(-272, -80)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Brian/North" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Brian/North" index="1" instance=ExtResource("6")]
-
-[node name="FacePatrolAction2" parent="PatrolPoints/Brian/North" index="2" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction2" parent="PatrolPoints/Brian/North" index="3" instance=ExtResource("6")]
-_wait_duration = 1.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Brian/North" index="4" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../East/FirstVisit")
-
-[node name="West" parent="PatrolPoints/Brian" index="2" instance=ExtResource("8")]
-position = Vector2(-368, 16)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Brian/West" index="0" instance=ExtResource("10")]
-_angle = -90.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Brian/West" index="1" instance=ExtResource("6")]
-
-[node name="FacePatrolAction2" parent="PatrolPoints/Brian/West" index="2" instance=ExtResource("10")]
-_angle = 90.0
-
-[node name="WaitPatrolAction2" parent="PatrolPoints/Brian/West" index="3" instance=ExtResource("6")]
-_wait_duration = 1.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Brian/West" index="4" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../South")
-
-[node name="East" parent="PatrolPoints/Brian" index="3" instance=ExtResource("8")]
-position = Vector2(-176, 16)
-
-[node name="FirstVisit" type="Node" parent="PatrolPoints/Brian/East" index="0"]
-
-[node name="FacePatrolAction" parent="PatrolPoints/Brian/East/FirstVisit" index="0" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Brian/East/FirstVisit" index="1" instance=ExtResource("6")]
-
-[node name="FacePatrolAction2" parent="PatrolPoints/Brian/East/FirstVisit" index="2" instance=ExtResource("10")]
-_angle = 90.0
-
-[node name="WaitPatrolAction2" parent="PatrolPoints/Brian/East/FirstVisit" index="3" instance=ExtResource("6")]
-
-[node name="FacePatrolAction3" parent="PatrolPoints/Brian/East/FirstVisit" index="4" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction3" parent="PatrolPoints/Brian/East/FirstVisit" index="5" instance=ExtResource("6")]
-_wait_duration = 3.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Brian/East/FirstVisit" index="6" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../../West")
-
-[node name="SecondVisit" type="Node" parent="PatrolPoints/Brian/East" index="1"]
-
-[node name="FacePatrolAction" parent="PatrolPoints/Brian/East/SecondVisit" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Brian/East/SecondVisit" index="1" instance=ExtResource("6")]
-
-[node name="FacePatrolAction2" parent="PatrolPoints/Brian/East/SecondVisit" index="2" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction2" parent="PatrolPoints/Brian/East/SecondVisit" index="3" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Brian/East/SecondVisit" index="4" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../../Bridge")
-
-[node name="South" parent="PatrolPoints/Brian" index="4" instance=ExtResource("8")]
-position = Vector2(-272, 112)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Brian/South" index="0" instance=ExtResource("10")]
-_angle = 90.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Brian/South" index="1" instance=ExtResource("6")]
-_wait_duration = 5.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Brian/South" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../East/SecondVisit")
-
-[node name="Nora" type="Node2D" parent="PatrolPoints" index="2"]
-
-[node name="Hidden" parent="PatrolPoints/Nora" index="0" instance=ExtResource("8")]
+[node name="NoraHidden" parent="PatrolPoints" index="0" instance=ExtResource("8")]
 position = Vector2(16, -496)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../NoraMiddle")])
+_patrol_script = "face right
+wait 3
+goto 0"
 
-[node name="FacePatrolAction" parent="PatrolPoints/Nora/Hidden" index="0" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Nora/Hidden" index="1" instance=ExtResource("6")]
-_wait_duration = 3.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Nora/Hidden" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../Middle")
-
-[node name="Middle" parent="PatrolPoints/Nora" index="1" instance=ExtResource("8")]
+[node name="NoraMiddle" parent="PatrolPoints" index="1" instance=ExtResource("8")]
 position = Vector2(48, -560)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../NoraFar")])
+_patrol_script = "face right
+wait 2
+face up
+wait 2
+face left
+wait 3
+goto 0"
 
-[node name="FacePatrolAction" parent="PatrolPoints/Nora/Middle" index="0" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Nora/Middle" index="1" instance=ExtResource("6")]
-
-[node name="FacePatrolAction2" parent="PatrolPoints/Nora/Middle" index="2" instance=ExtResource("10")]
-_angle = -90.0
-
-[node name="WaitPatrolAction2" parent="PatrolPoints/Nora/Middle" index="3" instance=ExtResource("6")]
-
-[node name="FacePatrolAction3" parent="PatrolPoints/Nora/Middle" index="4" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction3" parent="PatrolPoints/Nora/Middle" index="5" instance=ExtResource("6")]
-_wait_duration = 3.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Nora/Middle" index="6" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../Far")
-
-[node name="Far" parent="PatrolPoints/Nora" index="2" instance=ExtResource("8")]
+[node name="NoraFar" parent="PatrolPoints" index="2" instance=ExtResource("8")]
 position = Vector2(-112, -528)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../NoraWest")])
+_patrol_script = "face left
+wait 4
+goto 0"
 
-[node name="FacePatrolAction" parent="PatrolPoints/Nora/Far" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Nora/Far" index="1" instance=ExtResource("6")]
-_wait_duration = 4.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Nora/Far" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../West/FirstVisit")
-
-[node name="West" parent="PatrolPoints/Nora" index="3" instance=ExtResource("8")]
+[node name="NoraWest" parent="PatrolPoints" index="3" instance=ExtResource("8")]
 position = Vector2(192, -528)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../NoraSouth"), NodePath("../NoraHidden")])
+_patrol_script = "face left
+wait 2
+goto 0
 
-[node name="FirstVisit" type="Node" parent="PatrolPoints/Nora/West" index="0"]
+section
+face up
+wait 2
+face down
+wait 2
+goto 1"
 
-[node name="FacePatrolAction" parent="PatrolPoints/Nora/West/FirstVisit" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Nora/West/FirstVisit" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Nora/West/FirstVisit" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../../South")
-
-[node name="SecondVisit" type="Node" parent="PatrolPoints/Nora/West" index="1"]
-
-[node name="FacePatrolAction" parent="PatrolPoints/Nora/West/SecondVisit" index="0" instance=ExtResource("10")]
-_angle = -90.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Nora/West/SecondVisit" index="1" instance=ExtResource("6")]
-
-[node name="FacePatrolAction2" parent="PatrolPoints/Nora/West/SecondVisit" index="2" instance=ExtResource("10")]
-_angle = 90.0
-
-[node name="WaitPatrolAction2" parent="PatrolPoints/Nora/West/SecondVisit" index="3" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Nora/West/SecondVisit" index="4" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../../Hidden")
-
-[node name="South" parent="PatrolPoints/Nora" index="4" instance=ExtResource("8")]
+[node name="NoraSouth" parent="PatrolPoints" index="4" instance=ExtResource("8")]
 position = Vector2(272, -448)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../NoraEast")])
+_patrol_script = "face left
+wait 2
+face down
+wait 5
+goto 0"
 
-[node name="FacePatrolAction" parent="PatrolPoints/Nora/South" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Nora/South" index="1" instance=ExtResource("6")]
-
-[node name="FacePatrolAction2" parent="PatrolPoints/Nora/South" index="2" instance=ExtResource("10")]
-_angle = 90.0
-
-[node name="WaitPatrolAction2" parent="PatrolPoints/Nora/South" index="3" instance=ExtResource("6")]
-_wait_duration = 5.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Nora/South" index="4" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../East")
-
-[node name="East" parent="PatrolPoints/Nora" index="5" instance=ExtResource("8")]
+[node name="NoraEast" parent="PatrolPoints" index="5" instance=ExtResource("8")]
 position = Vector2(352, -528)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../NoraNorth")])
+_patrol_script = "goto 0"
 
-[node name="GoToPatrolAction" parent="PatrolPoints/Nora/East" index="0" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../North")
-
-[node name="North" parent="PatrolPoints/Nora" index="6" instance=ExtResource("8")]
+[node name="NoraNorth" parent="PatrolPoints" index="6" instance=ExtResource("8")]
 position = Vector2(272, -608)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../NoraWest")])
+_patrol_script = "face right
+wait 2
+goto 0 1"
 
-[node name="FacePatrolAction" parent="PatrolPoints/Nora/North" index="0" instance=ExtResource("10")]
+[node name="BrianBridge" parent="PatrolPoints" index="7" instance=ExtResource("8")]
+position = Vector2(-272, -112)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../BrianNorth"), NodePath("../NoraMiddle")])
+_patrol_script = "face up
+sync 1
+wait 1
+goto 0"
 
-[node name="WaitPatrolAction" parent="PatrolPoints/Nora/North" index="1" instance=ExtResource("6")]
+[node name="BrianNorth" parent="PatrolPoints" index="8" instance=ExtResource("8")]
+position = Vector2(-272, -80)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../BrianEast")])
+_patrol_script = "face left
+wait 2
+face right
+wait 1
+goto 0"
 
-[node name="GoToPatrolAction" parent="PatrolPoints/Nora/North" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../West/SecondVisit")
+[node name="BrianWest" parent="PatrolPoints" index="9" instance=ExtResource("8")]
+position = Vector2(-368, 16)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../BrianSouth")])
+_patrol_script = "face up
+wait 2
+face down
+wait 1
+goto 0"
 
-[node name="Susie" type="Node2D" parent="PatrolPoints" index="3"]
+[node name="BrianEast" parent="PatrolPoints" index="10" instance=ExtResource("8")]
+position = Vector2(-176, 16)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../BrianWest"), NodePath("../BrianBridge")])
+_patrol_script = "face right
+wait 2
+face down
+wait 2
+face right
+wait 3
+goto 0
 
-[node name="North" parent="PatrolPoints/Susie" index="0" instance=ExtResource("8")]
+section
+face left
+wait 2
+face right
+wait 2
+goto 1"
+
+[node name="BrianSouth" parent="PatrolPoints" index="11" instance=ExtResource("8")]
+position = Vector2(-272, 112)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../BrianEast")])
+_patrol_script = "face down
+wait 5
+goto 0 1"
+
+[node name="ArchieFront" parent="PatrolPoints" index="12" instance=ExtResource("8")]
+position = Vector2(0, 128)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieLeftFarFront"), NodePath("../BrianNorth")])
+_patrol_script = "face up
+sync 1
+wait 1
+goto 0"
+
+[node name="ArchieLeftFarFront" parent="PatrolPoints" index="13" instance=ExtResource("8")]
+position = Vector2(-136, 200)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieLeftFront")])
+_patrol_script = "face right
+wait 2
+goto 0"
+
+[node name="ArchieLeftFront" parent="PatrolPoints" index="14" instance=ExtResource("8")]
+position = Vector2(-160, 272)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieLeftMiddle")])
+_patrol_script = "face right
+wait 2
+goto 0"
+
+[node name="ArchieLeftMiddle" parent="PatrolPoints" index="15" instance=ExtResource("8")]
+position = Vector2(-152, 336)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieLeftBack")])
+_patrol_script = "face right
+wait 2
+goto 0"
+
+[node name="ArchieLeftBack" parent="PatrolPoints" index="16" instance=ExtResource("8")]
+position = Vector2(-112, 400)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieLeftFarBack")])
+_patrol_script = "face right
+wait 2
+goto 0"
+
+[node name="ArchieLeftFarBack" parent="PatrolPoints" index="17" instance=ExtResource("8")]
+position = Vector2(-80, 464)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieRightFarBack")])
+_patrol_script = "goto 0"
+
+[node name="ArchieRightFarBack" parent="PatrolPoints" index="18" instance=ExtResource("8")]
+position = Vector2(80, 464)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieRightBack")])
+_patrol_script = "face left
+wait 1
+goto 0"
+
+[node name="ArchieRightBack" parent="PatrolPoints" index="19" instance=ExtResource("8")]
+position = Vector2(112, 400)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieRightMiddle")])
+_patrol_script = "face left
+wait 2
+goto 0"
+
+[node name="ArchieRightMiddle" parent="PatrolPoints" index="20" instance=ExtResource("8")]
+position = Vector2(152, 336)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieRightFront")])
+_patrol_script = "face left
+wait 2
+goto 0"
+
+[node name="ArchieRightFront" parent="PatrolPoints" index="21" instance=ExtResource("8")]
+position = Vector2(160, 272)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieRightFarFront")])
+_patrol_script = "face left
+wait 2
+goto 0"
+
+[node name="ArchieRightFarFront" parent="PatrolPoints" index="22" instance=ExtResource("8")]
+position = Vector2(136, 200)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../ArchieFront")])
+_patrol_script = "face left
+wait 2
+goto 0"
+
+[node name="SusieNorth" parent="PatrolPoints" index="23" instance=ExtResource("8")]
 position = Vector2(272, 464)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../SusieEast"), NodePath("../SusieWest")])
+_patrol_script = "face down
+wait 2
+goto 0
 
-[node name="FirstVisit" type="Node" parent="PatrolPoints/Susie/North" index="0"]
+section
+goto 1 1"
 
-[node name="FacePatrolAction" parent="PatrolPoints/Susie/North/FirstVisit" index="0" instance=ExtResource("10")]
-_angle = 90.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Susie/North/FirstVisit" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Susie/North/FirstVisit" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../../East")
-
-[node name="SecondVisit" type="Node" parent="PatrolPoints/Susie/North" index="1"]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Susie/North/SecondVisit" index="0" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../../West/SecondVisit")
-
-[node name="Entrance" parent="PatrolPoints/Susie" index="1" instance=ExtResource("8")]
+[node name="SusieFront" parent="PatrolPoints" index="24" instance=ExtResource("8")]
 position = Vector2(112, 560)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../SusieWest")])
+_patrol_script = "face left
+wait 4
+goto 0"
 
-[node name="FacePatrolAction" parent="PatrolPoints/Susie/Entrance" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Susie/Entrance" index="1" instance=ExtResource("6")]
-_wait_duration = 4.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Susie/Entrance" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../West/FirstVisit")
-
-[node name="West" parent="PatrolPoints/Susie" index="2" instance=ExtResource("8")]
+[node name="SusieWest" parent="PatrolPoints" index="25" instance=ExtResource("8")]
 position = Vector2(176, 560)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../SusieNorth"), NodePath("../SusieFront")])
+_patrol_script = "face down
+wait 1
+goto 0
 
-[node name="FirstVisit" type="Node" parent="PatrolPoints/Susie/West" index="0"]
+section
+face down
+wait 2
+goto 1"
 
-[node name="FacePatrolAction" parent="PatrolPoints/Susie/West/FirstVisit" index="0" instance=ExtResource("10")]
-_angle = 90.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Susie/West/FirstVisit" index="1" instance=ExtResource("6")]
-_wait_duration = 1.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Susie/West/FirstVisit" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../../North/FirstVisit")
-
-[node name="SecondVisit" type="Node" parent="PatrolPoints/Susie/West" index="1"]
-
-[node name="FacePatrolAction" parent="PatrolPoints/Susie/West/SecondVisit" index="0" instance=ExtResource("10")]
-_angle = 90.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Susie/West/SecondVisit" index="1" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Susie/West/SecondVisit" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../../Entrance")
-
-[node name="East" parent="PatrolPoints/Susie" index="3" instance=ExtResource("8")]
+[node name="SusieEast" parent="PatrolPoints" index="26" instance=ExtResource("8")]
 position = Vector2(352, 560)
+_patrol_script_point_paths = Array[NodePath]([NodePath("../SusieSouth")])
+_patrol_script = "goto 0"
 
-[node name="GoToPatrolAction" parent="PatrolPoints/Susie/East" index="0" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../South")
-
-[node name="South" parent="PatrolPoints/Susie" index="4" instance=ExtResource("8")]
+[node name="SusieSouth" parent="PatrolPoints" index="27" instance=ExtResource("8")]
 position = Vector2(272, 656)
-
-[node name="FacePatrolAction" parent="PatrolPoints/Susie/South" index="0" instance=ExtResource("10")]
-_angle = -90.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/Susie/South" index="1" instance=ExtResource("6")]
-
-[node name="FacePatrolAction2" parent="PatrolPoints/Susie/South" index="2" instance=ExtResource("10")]
-
-[node name="WaitPatrolAction2" parent="PatrolPoints/Susie/South" index="3" instance=ExtResource("6")]
-
-[node name="GoToPatrolAction" parent="PatrolPoints/Susie/South" index="4" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("9")]
-_target_patrol_action_parent = NodePath("../../North/SecondVisit")
+_patrol_script_point_paths = Array[NodePath]([NodePath("../SusieNorth")])
+_patrol_script = "face up
+wait 2
+face right
+wait 2
+goto 0 1"
 
 [node name="NorthEntrance" type="Marker2D" parent="Points" index="0"]
 position = Vector2(0, -720)

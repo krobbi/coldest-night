@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://c1t8bv1uqirpo"]
+[gd_scene load_steps=15 format=3 uid="uid://c1t8bv1uqirpo"]
 
 [ext_resource type="PackedScene" uid="uid://dofn6s8r2ut5k" path="res://levels/test/area_bx.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://cjkd8gdjt25ot" path="res://entities/triggers/transition_level_trigger/transition_level_trigger.tscn" id="2"]
@@ -9,10 +9,6 @@
 [ext_resource type="PackedScene" uid="uid://bulv33wevyvbf" path="res://entities/test/laser_wall/laser_wall.tscn" id="7"]
 [ext_resource type="PackedScene" uid="uid://0hbot7ft6r82" path="res://entities/triggers/focus_camera_trigger/focus_camera_trigger.tscn" id="8"]
 [ext_resource type="PackedScene" uid="uid://y2ewmu5tu8el" path="res://entities/patrol_point/patrol_point.tscn" id="9"]
-[ext_resource type="PackedScene" uid="uid://cw1nhsxh31umy" path="res://entities/patrol_point/patrol_actions/face_patrol_action/face_patrol_action.tscn" id="10"]
-[ext_resource type="PackedScene" uid="uid://dch43m4h8o68e" path="res://entities/patrol_point/patrol_actions/sync_patrol_action/sync_patrol_action.tscn" id="11"]
-[ext_resource type="PackedScene" uid="uid://ds52w3341hhfd" path="res://entities/patrol_point/patrol_actions/go_to_patrol_action/go_to_patrol_action.tscn" id="12"]
-[ext_resource type="PackedScene" uid="uid://bv6iwqb85fiao" path="res://entities/patrol_point/patrol_actions/wait_patrol_action/wait_patrol_action.tscn" id="13"]
 [ext_resource type="PackedScene" uid="uid://clfbme8812ksn" path="res://entities/terminals/terminal.tscn" id="14"]
 [ext_resource type="Script" path="res://levels/test/area_bx/west_redirect_terminal_cutscene.gd" id="15"]
 [ext_resource type="Script" path="res://levels/test/area_bx/west_unlock_terminal_cutscene.gd" id="16"]
@@ -62,17 +58,17 @@ position = Vector2(560, 368)
 y_sort_enabled = true
 metadata/_edit_lock_ = true
 
-[node name="Alice" parent="Entities/Guards" index="0" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
+[node name="Alice" parent="Entities/Guards" index="0" node_paths=PackedStringArray("_main_patrol_point") instance=ExtResource("3")]
 position = Vector2(656, -240)
 _start_facing = 2
 actor_key = "alice"
-_main_patrol_action_parent = NodePath("../../../PatrolPoints/AliceInterior")
+_main_patrol_point = NodePath("../../../PatrolPoints/AliceInterior")
 
-[node name="Bob" parent="Entities/Guards" index="1" node_paths=PackedStringArray("_main_patrol_action_parent") instance=ExtResource("3")]
+[node name="Bob" parent="Entities/Guards" index="1" node_paths=PackedStringArray("_main_patrol_point") instance=ExtResource("3")]
 position = Vector2(656, 240)
 _start_facing = 2
 actor_key = "bob"
-_main_patrol_action_parent = NodePath("../../../PatrolPoints/BobInterior")
+_main_patrol_point = NodePath("../../../PatrolPoints/BobInterior")
 
 [node name="LaserWalls" type="Node2D" parent="Entities" index="4"]
 y_sort_enabled = true
@@ -321,57 +317,33 @@ position = Vector2(0, 80)
 
 [node name="AliceExterior" parent="PatrolPoints" index="0" instance=ExtResource("9")]
 position = Vector2(656, -304)
-
-[node name="FacePatrolAction" parent="PatrolPoints/AliceExterior" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="SyncPatrolAction" parent="PatrolPoints/AliceExterior" index="1" node_paths=PackedStringArray("_test_patrol_point") instance=ExtResource("11")]
-_test_patrol_point = NodePath("../../BobExterior")
-
-[node name="WaitPatrolAction" parent="PatrolPoints/AliceExterior" index="2" instance=ExtResource("13")]
-_wait_duration = 5.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/AliceExterior" index="3" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("12")]
-_target_patrol_action_parent = NodePath("../../AliceInterior")
+_patrol_script_point_paths = Array[NodePath]([NodePath("../AliceInterior"), NodePath("../BobExterior")])
+_patrol_script = "face left
+sync 1
+wait 5
+goto 0"
 
 [node name="AliceInterior" parent="PatrolPoints" index="1" instance=ExtResource("9")]
 position = Vector2(656, -240)
-
-[node name="FacePatrolAction" parent="PatrolPoints/AliceInterior" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/AliceInterior" index="1" instance=ExtResource("13")]
-_wait_duration = 5.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/AliceInterior" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("12")]
-_target_patrol_action_parent = NodePath("../../AliceExterior")
+_patrol_script_point_paths = Array[NodePath]([NodePath("../AliceExterior")])
+_patrol_script = "face left
+wait 5
+goto 0"
 
 [node name="BobInterior" parent="PatrolPoints" index="2" instance=ExtResource("9")]
 position = Vector2(656, 240)
-
-[node name="FacePatrolAction" parent="PatrolPoints/BobInterior" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="WaitPatrolAction" parent="PatrolPoints/BobInterior" index="1" instance=ExtResource("13")]
-_wait_duration = 5.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/BobInterior" index="2" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("12")]
-_target_patrol_action_parent = NodePath("../../BobExterior")
+_patrol_script_point_paths = Array[NodePath]([NodePath("../BobExterior")])
+_patrol_script = "face left
+wait 5
+goto 0"
 
 [node name="BobExterior" parent="PatrolPoints" index="3" instance=ExtResource("9")]
 position = Vector2(656, 304)
-
-[node name="FacePatrolAction" parent="PatrolPoints/BobExterior" index="0" instance=ExtResource("10")]
-_angle = 180.0
-
-[node name="SyncPatrolAction" parent="PatrolPoints/BobExterior" index="1" node_paths=PackedStringArray("_test_patrol_point") instance=ExtResource("11")]
-_test_patrol_point = NodePath("../../AliceExterior")
-
-[node name="WaitPatrolAction" parent="PatrolPoints/BobExterior" index="2" instance=ExtResource("13")]
-_wait_duration = 5.0
-
-[node name="GoToPatrolAction" parent="PatrolPoints/BobExterior" index="3" node_paths=PackedStringArray("_target_patrol_action_parent") instance=ExtResource("12")]
-_target_patrol_action_parent = NodePath("../../BobInterior")
+_patrol_script_point_paths = Array[NodePath]([NodePath("../BobInterior"), NodePath("../AliceExterior")])
+_patrol_script = "face left
+sync 1
+wait 5
+goto 0"
 
 [node name="WestEntrance" type="Marker2D" parent="Points" index="0"]
 position = Vector2(-720, 0)

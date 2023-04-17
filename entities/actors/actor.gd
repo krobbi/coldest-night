@@ -10,7 +10,7 @@ enum Facing {RIGHT, DOWN, LEFT, UP}
 @export var actor_key: String
 @export var animation_threshold: float = 40.0
 
-@export var _main_patrol_action_parent: Node
+@export var _main_patrol_point: PatrolPoint
 @export var _repel_speed: float = 180.0
 @export var _repel_force: float = 900.0
 
@@ -61,13 +61,10 @@ func _physics_process(delta: float) -> void:
 		_animation_player.play("idle_%s" % get_facing_key())
 
 
-# Get the actor's main patrol action if it is specified. Otherwise, return
-# `null`.
-func get_main_patrol_action() -> PatrolAction:
-	if _main_patrol_action_parent:
-		return _main_patrol_action_parent.get_child(0)
-	else:
-		return null
+# Get the actor's main patrol point. Return `null` if no main patrol point is
+# defined.
+func get_main_patrol_point() -> PatrolPoint:
+	return _main_patrol_point
 
 
 # Get the actor's camera anchor.

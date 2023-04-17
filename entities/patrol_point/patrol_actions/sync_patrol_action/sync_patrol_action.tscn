@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://dch43m4h8o68e"]
-
-[ext_resource type="PackedScene" uid="uid://cko2xup270v5b" path="res://entities/patrol_point/patrol_actions/patrol_action.tscn" id="1"]
-[ext_resource type="Script" path="res://entities/patrol_point/patrol_actions/sync_patrol_action/sync_patrol_action.gd" id="2"]
-
-[node name="SyncPatrolAction" instance=ExtResource("1")]
-script = ExtResource("2")
-_test_patrol_point_path = NodePath("")
