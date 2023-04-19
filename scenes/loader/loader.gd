@@ -6,14 +6,15 @@ extends Control
 
 @export_file("*.tscn") var _normal_scene_path: String
 @export_file("*.tscn") var _completed_scene_path: String
-
-@onready var _new_game_cutscene: Cutscene = $NewGameCutscene
+@export var _new_game_cutscene: Cutscene
 
 # Run when the loader scene is entered. Run the new game cutscene on a new game
 # and change to the appropriate scene.
 func _ready() -> void:
 	match SaveManager.get_working_data().state:
 		SaveData.State.NEW_GAME:
+			_new_game_cutscene.cutscene_finished.connect(
+					_on_new_game_cutscene_finished, CONNECT_ONE_SHOT)
 			_new_game_cutscene.run()
 		SaveData.State.NORMAL:
 			SceneManager.change_scene_to_file(_normal_scene_path, true, false)

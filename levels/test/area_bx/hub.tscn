@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b4e050nvb432p"]
+[gd_scene load_steps=13 format=3 uid="uid://b4e050nvb432p"]
 
 [ext_resource type="PackedScene" uid="uid://dofn6s8r2ut5k" path="res://levels/test/area_bx.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://bulv33wevyvbf" path="res://entities/test/laser_wall/laser_wall.tscn" id="2"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://cbwmv0g3upqj2" path="res://entities/triggers/run_cutscene_trigger/run_cutscene_trigger.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://0hbot7ft6r82" path="res://entities/triggers/focus_camera_trigger/focus_camera_trigger.tscn" id="5"]
 [ext_resource type="PackedScene" uid="uid://c3ub72x51ejpe" path="res://entities/terminals/save_terminal/save_terminal.tscn" id="6"]
-[ext_resource type="PackedScene" uid="uid://b5hmlnvmbjm6c" path="res://components/cutscene/cutscene.tscn" id="7"]
 [ext_resource type="Script" path="res://levels/test/area_bx/hub_enter_cutscene.gd" id="8"]
 
 [sub_resource type="RectangleShape2D" id="1"]
@@ -27,7 +26,7 @@ size = Vector2(64, 32)
 [node name="Hub" instance=ExtResource("1")]
 level_name = "LEVEL.TEST.AREA_BX.HUB"
 
-[node name="EnterCutscene" parent="Cutscenes" index="0" node_paths=PackedStringArray("_terminal_point") instance=ExtResource("7")]
+[node name="EnterCutscene" type="Node" parent="Cutscenes" index="0" node_paths=PackedStringArray("_terminal_point")]
 script = ExtResource("8")
 _terminal_point = NodePath("TerminalPoint")
 

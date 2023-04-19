@@ -1,9 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://c1t8bv1uqirpo"]
+[gd_scene load_steps=14 format=3 uid="uid://c1t8bv1uqirpo"]
 
 [ext_resource type="PackedScene" uid="uid://dofn6s8r2ut5k" path="res://levels/test/area_bx.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://cjkd8gdjt25ot" path="res://entities/triggers/transition_level_trigger/transition_level_trigger.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://pcrt8w7gua2o" path="res://entities/actors/guards/robot_guard.tscn" id="3"]
-[ext_resource type="PackedScene" uid="uid://b5hmlnvmbjm6c" path="res://components/cutscene/cutscene.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://cpo0geqwrh6p3" path="res://entities/test/archival_unit/archival_unit.tscn" id="5"]
 [ext_resource type="PackedScene" uid="uid://b30pq0rw06h07" path="res://entities/test/window/window.tscn" id="6"]
 [ext_resource type="PackedScene" uid="uid://bulv33wevyvbf" path="res://entities/test/laser_wall/laser_wall.tscn" id="7"]
@@ -22,10 +21,10 @@ size = Vector2(256, 128)
 [node name="West" instance=ExtResource("1")]
 level_name = "LEVEL.TEST.AREA_BX.WEST"
 
-[node name="RedirectTerminalCutscene" parent="Cutscenes" index="0" instance=ExtResource("4")]
+[node name="RedirectTerminalCutscene" type="Node" parent="Cutscenes" index="0"]
 script = ExtResource("15")
 
-[node name="UnlockTerminalCutscene" parent="Cutscenes" index="1" instance=ExtResource("4")]
+[node name="UnlockTerminalCutscene" type="Node" parent="Cutscenes" index="1"]
 script = ExtResource("16")
 
 [node name="TileMap" parent="Entities" index="1"]
