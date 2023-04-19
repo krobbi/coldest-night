@@ -121,8 +121,7 @@ except for the `.itch` files.
 3. Open the game in the [correct version](#versions) of the Godot Engine
 editor.
 4. Wait for any assets to be reimported (a progress bar may appear).
-5. Close the project settings menu. Select `Project > Export...` to open the
-export menu.
+5. Select `Project > Export...` to open the export menu.
 6. Select `Export All... > Release` to begin exporting the game.
 7. Wait for the exporting process to finish. You may now close the Godot Engine
 editor.
