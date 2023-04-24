@@ -22,7 +22,6 @@ func _enter_tree() -> void:
 
 # Run when the level finishes entering the scene tree. Initialize the level.
 func _ready() -> void:
-	ConfigBus.subscribe_node_bool("debug.show_navigation_map", $NavigationTileMap.set_visible)
 	AudioManager.play_music(_music)
 	
 	var points_node: Node = $Points

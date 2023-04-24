@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bfqaaq8mfmxvg"]
+
+[ext_resource type="TileSet" uid="uid://dqthosdpewes3" path="res://resources/tile_sets/navigation.tres" id="1_ctgcu"]
+[ext_resource type="Script" path="res://components/navigation_tile_map/navigation_tile_map.gd" id="1_l5ew3"]
+
+[node name="NavigationTileMap" type="TileMap"]
+tile_set = ExtResource("1_ctgcu")
+format = 2
+layer_0/name = "Navigation"
+script = ExtResource("1_l5ew3")
+metadata/_edit_lock_ = true

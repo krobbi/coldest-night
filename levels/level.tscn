@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://levels/level.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://bl6054aek4v2f" path="res://gui/radar/level_vision_area_renderer/level_vision_area_renderer.tscn" id="3"]
-[ext_resource type="TileSet" uid="uid://dqthosdpewes3" path="res://resources/tile_sets/navigation.tres" id="3_qqo23"]
+[ext_resource type="PackedScene" uid="uid://bfqaaq8mfmxvg" path="res://components/navigation_tile_map/navigation_tile_map.tscn" id="3_2jucj"]
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1")
@@ -18,11 +18,7 @@ metadata/_edit_lock_ = true
 z_index = -1
 metadata/_edit_lock_ = true
 
-[node name="NavigationTileMap" type="TileMap" parent="."]
-tile_set = ExtResource("3_qqo23")
-format = 2
-layer_0/name = "Navigation"
-metadata/_edit_lock_ = true
+[node name="NavigationTileMap" parent="." instance=ExtResource("3_2jucj")]
 
 [node name="RadarPits" type="Node2D" parent="." groups=["radar_pits"]]
 visible = false
