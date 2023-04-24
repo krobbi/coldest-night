@@ -16,12 +16,17 @@ layout_mode = 2
 _config = "advanced.readable_saves"
 appearance_condition = 3
 
-[node name="ShowStateLabelsCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource("3")]
+[node name="ShowNavigationMapCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="1" instance=ExtResource("3")]
+layout_mode = 2
+_config = "debug.show_navigation_map"
+appearance_condition = 2
+
+[node name="ShowStateLabelsCheckbox" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource("3")]
 layout_mode = 2
 _config = "debug.show_state_labels"
 appearance_condition = 2
 
-[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="2" instance=ExtResource("4")]
+[node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="3" instance=ExtResource("4")]
 layout_mode = 2
 _text = "BUTTON.GO_BACK"
 _icon = ExtResource("6")

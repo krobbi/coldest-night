@@ -51,6 +51,7 @@ var _data: Dictionary = {
 	"radar.collectable_color": "orange",
 	"advanced.show_advanced": false,
 	"advanced.readable_saves": false,
+	"debug.show_navigation_map": false,
 	"debug.show_state_labels": false,
 }
 
