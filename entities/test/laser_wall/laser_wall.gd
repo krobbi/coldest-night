@@ -39,9 +39,9 @@ func _ready() -> void:
 	line.points[1] = b
 	
 	if _eval_appearance_condition(_save_data.get_flag(flag)):
-		show_wall()
+		show_wall.call_deferred()
 	else:
-		hide_wall()
+		hide_wall.call_deferred()
 	
 	if _save_data.flag_changed.connect(_on_flag_changed) != OK:
 		if _save_data.flag_changed.is_connected(_on_flag_changed):
@@ -62,6 +62,7 @@ func show_wall() -> void:
 	_obstructive_shape.set_disabled.call_deferred(false)
 	show()
 	wall_visibility_changed.emit(true)
+	EventBus.navigability_changed.emit(Rect2(global_position - size, size * 2.0), false)
 
 
 # Hide the laser wall.
@@ -69,6 +70,7 @@ func hide_wall() -> void:
 	hide()
 	_obstructive_shape.set_disabled.call_deferred(true)
 	wall_visibility_changed.emit(false)
+	EventBus.navigability_changed.emit(Rect2(global_position - size, size * 2.0), true)
 
 
 # Evaluate whether the laser wall should be shown based on a value.

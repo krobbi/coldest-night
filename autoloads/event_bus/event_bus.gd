@@ -11,6 +11,7 @@ signal game_over_request
 signal transition_level_request(
 		level_path: String, point: String, relative_point: String,
 		is_relative_x: bool, is_relative_y: bool)
+signal navigability_changed(rect: Rect2, is_navigable: bool)
 
 signal player_push_freeze_state_request
 signal player_push_transition_state_request
