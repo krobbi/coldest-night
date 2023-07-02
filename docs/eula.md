@@ -38,8 +38,8 @@ Media based on the Software must not provide a reasonable substitute for the
 Software.
 
 The Software, media based on the Software, or parts thereof must not be used in
-the promotion or production of cryptocurrencies, non-fungible tokens, and/or
-blockchain technologies.
+the promotion or production of generative AI models, cryptocurrencies,
+non-fungible tokens, and/or blockchain technologies.
 
 The copyright holders reserve the rights to remove access to the Software or to
 parts of the Software, and to sell copies of the Software.
