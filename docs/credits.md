@@ -3,7 +3,7 @@
 [Go Back](../readme.md)
 
 # Coldest Night Credits
-__Copyright &copy; 2021-2023 Chris Roberts__ (Krobbizoid).  
+__Copyright &copy; 2021-2024 Chris Roberts__ (Krobbizoid).  
 _All rights reserved._
 
 ## Lead Developer

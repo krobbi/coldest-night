@@ -2,7 +2,7 @@
 _A prototype stealth game._  
 __Version__ `0.8.0`  
 __Godot Engine__ `4.0.2`  
-__Copyright &copy; 2021-2023 Chris Roberts__ (Krobbizoid).  
+__Copyright &copy; 2021-2024 Chris Roberts__ (Krobbizoid).  
 _All rights reserved._
 
 # Contents
@@ -83,6 +83,6 @@ See [docs/eula.md](./docs/eula.md) for the end-user license agreement and
 third-party license texts.
 
 Coldest Night is released under the Krobbizoid Game License (KGL):  
-https://krobbi.github.io/license/2021/2023/kgl.txt
+https://krobbi.github.io/license/2021/2024/kgl.txt
 
 See [license.txt](./license.txt) for a full copy of the license text.
