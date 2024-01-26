@@ -1,7 +1,9 @@
+# Godot Engine:
+.godot/*
+*.translation
+
 # Ignore:
-ignore/*
-!ignore/.gdignore
-!ignore/readme.md
+etc/ignore/*
 
 # Builds:
 builds/linux-demo/*
@@ -13,18 +15,6 @@ builds/version_lock.txt
 !builds/linux-demo/.itch
 !builds/mac-demo/.itch
 !builds/win-demo/.itch
-
-# Godot Engine:
-.godot/*
-.import/*
-
-# Godot Engine Mono:
-.mono/*
-data_*/*
-mono_crash.*.json
-
-# Godot Engine imported translations:
-*.translation
 
 # Python:
 __pycache__/*
