@@ -85,4 +85,4 @@ third-party license texts.
 Coldest Night is released under the Krobbizoid Game License (KGL):  
 https://krobbi.github.io/license/2021/2024/kgl.txt
 
-See [license.txt](./license.txt) for a full copy of the license text.
+See [LICENSE.txt](/LICENSE.txt) for a full copy of the license text.
