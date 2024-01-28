@@ -5,6 +5,8 @@ extends Control
 
 const CREDITS_PATH: String = "res://scenes/credits/credits_%s.txt"
 const SPEED: float = 30.0
+const HEADING_COLOR: Color = Color("#ff980e")
+const SUBHEADING_COLOR: Color = Color("#a9b0b0")
 
 @export_file("*.tscn") var _exit_scene_path: String
 @export var _music: AudioStream
@@ -49,13 +51,20 @@ func _process(delta: float) -> void:
 		_exit_credits()
 
 
-# Add a line to BBCode text as a workaround for rich text labels condensing
-# repeated lines.
-func _add_line(text: String) -> String:
-	if text.ends_with("\n"):
-		return "%s \n" % text
-	else:
-		return "%s\n" % text
+# Add line breaks to BBCode text.
+func _break_text(text: String, count: int = 1) -> String:
+	for i in range(count):
+		if text.ends_with("\n"):
+			text += " " # Workaround for rich text labels condensing lines.
+		
+		text += "\n"
+	
+	return text
+
+
+# Color BBCode text.
+func _color_text(text: String, color: Color) -> String:
+	return "[color=#%s]%s[/color]" % [color.to_html(false), text]
 
 
 # Parse a credits source to credits BBCode.
@@ -66,18 +75,25 @@ func _parse_credits(source: String) -> String:
 	for line in source.split("\n"):
 		line = line.strip_edges()
 		
-		if line.begins_with("##"):
-			line = "[color=#ff980e]%s[/color]" % line.substr(2).strip_edges(true, false)
+		if line == "---":
+			result = _break_text(result, 2)
+			line = ""
+			is_line_centered = true
+		elif line.begins_with("###"):
+			line = _color_text(line.substr(3).strip_edges(), SUBHEADING_COLOR)
+			is_line_centered = false
+		elif line.begins_with("##"):
+			line = _color_text(line.substr(2).strip_edges(), HEADING_COLOR)
 			is_line_centered = false
 		elif line.begins_with("#"):
-			result = _add_line(_add_line(result))
-			line = "[color=#ff980e]%s[/color]" % line.substr(1).strip_edges(true, false)
+			result = _break_text(result, 2)
+			line = _color_text(line.substr(1).strip_edges(), HEADING_COLOR)
 			is_line_centered = true
 		
 		if is_line_centered and not line.is_empty():
 			line = "[center]%s[/center]" % line
 		
-		result = _add_line("%s%s" % [result, line])
+		result = _break_text(result + line)
 	
 	return result.strip_edges()
 

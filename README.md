@@ -14,7 +14,8 @@ _All rights reserved._
    * [Issues Affecting Windows](#issues-affecting-windows)
    * [Issues Affecting macOS](#issues-affecting-macos)
 5. [Translating](#translating)
-6. [Credits and Licensing](#credits-and-licensing)
+6. [Credits](#credits)
+7. [License](#license)
 
 # Coldest Night
 Coldest Night is a stealth game being developed in
@@ -77,12 +78,17 @@ project setting.
 The story, character names, and other attributes may not be final and may
 change.
 
-# Credits and Licensing
-See [docs/credits.md](./docs/credits.md) for a full copy of the credits.  
-See [docs/eula.md](./docs/eula.md) for the end-user license agreement and
-third-party license texts.
+# Credits
+* Color palette: [Faraway48](https://lospec.com/palette-list/faraway48) by
+[Igor Ferreira (Diemorth)](https://twitter.com/diemorth)
+* Alternate font:
+[Atkinson Hyperlegible](https://brailleinstitute.org/freefont) by
+[Braille Institute of America, Inc.](https://brailleinstitute.org)
 
+# License
 Coldest Night is released under the Krobbizoid Game License (KGL):  
 https://krobbi.github.io/license/2021/2024/kgl.txt
 
-See [LICENSE.txt](/LICENSE.txt) for a full copy of the license text.
+See [LICENSE.txt](/LICENSE.txt) for a full copy of the license text.  
+See [docs/eula.md](/docs/eula.md) for the end-user license agreement and
+third-party license texts.

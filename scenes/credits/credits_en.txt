@@ -3,70 +3,27 @@
 ## Lead Developer
 Chris Roberts (Krobbizoid)
 
-# Tools and Resources Used
+# Resources
 
-# Godot Engine
-Game engine
-https://godotengine.org
+## Godot Engine
+### Game engine
 
-## Copyright Holders
 Godot Engine contributors
 Juan Linietsky
 Ariel Manzur
 
-# Aseprite
-Animated sprite editor & pixel art tool
-https://www.aseprite.org
+## Faraway48
+### Color palette
 
-## Publisher
-Igara Studio
-
-# Krita
-Image editor
-https://krita.org
-
-## Publisher
-KDE
-
-# Faraway48
-Color palette
-https://lospec.com/palette-list/faraway48
-
-## Creator
 Igor Ferreira (Diemorth)
 
-# Pixel Font Converter
-Bitmap font to TTF converter
-https://yal.cc/r/20/pixelfont
+## Atkinson Hyperlegible Font
+### Legible font
 
-## Lead Developer
-Vadym Diachenko (YellowAfterlife)
-
-# make-icns
-PNG to ICNS converter
-https://www.npmjs.com/package/make-icns
-
-## Lead Developer
-Dang Khoa Chiem (Doudou8)
-
-# Atkinson Hyperlegible Font
-Legible font
-https://brailleinstitute.org/freefont
-
-## Copyright Holder
 Braille Institute of America, Inc.
 
-# LMMS
-Digital audio workstation
-https://lmms.io
+---
 
-# Audacity®
-Digital audio workstation
-https://audacityteam.org
-
-The name Audacity® is a registered trademark of Dominic Mazzoni.
-
-# Licensing
 For full license texts, please refer to the readme.md file distributed with the game.
 
 Copyright © 2021-2024 Chris Roberts (Krobbizoid).
