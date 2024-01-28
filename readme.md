@@ -1,4 +1,4 @@
-![Coldest Night logo.](docs/header.png)  
+[![Coldest Night logo.](/etc/images/logo.png)](/README.md)  
 _A prototype stealth game._  
 __Version__ `0.8.0`  
 __Godot Engine__ `4.0.2`  

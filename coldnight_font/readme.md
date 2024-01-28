@@ -1,9 +1,7 @@
-![Coldest Night logo.](../docs/header.png)  
+[![Coldest Night logo.](/etc/images/logo.png)](/README.md)  
 _A public domain, stylized font for Coldest Night._  
 __Version__ `1.1.1`  
 __Public domain.__
-
-[Go Back](../readme.md)
 
 # Contents
 1. [Coldnight Font](#coldnight-font)

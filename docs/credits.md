@@ -1,6 +1,4 @@
-![Coldest Night logo.](header.png)
-
-[Go Back](../readme.md)
+[![Coldest Night logo.](/etc/images/logo.png)](/README.md)
 
 # Coldest Night Credits
 __Copyright &copy; 2021-2024 Chris Roberts__ (Krobbizoid).  

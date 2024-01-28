@@ -1,6 +1,4 @@
-![Coldest Night logo.](header.png)
-
-[Go back](../readme.md)
+[![Coldest Night logo.](/etc/images/logo.png)](/README.md)
 
 # Contents
 1. [Building Coldest Night](#building-coldest-night)
