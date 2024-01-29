@@ -13,9 +13,8 @@ _All rights reserved._
    * [Issues Affecting All Platforms](#issues-affecting-all-platforms)
    * [Issues Affecting Windows](#issues-affecting-windows)
    * [Issues Affecting macOS](#issues-affecting-macos)
-5. [Translating](#translating)
-6. [Credits](#credits)
-7. [Licenses](#licenses)
+5. [Credits](#credits)
+6. [Licenses](#licenses)
 
 # Coldest Night
 Coldest Night is a stealth game being developed in
@@ -60,23 +59,6 @@ in order to run it.
 * The native macOS icon from versions `0.3.0` and below is poorly formatted and
 may cause a crash when running the game.
 * There is no native macOS icon between versions `0.4.0` and `0.6.0`.
-
-# Translating
-The game's GUI and credits are fully translatable, although they are currently
-only available in English. Cutscene dialogue is not yet translatable.
-
-A table for translation keys in alphabetical order can be found at
-`resources/translations/text.csv`.
-
-The credits can be found at `scenes/credits/credits_<locale>.txt`.
-
-If more than one locale is available to the game, a language menu will appear
-in the settings menu, otherwise it will be hidden. The translation system
-should respond automatically to the game's loaded locales and `locale/fallback`
-project setting.
-
-The story, character names, and other attributes may not be final and may
-change.
 
 # Credits
 * Color palette: [Faraway48](https://lospec.com/palette-list/faraway48) by

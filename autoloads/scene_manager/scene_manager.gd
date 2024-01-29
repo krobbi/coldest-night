@@ -15,6 +15,13 @@ var _is_changing_scene: bool = false
 
 @onready var _animation_player: AnimationPlayer = $AnimationPlayer
 
+# Run when the scene manager enters the scene tree. Unpause the game and set the
+# locale.
+func _ready() -> void:
+	get_tree().paused = false
+	TranslationServer.set_locale("en")
+
+
 # Fade in to the scene.
 func fade_in() -> void:
 	match _fade_state:

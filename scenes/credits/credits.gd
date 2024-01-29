@@ -3,10 +3,44 @@ extends Control
 # Credits Scene
 # The credits scene is a scene that displays the game's credits.
 
-const CREDITS_PATH: String = "res://scenes/credits/credits_%s.txt"
 const SPEED: float = 30.0
 const HEADING_COLOR: Color = Color("#ff980e")
 const SUBHEADING_COLOR: Color = Color("#a9b0b0")
+
+const CREDITS: String = """
+# Coldest Night Credits
+
+## Lead Developer
+Chris Roberts (Krobbizoid)
+
+# Resources
+
+## Godot Engine
+### Game engine
+
+Godot Engine contributors
+Juan Linietsky
+Ariel Manzur
+
+## Faraway48
+### Color palette
+
+Igor Ferreira (Diemorth)
+
+## Atkinson Hyperlegible Font
+### Legible font
+
+Braille Institute of America, Inc.
+
+---
+
+For full license texts, please refer to the readme.md file distributed with the game.
+
+Copyright © 2021-2024 Chris Roberts (Krobbizoid).
+All rights reserved.
+
+# Thanks for playing!
+"""
 
 @export_file("*.tscn") var _exit_scene_path: String
 @export var _music: AudioStream
@@ -16,22 +50,10 @@ var _is_exiting: bool = false
 @onready var _credits_label: RichTextLabel = $CreditsLabel
 @onready var _credits_camera: Camera2D = $CreditsCamera
 
-# Run when the credits scene is entered. Load and parse the credits file and
-# play background music.
+# Run when the credits scene is entered. Parse the credits and play background
+# music.
 func _ready() -> void:
-	var path: String = CREDITS_PATH % LangManager.get_locale()
-	
-	if not FileAccess.file_exists(path):
-		path = CREDITS_PATH % LangManager.get_default_locale()
-	
-	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
-	
-	if not file:
-		_exit_credits()
-		return
-	
-	_credits_label.text = _parse_credits(file.get_as_text())
-	file.close()
+	_credits_label.text = _parse_credits(CREDITS)
 	AudioManager.play_music(_music, false)
 
 

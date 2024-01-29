@@ -13,7 +13,6 @@ enum AppearanceCondition {
 	DEBUG,
 	ADVANCED,
 	MULTIPLE_WINDOW_SCALES,
-	MULTIPLE_LOCALES,
 	HAS_SAVE,
 }
 
@@ -49,8 +48,6 @@ func get_should_appear() -> bool:
 			return OS.is_debug_build() or ConfigBus.get_bool("advanced.show_advanced")
 		AppearanceCondition.MULTIPLE_WINDOW_SCALES:
 			return DisplayManager.get_max_window_scale() > 1
-		AppearanceCondition.MULTIPLE_LOCALES:
-			return LangManager.get_locale_count() > 1
 		AppearanceCondition.HAS_SAVE:
 			return SaveManager.get_working_data().state != SaveData.State.NEW_GAME
 		AppearanceCondition.ALWAYS, _:

@@ -48,7 +48,7 @@ _config = "display.pixel_snap"
 [node name="WindowScaleOption" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="5" instance=ExtResource("3")]
 layout_mode = 2
 _config = "display.window_scale"
-_option_source = 4
+_option_source = 3
 appearance_condition = 4
 
 [node name="GoBackButton" parent="CenterContainer/VBoxContainer/ScrollContainer/MenuList" index="6" instance=ExtResource("4")]

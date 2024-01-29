@@ -34,7 +34,6 @@ var _data: Dictionary = {
 	"display.window_scale": 0,
 	"font.family": "coldnight",
 	"font.size": 20,
-	"language.locale": "auto",
 	"radar.show_world_cones": false,
 	"radar.normal_cone_color": "blue",
 	"radar.caution_cone_color": "yellow",

@@ -58,7 +58,7 @@ layout_mode = 2
 layout_mode = 2
 _text = "BUTTON.CONTINUE_GAME"
 _icon = ExtResource("11")
-appearance_condition = 6
+appearance_condition = 5
 tooltip = "TOOLTIP.BUTTON.CONTINUE_GAME"
 
 [node name="NewGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="1" instance=ExtResource("6")]

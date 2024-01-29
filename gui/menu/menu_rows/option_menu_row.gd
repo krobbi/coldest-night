@@ -6,7 +6,7 @@ extends MenuRow
 
 signal value_changed(value: Variant)
 
-enum OptionSource {COLOR, COLOR_GRADING, FONT_FAMILY, LOCALE, WINDOW_SCALE}
+enum OptionSource {COLOR, COLOR_GRADING, FONT_FAMILY, WINDOW_SCALE}
 
 @export var _option_source: OptionSource = OptionSource.COLOR
 @export var _text: String
@@ -49,8 +49,6 @@ func refresh_options() -> void:
 			options = ShaderManager.get_color_grading_options()
 		OptionSource.FONT_FAMILY:
 			options = DisplayManager.get_font_options()
-		OptionSource.LOCALE:
-			options = LangManager.get_locale_options()
 		OptionSource.WINDOW_SCALE:
 			options = DisplayManager.get_window_scale_options()
 	
