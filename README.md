@@ -15,7 +15,7 @@ _All rights reserved._
    * [Issues Affecting macOS](#issues-affecting-macos)
 5. [Translating](#translating)
 6. [Credits](#credits)
-7. [License](#license)
+7. [Licenses](#licenses)
 
 # Coldest Night
 Coldest Night is a stealth game being developed in
@@ -85,10 +85,13 @@ change.
 [Atkinson Hyperlegible](https://brailleinstitute.org/freefont) by
 [Braille Institute of America, Inc.](https://brailleinstitute.org)
 
-# License
+# Licenses
 Coldest Night is released under the Krobbizoid Game License (KGL):  
 https://krobbi.github.io/license/2021/2024/kgl.txt
 
 See [LICENSE.txt](/LICENSE.txt) for a full copy of the license text.  
 See [docs/eula.md](/docs/eula.md) for the end-user license agreement and
 third-party license texts.
+
+The game's default font 'Coldnight' is considered a separate, public domain
+component. See [etc/font/README.md](/etc/font/README.md) for more information.
