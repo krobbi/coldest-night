@@ -1,5 +1,0 @@
-#!/bin/sh
-return_dir=$(pwd)
-cd $(dirname $0)
-python build.py $*
-cd $return_dir

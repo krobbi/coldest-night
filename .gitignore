@@ -6,15 +6,13 @@
 etc/ignore/*
 
 # Builds:
-builds/linux-demo/*
-builds/mac-demo/*
-builds/win-demo/*
-builds/butler_path.txt
-builds/godot_path.txt
-builds/version_lock.txt
-!builds/linux-demo/.itch
-!builds/mac-demo/.itch
-!builds/win-demo/.itch
+etc/builds/linux-demo/*
+etc/builds/mac-demo/*
+etc/builds/win-demo/*
+etc/builds/build.cfg
+!etc/builds/linux-demo/.itch
+!etc/builds/mac-demo/.itch
+!etc/builds/win-demo/.itch
 
 # Python:
 __pycache__/*

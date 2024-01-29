@@ -34,7 +34,7 @@ Running the game will create directories and files in a
 data/settings folder (in `%AppData%` on Windows.)
 
 # Building
-See [docs/building.md](./docs/building.md) for detailed instructions on
+See [etc/builds/README.md](/etc/builds/README.md) for detailed instructions on
 building the game.
 
 # Known Issues
@@ -90,8 +90,8 @@ Coldest Night is released under the Krobbizoid Game License (KGL):
 https://krobbi.github.io/license/2021/2024/kgl.txt
 
 See [LICENSE.txt](/LICENSE.txt) for a full copy of the license text.  
-See [docs/eula.md](/docs/eula.md) for the end-user license agreement and
-third-party license texts.
+See [etc/builds/eula.md](/etc/builds/eula.md) for the end-user license
+agreement and third-party license texts.
 
 The game's default font 'Coldnight' is considered a separate, public domain
 component. See [etc/font/README.md](/etc/font/README.md) for more information.
