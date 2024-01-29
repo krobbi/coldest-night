@@ -13,7 +13,8 @@
 
 [node name="MainMenuCard" node_paths=PackedStringArray("_menu_list") instance=ExtResource("1")]
 script = ExtResource("2")
-_loader_scene_path = "res://scenes/loader/loader.tscn"
+_start_scene_path = "res://scenes/overworld/overworld.tscn"
+_completed_scene_path = "res://scenes/results/results.tscn"
 _credits_scene_path = "res://scenes/credits/credits.tscn"
 _is_manually_poppable = false
 _menu_list = NodePath("CenterContainer/VBoxContainer/MenuList")

@@ -9,7 +9,7 @@
 
 [node name="GameOverMenuCard" instance=ExtResource("1")]
 script = ExtResource("2")
-_retry_scene_path = "res://scenes/loader/loader.tscn"
+_retry_scene_path = "res://scenes/overworld/overworld.tscn"
 _quit_scene_path = "res://scenes/menu/menu.tscn"
 _is_manually_poppable = false
 

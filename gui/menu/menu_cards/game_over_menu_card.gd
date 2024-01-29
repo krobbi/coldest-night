@@ -19,7 +19,7 @@ func _on_game_over_retry_button_pressed() -> void:
 	_is_continuing = true
 	SaveManager.pull_from_checkpoint()
 	_save_data.stats.accumulate_alert_count()
-	SceneManager.change_scene_to_file(_retry_scene_path)
+	SceneManager.change_scene_to_file(_retry_scene_path, true, false)
 
 
 # Run when the quit to main menu button is pressed. Overwrite the current

@@ -12,7 +12,7 @@
 
 [node name="PauseMenuCard" instance=ExtResource("1")]
 script = ExtResource("2")
-_loader_scene_path = "res://scenes/loader/loader.tscn"
+_load_scene_path = "res://scenes/overworld/overworld.tscn"
 
 [node name="HeadingLabel" parent="CenterContainer/VBoxContainer" index="0"]
 text = "HEADING.PAUSED"
