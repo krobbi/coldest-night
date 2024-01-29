@@ -15,7 +15,6 @@
 script = ExtResource("2")
 _loader_scene_path = "res://scenes/loader/loader.tscn"
 _credits_scene_path = "res://scenes/credits/credits.tscn"
-_devlog_scene_path = "res://scenes/devlog/devlog.tscn"
 _is_manually_poppable = false
 _menu_list = NodePath("CenterContainer/VBoxContainer/MenuList")
 
@@ -79,13 +78,7 @@ _text = "BUTTON.CREDITS"
 _icon = ExtResource("10")
 tooltip = "TOOLTIP.BUTTON.CREDITS"
 
-[node name="DevlogButton" parent="CenterContainer/VBoxContainer/MenuList" index="4" instance=ExtResource("6")]
-layout_mode = 2
-_text = "BUTTON.DEVLOG"
-_icon = ExtResource("10")
-tooltip = "TOOLTIP.BUTTON.DEVLOG"
-
-[node name="QuitGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="5" instance=ExtResource("6")]
+[node name="QuitGameButton" parent="CenterContainer/VBoxContainer/MenuList" index="4" instance=ExtResource("6")]
 layout_mode = 2
 _text = "BUTTON.QUIT_GAME"
 _icon = ExtResource("8")
@@ -99,5 +92,4 @@ layout_mode = 2
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/NewGameButton" to="." method="_on_new_game_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/SettingsButton" to="." method="request_push" binds= ["settings"]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/CreditsButton" to="." method="_on_credits_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/DevlogButton" to="." method="_on_devlog_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/MenuList/QuitGameButton" to="." method="_on_quit_game_button_pressed"]
