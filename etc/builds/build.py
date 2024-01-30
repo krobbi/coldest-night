@@ -16,6 +16,9 @@ VERSION: str = "0.7.0"
 CHANNELS: list[str] = ["win-demo", "linux-demo", "mac-demo"]
 """ All available channels. """
 
+PROJECT: str = "krobbizoid/coldest-night"
+""" The itch.io project to publish to. """
+
 godot: str = ""
 """ The command for calling Godot Engine. """
 
@@ -30,6 +33,9 @@ has_checked_config: bool = False
 
 has_checked_godot: bool = False
 """ Whether a Godot Engine command has been checked for. """
+
+has_checked_butler: bool = False
+""" Whether a butler command has been checked for. """
 
 class BuildError(Exception):
     """ An error raised by the build script. """
@@ -75,12 +81,14 @@ def check_files() -> None:
 
 
 def check_config() -> None:
-    """ Raise an error if a valid config file does not exist. """
+    """ Raise an error if a valid config file is not found. """
     
     global has_checked_config, godot, butler
     
     if has_checked_config:
         return
+    
+    check_files()
     
     if not os.path.isfile("build.cfg"):
         raise BuildError(f"Create a 'build.cfg' file.")
@@ -97,7 +105,7 @@ def check_config() -> None:
 
 
 def check_godot() -> None:
-    """ Raise an error if the Godot Engine command is invalid. """
+    """ Raise an error if a valid Godot Engine command is not found. """
     
     global has_checked_godot
     
@@ -105,12 +113,29 @@ def check_godot() -> None:
         return
     
     print("Checking Godot Engine...")
+    check_config()
     call(godot, "--version")
     has_checked_godot = True
 
 
+def check_butler() -> None:
+    """ Raise an error if a valid butler command is not found. """
+    
+    global has_checked_butler
+    
+    if has_checked_butler:
+        return
+    
+    print("Checking butler...")
+    check_config()
+    call(butler, "version")
+    has_checked_butler = True
+
+
 def check_channel(channel: str) -> None:
     """ Raise an error if a channel does not exist. """
+    
+    check_files()
     
     if channel not in CHANNELS:
         raise BuildError(f"Channel '{channel}' does not exist.")
@@ -151,7 +176,6 @@ def clean_dir(path: str, depth: int = 0) -> None:
 def clean_channel(channel: str) -> None:
     """ Clean a channel. """
     
-    check_files()
     check_channel(channel)
     
     try:
@@ -163,9 +187,10 @@ def clean_channel(channel: str) -> None:
 def export_channel(channel: str) -> None:
     """ Clean and export a channel. """
     
-    clean_channel(channel)
-    check_config()
+    check_channel(channel)
     check_godot()
+    
+    clean_channel(channel)
     call(godot, "--path", "../..", "--headless", "--export-release", channel)
     
     try:
@@ -176,9 +201,13 @@ def export_channel(channel: str) -> None:
 
 def publish_channel(channel: str) -> None:
     """ Publish an exported channel. """
-    # TODO: Implement channel publishing. <krobbi>
     
-    print(f"Publish channel '{channel}'.")
+    check_channel(channel)
+    check_butler()
+    
+    call(
+            butler, "push", f"--userversion={VERSION}", channel,
+            f"{PROJECT}:{channel}")
 
 
 def for_channels(channels: list[str], fn: Callable[[str], None]) -> None:
