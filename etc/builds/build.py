@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 
 import os
+import random
 import sys
 
+from collections.abc import Callable
 from typing import Self
+
+VERSION: str = "0.7.0"
+""" The version tag to publish with. Only update when ready. """
+
+CHANNELS: list[str] = ["win-demo", "linux-demo", "mac-demo"]
+""" All available channels. """
 
 class BuildError(Exception):
     """ An error raised by the build script. """
@@ -16,6 +24,90 @@ class BuildError(Exception):
         
         super().__init__(message)
         self.message = message
+
+
+def clean_channel(channel: str) -> None:
+    """ Clean a channel. """
+    # TODO: Implement channel cleaning. <krobbi>
+    
+    print(f"Clean channel '{channel}'.")
+
+
+def export_channel(channel: str) -> None:
+    """ Clean and export a channel. """
+    # TODO: Implement channel exporting. <krobbi>
+    
+    clean_channel(channel)
+    print(f"Export channel '{channel}'.")
+
+
+def publish_channel(channel: str) -> None:
+    """ Publish an exported channel. """
+    # TODO: Implement channel publishing. <krobbi>
+    
+    print(f"Publish channel '{channel}'.")
+
+
+def for_channels(channels: list[str], fn: Callable[[str], None]) -> None:
+    """ Call a function for a set of channels. """
+    
+    for channel in channels:
+        fn(channel)
+
+
+def for_each_channel(fn: Callable[[str], None]) -> None:
+    """ Call a function for each available channel. """
+    
+    for_channels(CHANNELS, fn)
+
+
+def publish_all_channels() -> None:
+    """ Clean, export, and publish all available channels. """
+    
+    passcode: str = f"v{VERSION}:{random.randint(1111, 9999)}"
+    print(f"Are you sure you want to publish? Enter '{passcode}' to continue.")
+    prompt: str = input("> ")
+    
+    if prompt == passcode:
+        for_each_channel(export_channel)
+        for_each_channel(publish_channel)
+    else:
+        print("Publishing canceled.")
+
+
+def raise_usage_error() -> None:
+    """ Raise a build command usage error. """
+    
+    raise BuildError(
+            "Usage:"
+            "\n * build.py clean               - Clean all channels."
+            "\n * build.py clean <channel>...  - Clean one or more channels."
+            "\n * build.py export              - Export all channels"
+            "\n * build.py export <channel>... - Export one or more channels."
+            "\n * build.py publish             - Publish all channels.")
+
+
+def run_command(command: list[str]) -> None:
+    """ Run a build command. """
+    
+    if len(command) == 1:
+        if command[0] == "clean":
+            for_each_channel(clean_channel)
+        elif command[0] == "export":
+            for_each_channel(export_channel)
+        elif command[0] == "publish":
+            publish_all_channels()
+        else:
+            raise_usage_error()
+    elif len(command) > 1:
+        if command[0] == "clean":
+            for_channels(command[1:], clean_channel)
+        elif command[0] == "export":
+            for_channels(command[1:], export_channel)
+        else:
+            raise_usage_error()
+    else:
+        raise_usage_error()
 
 
 def change_to_builds_path() -> None:
@@ -48,7 +140,6 @@ def main() -> None:
     Run a build command from command line arguments and exit if an error
     occurred.
     """
-    # TODO: Implement build command. <krobbi>
     
     return_path: str = os.path.realpath(os.getcwd())
     
@@ -57,7 +148,7 @@ def main() -> None:
     
     try:
         change_to_builds_path()
-        print("Hello, build.py!")
+        run_command(sys.argv[1:])
     except BuildError as build_error:
         sys.exit(build_error.message)
     finally:

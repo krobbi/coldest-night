@@ -102,17 +102,17 @@ to run this as `build` from the root of the repository.
 
 Several subcommands are available:
 ```shell
-build.py clean [channel]
+build.py clean [<channel>...]
 ```
 Delete the build output for all channels. Optionally delete the build output
-for a single channel.
+for one or more specified channels.
 
 ```shell
-build.py export [channel]
+build.py export [<channel>...]
 ```
-Clean and export all channels. Optionally clean and export a single channel.
-When exporting, the EULA at `etc/builds/eula.md` will be copied to each channel
-as `readme.md`.
+Clean and export all channels. Optionally clean and export one or more
+specified channels. When exporting, the EULA at `etc/builds/eula.md` is copied
+to each channel as `readme.md`.
 
 ```shell
 build.py publish
