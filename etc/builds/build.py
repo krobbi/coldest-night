@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
+import configparser
 import os
 import random
+import shutil
+import subprocess
 import sys
 
 from collections.abc import Callable
@@ -13,8 +16,20 @@ VERSION: str = "0.7.0"
 CHANNELS: list[str] = ["win-demo", "linux-demo", "mac-demo"]
 """ All available channels. """
 
+godot: str = ""
+""" The command for calling Godot Engine. """
+
+butler: str = ""
+""" The command for calling butler. """
+
 has_checked_files: bool = False
 """ Whether expected files have been checked for. """
+
+has_checked_config: bool = False
+""" Whether a config file has been checked for. """
+
+has_checked_godot: bool = False
+""" Whether a Godot Engine command has been checked for. """
 
 class BuildError(Exception):
     """ An error raised by the build script. """
@@ -27,6 +42,15 @@ class BuildError(Exception):
         
         super().__init__(message)
         self.message = message
+
+
+def call(*args: str) -> None:
+    """ Call a subprocess and raise an error if it failed. """
+    
+    try:
+        subprocess.check_call(args)
+    except (subprocess.CalledProcessError, OSError):
+        raise BuildError(f"Could not call subprocess.")
 
 
 def check_files() -> None:
@@ -48,6 +72,41 @@ def check_files() -> None:
             raise BuildError("Run the build script from 'etc/builds/'.")
     
     has_checked_files = True
+
+
+def check_config() -> None:
+    """ Raise an error if a valid config file does not exist. """
+    
+    global has_checked_config, godot, butler
+    
+    if has_checked_config:
+        return
+    
+    if not os.path.isfile("build.cfg"):
+        raise BuildError(f"Create a 'build.cfg' file.")
+    
+    try:
+        config: configparser.ConfigParser = configparser.ConfigParser()
+        config.read("build.cfg")
+        godot = config.get("commands", "godot")
+        butler = config.get("commands", "butler")
+    except configparser.Error:
+        raise BuildError(f"Could not parse 'build.cfg'.")
+    
+    has_checked_config = True
+
+
+def check_godot() -> None:
+    """ Raise an error if the Godot Engine command is invalid. """
+    
+    global has_checked_godot
+    
+    if has_checked_godot:
+        return
+    
+    print("Checking Godot Engine...")
+    call(godot, "--version")
+    has_checked_godot = True
 
 
 def check_channel(channel: str) -> None:
@@ -103,10 +162,16 @@ def clean_channel(channel: str) -> None:
 
 def export_channel(channel: str) -> None:
     """ Clean and export a channel. """
-    # TODO: Implement channel exporting. <krobbi>
     
     clean_channel(channel)
-    print(f"Export channel '{channel}'.")
+    check_config()
+    check_godot()
+    call(godot, "--path", "../..", "--headless", "--export-release", channel)
+    
+    try:
+        shutil.copy("eula.md", f"{channel}/readme.md")
+    except shutil.Error:
+        raise BuildError(f"Could not copy 'eula.md' to channel '{channel}'.")
 
 
 def publish_channel(channel: str) -> None:
