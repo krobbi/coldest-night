@@ -13,6 +13,9 @@ VERSION: str = "0.7.0"
 CHANNELS: list[str] = ["win-demo", "linux-demo", "mac-demo"]
 """ All available channels. """
 
+has_checked_files: bool = False
+""" Whether expected files have been checked for. """
+
 class BuildError(Exception):
     """ An error raised by the build script. """
     
@@ -26,10 +29,40 @@ class BuildError(Exception):
         self.message = message
 
 
+def check_files() -> None:
+    """ Raise an error if expected files are not found. """
+    
+    global has_checked_files
+    
+    if has_checked_files:
+        return
+    
+    for path in [
+        "../../export_presets.cfg",
+        "../../project.godot",
+        "../.gdignore",
+        "build.py",
+        "eula.md",
+    ] + [f"{channel}/.itch" for channel in CHANNELS]:
+        if not os.path.isfile(path):
+            raise BuildError("Run the build script from 'etc/builds/'.")
+    
+    has_checked_files = True
+
+
+def check_channel(channel: str) -> None:
+    """ Raise an error if a channel does not exist. """
+    
+    if channel not in CHANNELS:
+        raise BuildError(f"Channel '{channel}' does not exist.")
+
+
 def clean_channel(channel: str) -> None:
     """ Clean a channel. """
     # TODO: Implement channel cleaning. <krobbi>
     
+    check_files()
+    check_channel(channel)
     print(f"Clean channel '{channel}'.")
 
 
