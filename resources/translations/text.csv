@@ -181,7 +181,7 @@ TOOLTIP.OPTION.RADAR.ALERT_CONE_COLOR,"Change the color of vision cones in alert
 TOOLTIP.OPTION.RADAR.BACKGROUND_COLOR,"Change the radar display's background color."
 TOOLTIP.OPTION.RADAR.BARRIER_COLOR,"Change to color of barriers on the radar display."
 TOOLTIP.OPTION.RADAR.CAUTION_CONE_COLOR,"Change the color of vision cones in caution mode."
-TOOLTIP.OPTION.RADAR.COLLECTABLE_COLOR,"Change the color of collectbles on the radar display."
+TOOLTIP.OPTION.RADAR.COLLECTABLE_COLOR,"Change the color of collectables on the radar display."
 TOOLTIP.OPTION.RADAR.FLOOR_COLOR,"Change the color of floors on the radar display."
 TOOLTIP.OPTION.RADAR.GUARD_COLOR,"Change the color of guards on the radar display."
 TOOLTIP.OPTION.RADAR.NORMAL_CONE_COLOR,"Change the color of vision cones."
