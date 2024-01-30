@@ -57,13 +57,48 @@ def check_channel(channel: str) -> None:
         raise BuildError(f"Channel '{channel}' does not exist.")
 
 
+def is_entry_file(entry: os.DirEntry[str]) -> bool:
+    """ Return whether a directory entry is a file or symbolic link. """
+    
+    if entry.is_file(follow_symlinks=False) or entry.is_symlink():
+        return True
+    
+    try:
+        return bool(os.readlink(entry))
+    except OSError:
+        return False
+
+
+def clean_dir(path: str, depth: int = 0) -> None:
+    """ Recursively clean a directory. May raise an OS error. """
+    
+    if depth >= 8:
+        raise BuildError(f"Cleaning depth exceeded at '{path}'.")
+    
+    with os.scandir(path) as dir:
+        for entry in dir:
+            if entry.name == ".itch" and depth == 0:
+                continue
+            
+            if is_entry_file(entry):
+                os.remove(entry)
+            elif entry.is_dir(follow_symlinks=False):
+                clean_dir(entry.path, depth + 1)
+                os.rmdir(entry)
+            else:
+                raise BuildError(f"Broken directory entry at '{entry.path}'.")
+
+
 def clean_channel(channel: str) -> None:
     """ Clean a channel. """
-    # TODO: Implement channel cleaning. <krobbi>
     
     check_files()
     check_channel(channel)
-    print(f"Clean channel '{channel}'.")
+    
+    try:
+        clean_dir(channel)
+    except OSError:
+        raise BuildError(f"Could not clean channel '{channel}'.")
 
 
 def export_channel(channel: str) -> None:
