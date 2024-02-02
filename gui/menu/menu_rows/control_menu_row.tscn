@@ -17,7 +17,7 @@ texture_margin_right = 2.0
 texture_margin_bottom = 6.0
 region_rect = Rect2(0, 0, 6, 10)
 
-[node name="ControlMenuRow" node_paths=PackedStringArray("_focus_node") groups=["control_menu_rows"] instance=ExtResource("1")]
+[node name="ControlMenuRow" node_paths=PackedStringArray("_focus_node") instance=ExtResource("1")]
 script = ExtResource("2")
 _action = ""
 _focus_node = NodePath("Content/Button")
@@ -63,6 +63,6 @@ stream = ExtResource("4")
 mix_target = 2
 bus = &"SFX"
 
-[connection signal="deselected" from="." to="." method="_on_deselected"]
-[connection signal="toggled" from="Content/Button" to="." method="set_awaiting_input"]
-[connection signal="timeout" from="InputTimer" to="." method="_on_input_timer_timeout"]
+[connection signal="deselected" from="." to="." method="_deactivate"]
+[connection signal="toggled" from="Content/Button" to="." method="_on_button_toggled"]
+[connection signal="timeout" from="InputTimer" to="." method="_deactivate"]

@@ -1,20 +1,22 @@
+## Manages input mapping.
 extends Node
 
-# Input Manager
-# The input manager is an autoload scene that manages input mapping. The input
-# manager can be accessed from any script by using `InputManager`.
+## Emitted when input mappings are applied.
+signal mappings_applied
 
-const DEFAULT_MAPPINGS: Dictionary = {
-	"move_up": "key.%d" % KEY_UP,
-	"move_down": "key.%d" % KEY_DOWN,
-	"move_left": "key.%d" % KEY_LEFT,
-	"move_right": "key.%d" % KEY_RIGHT,
-	"interact": "key.%d" % KEY_Z,
-	"pause": "key.%d" % KEY_ESCAPE,
-	"toggle_fullscreen": "key.%d" % KEY_F11,
+## The map of action [String]s to their default mapping code [String]s.
+const _DEFAULT_MAPPINGS: Dictionary = {
+	"move_up": "key/%d" % KEY_UP,
+	"move_down": "key/%d" % KEY_DOWN,
+	"move_left": "key/%d" % KEY_LEFT,
+	"move_right": "key/%d" % KEY_RIGHT,
+	"interact": "key/%d" % KEY_Z,
+	"pause": "key/%d" % KEY_ESCAPE,
+	"toggle_fullscreen": "key/%d" % KEY_F11,
 }
 
-const LINKED_ACTIONS: Dictionary = {
+## The map of links from game action [String]s to built-in action [String]s.
+const _ACTION_LINKS: Dictionary = {
 	"move_up": "ui_up",
 	"move_down": "ui_down",
 	"move_left": "ui_left",
@@ -23,94 +25,158 @@ const LINKED_ACTIONS: Dictionary = {
 	"pause": "ui_cancel",
 }
 
-var _mappings: Dictionary = DEFAULT_MAPPINGS.duplicate()
-var _linked_action_events: Dictionary = {}
+## The map of action [String]s to their current mapping code [String]s.
+var _mappings: Dictionary = _DEFAULT_MAPPINGS.duplicate()
 
-# Run when the input manager enters the scene tree. Populate the linked input
-# action events and subscribe the input manager to the configuration bus.
+## The map of built-in action [String]s to their mapped [InputEvent]s.
+var _linked_events: Dictionary = {}
+
+## Run when the input manager is ready. Clear the linked [InputEvent]s and apply
+## input mappings from config values.
 func _ready() -> void:
-	for linked_action in LINKED_ACTIONS.values():
-		_linked_action_events[linked_action] = null
+	for action in _ACTION_LINKS.values():
+		_linked_events[action] = null
 	
-	for action in DEFAULT_MAPPINGS:ConfigBus.subscribe_node_string(
-			"controls.%s_mapping" % action, _on_config_changed.bind(action))
+	for action in _mappings:
+		_map_action_code(action, ConfigBus.get_string("controls.%s_mapping" % action))
+	
+	_apply_mappings()
 
 
-# Get an input mapping code's human-readable name.
-func get_code_name(code: String) -> String:
-	var code_parts: PackedStringArray = code.split(".")
+## Get an action [String]'s mapped input as a human-readable [String].
+func get_mapping_name(action: String) -> String:
+	if not action in _mappings:
+		return tr("INPUT.NO_ACTION")
+	
+	var code_parts: PackedStringArray = _mappings[action].split("/")
 	
 	if code_parts[0] == "key" and code_parts.size() == 2:
 		return OS.get_keycode_string(int(code_parts[1]))
 	elif code_parts[0] == "mouse_button" and code_parts.size() == 2:
-		var button_index: int = int(code_parts[1])
+		var mouse_button: MouseButton = int(code_parts[1]) as MouseButton
 		
-		if button_index == MOUSE_BUTTON_LEFT:
-			return "INPUT.MOUSE_BUTTON.LEFT"
-		elif button_index == MOUSE_BUTTON_RIGHT:
-			return "INPUT.MOUSE_BUTTON.RIGHT"
-		elif button_index == MOUSE_BUTTON_MIDDLE:
-			return "INPUT.MOUSE_BUTTON.MIDDLE"
-		elif button_index == MOUSE_BUTTON_XBUTTON1:
-			return "INPUT.MOUSE_BUTTON.XBUTTON1"
-		elif button_index == MOUSE_BUTTON_XBUTTON2:
-			return "INPUT.MOUSE_BUTTON.XBUTTON2"
-		
-		return tr("INPUT.MOUSE_BUTTON.UNKNOWN").format({"button_index": code_parts[1]})
+		match mouse_button:
+			MOUSE_BUTTON_LEFT:
+				return tr("INPUT.MOUSE_BUTTON.LEFT")
+			MOUSE_BUTTON_RIGHT:
+				return tr("INPUT.MOUSE_BUTTON.RIGHT")
+			MOUSE_BUTTON_MIDDLE:
+				return tr("INPUT.MOUSE_BUTTON.MIDDLE")
+			MOUSE_BUTTON_WHEEL_UP:
+				return tr("INPUT.MOUSE_BUTTON.WHEEL_UP")
+			MOUSE_BUTTON_WHEEL_DOWN:
+				return tr("INPUT.MOUSE_BUTTON.WHEEL_DOWN")
+			MOUSE_BUTTON_WHEEL_LEFT:
+				return tr("INPUT.MOUSE_BUTTON.WHEEL_LEFT")
+			MOUSE_BUTTON_WHEEL_RIGHT:
+				return tr("INPUT.MOUSE_BUTTON.WHEEL_RIGHT")
+			MOUSE_BUTTON_XBUTTON1:
+				return tr("INPUT.MOUSE_BUTTON.XBUTTON1")
+			MOUSE_BUTTON_XBUTTON2:
+				return tr("INPUT.MOUSE_BUTTON.XBUTTON2")
+			_:
+				return tr("INPUT.MOUSE_BUTTON.UNKNOWN").format({"index": mouse_button})
 	elif code_parts[0] == "joypad_button" and code_parts.size() == 2:
-		return tr("INPUT.JOYPAD_BUTTON.UNKNOWN").format({"button_index": code_parts[1]})
+		var joy_button: JoyButton = int(code_parts[1]) as JoyButton
+		
+		match joy_button:
+			JOY_BUTTON_A:
+				return tr("INPUT.JOYPAD_BUTTON.A")
+			JOY_BUTTON_B:
+				return tr("INPUT.JOYPAD_BUTTON.B")
+			JOY_BUTTON_X:
+				return tr("INPUT.JOYPAD_BUTTON.X")
+			JOY_BUTTON_Y:
+				return tr("INPUT.JOYPAD_BUTTON.Y")
+			JOY_BUTTON_BACK:
+				return tr("INPUT.JOYPAD_BUTTON.BACK")
+			JOY_BUTTON_GUIDE:
+				return tr("INPUT.JOYPAD_BUTTON.GUIDE")
+			JOY_BUTTON_START:
+				return tr("INPUT.JOYPAD_BUTTON.START")
+			JOY_BUTTON_LEFT_STICK:
+				return tr("INPUT.JOYPAD_BUTTON.LEFT_STICK")
+			JOY_BUTTON_RIGHT_STICK:
+				return tr("INPUT.JOYPAD_BUTTON.RIGHT_STICK")
+			JOY_BUTTON_LEFT_SHOULDER:
+				return tr("INPUT.JOYPAD_BUTTON.LEFT_SHOULDER")
+			JOY_BUTTON_RIGHT_SHOULDER:
+				return tr("INPUT.JOYPAD_BUTTON.RIGHT_SHOULDER")
+			JOY_BUTTON_DPAD_UP:
+				return tr("INPUT.JOYPAD_BUTTON.DPAD_UP")
+			JOY_BUTTON_DPAD_DOWN:
+				return tr("INPUT.JOYPAD_BUTTON.DPAD_DOWN")
+			JOY_BUTTON_DPAD_LEFT:
+				return tr("INPUT.JOYPAD_BUTTON.DPAD_LEFT")
+			JOY_BUTTON_DPAD_RIGHT:
+				return tr("INPUT.JOYPAD_BUTTON.DPAD_RIGHT")
+			JOY_BUTTON_MISC1:
+				return tr("INPUT.JOYPAD_BUTTON.MISC1")
+			JOY_BUTTON_PADDLE1:
+				return tr("INPUT.JOYPAD_BUTTON.PADDLE1")
+			JOY_BUTTON_PADDLE2:
+				return tr("INPUT.JOYPAD_BUTTON.PADDLE2")
+			JOY_BUTTON_PADDLE3:
+				return tr("INPUT.JOYPAD_BUTTON.PADDLE3")
+			JOY_BUTTON_PADDLE4:
+				return tr("INPUT.JOYPAD_BUTTON.PADDLE4")
+			JOY_BUTTON_TOUCHPAD:
+				return tr("INPUT.JOYPAD_BUTTON.TOUCHPAD")
+			_:
+				return tr("INPUT.JOYPAD_BUTTON.UNKNOWN").format({"index": joy_button})
 	elif code_parts[0] == "joypad_motion" and code_parts.size() == 3:
-		if code_parts[2] == "positive":
-			return tr("INPUT.JOYPAD_MOTION.UNKNOWN.POSITIVE").format({"axis": code_parts[1]})
-		elif code_parts[2] == "negative":
-			return tr("INPUT.JOYPAD_MOTION.UNKNOWN.NEGATIVE").format({"axis": code_parts[1]})
+		var joy_axis: JoyAxis = int(code_parts[1]) as JoyAxis
+		var direction: String = code_parts[2]
+		
+		if direction != "positive" and direction != "negative":
+			return tr("INPUT.UNKNOWN")
+		
+		direction = direction.to_upper()
+		
+		match joy_axis:
+			JOY_AXIS_LEFT_X:
+				return tr("INPUT.JOYPAD_MOTION.LEFT_X.%s" % direction)
+			JOY_AXIS_LEFT_Y:
+				return tr("INPUT.JOYPAD_MOTION.LEFT_Y.%s" % direction)
+			JOY_AXIS_RIGHT_X:
+				return tr("INPUT.JOYPAD_MOTION.RIGHT_X.%s" % direction)
+			JOY_AXIS_RIGHT_Y:
+				return tr("INPUT.JOYPAD_MOTION.RIGHT_Y.%s" % direction)
+			JOY_AXIS_TRIGGER_LEFT:
+				return tr("INPUT.JOYPAD_MOTION.TRIGGER_LEFT.%s" % direction)
+			JOY_AXIS_TRIGGER_RIGHT:
+				return tr("INPUT.JOYPAD_MOTION.TRIGGER_RIGHT.%s" % direction)
+			_:
+				return tr("INPUT.JOYPAD_MOTION.UNKNOWN.%s" % direction).format({"index": joy_axis})
 	
-	return "INPUT.UNKNOWN"
+	return tr("INPUT.UNKNOWN")
 
 
-# Get an input action's mapping's human-readable name.
-func get_mapping_name(action: String) -> String:
-	return get_code_name(_mappings.get(action, ""))
+## Reset all input mappings to their defaults.
+func reset_mappings() -> void:
+	_mappings = _DEFAULT_MAPPINGS.duplicate()
+	_apply_mappings()
 
 
-# Get an input mapping code from an input event. Return `"auto"` if the input
-# event cannot be used for input mapping.
-func get_event_code(event: InputEvent) -> String:
-	if event is InputEventKey:
-		return "key.%d" % event.keycode
-	elif event is InputEventMouseButton:
-		return "mouse_button.%d" % event.button_index
-	elif event is InputEventJoypadButton:
-		return "joypad_button.%d" % event.button_index
-	elif event is InputEventJoypadMotion:
-		return "joypad_motion.%d.%s" % [
-				event.axis, "positive" if event.axis_value >= 0.0 else "negative"]
-	
-	return "auto"
-
-
-# Get whether an input event may be used to trigger an input mapping.
-func is_event_mappable(event: InputEvent) -> bool:
-	if event is InputEventKey or event is InputEventJoypadButton:
+## Attempt to map an action [String] to an [InputEvent] and return whether it
+## was successful.
+func map_action_event(action: String, event: InputEvent) -> bool:
+	if action in _mappings and _is_event_mappable(event):
+		_map_action_code(action, _get_event_code(event))
+		_apply_mappings()
 		return true
-	elif event is InputEventMouseButton:
-		return not event.button_index in [
-				MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN,
-				MOUSE_BUTTON_WHEEL_LEFT, MOUSE_BUTTON_WHEEL_RIGHT]
-	elif event is InputEventJoypadMotion:
-		return abs(event.axis_value) >= 0.5
-	
-	return false
+	else:
+		return false
 
 
-# Create an input event for input mapping from an input mapping code. Return
-# `null` if the input mapping code is invalid.
-func create_code_event(code: String) -> InputEvent:
-	var code_parts: PackedStringArray = code.split(".")
+## Get a mapping code [String]'s [InputEvent]. Return [code]null[/code] if
+## [param code] is not a valid mapping code.
+func _get_code_event(code: String) -> InputEvent:
+	var code_parts: PackedStringArray = code.split("/")
 	
 	if code_parts[0] == "key" and code_parts.size() == 2:
 		var event: InputEventKey = InputEventKey.new()
-		event.keycode = int(code_parts[1]) as Key
+		event.physical_keycode = int(code_parts[1]) as Key
 		return event
 	elif code_parts[0] == "mouse_button" and code_parts.size() == 2:
 		var event: InputEventMouseButton = InputEventMouseButton.new()
@@ -136,59 +202,75 @@ func create_code_event(code: String) -> InputEvent:
 	return null
 
 
-# Map an input action to an input mapping code.
-func map_action_code(action: String, code: String, swap: bool = true) -> void:
-	if code == "auto":
-		code = DEFAULT_MAPPINGS[action]
+## Get an [InputEvent]'s mapping code [String]. Return an empty [String] if
+## [param event] is not mappable.
+func _get_event_code(event: InputEvent) -> String:
+	if event is InputEventKey:
+		return "key/%d" % event.physical_keycode
+	elif event is InputEventMouseButton:
+		return "mouse_button/%d" % event.button_index
+	elif event is InputEventJoypadButton:
+		return "joypad_button/%d" % event.button_index
+	elif event is InputEventJoypadMotion:
+		if event.axis_value >= 0.5:
+			return "joypad_motion/%d/positive" % event.axis
+		elif event.axis_value <= -0.5:
+			return "joypad_motion/%d/negative" % event.axis
 	
-	map_action_event(action, create_code_event(code), swap)
+	return ""
 
 
-# Map an input action to an input event.
-func map_action_event(action: String, event: InputEvent, swap: bool = true) -> void:
-	if not DEFAULT_MAPPINGS.has(action) or not is_event_mappable(event):
-		return
-	
-	var code: String = get_event_code(event)
-	event = create_code_event(code) # Normalize event for input mapping.
+## Return whether an [InputEvent] can be used for input mapping.
+func _is_event_mappable(event: InputEvent) -> bool:
+	return not _get_event_code(event).is_empty()
+
+
+## Normalize an input mapping code [String]. Return [param action]'s default
+## mapping code if [param code] is not a valid mapping code.
+func _normalize_code(action: String, code: String) -> String:
+	var event: InputEvent = _get_code_event(code)
 	
 	if not event:
-		return
+		event = _get_code_event(_DEFAULT_MAPPINGS.get(action, _DEFAULT_MAPPINGS.interact))
 	
-	InputMap.action_erase_events(action)
-	InputMap.action_add_event(action, event)
+	return _get_event_code(event)
+
+
+## Map an action [String] to a mapping code [String].
+func _map_action_code(action: String, code: String) -> void:
+	code = _normalize_code(action, code)
 	
-	if LINKED_ACTIONS.has(action):
-		var linked_action: String = LINKED_ACTIONS[action]
-		
-		if _linked_action_events[linked_action]:
-			InputMap.action_erase_event(linked_action, _linked_action_events[linked_action])
-			_linked_action_events[linked_action] = null
-		
-		if not InputMap.action_has_event(linked_action, event):
-			InputMap.action_add_event(linked_action, event)
-			_linked_action_events[linked_action] = event
-	
-	if swap:
-		var previous_code: String = _mappings[action]
-		
-		for other_action in DEFAULT_MAPPINGS:
-			if action == other_action or _mappings[other_action] != code:
-				continue
-			
-			map_action_code(other_action, previous_code, false)
+	for other_action in _mappings:
+		if other_action != action and _mappings[other_action] == code:
+			_mappings[other_action] = _mappings[action]
+			break
 	
 	_mappings[action] = code
-	ConfigBus.set_string("controls.%s_mapping" % action, code)
 
 
-# Reset all input action mappings to their defaults.
-func reset_mappings() -> void:
-	for action in DEFAULT_MAPPINGS:
-		map_action_code(action, DEFAULT_MAPPINGS[action])
-
-
-# Run when an input action's input mapping code changes in the configuration
-# bus. Map the input action to the input mapping code.
-func _on_config_changed(code: String, action: String) -> void:
-	map_action_code(action, code)
+## Apply the current input mappings. Emit [signal mappings_applied].
+func _apply_mappings() -> void:
+	for action in _mappings:
+		var code: String = _mappings[action]
+		var event: InputEvent = _get_code_event(code)
+		
+		if not event:
+			continue
+		
+		InputMap.action_erase_events(action)
+		InputMap.action_add_event(action, event)
+		
+		if action in _ACTION_LINKS:
+			var linked_action: String = _ACTION_LINKS[action]
+			
+			if _linked_events[linked_action]:
+				InputMap.action_erase_event(linked_action, _linked_events[linked_action])
+				_linked_events[linked_action] = null
+			
+			if not InputMap.action_has_event(linked_action, event):
+				InputMap.action_add_event(linked_action, event)
+				_linked_events[linked_action] = event
+		
+		ConfigBus.set_string("controls.%s_mapping" % action, code)
+	
+	mappings_applied.emit()
