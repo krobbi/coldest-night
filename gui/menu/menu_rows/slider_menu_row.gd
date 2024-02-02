@@ -26,6 +26,20 @@ func _ready() -> void:
 	_label.text = _text
 
 
+## Run when the slider menu row receives an input event. Debounce analog input.
+func _input(event: InputEvent) -> void:
+	if not _is_selected or not event is InputEventJoypadMotion:
+		return
+	
+	if event.is_action("ui_left") or event.is_action("ui_right"):
+		get_viewport().set_input_as_handled()
+		
+		if Input.is_action_just_pressed("ui_left"):
+			_slider.value -= _step
+		elif Input.is_action_just_pressed("ui_right"):
+			_slider.value += _step
+
+
 # Run when the slider menu row exits the scene tree. Disconnect the slider's
 # `value_changed` signal from the slider menu row.
 func _exit_tree() -> void:

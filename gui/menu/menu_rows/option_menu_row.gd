@@ -28,14 +28,16 @@ func _ready() -> void:
 	_label.text = _text
 
 
-# Run when the option menu row receives an input event. Handle controls for
-# selecting options with the keyboard if the option menu row is selected.
-func _input(event: InputEvent) -> void:
-	if _is_selected:
-		if event.is_action_pressed("ui_left", true):
-			_select_previous()
-		elif event.is_action_pressed("ui_right", true):
-			_select_next()
+## Run when the option menu row receives an input event. Handle controls for
+## selecting options if the option menu row is selected.
+func _input(_event: InputEvent) -> void:
+	if not _is_selected:
+		return
+	
+	if Input.is_action_just_pressed("ui_left"):
+		_select_previous()
+	elif Input.is_action_just_pressed("ui_right"):
+		_select_next()
 
 
 # Refresh the option's options.
