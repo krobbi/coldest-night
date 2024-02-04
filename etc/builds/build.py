@@ -10,7 +10,7 @@ import sys
 from collections.abc import Callable
 from typing import Self
 
-VERSION: str = "0.7.0"
+VERSION: str = "0.8.0"
 """ The version tag to publish with. Only update when ready. """
 
 CHANNELS: list[str] = ["win-demo", "linux-demo", "mac-demo"]
