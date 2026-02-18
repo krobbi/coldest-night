@@ -1,9 +1,5 @@
 [![Coldest Night logo.](/etc/images/logo.png)](/README.md)  
-_A prototype stealth game._  
-__Version__ `0.8.0`  
-__Godot Engine__ `4.0.2`  
-__Copyright &copy; 2021-2024 Chris Roberts__ (Krobbizoid).  
-_All rights reserved._
+_A prototype stealth game._
 
 # Contents
 1. [Coldest Night](#coldest-night)
@@ -66,12 +62,11 @@ may cause a crash when running the game.
 [Braille Institute of America, Inc.](https://brailleinstitute.org)
 
 # Licenses
-Coldest Night is released under the Krobbizoid Game License (KGL):  
-https://krobbi.github.io/license/2021/2024/kgl.txt
+Coldest Night is released under the Krobbizoid Game License (KGL). See
+[LICENSE.txt](LICENSE.txt) for a full copy of the license text.  
 
-See [LICENSE.txt](/LICENSE.txt) for a full copy of the license text.  
-See [etc/builds/eula.md](/etc/builds/eula.md) for the end-user license
-agreement and third-party license texts.
+See [etc/builds/eula.md](etc/builds/eula.md) for the end-user license agreement
+and third-party license texts.
 
 The game's default font 'Coldnight' is considered a separate, public domain
-component. See [etc/font/README.md](/etc/font/README.md) for more information.
+component. See [etc/font/README.md](etc/font/README.md) for more information.

@@ -1,25 +1,22 @@
 # Coldest Night
 _A prototype stealth game._  
-__Version__ `0.8.0`  
-__Copyright &copy; 2021-2024 Chris Roberts__ (Krobbizoid).  
+__Version__ `0.8.1`  
+__Copyright &copy; 2021-2026 Chris Roberts__ (Krobbizoid).  
 _All rights reserved._
 
 # End User License Agreement
 By using the packaged executable file and/or its associated files (the game),
 you accept the following:
 
-* You agree to the terms of the
-[Krobbizoid Game License](https://krobbi.github.io/license/2021/2024/kgl.txt)
-(shown below.)
-* You understand that the game is not finished and may not represent the
-quality of the final product.
+* You agree to the terms of the Krobbizoid Game License (shown below.)
+* You understand that the game is in an incomplete state.
 * You understand that the game has not been rated and that you are viewing its
 content at your own discretion.
 
 ```
 Krobbizoid Game License
 
-Copyright (c) 2021-2024 Chris Roberts
+Copyright (c) 2021-2026 Chris Roberts
 All rights reserved.
 
 Permission is granted to any person obtaining a copy of this software, its
