@@ -36,7 +36,7 @@ Braille Institute of America, Inc.
 
 For full license texts, please refer to the readme.md file distributed with the game.
 
-Copyright © 2021-2024 Chris Roberts (Krobbizoid).
+Copyright © 2021-2026 Chris Roberts (Krobbizoid).
 All rights reserved.
 
 # Thanks for playing!
